@@ -13,9 +13,9 @@ export function UnlockCTA({
   context: 'category' | 'trending' | 'gallery';
 }) {
   const label = {
-    category: `${totalLocked} more tools in this category`,
-    trending: `${totalLocked} more trending repos`,
-    gallery: `${totalLocked} more curated repos`,
+    category: `${totalLocked} more tools in this category · unlock full access`,
+    trending: `${totalLocked} more repos · unlock full access`,
+    gallery: `${totalLocked} more curated repos · unlock full access`,
   }[context];
 
   return (
