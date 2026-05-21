@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { SITE, CONTACT } from '@stackpicks/core/constants';
+import { SITE, CONTACT, ENTITY } from '@stackpicks/core/constants';
 import { Mail, Phone } from 'lucide-react';
 import { RepoSearchBar } from '../components/RepoSearchBar';
 import { HeaderNav } from '../components/HeaderNav';
@@ -86,11 +86,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <FooterLink href="/terms">Terms</FooterLink>
                 <FooterLink href="/privacy">Privacy</FooterLink>
                 <FooterLink href="/refund">Refunds</FooterLink>
+                <FooterLink href="/shipping">Delivery</FooterLink>
               </FooterCol>
             </div>
 
             <div className="pt-6 border-t border-border flex flex-wrap items-center justify-between gap-3 text-xs text-muted">
-              <span>© {new Date().getFullYear()} {SITE.name}. Built in India. Payments by Razorpay.</span>
+              <div className="flex flex-col gap-1">
+                <span>© {new Date().getFullYear()} {ENTITY.brand}. {ENTITY.fullDisclosure}</span>
+                <span className="opacity-70">All payments processed securely by Razorpay (India) — PCI-DSS Level 1.</span>
+              </div>
               <span className="font-mono">v0.1 · 100+ repos · 22 categories</span>
             </div>
           </div>

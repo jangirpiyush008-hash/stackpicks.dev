@@ -64,7 +64,12 @@ export function GeoPricingCard({
         Get lifetime access
       </Link>
       <p className="text-[11px] text-center text-muted mt-2">
-        Razorpay checkout · 7-day full refund · GSTIN invoice on request
+        Razorpay secure checkout · 7-day full refund · GSTIN invoice on request
+      </p>
+      {/* Razorpay reviewers (and confused customers) always see the INR amount */}
+      <p className="text-[11px] text-center text-muted/70 mt-1">
+        Indian customers charged <strong className="text-text">{inrDisplay}</strong> in INR ·{' '}
+        International charged <strong className="text-text">${usdDisplay}</strong> in USD
       </p>
 
       <ul className="mt-6 space-y-2.5">

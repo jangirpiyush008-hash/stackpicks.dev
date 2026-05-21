@@ -1,5 +1,6 @@
 import { LegalPage } from '../../components/LegalPage';
 import { Sparkles, Compass, Hammer, ScrollText } from 'lucide-react';
+import { ENTITY, CONTACT } from '@stackpicks/core/constants';
 
 export const metadata = {
   title: 'About — why this directory exists',
@@ -109,6 +110,16 @@ export default function AboutPage() {
 
       <p className="mt-10 text-sm">
         Questions, corrections, a take you disagree with? The <a href="/contact">contact page</a> has the real email and phone. We read every message.
+      </p>
+
+      <h2>Who runs this</h2>
+      <p className="text-sm">
+        {ENTITY.brand} is operated as a <strong>{ENTITY.form}</strong> by{' '}
+        <strong>{ENTITY.operator}</strong>, based in {ENTITY.jurisdiction}. Customer support and
+        legal contact: <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> ·{' '}
+        <a href={`tel:${CONTACT.phoneE164}`}>{CONTACT.phone}</a>. All payments are processed in
+        INR (or USD for international customers) via <strong>Razorpay</strong> — a PCI-DSS Level 1
+        certified Indian payment processor.
       </p>
     </LegalPage>
   );

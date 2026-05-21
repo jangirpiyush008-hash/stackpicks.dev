@@ -1,5 +1,5 @@
 import { LegalPage } from '../../components/LegalPage';
-import { CONTACT } from '@stackpicks/core/constants';
+import { CONTACT, ENTITY } from '@stackpicks/core/constants';
 
 export const metadata = {
   title: 'Privacy Policy',
@@ -121,10 +121,21 @@ export default function PrivacyPage() {
         updated&rdquo; date at the top reflects the latest revision.
       </p>
 
-      <h2>11. Contact</h2>
+      <h2>11. Grievance Officer (India IT Rules 2021)</h2>
       <p>
-        Grievance Officer / Data Protection Officer: reachable at{' '}
-        <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> or <a href={`tel:${CONTACT.phoneE164}`}>{CONTACT.phone}</a>.
+        In accordance with the Information Technology Act, 2000 and Rules made thereunder, the
+        Grievance Officer for {ENTITY.brand} is:
+      </p>
+      <ul>
+        <li><strong>Name:</strong> {ENTITY.grievanceOfficer}</li>
+        <li><strong>Email:</strong> <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></li>
+        <li><strong>Phone:</strong> <a href={`tel:${CONTACT.phoneE164}`}>{CONTACT.phone}</a></li>
+        <li><strong>Address:</strong> Available on written request</li>
+        <li><strong>Response time:</strong> Acknowledgement within 48 hours; resolution within 30 days</li>
+      </ul>
+      <p>
+        Use this contact for any data-protection complaint, takedown request, or grievance under
+        Indian law. For other support, the same channels work — see <a href="/contact">/contact</a>.
       </p>
     </LegalPage>
   );

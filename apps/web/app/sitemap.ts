@@ -14,6 +14,7 @@ const STATIC_PATHS: MetadataRoute.Sitemap = [
   { url: `${SITE.url}/privacy`, changeFrequency: 'yearly', priority: 0.3 },
   { url: `${SITE.url}/terms`, changeFrequency: 'yearly', priority: 0.3 },
   { url: `${SITE.url}/refund`, changeFrequency: 'yearly', priority: 0.3 },
+  { url: `${SITE.url}/shipping`, changeFrequency: 'yearly', priority: 0.3 },
   { url: `${SITE.url}/security`, changeFrequency: 'yearly', priority: 0.3 },
 ];
 

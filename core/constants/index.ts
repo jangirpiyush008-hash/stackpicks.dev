@@ -62,3 +62,12 @@ export const CONTACT = {
   hours: 'Monday – Friday, 10:00 – 18:00 IST',
   responseTime: 'within 48 hours on business days',
 } as const;
+
+export const ENTITY = {
+  brand: 'StackPicks',
+  operator: 'Piyush Jangir',
+  form: 'sole proprietorship',
+  jurisdiction: 'India',
+  fullDisclosure: 'StackPicks is operated as a sole proprietorship by Piyush Jangir, based in India.',
+  grievanceOfficer: 'Piyush Jangir',
+} as const;

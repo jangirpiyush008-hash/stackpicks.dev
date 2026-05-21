@@ -1,5 +1,5 @@
 import { LegalPage } from '../../components/LegalPage';
-import { CONTACT } from '@stackpicks/core/constants';
+import { CONTACT, ENTITY } from '@stackpicks/core/constants';
 
 export const metadata = {
   title: 'Terms of Service',
@@ -10,9 +10,11 @@ export default function TermsPage() {
   return (
     <LegalPage title="Terms of Service" lastUpdated="21 May 2026">
       <p>
-        These Terms govern your access to and use of StackPicks (&ldquo;the Service&rdquo;,
-        &ldquo;we&rdquo;, &ldquo;us&rdquo;). By using the Service you agree to these Terms. If you
-        don&apos;t agree, please stop using the Service.
+        These Terms govern your access to and use of <strong>{ENTITY.brand}</strong>{' '}
+        (&ldquo;the Service&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;). The Service is operated as
+        a <strong>{ENTITY.form}</strong> by <strong>{ENTITY.operator}</strong>, based in {ENTITY.jurisdiction}.
+        By using the Service you agree to these Terms. If you don&apos;t agree, please stop using
+        the Service.
       </p>
 
       <h2>1. Who can use the Service</h2>
@@ -56,7 +58,8 @@ export default function TermsPage() {
 
       <h2>5. Premium membership</h2>
       <ul>
-        <li>Pricing is <strong>₹99 (INR)</strong> for India or <strong>$1.99 (USD)</strong> internationally</li>
+        <li>Pricing is <strong>₹99 (INR)</strong> for India or <strong>$2.99 (USD)</strong> internationally — single one-time payment</li>
+        <li>All Indian transactions are processed in INR via <strong>Razorpay</strong>; international transactions in USD via the same Razorpay merchant account where supported</li>
         <li>Payment is one-time and grants <strong>lifetime access</strong> to premium content as it exists today and in the future</li>
         <li>&ldquo;Lifetime&rdquo; means the operational life of the Service. If we cease operations, we will provide at least 30 days&apos; notice and a data export</li>
         <li>Refunds are governed by the <a href="/refund">Refund Policy</a></li>
