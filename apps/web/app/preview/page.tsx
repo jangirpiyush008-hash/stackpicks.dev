@@ -285,7 +285,7 @@ function UnlockBanner({ totalLocked }: { totalLocked: number }) {
           Unlock the full directory.
         </h3>
         <p className="text-muted leading-relaxed max-w-xl mx-auto mb-6">
-          Free preview shows {FREE_LIMIT} sample repos. Pay once — lifetime access to every
+          Free preview shows a small sample. Pay once — lifetime access to every
           curator take, every bundle, every weekly deep-dive. No renewals.
         </p>
         <Link
