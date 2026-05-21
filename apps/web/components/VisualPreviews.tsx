@@ -1,24 +1,66 @@
-import Link from 'next/link';
-import { Image as ImageIcon, ArrowRight, Sparkles, Star, Github } from 'lucide-react';
+'use client';
 
-// Featured repos shown as visual previews on the homepage.
-// Each one renders GitHub's actual social card (1280×640) so visitors see what
-// the repo looks like before they click through. Real-time, no manual upkeep.
+import Link from 'next/link';
+import { useState } from 'react';
+import { Sparkles, ArrowRight, Star, Image as ImageIcon, Globe } from 'lucide-react';
+
+/**
+ * Featured repos shown as live deployed-app previews on the homepage.
+ * Each card renders a real screenshot of the project's actual website (the
+ * polished product, not the GitHub repo page). The OG image on the GitHub
+ * card is available via a hover/toggle.
+ */
 interface FeaturedRepo {
   full_name: string;
   short: string;
-  // tailwind gradient classname for the card hover frame
-  accent: string;
+  demo_url: string;          // the actual deployed app — what users see
+  accent: string;            // tailwind gradient for the hover glow
 }
 
 const FEATURED_REPOS: FeaturedRepo[] = [
-  { full_name: 'shadcn-ui/ui',          short: 'The default UI primitives',     accent: 'from-fuchsia-500/30 via-indigo-500/20 to-cyan-500/20' },
-  { full_name: 'vercel/next.js',        short: 'The framework default',          accent: 'from-zinc-300/20 via-zinc-500/10 to-zinc-700/10' },
-  { full_name: 'supabase/supabase',     short: 'Postgres + Auth + Storage',     accent: 'from-emerald-400/30 via-teal-500/20 to-cyan-500/20' },
-  { full_name: 'pmndrs/zustand',        short: 'Tiny state, no boilerplate',     accent: 'from-amber-400/30 via-orange-500/20 to-red-500/20' },
-  { full_name: 'colinhacks/zod',        short: 'Schema validation everywhere',   accent: 'from-blue-400/30 via-indigo-500/20 to-violet-500/20' },
-  { full_name: 'better-auth/better-auth', short: 'The 2026 auth default',        accent: 'from-pink-500/30 via-rose-500/20 to-orange-500/20' },
+  {
+    full_name: 'shadcn-ui/ui',
+    short: 'UI primitives you copy into your codebase',
+    demo_url: 'https://ui.shadcn.com',
+    accent: 'from-zinc-300/30 via-zinc-500/20 to-zinc-700/20',
+  },
+  {
+    full_name: 'vercel/next.js',
+    short: 'The React framework — App Router + Server Components',
+    demo_url: 'https://nextjs.org',
+    accent: 'from-zinc-200/20 via-zinc-400/10 to-zinc-600/10',
+  },
+  {
+    full_name: 'supabase/supabase',
+    short: 'Postgres + Auth + Storage + Edge Functions',
+    demo_url: 'https://supabase.com',
+    accent: 'from-emerald-400/30 via-teal-500/20 to-cyan-500/20',
+  },
+  {
+    full_name: 'colinhacks/zod',
+    short: 'TypeScript-first schema validation',
+    demo_url: 'https://zod.dev',
+    accent: 'from-blue-400/30 via-indigo-500/20 to-violet-500/20',
+  },
+  {
+    full_name: 'better-auth/better-auth',
+    short: 'The 2026 auth default — type-safe, plugin-driven',
+    demo_url: 'https://www.better-auth.com',
+    accent: 'from-pink-500/30 via-rose-500/20 to-orange-500/20',
+  },
+  {
+    full_name: 'pmndrs/zustand',
+    short: 'Bear necessities for React state — tiny + tree-shakable',
+    demo_url: 'https://zustand-demo.pmnd.rs',
+    accent: 'from-amber-400/30 via-orange-500/20 to-red-500/20',
+  },
 ];
+
+const mshots = (url: string, w = 1280, h = 720) =>
+  `https://s.wordpress.com/mshots/v1/${encodeURIComponent(url)}?w=${w}&h=${h}`;
+
+const ghOg = (fullName: string) =>
+  `https://opengraph.githubassets.com/1/${fullName}`;
 
 export function VisualPreviews() {
   return (
@@ -30,18 +72,19 @@ export function VisualPreviews() {
 
       <header className="text-center max-w-2xl mx-auto mb-10 md:mb-14 px-4">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-accent/30 bg-accent/5 backdrop-blur text-xs text-accent mb-5">
-          <ImageIcon className="w-3.5 h-3.5" />
-          <span className="font-mono uppercase tracking-wider">Live from GitHub</span>
+          <Globe className="w-3.5 h-3.5" />
+          <span className="font-mono uppercase tracking-wider">After you ship — live deployed previews</span>
         </div>
         <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4">
-          See what you&apos;re{' '}
+          See what you&apos;ll{' '}
           <span className="bg-gradient-to-r from-accent via-emerald-300 to-cyan-300 bg-clip-text text-transparent">
-            getting.
+            ship.
           </span>
         </h2>
         <p className="text-base md:text-lg text-muted leading-relaxed">
-          Every repo page shows the actual GitHub social card, README, and live star count.
-          No guesswork — you see the repo as the maintainer presents it.
+          Not the GitHub repo card — the actual deployed product. Live screenshots of every
+          tool&apos;s real website, refreshed from the source. Hover any card to flip to its
+          GitHub page.
         </p>
       </header>
 
@@ -58,7 +101,7 @@ export function VisualPreviews() {
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-accent/40 bg-accent/5 hover:bg-accent/15 hover:border-accent transition text-sm font-semibold text-accent"
           >
             <Sparkles className="w-4 h-4" />
-            Browse all 100+ repos
+            Browse all 100+ deployed previews
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -68,44 +111,79 @@ export function VisualPreviews() {
 }
 
 function PreviewCard({ repo }: { repo: FeaturedRepo }) {
+  const [view, setView] = useState<'live' | 'github'>('live');
   const [owner, name] = repo.full_name.split('/');
-  const ogImage = `https://opengraph.githubassets.com/1/${owner}/${name}`;
   const avatar = `https://avatars.githubusercontent.com/${owner}`;
+  const imgSrc = view === 'live' ? mshots(repo.demo_url) : ghOg(repo.full_name);
 
   return (
-    <Link
-      href={`/preview/${owner}/${name}`}
-      className="group relative block rounded-2xl overflow-hidden transition"
-    >
-      {/* Animated gradient border on hover */}
+    <div className="group relative">
+      {/* Animated gradient glow on hover */}
       <div
         className={`absolute -inset-px rounded-2xl bg-gradient-to-br ${repo.accent} opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none blur-sm`}
       />
 
       <div className="relative rounded-2xl border border-border bg-surface/50 backdrop-blur overflow-hidden h-full transition group-hover:border-accent/60">
-        {/* GitHub OG image */}
-        <div className="aspect-[2/1] bg-bg border-b border-border overflow-hidden relative">
-          {/* Skeleton fallback (shows if image fails) */}
+        {/* Image area */}
+        <Link
+          href={`/preview/${owner}/${name}`}
+          className="block aspect-[2/1] bg-bg border-b border-border overflow-hidden relative"
+        >
+          {/* Loading skeleton (visible until image loads) */}
           <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-surface to-bg">
-            <Github className="w-10 h-10 text-muted/30" />
+            <div className="text-center">
+              <ImageIcon className="w-8 h-8 text-muted/30 mx-auto mb-2 animate-pulse" />
+              <div className="text-[10px] font-mono text-muted/40 uppercase tracking-wider">
+                Loading live screenshot…
+              </div>
+            </div>
           </div>
           <img
-            src={ogImage}
-            alt={`${repo.full_name} repository preview`}
-            className="absolute inset-0 w-full h-full object-cover transition duration-500 group-hover:scale-[1.04]"
+            key={imgSrc}
+            src={imgSrc}
+            alt={`${repo.full_name} ${view === 'live' ? 'deployed app' : 'GitHub repo'} preview`}
+            className="absolute inset-0 w-full h-full object-cover object-top transition duration-500 group-hover:scale-[1.03]"
             loading="lazy"
           />
-          {/* Bottom gradient for legibility of any future overlays */}
+
+          {/* Bottom gradient + URL pill */}
           <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-bg/80 to-transparent pointer-events-none" />
-          {/* "View on hover" pill */}
-          <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-bg/90 backdrop-blur border border-border text-[10px] font-mono uppercase tracking-wider text-accent opacity-0 group-hover:opacity-100 transition flex items-center gap-1">
-            View
+          {view === 'live' && (
+            <div className="absolute bottom-3 left-3 px-2.5 py-1 rounded-full bg-bg/90 backdrop-blur border border-border text-[10px] font-mono text-accent flex items-center gap-1.5">
+              <Globe className="w-3 h-3" />
+              {new URL(repo.demo_url).hostname.replace(/^www\./, '')}
+            </div>
+          )}
+          {view === 'github' && (
+            <div className="absolute bottom-3 left-3 px-2.5 py-1 rounded-full bg-bg/90 backdrop-blur border border-border text-[10px] font-mono text-muted">
+              github.com / {repo.full_name}
+            </div>
+          )}
+
+          {/* View → pill */}
+          <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-accent/90 backdrop-blur text-bg text-[10px] font-mono uppercase tracking-wider opacity-0 group-hover:opacity-100 transition flex items-center gap-1 font-bold">
+            Open
             <ArrowRight className="w-2.5 h-2.5" />
           </div>
+        </Link>
+
+        {/* Toggle strip */}
+        <div className="flex items-center gap-1 px-3 pt-3 border-b border-border/50">
+          <ToggleButton active={view === 'live'} onClick={() => setView('live')}>
+            <Globe className="w-3 h-3" />
+            Live
+          </ToggleButton>
+          <ToggleButton active={view === 'github'} onClick={() => setView('github')}>
+            <Star className="w-3 h-3" />
+            GitHub
+          </ToggleButton>
         </div>
 
         {/* Card meta */}
-        <div className="p-4 md:p-5 flex items-start gap-3">
+        <Link
+          href={`/preview/${owner}/${name}`}
+          className="block p-4 md:p-5 flex items-start gap-3"
+        >
           <img
             src={avatar}
             alt=""
@@ -116,12 +194,35 @@ function PreviewCard({ repo }: { repo: FeaturedRepo }) {
           />
           <div className="min-w-0 flex-1">
             <div className="font-mono text-[11px] text-muted truncate">{owner}</div>
-            <div className="font-bold text-base group-hover:text-accent transition truncate">{name}</div>
-            <p className="text-xs text-muted mt-1 line-clamp-1">{repo.short}</p>
+            <div className="font-bold text-base group-hover:text-accent transition truncate">
+              {name}
+            </div>
+            <p className="text-xs text-muted mt-1 line-clamp-2">{repo.short}</p>
           </div>
-          <Star className="w-3.5 h-3.5 text-muted/50 group-hover:text-accent transition shrink-0" />
-        </div>
+        </Link>
       </div>
-    </Link>
+    </div>
+  );
+}
+
+function ToggleButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`text-[11px] font-mono px-2 py-1 rounded-md transition inline-flex items-center gap-1 ${
+        active ? 'bg-accent/20 text-accent' : 'text-muted hover:text-text'
+      }`}
+    >
+      {children}
+    </button>
   );
 }
