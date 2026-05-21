@@ -260,8 +260,47 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
         ],
       },
       {
-        title: 'Background jobs (embedding indexing)',
-        repos: [],
+        title: 'Agent frameworks',
+        repos: [
+          { full_name: 'langchain-ai/langchain', reason: 'The ecosystem standard for chaining LLM calls, tools, and retrievers. Verbose but universal.' },
+          { full_name: 'run-llama/llama_index', reason: 'Better than Langchain for pure RAG — indexing, query engines, and retrievers are first-class.' },
+          { full_name: 'microsoft/autogen', reason: 'Multi-agent orchestration. Use when one LLM call is not enough.' },
+          { full_name: 'pydantic/pydantic-ai', reason: 'Type-safe agent framework if you\'re Python-native. Smaller surface area than Langchain.' },
+        ],
+      },
+      {
+        title: 'Embeddings + reranking',
+        repos: [
+          { full_name: 'FlagOpen/FlagEmbedding', reason: 'BGE family — the open-source embedding models that actually beat OpenAI on retrieval benchmarks.' },
+          { full_name: 'jina-ai/jina', reason: 'Production-grade multimodal embeddings. Pair with their reranker for hybrid search.' },
+        ],
+      },
+      {
+        title: 'Observability (LLM-specific)',
+        repos: [
+          { full_name: 'langfuse/langfuse', reason: 'Trace every LLM call, see costs, see prompts. Self-hostable. The Sentry for AI apps.' },
+          { full_name: 'Helicone/helicone', reason: 'Lighter than Langfuse. Drop-in proxy that logs without code changes.' },
+        ],
+      },
+      {
+        title: 'Frontend chat UI',
+        repos: [
+          { full_name: 'vercel/ai', reason: 'Vercel\'s AI SDK + UI components for streaming chat. Drop-in chat experiences.' },
+          { full_name: 'shadcn-ui/ui', reason: 'Command palette, message list, thread switcher — all primitives included.' },
+        ],
+      },
+      {
+        title: 'Data ingestion',
+        repos: [
+          { full_name: 'mendableai/firecrawl', reason: 'Scrape websites into LLM-ready markdown.' },
+          { full_name: 'unclecode/crawl4ai', reason: 'Python alternative with embedded LLM extraction.' },
+        ],
+      },
+      {
+        title: 'Validation + types',
+        repos: [
+          { full_name: 'colinhacks/zod', reason: 'Validate LLM JSON outputs before they hit your DB.' },
+        ],
       },
     ],
     keywords: ['ai', 'agent', 'rag', 'llm', 'embeddings', 'vector', 'chatbot'],
@@ -311,6 +350,44 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
         repos: [
           { full_name: 'plausible/analytics', reason: 'No cookie banner needed. Lighthouse score stays at 100.' },
           { full_name: 'umami-software/umami', reason: 'Self-hostable alternative if you have a VPS.' },
+          { full_name: 'PostHog/posthog', reason: 'Add later for funnels + session replay. Free tier is generous.' },
+        ],
+      },
+      {
+        title: 'Animation + motion',
+        repos: [
+          { full_name: 'framer/motion', reason: 'Required for landing pages that need to feel premium.' },
+        ],
+      },
+      {
+        title: 'Icons + visuals',
+        repos: [
+          { full_name: 'lucide-icons/lucide', reason: '1500+ icons, tree-shakable. Pairs natively with shadcn.' },
+        ],
+      },
+      {
+        title: 'SEO essentials',
+        repos: [
+          { full_name: 'garmeeh/next-seo', reason: 'Easier metadata + JSON-LD for older Next versions. Built-in on App Router but still useful for blog posts.' },
+        ],
+      },
+      {
+        title: 'Markdown / MDX content',
+        repos: [
+          { full_name: 'remarkjs/remark', reason: 'Markdown processor. Use with MDX for component-rich blog posts.' },
+          { full_name: 'rehypejs/rehype', reason: 'HTML transformation pipeline — syntax highlighting, headings, anchors.' },
+        ],
+      },
+      {
+        title: 'Images',
+        repos: [
+          { full_name: 'lovell/sharp', reason: 'Image resize / format conversion. Used under the hood by next/image.' },
+        ],
+      },
+      {
+        title: 'Search',
+        repos: [
+          { full_name: 'orama/orama', reason: 'In-browser search for docs/blog. Zero backend, instant.' },
         ],
       },
     ],
@@ -365,6 +442,44 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
           { full_name: 'colinhacks/zod', reason: 'Schema validation that backs Postgres column types.' },
         ],
       },
+      {
+        title: 'Tables (advanced)',
+        repos: [
+          { full_name: 'TanStack/table', reason: 'Headless table primitive. Sort, filter, paginate — bring your own JSX.' },
+        ],
+      },
+      {
+        title: 'Layout + drag',
+        repos: [
+          { full_name: 'react-grid-layout/react-grid-layout', reason: 'Resizable + draggable widget dashboards. Users love rearranging things.' },
+          { full_name: 'clauderic/dnd-kit', reason: 'Modern drag and drop. Replaces react-dnd. Kanban, sortable lists.' },
+        ],
+      },
+      {
+        title: 'Auth + RBAC',
+        repos: [
+          { full_name: 'better-auth/better-auth', reason: 'Type-safe sessions + role-based access. Faster to wire than spinning your own.' },
+        ],
+      },
+      {
+        title: 'Export + reporting',
+        repos: [
+          { full_name: 'mholt/PapaParse', reason: 'CSV parse + stringify in browser. For "Export to CSV" buttons.' },
+          { full_name: 'wojtekmaj/react-pdf', reason: 'Generate PDF receipts and reports client-side.' },
+        ],
+      },
+      {
+        title: 'Component documentation',
+        repos: [
+          { full_name: 'storybookjs/storybook', reason: 'Document every dashboard widget in isolation. Speeds up new feature reviews.' },
+        ],
+      },
+      {
+        title: 'Email (digest / alerts)',
+        repos: [
+          { full_name: 'resend/react-email', reason: 'Weekly digest emails to stakeholders. Templates in React.' },
+        ],
+      },
     ],
     keywords: ['admin', 'dashboard', 'internal', 'ops', 'crm', 'b2b'],
   },
@@ -407,6 +522,32 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
         title: 'Backend / sync',
         repos: [
           { full_name: 'supabase/supabase', reason: 'Auth + sync. Pair with Magic Link login since extensions cannot do redirect OAuth easily.' },
+        ],
+      },
+      {
+        title: 'Extension frameworks',
+        repos: [
+          { full_name: 'wxt-dev/wxt', reason: 'Next.js-style DX for extensions. File-based routing, hot reload, MV3 by default.' },
+          { full_name: 'plasmohq/plasmo', reason: 'Alternative extension framework with React-first APIs and built-in messaging.' },
+        ],
+      },
+      {
+        title: 'Storage + sync',
+        repos: [
+          { full_name: 'pmndrs/jotai', reason: 'Alternative store for derived/computed state in popup + side panel.' },
+        ],
+      },
+      {
+        title: 'AI augmentation',
+        repos: [
+          { full_name: 'vercel/ai', reason: 'Stream LLM responses inside the extension popup. Drop-in chat UI.' },
+          { full_name: 'ollama/ollama', reason: 'Local LLM for extensions that should not call cloud APIs.' },
+        ],
+      },
+      {
+        title: 'Animation + polish',
+        repos: [
+          { full_name: 'framer/motion', reason: 'Smooth open/close transitions for the popup panel.' },
         ],
       },
     ],
@@ -454,6 +595,35 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
           { full_name: 'PostHog/posthog', reason: 'Custom events for job lifecycle. Funnels show where jobs fail.' },
         ],
       },
+      {
+        title: 'Job orchestration',
+        repos: [
+          { full_name: 'inngest/inngest', reason: 'Modern job runner with built-in retries, fan-out, scheduling. The new default.' },
+          { full_name: 'triggerdotdev/trigger.dev', reason: 'Background jobs as TypeScript functions. Self-host or use their cloud.' },
+          { full_name: 'taskforcesh/bullmq', reason: 'Redis-backed queues. Ship-tested at huge scale.' },
+        ],
+      },
+      {
+        title: 'Postgres-native queues',
+        repos: [
+          { full_name: 'graphile/worker', reason: 'Job queue inside your existing Postgres. No Redis to operate.' },
+          { full_name: 'timgit/pg-boss', reason: 'Same idea, different implementation. Pick whichever API you prefer.' },
+        ],
+      },
+      {
+        title: 'Notifications',
+        repos: [
+          { full_name: 'slackapi/node-slack-sdk', reason: 'Send job-status messages to your team Slack.' },
+          { full_name: 'twilio/twilio-node', reason: 'SMS / WhatsApp for production alerts.' },
+        ],
+      },
+      {
+        title: 'AI-augmented automation',
+        repos: [
+          { full_name: 'mendableai/firecrawl', reason: 'Automate competitive intel — scrape competitor pages on a cron.' },
+          { full_name: 'vercel/ai', reason: 'LLM-driven decision-making inside automation steps.' },
+        ],
+      },
     ],
     keywords: ['automation', 'workflow', 'cron', 'jobs', 'background', 'webhook'],
   },
@@ -498,6 +668,41 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
           { full_name: 'meilisearch/meilisearch', reason: 'Typo-tolerant search for blog + docs. Self-host on the same VPS as Umami.' },
           { full_name: 'typesense/typesense', reason: 'Alternative — strong faceting, real-time index.' },
           { full_name: 'orama/orama', reason: 'Run search in the browser. Zero backend.' },
+        ],
+      },
+      {
+        title: 'A/B testing + feature flags',
+        repos: [
+          { full_name: 'growthbook/growthbook', reason: 'Open-source A/B testing engine. Self-host, own your experiments data.' },
+          { full_name: 'Unleash/unleash', reason: 'Feature flags + experiments. Enterprise-grade, OSS-friendly.' },
+        ],
+      },
+      {
+        title: 'Marketing automation',
+        repos: [
+          { full_name: 'mautic/mautic', reason: 'Self-hosted marketing automation. Drip sequences, lead scoring — the HubSpot alternative if you want to own your data.' },
+          { full_name: 'novuhq/novu', reason: 'Multi-channel notification infra — push, email, SMS, in-app — through one API.' },
+        ],
+      },
+      {
+        title: 'Landing pages + builders',
+        repos: [
+          { full_name: 'withastro/astro', reason: 'Ship a 100/100 Lighthouse landing page in a weekend.' },
+          { full_name: 'shadcn-ui/ui', reason: 'Hero, pricing, FAQ blocks. Copy in, customise, ship.' },
+        ],
+      },
+      {
+        title: 'SEO tooling',
+        repos: [
+          { full_name: 'garmeeh/next-seo', reason: 'JSON-LD + canonical + OG tags. Skips repetitive head-tag wiring.' },
+          { full_name: 'remarkjs/remark', reason: 'Process blog markdown with plugins for headings, anchors, syntax highlights.' },
+        ],
+      },
+      {
+        title: 'Lead capture',
+        repos: [
+          { full_name: 'react-hook-form/react-hook-form', reason: 'Newsletter, lead-gen, contact forms — all the same library.' },
+          { full_name: 'colinhacks/zod', reason: 'Validate before hitting your CRM.' },
         ],
       },
     ],
@@ -549,6 +754,39 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
           { full_name: 'razorpay/razorpay-node', reason: 'Generate INR invoices with GSTIN compliance — required for B2B in India.' },
         ],
       },
+      {
+        title: 'Pipeline UI (kanban + drag)',
+        repos: [
+          { full_name: 'clauderic/dnd-kit', reason: 'The modern kanban primitive. Smooth, accessible drag-and-drop.' },
+          { full_name: 'TanStack/table', reason: 'Sortable + filterable lead lists.' },
+        ],
+      },
+      {
+        title: 'Voice + telephony',
+        repos: [
+          { full_name: 'twilio/twilio-node', reason: 'Click-to-call, SMS sequences. The classic for sales tools.' },
+        ],
+      },
+      {
+        title: 'AI-assisted outreach',
+        repos: [
+          { full_name: 'vercel/ai', reason: 'Draft personalised emails from a lead\'s public info. The 2026 sales motion.' },
+          { full_name: 'mendableai/firecrawl', reason: 'Scrape a prospect\'s site so the AI has context before drafting.' },
+        ],
+      },
+      {
+        title: 'Scheduling',
+        repos: [
+          { full_name: 'calcom/cal.com', reason: 'Open-source Calendly alternative. Embed in lead emails or self-host.' },
+        ],
+      },
+      {
+        title: 'State + background jobs',
+        repos: [
+          { full_name: 'TanStack/query', reason: 'Optimistic updates so the kanban does not lag during DB writes.' },
+          { full_name: 'inngest/inngest', reason: 'Sequence runner — drip a 5-email cadence over 14 days reliably.' },
+        ],
+      },
     ],
     keywords: ['sales', 'crm', 'leads', 'pipeline', 'b2b', 'invoicing'],
   },
@@ -597,6 +835,45 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
           { full_name: 'resend/react-email', reason: 'Order confirmation, shipping, abandoned cart — all branded.' },
         ],
       },
+      {
+        title: 'Alternative commerce backends',
+        repos: [
+          { full_name: 'saleor/saleor', reason: 'GraphQL-first headless commerce. Python backend, modern API.' },
+          { full_name: 'vendure-ecommerce/vendure', reason: 'TypeScript headless commerce. Plugin-rich.' },
+        ],
+      },
+      {
+        title: 'Inventory + admin',
+        repos: [
+          { full_name: 'TanStack/table', reason: 'Bulk product editor. Filter, sort, edit in place.' },
+          { full_name: 'mholt/PapaParse', reason: 'CSV bulk import of products — common merchant flow.' },
+        ],
+      },
+      {
+        title: 'Reviews + UGC',
+        repos: [
+          { full_name: 'ueberdosis/tiptap', reason: 'Rich-text reviews with images + ratings. Less abusable than raw textarea.' },
+        ],
+      },
+      {
+        title: 'AI shopping assistants',
+        repos: [
+          { full_name: 'vercel/ai', reason: 'Streamed product Q&A on PDPs. Boosts conversion meaningfully.' },
+          { full_name: 'pgvector/pgvector', reason: 'Vector search across your catalog — "shoes for monsoon" returns the right SKUs.' },
+        ],
+      },
+      {
+        title: 'Animation + polish',
+        repos: [
+          { full_name: 'framer/motion', reason: 'Add-to-cart animations, drawer transitions — the small things that lift conversion.' },
+        ],
+      },
+      {
+        title: 'CMS for content marketing',
+        repos: [
+          { full_name: 'payloadcms/payload', reason: 'Blog + landing CMS that sits next to your storefront code.' },
+        ],
+      },
     ],
     keywords: ['ecommerce', 'shop', 'store', 'cart', 'checkout', 'retail'],
   },
@@ -641,6 +918,48 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
           { full_name: 'shadcn-ui/ui', reason: 'Same primitives as everything else here. Consistency compounds.' },
         ],
       },
+      {
+        title: 'Library bundling',
+        repos: [
+          { full_name: 'egoist/tsup', reason: 'Bundle TypeScript libraries without a webpack config. Outputs ESM + CJS + types.' },
+          { full_name: 'unjs/unbuild', reason: 'Alternative — opinionated bundler for libraries. Used by Nuxt ecosystem.' },
+        ],
+      },
+      {
+        title: 'Codegen + scaffolders',
+        repos: [
+          { full_name: 'sindresorhus/yo', reason: 'Yeoman-style project scaffolders. Old but reliable.' },
+          { full_name: 'sindresorhus/got', reason: 'HTTP client. Drop-in fetch replacement with retries baked in.' },
+        ],
+      },
+      {
+        title: 'Dependency hygiene',
+        repos: [
+          { full_name: 'antfu/taze', reason: 'Modern alternative to npm-check-updates. Faster, prettier.' },
+          { full_name: 'webpro/knip', reason: 'Find unused files, dependencies, exports. Will surprise you.' },
+          { full_name: 'JamieMason/syncpack', reason: 'Keeps versions consistent across a monorepo.' },
+        ],
+      },
+      {
+        title: 'Git hooks',
+        repos: [
+          { full_name: 'typicode/husky', reason: 'Pre-commit hooks. Standard for lint-on-commit.' },
+          { full_name: 'evilmartians/lefthook', reason: 'Faster + more flexible than Husky. Go-based.' },
+        ],
+      },
+      {
+        title: 'CLI UX',
+        repos: [
+          { full_name: 'unjs/citty', reason: 'Modern CLI framework. Type-safe args, clean help output.' },
+          { full_name: 'natemoo-re/clack', reason: 'Beautiful interactive prompts. Used by Astro\'s create command.' },
+        ],
+      },
+      {
+        title: 'Modern compilers (early adoption)',
+        repos: [
+          { full_name: 'oxc-project/oxc', reason: 'Rust-based JS toolchain — linter, parser, transformer. Watch this space.' },
+        ],
+      },
     ],
     keywords: ['cli', 'devtool', 'tooling', 'developer', 'sdk'],
   },
@@ -681,6 +1000,51 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
         title: 'Forms + Schema',
         repos: [
           { full_name: 'colinhacks/zod', reason: 'Validate document JSON before it hits the DB.' },
+        ],
+      },
+      {
+        title: 'Block-style editors',
+        repos: [
+          { full_name: 'TypeCellOS/BlockNote', reason: 'Notion-style block editor on top of Tiptap. Fastest path to a Notion clone.' },
+          { full_name: 'ianstormtaylor/slate', reason: 'Lower-level alternative for completely custom editors.' },
+        ],
+      },
+      {
+        title: 'Code editor inside content',
+        repos: [
+          { full_name: 'codemirror/codemirror5', reason: 'Embed CodeMirror for code blocks inside articles.' },
+          { full_name: 'microsoft/monaco-editor', reason: 'VS Code\'s editor — heavier but better for IDE-style content.' },
+        ],
+      },
+      {
+        title: 'Markdown / MDX',
+        repos: [
+          { full_name: 'remarkjs/remark', reason: 'Markdown processor. Use plugins for headings, anchors, tables.' },
+          { full_name: 'rehypejs/rehype', reason: 'HTML transformer. Syntax highlighting via rehype-prism-plus.' },
+        ],
+      },
+      {
+        title: 'Realtime collaboration',
+        repos: [
+          { full_name: 'yjs/yjs', reason: 'CRDT for real-time collaborative editing. Pair with Tiptap.' },
+        ],
+      },
+      {
+        title: 'Animation + interactions',
+        repos: [
+          { full_name: 'framer/motion', reason: 'Smooth transitions when blocks expand/collapse, dialogs open.' },
+        ],
+      },
+      {
+        title: 'Search inside content',
+        repos: [
+          { full_name: 'meilisearch/meilisearch', reason: 'Search across all docs/pages with typo tolerance.' },
+        ],
+      },
+      {
+        title: 'AI in the editor',
+        repos: [
+          { full_name: 'vercel/ai', reason: 'Slash-command AI — "/improve writing", "/translate to Hindi" inside the editor.' },
         ],
       },
     ],
