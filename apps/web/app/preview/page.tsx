@@ -10,8 +10,8 @@ import { INTENT_GROUPS, expandQuery } from '../../lib/intent-presets';
 import { USE_CASE_BUNDLES } from '../../lib/use-case-bundles';
 import { MissingRepoForm } from '../../components/MissingRepoForm';
 
-// Free tier: first N repos visible. The rest are blurred + locked behind ₹99 lifetime.
-const FREE_LIMIT = 18;
+// Free tier: first N repos visible. The rest are completely hidden behind one CTA.
+const FREE_LIMIT = 6;
 
 const BUNDLE_ICONS: Record<string, LucideIcon> = {
   rocket: Rocket, smartphone: Smartphone, brain: Brain, globe: Globe,
@@ -69,14 +69,14 @@ export default async function PreviewPage({
               <Sparkles className="w-3.5 h-3.5 text-accent" />
               <span>Preview mode — {SEED_REPOS.length} repos, zero database</span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-5">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter mb-5">
               The open-source stack,
               <br />
               <span className="bg-gradient-to-r from-accent via-emerald-300 to-cyan-300 bg-clip-text text-transparent">
                 curated by builders.
               </span>
             </h1>
-            <p className="text-lg text-muted max-w-2xl mx-auto mb-8">
+            <p className="text-base md:text-lg text-muted max-w-2xl mx-auto mb-8 px-2">
               Tell us what you&apos;re building or what you need. We&apos;ll surface the right repo,
               with an honest take on whether to use it.
             </p>
@@ -224,7 +224,7 @@ export default async function PreviewPage({
               <h2 className="text-xl font-bold">Editor&apos;s picks</h2>
               <span className="text-xs text-muted">— the ones we&apos;d ship with tomorrow</span>
             </div>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
               {featured.map((r) => (
                 <RepoCard key={r.full_name} repo={r} featured />
               ))}
@@ -245,18 +245,18 @@ export default async function PreviewPage({
           if (items.length === 0) {
             return <MissingRepoForm query={rawQuery ?? activeCat ?? ''} />;
           }
+          // Hard gate: only the first FREE_LIMIT repos render. Rest is one CTA.
+          const visible = items.slice(0, FREE_LIMIT);
+          const lockedCount = Math.max(0, items.length - FREE_LIMIT);
           return (
             <>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {items.map((r, i) => (
-                  <RepoCard key={r.full_name} repo={r} locked={i >= FREE_LIMIT} />
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {visible.map((r) => (
+                  <RepoCard key={r.full_name} repo={r} />
                 ))}
               </div>
-              {items.length > FREE_LIMIT && (
-                <UnlockBanner totalLocked={items.length - FREE_LIMIT} />
-              )}
-              {/* Always show feedback CTA at the end — even when there ARE results */}
-              <div className="mt-12">
+              {lockedCount > 0 && <UnlockBanner totalLocked={lockedCount} />}
+              <div className="mt-10">
                 <MissingRepoForm query="" subtle />
               </div>
             </>
@@ -269,30 +269,27 @@ export default async function PreviewPage({
 
 function UnlockBanner({ totalLocked }: { totalLocked: number }) {
   return (
-    <div className="mt-10 relative overflow-hidden rounded-2xl border border-accent/40 bg-gradient-to-br from-accent/15 via-surface/40 to-transparent p-7">
+    <div className="mt-8 relative overflow-hidden rounded-2xl border-2 border-accent/40 bg-gradient-to-br from-accent/15 via-surface/40 to-transparent p-6 md:p-8">
       <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full blur-3xl opacity-30 bg-accent" />
-      <div className="relative flex flex-col md:flex-row md:items-center gap-6">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-3">
-            <Lock className="w-4 h-4 text-accent" />
-            <span className="text-xs font-mono uppercase tracking-wider text-accent">
-              {totalLocked} more repos locked
-            </span>
-          </div>
-          <h3 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">
-            Unlock the whole directory.
-          </h3>
-          <p className="text-muted leading-relaxed max-w-xl">
-            One-time <span className="text-text font-semibold">₹99</span> ({" "}
-            <span className="text-text font-semibold">$1.99</span> intl). Lifetime access to every
-            curator take, every bundle, every weekly deep-dive. No renewals.
-          </p>
+      <div className="relative text-center">
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent/15 border border-accent/40 mb-4">
+          <Lock className="w-5 h-5 text-accent" />
         </div>
+        <div className="text-xs font-mono uppercase tracking-wider text-accent mb-3">
+          {totalLocked} more curated repos · members only
+        </div>
+        <h3 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">
+          Unlock the full directory.
+        </h3>
+        <p className="text-muted leading-relaxed max-w-xl mx-auto mb-6">
+          Free preview shows {FREE_LIMIT} sample repos. Pay once — lifetime access to every
+          curator take, every bundle, every weekly deep-dive. No renewals.
+        </p>
         <Link
           href="/pricing"
-          className="px-5 py-3 rounded-lg bg-accent text-bg font-semibold inline-flex items-center gap-2 self-start md:self-auto hover:opacity-90 transition shrink-0"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-accent text-bg font-semibold hover:opacity-90 transition"
         >
-          Unlock for ₹99 lifetime
+          See pricing
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
@@ -300,51 +297,9 @@ function UnlockBanner({ totalLocked }: { totalLocked: number }) {
   );
 }
 
-function RepoCard({ repo, featured = false, locked = false }: { repo: typeof SEED_REPOS[number]; featured?: boolean; locked?: boolean }) {
+function RepoCard({ repo, featured = false }: { repo: typeof SEED_REPOS[number]; featured?: boolean }) {
   const owner = ownerOf(repo);
   const name = nameOf(repo);
-  if (locked) {
-    return (
-      <Link
-        href="/pricing"
-        className="group block rounded-xl border border-border bg-surface/30 p-5 transition relative overflow-hidden hover:border-accent/40"
-      >
-        {/* Blurred content layer */}
-        <div className="blur-[3px] select-none pointer-events-none opacity-60">
-          <div className="flex items-start gap-3 mb-3">
-            <img
-              src={`https://avatars.githubusercontent.com/${owner}`}
-              alt=""
-              width={36}
-              height={36}
-              className="rounded-md border border-border bg-surface"
-              loading="lazy"
-            />
-            <div className="min-w-0">
-              <div className="font-mono text-[11px] text-muted truncate">{owner}</div>
-              <div className="font-bold text-base leading-tight truncate">{name}</div>
-            </div>
-          </div>
-          <p className="text-sm text-muted line-clamp-3 mb-4 leading-relaxed">
-            {repo.curator_take.slice(0, 200)}…
-          </p>
-        </div>
-        {/* Lock overlay */}
-        <div className="absolute inset-0 flex items-center justify-center bg-bg/40 backdrop-blur-[2px]">
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-accent/15 border border-accent/40 mb-3">
-              <Lock className="w-4 h-4 text-accent" />
-            </div>
-            <div className="text-sm font-semibold text-text mb-1">Locked</div>
-            <div className="text-xs text-muted mb-3">Unlock with ₹99 lifetime</div>
-            <span className="inline-flex items-center gap-1 text-xs text-accent group-hover:gap-2 transition-all">
-              Unlock <ArrowRight className="w-3 h-3" />
-            </span>
-          </div>
-        </div>
-      </Link>
-    );
-  }
   return (
     <Link
       href={`/preview/${owner}/${name}`}

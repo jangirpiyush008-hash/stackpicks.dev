@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { SITE, CONTACT } from '@stackpicks/core/constants';
 import { Mail, Phone } from 'lucide-react';
 import { RepoSearchBar } from '../components/RepoSearchBar';
+import { HeaderNav } from '../components/HeaderNav';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -25,25 +26,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className="font-sans antialiased min-h-screen flex flex-col">
         <header className="border-b border-border sticky top-0 z-40 bg-bg/80 backdrop-blur">
-          <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
-            <Link href="/preview" className="font-mono font-bold tracking-tight text-lg shrink-0">
+          <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-2 md:gap-4">
+            <Link href="/preview" className="font-mono font-bold tracking-tight text-base md:text-lg shrink-0">
               stackpicks<span className="text-accent">.dev</span>
             </Link>
-            <div className="flex-1 max-w-md">
+            <div className="flex-1 min-w-0">
               <RepoSearchBar compact />
             </div>
-            <nav className="hidden md:flex items-center gap-5 text-sm text-muted shrink-0">
-              <Link href="/build" className="hover:text-text transition">Build</Link>
-              <Link href="/preview" className="hover:text-text transition">Browse</Link>
-              <Link href="/how-to-use" className="hover:text-text transition">How it works</Link>
-              <Link href="/pricing" className="hover:text-text transition">Pricing</Link>
-              <Link
-                href="/pricing"
-                className="px-3 py-1.5 rounded bg-accent text-bg font-semibold hover:opacity-90 transition"
-              >
-                Lifetime ₹99
-              </Link>
-            </nav>
+            <HeaderNav />
           </div>
         </header>
 

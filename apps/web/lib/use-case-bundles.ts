@@ -95,6 +95,42 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
         repos: [
           { full_name: 'plausible/analytics', reason: 'Privacy-friendly, cookie-free, GDPR/DPDP ready.' },
           { full_name: 'PostHog/posthog', reason: 'When you need session replay or feature flags later.' },
+          { full_name: 'umami-software/umami', reason: 'Self-host on a ₹500 VPS if you want full data ownership.' },
+        ],
+      },
+      {
+        title: 'Animation + polish',
+        repos: [
+          { full_name: 'framer/motion', reason: 'Production motion library. Required for landing pages that need to feel premium.' },
+        ],
+      },
+      {
+        title: 'Search inside your app',
+        repos: [
+          { full_name: 'meilisearch/meilisearch', reason: 'Typo-tolerant full-text search for docs/help/inventory. Self-host on the same VPS.' },
+          { full_name: 'typesense/typesense', reason: 'Alternative with strong faceting. Cloud option if you do not want to self-host.' },
+        ],
+      },
+      {
+        title: 'CMS for editorial content',
+        repos: [
+          { full_name: 'payloadcms/payload', reason: 'TS-native CMS for the blog and changelog. Sits next to your app code.' },
+        ],
+      },
+      {
+        title: 'Tooling',
+        repos: [
+          { full_name: 'biomejs/biome', reason: 'Linter + formatter + import sorter in one binary. 10x faster than ESLint + Prettier.' },
+          { full_name: 'pnpm/pnpm', reason: 'Workspaces for monorepos. Web + mobile + scripts in one repo.' },
+          { full_name: 'turbo-build/turbo', reason: 'Build cache across the monorepo. Skips unchanged work in CI.' },
+          { full_name: 'vitest-dev/vitest', reason: 'Test runner that just works with TS/ESM.' },
+          { full_name: 'microsoft/playwright', reason: 'E2E tests for the signup → checkout flow. Don\'t ship without these.' },
+        ],
+      },
+      {
+        title: 'Icons',
+        repos: [
+          { full_name: 'lucide-icons/lucide', reason: '1500+ icons, tree-shakable, fits any design.' },
         ],
       },
     ],
@@ -151,6 +187,31 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
         title: 'Payments',
         repos: [
           { full_name: 'razorpay/razorpay-node', reason: 'Razorpay has a React Native SDK with UPI Intent built in.' },
+        ],
+      },
+      {
+        title: 'Animation + gestures',
+        repos: [
+          { full_name: 'software-mansion/react-native-reanimated', reason: 'Animations that run on the UI thread. Mandatory for production-feel apps.' },
+          { full_name: 'software-mansion/react-native-gesture-handler', reason: 'Native gesture system. Pair with Reanimated for swipeable lists.' },
+        ],
+      },
+      {
+        title: 'Storage + offline',
+        repos: [
+          { full_name: 'mrousavy/react-native-mmkv', reason: 'Fastest mobile key-value store. Replaces AsyncStorage everywhere.' },
+        ],
+      },
+      {
+        title: 'Push notifications',
+        repos: [
+          { full_name: 'expo/expo', reason: 'Expo Notifications API handles iOS + Android push with one call.' },
+        ],
+      },
+      {
+        title: 'Icons + media',
+        repos: [
+          { full_name: 'lucide-icons/lucide', reason: 'Works in RN via the lucide-react-native package.' },
         ],
       },
     ],

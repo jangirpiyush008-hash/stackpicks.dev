@@ -6,8 +6,8 @@
 export const PRICING = {
   premium_lifetime: {
     label: 'Premium Lifetime',
-    amount_inr_paise: 9900, // ₹99 one-time, lifetime access
-    amount_usd_cents: 199, // $1.99 international
+    amount_inr_paise: 9900, // ₹99 one-time, lifetime access (India)
+    amount_usd_cents: 299, // $2.99 international
     description: 'One payment. Lifetime access. Every curator take, every collection, future-proof.',
   },
   sponsor_category_top: {
