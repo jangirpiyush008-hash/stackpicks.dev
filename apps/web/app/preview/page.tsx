@@ -9,6 +9,8 @@ import { CATEGORIES, CATEGORY_BY_SLUG } from '../../lib/categories';
 import { INTENT_GROUPS, expandQuery } from '../../lib/intent-presets';
 import { USE_CASE_BUNDLES } from '../../lib/use-case-bundles';
 import { MissingRepoForm } from '../../components/MissingRepoForm';
+import { Testimonials } from '../../components/Testimonials';
+import { VisualPreviews } from '../../components/VisualPreviews';
 
 // Free tier: how many repos render before the paywall.
 // - Unfiltered gallery: 6 sample repos (gives a feel for the curation)
@@ -266,6 +268,14 @@ export default async function PreviewPage({
           );
         })()}
       </div>
+
+      {/* Visual previews + testimonials only on the unfiltered gallery */}
+      {!isFiltered && (
+        <>
+          <VisualPreviews />
+          <Testimonials />
+        </>
+      )}
     </div>
   );
 }

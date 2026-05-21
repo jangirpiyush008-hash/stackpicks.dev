@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { USE_CASE_BUNDLES } from '../lib/use-case-bundles';
 import { UnlockCTA, FREE_TRENDING_LIMIT } from '../components/UnlockCTA';
+import { Testimonials } from '../components/Testimonials';
+import { VisualPreviews } from '../components/VisualPreviews';
 
 const BUNDLE_ICONS: Record<string, LucideIcon> = {
   rocket: Rocket, smartphone: Smartphone, brain: Brain, globe: Globe,
@@ -145,6 +147,12 @@ export default async function HomePage() {
           <UnlockCTA totalLocked={trending.length - FREE_TRENDING_LIMIT} context="trending" />
         )}
       </section>
+
+      {/* Visual previews — live GitHub social cards */}
+      <VisualPreviews />
+
+      {/* Testimonials */}
+      <Testimonials />
 
       {/* Newsletter capture */}
       <section className="mb-16 p-8 rounded border border-border text-center">
