@@ -129,9 +129,16 @@ export function AuthForm({ mode }: Props) {
           />
         </label>
         <label className="block">
-          <span className="text-xs text-muted mb-1.5 flex items-center gap-1.5">
-            <Lock className="w-3.5 h-3.5" />
-            Password
+          <span className="text-xs text-muted mb-1.5 flex items-center gap-1.5 justify-between">
+            <span className="flex items-center gap-1.5">
+              <Lock className="w-3.5 h-3.5" />
+              Password
+            </span>
+            {mode === 'login' && (
+              <Link href="/forgot-password" className="text-xs text-muted hover:text-accent transition">
+                Forgot?
+              </Link>
+            )}
           </span>
           <div className="relative">
             <input
