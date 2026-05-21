@@ -11,6 +11,7 @@ import { USE_CASE_BUNDLES } from '../../lib/use-case-bundles';
 import { MissingRepoForm } from '../../components/MissingRepoForm';
 import { Testimonials } from '../../components/Testimonials';
 import { VisualPreviews } from '../../components/VisualPreviews';
+import { HeroSearchBar } from '../../components/HeroSearchBar';
 
 // Free tier: how many repos render before the paywall.
 // - Unfiltered gallery: 6 sample repos (gives a feel for the curation)
@@ -85,22 +86,7 @@ export default async function PreviewPage({
               Tell us what you&apos;re building or what you need. We&apos;ll surface the right repo,
               with an honest take on whether to use it.
             </p>
-            <form action="/preview" method="get" className="max-w-2xl mx-auto">
-              <div className="flex items-center gap-2 px-4 py-3 rounded-xl border border-border bg-surface/80 backdrop-blur focus-within:border-accent transition shadow-lg shadow-accent/5">
-                <Github className="w-4 h-4 text-muted shrink-0" />
-                <input
-                  type="text"
-                  name="q"
-                  defaultValue={rawQuery ?? ''}
-                  placeholder="What are you building? 'mobile app', 'auth + payments', 'AI agent', 'shadcn/ui'..."
-                  className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted/60"
-                />
-                <button className="text-xs font-mono text-muted hover:text-accent transition shrink-0">↵ search</button>
-              </div>
-              <p className="text-xs text-muted mt-3">
-                Or paste a GitHub repo — <span className="font-mono text-accent">owner/repo</span> — to preview it live.
-              </p>
-            </form>
+            <HeroSearchBar />
           </div>
 
           {/* Intent preset chips */}

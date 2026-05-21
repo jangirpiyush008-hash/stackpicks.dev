@@ -13,6 +13,7 @@ import { USE_CASE_BUNDLES } from '../lib/use-case-bundles';
 import { UnlockCTA, FREE_TRENDING_LIMIT } from '../components/UnlockCTA';
 import { Testimonials } from '../components/Testimonials';
 import { VisualPreviews } from '../components/VisualPreviews';
+import { HeroSearchBar } from '../components/HeroSearchBar';
 
 const BUNDLE_ICONS: Record<string, LucideIcon> = {
   rocket: Rocket, smartphone: Smartphone, brain: Brain, globe: Globe,
@@ -37,31 +38,24 @@ export default async function HomePage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4">
-      {/* Hero */}
-      <section className="py-20 text-center">
-        <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6">
+      {/* Hero — centered search bar is the focal point */}
+      <section className="relative pt-16 md:pt-20 pb-12 md:pb-16 text-center">
+        <div className="absolute inset-0 -z-10 opacity-40 pointer-events-none">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-accent/20 rounded-full blur-[140px]" />
+          <div className="absolute top-32 right-10 w-[400px] h-[400px] bg-fuchsia-500/10 rounded-full blur-[140px]" />
+        </div>
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter mb-5">
           The open-source stack,
           <br />
-          <span className="text-accent">curated by builders.</span>
+          <span className="bg-gradient-to-r from-accent via-emerald-300 to-cyan-300 bg-clip-text text-transparent">
+            curated by builders.
+          </span>
         </h1>
-        <p className="text-lg text-muted max-w-2xl mx-auto mb-8">
-          {SITE.description} Stop scrolling GitHub trending. We tell you what to use,
-          what to skip, and why.
+        <p className="text-base md:text-lg text-muted max-w-2xl mx-auto mb-8 px-2">
+          Stop scrolling GitHub trending. Tell us what you&apos;re building — we surface the
+          right repo with an honest take.
         </p>
-        <div className="flex gap-3 justify-center">
-          <a
-            href="/category/ui-components"
-            className="px-5 py-2.5 rounded bg-accent text-bg font-semibold"
-          >
-            Browse all categories
-          </a>
-          <a
-            href="#trending"
-            className="px-5 py-2.5 rounded border border-border hover:border-text transition"
-          >
-            See what's trending
-          </a>
-        </div>
+        <HeroSearchBar />
       </section>
 
       {/* "What are you building?" bundles strip */}
