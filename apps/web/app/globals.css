@@ -12,4 +12,80 @@
     background: theme('colors.accent');
     color: theme('colors.bg');
   }
+  /* Subtle radial backdrop so dark mode doesn't feel flat */
+  body {
+    background-image:
+      radial-gradient(ellipse 800px 600px at top, rgba(198,255,0,0.04), transparent 70%),
+      radial-gradient(ellipse 600px 400px at bottom right, rgba(99,102,241,0.05), transparent 70%);
+    background-attachment: fixed;
+  }
 }
+
+@layer utilities {
+  /* Hide scrollbar on the category strip */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { scrollbar-width: none; }
+}
+
+/* GitHub README sandboxed styles */
+.prose-preview {
+  font-size: 14px;
+  line-height: 1.65;
+  color: theme('colors.text');
+  max-height: 520px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+.prose-preview h1,
+.prose-preview h2,
+.prose-preview h3 {
+  font-weight: 700;
+  margin: 1.2em 0 0.6em;
+  color: theme('colors.text');
+}
+.prose-preview h1 { font-size: 1.4em; border-bottom: 1px solid theme('colors.border'); padding-bottom: 0.3em; }
+.prose-preview h2 { font-size: 1.2em; }
+.prose-preview h3 { font-size: 1.05em; }
+.prose-preview p { margin: 0.7em 0; color: theme('colors.muted'); }
+.prose-preview a { color: theme('colors.accent'); text-decoration: underline; text-underline-offset: 2px; }
+.prose-preview code {
+  background: theme('colors.surface');
+  border: 1px solid theme('colors.border');
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.88em;
+  font-family: theme('fontFamily.mono');
+}
+.prose-preview pre {
+  background: theme('colors.surface');
+  border: 1px solid theme('colors.border');
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.85em;
+  margin: 0.8em 0;
+}
+.prose-preview pre code { background: transparent; border: none; padding: 0; }
+.prose-preview ul, .prose-preview ol { margin: 0.6em 0; padding-left: 1.5em; color: theme('colors.muted'); }
+.prose-preview li { margin: 0.25em 0; }
+.prose-preview img { max-width: 100%; height: auto; border-radius: 6px; margin: 0.5em 0; }
+.prose-preview blockquote {
+  border-left: 3px solid theme('colors.accent');
+  padding-left: 12px;
+  color: theme('colors.muted');
+  margin: 0.8em 0;
+  font-style: italic;
+}
+.prose-preview table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9em;
+  margin: 0.8em 0;
+}
+.prose-preview th, .prose-preview td {
+  border: 1px solid theme('colors.border');
+  padding: 6px 10px;
+  text-align: left;
+}
+.prose-preview th { background: theme('colors.surface'); }
+.prose-preview hr { border: none; border-top: 1px solid theme('colors.border'); margin: 1.2em 0; }

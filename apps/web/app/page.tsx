@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation';
 import { adminClient } from '@stackpicks/core/db';
 import { listRepos, listCategories, getActiveSponsoredSlots } from '@stackpicks/core/db';
 import { formatStars, timeAgo } from '@stackpicks/core/utils';
@@ -7,6 +8,10 @@ import { Star, GitFork, ExternalLink, Sparkles } from 'lucide-react';
 export const revalidate = 3600; // ISR: rebuild hourly
 
 export default async function HomePage() {
+  // Until Supabase env is wired, send visitors to the static preview gallery.
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    redirect('/preview');
+  }
   const supabase = adminClient();
   const [trending, categories, sponsored] = await Promise.all([
     listRepos(supabase, { sort: 'trending', limit: 12 }),
