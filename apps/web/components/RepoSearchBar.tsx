@@ -6,6 +6,23 @@ import { useState, useTransition } from 'react';
 
 const REPO_RE = /^([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)$/;
 
+function normalizeGithubInput(raw: string): string {
+  let v = raw.trim();
+  // git@github.com:owner/repo.git → owner/repo
+  v = v.replace(/^git@github\.com:/, '');
+  // https://github.com/... or http://github.com/...
+  v = v.replace(/^https?:\/\/(www\.)?github\.com\//, '');
+  // .git suffix
+  v = v.replace(/\.git$/, '');
+  // strip trailing slash, /tree/branch, /blob/path, etc.
+  v = v.replace(/\/$/, '');
+  const parts = v.split('/');
+  if (parts.length >= 2 && REPO_RE.test(`${parts[0]}/${parts[1]}`)) {
+    return `${parts[0]}/${parts[1]}`;
+  }
+  return v;
+}
+
 export function RepoSearchBar({ compact = false }: { compact?: boolean }) {
   const router = useRouter();
   const [value, setValue] = useState('');
@@ -13,8 +30,8 @@ export function RepoSearchBar({ compact = false }: { compact?: boolean }) {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const v = value.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, '');
-    if (!v) return;
+    if (!value.trim()) return;
+    const v = normalizeGithubInput(value);
     startTransition(() => {
       const m = v.match(REPO_RE);
       if (m) router.push(`/preview/${m[1]}/${m[2]}`);

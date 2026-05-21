@@ -625,6 +625,63 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
     ],
     keywords: ['cms', 'editor', 'content', 'blog', 'docs', 'notion'],
   },
+
+  // ──────────────────────────────────────────────────────────────────────
+  {
+    slug: 'web-scraper',
+    title: 'Build a Web Scraper',
+    pitch: 'Scrape JS-heavy sites, dump to Postgres, feed to an LLM — the modern data stack.',
+    description:
+      'A production-grade scraping pipeline: headless browser, queues, retries, structured extraction. Use the LLM-friendly tools when the output goes to RAG; the classic ones when you need raw throughput.',
+    icon: 'globe-2',
+    gradient: 'from-lime-400/60 via-emerald-500/40 to-teal-500/30',
+    difficulty: 'weekend',
+    outcome: 'A scraper that crawls thousands of pages reliably, stores clean output, and feeds your AI agent.',
+    sections: [
+      {
+        title: 'LLM-grade scrapers',
+        repos: [
+          { full_name: 'mendableai/firecrawl', reason: 'One API, returns clean markdown ready for RAG. Self-host or use their cloud — same SDK.' },
+          { full_name: 'unclecode/crawl4ai', reason: 'Python alternative when you need strict JSON-schema extraction with an embedded LLM.' },
+        ],
+      },
+      {
+        title: 'Production crawlers',
+        repos: [
+          { full_name: 'apify/crawlee', reason: 'Node-native. Queues, retries, proxy rotation. The default for serious TS scraping.' },
+          { full_name: 'scrapy/scrapy', reason: 'Python\'s veteran. Battle-tested middleware + pipeline architecture.' },
+          { full_name: 'gocolly/colly', reason: 'Go option. Single binary, low memory, runs on a ₹500 VPS.' },
+        ],
+      },
+      {
+        title: 'Browser automation',
+        repos: [
+          { full_name: 'microsoft/playwright', reason: 'JS-heavy sites, anti-bot bypass, multi-browser. Also your E2E test runner.' },
+          { full_name: 'puppeteer/puppeteer', reason: 'Chrome-only, thinner abstraction. Use when Playwright is too much.' },
+        ],
+      },
+      {
+        title: 'Plain HTML parsing',
+        repos: [
+          { full_name: 'cheeriojs/cheerio', reason: 'jQuery API for server-rendered pages. 10x faster than spinning up a browser.' },
+        ],
+      },
+      {
+        title: 'Storage + queue',
+        repos: [
+          { full_name: 'supabase/supabase', reason: 'Postgres for scraped rows, queues table for the job state, Auth for your dashboard.' },
+        ],
+      },
+      {
+        title: 'Feed to your AI agent',
+        repos: [
+          { full_name: 'pgvector/pgvector', reason: 'Embed scraped chunks and retrieve them in your RAG agent.' },
+          { full_name: 'ollama/ollama', reason: 'Run a local model to summarise or tag scraped content without API costs.' },
+        ],
+      },
+    ],
+    keywords: ['scraper', 'scraping', 'crawler', 'crawling', 'data extraction', 'web data'],
+  },
 ];
 
 export function getBundleBySlug(slug: string): UseCaseBundle | undefined {

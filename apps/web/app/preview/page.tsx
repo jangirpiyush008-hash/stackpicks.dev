@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import {
-  Sparkles, ArrowRight, Github, Star, Check, X,
+  Sparkles, ArrowRight, Github, Star, Check, X, Lock,
   Rocket, Smartphone, Brain, Globe, LayoutDashboard, Chrome, Workflow,
   Megaphone, Handshake, ShoppingBag, Terminal, PenLine, type LucideIcon,
 } from 'lucide-react';
@@ -8,6 +8,10 @@ import { SEED_REPOS, ownerOf, nameOf } from '../../lib/preview-source';
 import { CATEGORIES, CATEGORY_BY_SLUG } from '../../lib/categories';
 import { INTENT_GROUPS, expandQuery } from '../../lib/intent-presets';
 import { USE_CASE_BUNDLES } from '../../lib/use-case-bundles';
+import { MissingRepoForm } from '../../components/MissingRepoForm';
+
+// Free tier: first N repos visible. The rest are blurred + locked behind ₹99 lifetime.
+const FREE_LIMIT = 18;
 
 const BUNDLE_ICONS: Record<string, LucideIcon> = {
   rocket: Rocket, smartphone: Smartphone, brain: Brain, globe: Globe,
@@ -236,28 +240,111 @@ export default async function PreviewPage({
           <span className="text-xs text-muted">{(isFiltered ? filtered : rest).length} repos</span>
         </div>
 
-        {(isFiltered ? filtered : rest).length === 0 ? (
-          <div className="border border-dashed border-border rounded-lg p-12 text-center">
-            <p className="text-muted">
-              No curated repo matches that yet. Try a different keyword — or paste an{' '}
-              <span className="font-mono text-accent">owner/repo</span> in the top bar to preview any GitHub repo live.
-            </p>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {(isFiltered ? filtered : rest).map((r) => (
-              <RepoCard key={r.full_name} repo={r} />
-            ))}
-          </div>
-        )}
+        {(() => {
+          const items = isFiltered ? filtered : rest;
+          if (items.length === 0) {
+            return <MissingRepoForm query={rawQuery ?? activeCat ?? ''} />;
+          }
+          return (
+            <>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {items.map((r, i) => (
+                  <RepoCard key={r.full_name} repo={r} locked={i >= FREE_LIMIT} />
+                ))}
+              </div>
+              {items.length > FREE_LIMIT && (
+                <UnlockBanner totalLocked={items.length - FREE_LIMIT} />
+              )}
+              {/* Always show feedback CTA at the end — even when there ARE results */}
+              <div className="mt-12">
+                <MissingRepoForm query="" subtle />
+              </div>
+            </>
+          );
+        })()}
       </div>
     </div>
   );
 }
 
-function RepoCard({ repo, featured = false }: { repo: typeof SEED_REPOS[number]; featured?: boolean }) {
+function UnlockBanner({ totalLocked }: { totalLocked: number }) {
+  return (
+    <div className="mt-10 relative overflow-hidden rounded-2xl border border-accent/40 bg-gradient-to-br from-accent/15 via-surface/40 to-transparent p-7">
+      <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full blur-3xl opacity-30 bg-accent" />
+      <div className="relative flex flex-col md:flex-row md:items-center gap-6">
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-3">
+            <Lock className="w-4 h-4 text-accent" />
+            <span className="text-xs font-mono uppercase tracking-wider text-accent">
+              {totalLocked} more repos locked
+            </span>
+          </div>
+          <h3 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">
+            Unlock the whole directory.
+          </h3>
+          <p className="text-muted leading-relaxed max-w-xl">
+            One-time <span className="text-text font-semibold">₹99</span> ({" "}
+            <span className="text-text font-semibold">$1.99</span> intl). Lifetime access to every
+            curator take, every bundle, every weekly deep-dive. No renewals.
+          </p>
+        </div>
+        <Link
+          href="/pricing"
+          className="px-5 py-3 rounded-lg bg-accent text-bg font-semibold inline-flex items-center gap-2 self-start md:self-auto hover:opacity-90 transition shrink-0"
+        >
+          Unlock for ₹99 lifetime
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function RepoCard({ repo, featured = false, locked = false }: { repo: typeof SEED_REPOS[number]; featured?: boolean; locked?: boolean }) {
   const owner = ownerOf(repo);
   const name = nameOf(repo);
+  if (locked) {
+    return (
+      <Link
+        href="/pricing"
+        className="group block rounded-xl border border-border bg-surface/30 p-5 transition relative overflow-hidden hover:border-accent/40"
+      >
+        {/* Blurred content layer */}
+        <div className="blur-[3px] select-none pointer-events-none opacity-60">
+          <div className="flex items-start gap-3 mb-3">
+            <img
+              src={`https://avatars.githubusercontent.com/${owner}`}
+              alt=""
+              width={36}
+              height={36}
+              className="rounded-md border border-border bg-surface"
+              loading="lazy"
+            />
+            <div className="min-w-0">
+              <div className="font-mono text-[11px] text-muted truncate">{owner}</div>
+              <div className="font-bold text-base leading-tight truncate">{name}</div>
+            </div>
+          </div>
+          <p className="text-sm text-muted line-clamp-3 mb-4 leading-relaxed">
+            {repo.curator_take.slice(0, 200)}…
+          </p>
+        </div>
+        {/* Lock overlay */}
+        <div className="absolute inset-0 flex items-center justify-center bg-bg/40 backdrop-blur-[2px]">
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-accent/15 border border-accent/40 mb-3">
+              <Lock className="w-4 h-4 text-accent" />
+            </div>
+            <div className="text-sm font-semibold text-text mb-1">Locked</div>
+            <div className="text-xs text-muted mb-3">Unlock with ₹99 lifetime</div>
+            <span className="inline-flex items-center gap-1 text-xs text-accent group-hover:gap-2 transition-all">
+              Unlock <ArrowRight className="w-3 h-3" />
+            </span>
+          </div>
+        </div>
+      </Link>
+    );
+  }
   return (
     <Link
       href={`/preview/${owner}/${name}`}

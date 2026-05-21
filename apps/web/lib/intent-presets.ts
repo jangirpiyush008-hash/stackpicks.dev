@@ -19,7 +19,9 @@ export const INTENT_GROUPS: { title: string; items: IntentPreset[] }[] = [
       { label: 'AI agent / RAG', query: 'ai' },
       { label: 'Internal dashboard', query: 'admin' },
       { label: 'Marketing site', query: 'framework' },
-      { label: 'Chrome extension', query: 'cli' },
+      { label: 'Chrome extension', query: 'chrome extension' },
+      { label: 'Scraper', query: 'scraper' },
+      { label: 'E-commerce', query: 'ecommerce' },
     ],
   },
   {
@@ -37,6 +39,8 @@ export const INTENT_GROUPS: { title: string; items: IntentPreset[] }[] = [
       { label: 'Charts', query: 'charts' },
       { label: 'Testing', query: 'testing' },
       { label: 'Analytics', query: 'analytics' },
+      { label: 'CMS', query: 'cms' },
+      { label: 'Rich text editor', query: 'editor' },
     ],
   },
   {
@@ -48,6 +52,7 @@ export const INTENT_GROUPS: { title: string; items: IntentPreset[] }[] = [
       { label: 'Tailwind', query: 'tailwind' },
       { label: 'Supabase', query: 'supabase' },
       { label: 'Python', query: 'python' },
+      { label: 'Go', query: 'go' },
       { label: 'Postgres', query: 'postgres' },
     ],
   },
@@ -58,55 +63,212 @@ export const INTENT_GROUPS: { title: string; items: IntentPreset[] }[] = [
  * Lets "mobile app" match the 'mobile' category, "payment" match 'payments', etc.
  */
 export const KEYWORD_EXPANSIONS: Record<string, string[]> = {
-  mobile: ['mobile', 'react-native', 'expo', 'flutter', 'ios', 'android'],
-  app: ['mobile', 'frameworks'],
-  saas: ['auth', 'payments', 'database', 'email'],
-  ai: ['ai-ml', 'llm', 'rag', 'vector', 'agent', 'openai', 'claude'],
-  rag: ['ai-ml', 'vector', 'embeddings'],
-  agent: ['ai-ml'],
-  auth: ['auth', 'oauth', 'login', 'session'],
+  // App types
+  mobile: ['mobile', 'react-native', 'expo', 'flutter', 'ios', 'android', 'nativewind', 'tamagui'],
+  app: ['mobile', 'frameworks', 'next.js', 'expo'],
+  ios: ['mobile', 'expo', 'react-native'],
+  android: ['mobile', 'expo', 'react-native'],
+  flutter: ['mobile'],
+  saas: ['auth', 'payments', 'database', 'email', 'next.js'],
+  startup: ['saas', 'auth', 'payments', 'next.js'],
+  product: ['saas', 'analytics'],
+  ecommerce: ['payments', 'razorpay', 'medusa', 'commerce', 'cart', 'checkout'],
+  'e-commerce': ['payments', 'medusa', 'commerce'],
+  shop: ['ecommerce', 'medusa', 'payments'],
+  store: ['ecommerce', 'medusa', 'state', 'zustand'],
+  cart: ['ecommerce', 'medusa'],
+  checkout: ['payments', 'razorpay', 'stripe'],
+  marketplace: ['ecommerce', 'payments', 'auth'],
+  dashboard: ['mui', 'shadcn', 'charts', 'tanstack', 'database', 'analytics'],
+  admin: ['mui', 'analytics', 'cms-content', 'directus', 'payload'],
+  internal: ['admin', 'dashboard'],
+  ops: ['admin', 'dashboard', 'analytics'],
+  b2b: ['admin', 'dashboard', 'crm'],
+  crm: ['supabase', 'forms', 'database', 'resend'],
+  // AI / agents
+  ai: ['ai-ml', 'llm', 'rag', 'vector', 'agent', 'openai', 'claude', 'ollama'],
+  llm: ['ai-ml', 'ollama', 'openai'],
+  rag: ['ai-ml', 'vector', 'embeddings', 'pgvector', 'chroma', 'weaviate'],
+  embedding: ['ai-ml', 'pgvector', 'chroma', 'weaviate'],
+  embeddings: ['ai-ml', 'pgvector', 'chroma', 'weaviate'],
+  agent: ['ai-ml', 'llm'],
+  chatbot: ['ai-ml', 'tiptap', 'shadcn'],
+  vector: ['pgvector', 'chroma', 'weaviate', 'milvus'],
+  openai: ['ai-ml'],
+  claude: ['ai-ml'],
+  anthropic: ['ai-ml'],
+  ollama: ['ai-ml'],
+  gemini: ['ai-ml'],
+  // Auth
+  auth: ['auth', 'oauth', 'login', 'session', 'better-auth', 'lucia', 'supabase'],
   login: ['auth'],
-  payments: ['payments', 'razorpay', 'stripe', 'billing'],
+  signup: ['auth'],
+  oauth: ['auth'],
+  signin: ['auth'],
+  authentication: ['auth'],
+  password: ['auth'],
+  magic: ['auth'],
+  // Payments
+  payments: ['payments', 'razorpay', 'stripe', 'billing', 'subscription'],
   payment: ['payments', 'razorpay'],
   razorpay: ['payments'],
-  billing: ['payments'],
+  stripe: ['payments'],
+  billing: ['payments', 'razorpay', 'stripe'],
+  subscription: ['payments', 'razorpay', 'stripe'],
+  invoice: ['payments', 'razorpay'],
   india: ['razorpay'],
-  database: ['database', 'orm', 'sql', 'postgres', 'sqlite'],
-  postgres: ['database'],
-  orm: ['database'],
-  forms: ['forms', 'validation', 'zod'],
+  upi: ['razorpay'],
+  inr: ['razorpay'],
+  // DB
+  database: ['database', 'orm', 'sql', 'postgres', 'sqlite', 'mysql', 'supabase'],
+  db: ['database'],
+  postgres: ['database', 'supabase', 'drizzle', 'prisma'],
+  postgresql: ['database', 'supabase'],
+  sql: ['database', 'drizzle', 'prisma'],
+  orm: ['database', 'drizzle', 'prisma', 'kysely'],
+  supabase: ['database', 'auth'],
+  drizzle: ['database', 'orm'],
+  prisma: ['database', 'orm'],
+  sqlite: ['database', 'pocketbase'],
+  mysql: ['database'],
+  // Forms
+  forms: ['forms', 'validation', 'zod', 'react-hook-form'],
+  form: ['forms'],
   validation: ['forms', 'zod'],
-  email: ['email', 'transactional', 'newsletter', 'resend'],
-  search: ['search', 'fts', 'meilisearch', 'algolia'],
-  analytics: ['analytics', 'tracking', 'plausible', 'posthog'],
-  state: ['state', 'store', 'signals', 'zustand'],
+  zod: ['forms', 'validation'],
+  // Email
+  email: ['email', 'transactional', 'newsletter', 'resend', 'react-email'],
+  newsletter: ['email', 'resend'],
+  mail: ['email'],
+  smtp: ['email', 'resend'],
+  transactional: ['email', 'resend'],
+  // Search
+  search: ['search', 'fts', 'meilisearch', 'algolia', 'typesense', 'orama'],
+  fulltext: ['search', 'meilisearch', 'typesense'],
+  algolia: ['search'],
+  meilisearch: ['search'],
+  // Analytics
+  analytics: ['analytics', 'tracking', 'plausible', 'posthog', 'umami'],
+  tracking: ['analytics'],
+  events: ['analytics', 'posthog'],
+  experiments: ['analytics', 'posthog'],
+  'a/b': ['analytics', 'posthog'],
+  funnel: ['analytics', 'posthog'],
+  plausible: ['analytics'],
+  posthog: ['analytics'],
+  // State
+  state: ['state', 'signals', 'zustand', 'jotai', 'redux'],
+  zustand: ['state'],
+  redux: ['state'],
+  signals: ['state', 'solid'],
+  // Routing
   routing: ['routing', 'router'],
-  testing: ['testing', 'vitest', 'playwright'],
-  devops: ['devops', 'deploy', 'docker', 'ci'],
-  components: ['ui-components', 'shadcn', 'radix', 'headless'],
+  router: ['routing'],
+  // Testing
+  testing: ['testing', 'vitest', 'playwright', 'storybook'],
+  test: ['testing'],
+  e2e: ['testing', 'playwright'],
+  unit: ['testing', 'vitest'],
+  jest: ['testing'],
+  vitest: ['testing'],
+  // DevOps
+  devops: ['devops', 'deploy', 'docker', 'ci', 'coolify'],
+  deploy: ['devops'],
+  hosting: ['devops', 'vercel'],
+  docker: ['devops'],
+  kubernetes: ['devops'],
+  // Components / UI
+  components: ['ui-components', 'shadcn', 'radix', 'headless', 'mui'],
+  component: ['ui-components'],
   ui: ['ui-components', 'design-systems'],
+  shadcn: ['ui-components'],
+  radix: ['ui-components'],
+  headless: ['ui-components', 'radix'],
+  mui: ['ui-components'],
+  material: ['ui-components', 'mui'],
   design: ['design-systems'],
-  charts: ['charts-viz', 'd3', 'chart'],
+  // Charts
+  charts: ['charts-viz', 'd3', 'chart', 'recharts', 'echarts'],
+  chart: ['charts-viz'],
+  visualization: ['charts-viz', 'd3'],
   viz: ['charts-viz'],
+  graph: ['charts-viz', 'd3'],
+  // Animation
   animation: ['animation', 'motion', 'framer'],
+  animate: ['animation'],
+  motion: ['animation'],
+  // Icons
   icons: ['icons', 'lucide'],
-  cms: ['cms-content', 'markdown', 'mdx'],
+  icon: ['icons'],
+  // CMS / content
+  cms: ['cms-content', 'markdown', 'mdx', 'payloadcms', 'directus', 'strapi'],
+  content: ['cms-content'],
+  blog: ['cms-content', 'next.js', 'astro'],
   markdown: ['cms-content', 'rich-text'],
-  editor: ['rich-text', 'tiptap', 'codemirror'],
-  cli: ['cli-tools'],
-  framework: ['frameworks', 'next', 'remix', 'astro', 'svelte'],
-  admin: ['analytics', 'cms-content'],
+  mdx: ['cms-content', 'rich-text'],
+  payload: ['cms-content'],
+  directus: ['cms-content'],
+  strapi: ['cms-content'],
+  // Editor
+  editor: ['rich-text', 'tiptap', 'codemirror', 'lexical'],
+  wysiwyg: ['rich-text', 'tiptap'],
+  tiptap: ['rich-text'],
+  notion: ['rich-text', 'tiptap', 'blocknote'],
+  // CLI / dev tools
+  cli: ['cli-tools', 'bun', 'tsx'],
+  bun: ['cli-tools'],
+  pnpm: ['cli-tools'],
+  monorepo: ['cli-tools', 'turbo', 'pnpm'],
+  // Framework
+  framework: ['frameworks', 'next', 'remix', 'astro', 'svelte', 'nuxt', 'solid'],
+  frameworks: ['frameworks'],
+  'next.js': ['frameworks'],
+  next: ['frameworks'],
+  nextjs: ['frameworks'],
+  astro: ['frameworks'],
+  remix: ['frameworks'],
+  svelte: ['frameworks'],
+  nuxt: ['frameworks'],
+  // Scraping
+  scraping: ['scraping', 'scraper', 'crawler', 'crawling', 'playwright', 'puppeteer'],
+  scraper: ['scraping'],
+  scrape: ['scraping'],
+  crawl: ['scraping'],
+  crawler: ['scraping'],
+  crawling: ['scraping'],
+  playwright: ['scraping', 'testing'],
+  puppeteer: ['scraping'],
+  cheerio: ['scraping'],
+  scrapy: ['scraping'],
+  crawlee: ['scraping'],
+  firecrawl: ['scraping', 'ai-ml'],
+  'browser automation': ['scraping', 'playwright', 'puppeteer'],
+  // Chrome extension
+  chrome: ['vitejs', 'shadcn', 'zustand'],
+  extension: ['vitejs', 'shadcn', 'zustand'],
+  // Misc
+  realtime: ['supabase', 'state'],
+  websocket: ['supabase'],
+  storage: ['supabase'],
+  upload: ['supabase'],
+  file: ['supabase'],
+  pdf: ['cms-content'],
+  i18n: ['frameworks'],
+  localization: ['frameworks'],
 };
 
 export function expandQuery(raw: string): string[] {
-  const tokens = raw
-    .toLowerCase()
-    .split(/[\s,/+]+/)
-    .filter(Boolean);
-  const out = new Set<string>(tokens);
+  // Split + lowercase. Also include the raw multi-word phrase so "browser automation" can match.
+  const normalized = raw.toLowerCase();
+  const tokens = normalized.split(/[\s,/+]+/).filter(Boolean);
+  const out = new Set<string>([normalized, ...tokens]);
   for (const t of tokens) {
     const exp = KEYWORD_EXPANSIONS[t];
     if (exp) for (const e of exp) out.add(e);
   }
+  // Also try the whole phrase as a key (e.g. "react native")
+  const phrase = tokens.join(' ');
+  const phraseExp = KEYWORD_EXPANSIONS[phrase];
+  if (phraseExp) for (const e of phraseExp) out.add(e);
   return Array.from(out);
 }

@@ -48,6 +48,12 @@ export default async function RepoPreviewPage({ params }: Props) {
   );
   const starsPerDay = Math.round(repo.stargazers_count / ageDays);
 
+  // GitHub's social preview image — actual screenshot of the repo card with description.
+  const ogImage = `https://opengraph.githubassets.com/1/${repo.owner.login}/${repo.name}`;
+
+  // Best-effort install snippet inferred from primary language.
+  const installSnippet = inferInstall(repo);
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
       <Link
@@ -57,6 +63,16 @@ export default async function RepoPreviewPage({ params }: Props) {
         <ArrowLeft className="w-3.5 h-3.5" />
         Back to gallery
       </Link>
+
+      {/* Visual preview banner — GitHub's actual social card image */}
+      <div className="mb-6 rounded-2xl border border-border overflow-hidden bg-surface/40">
+        <img
+          src={ogImage}
+          alt={`${repo.full_name} preview`}
+          className="w-full h-auto block"
+          loading="lazy"
+        />
+      </div>
 
       {/* Top card */}
       <div
@@ -212,19 +228,35 @@ export default async function RepoPreviewPage({ params }: Props) {
         </div>
       )}
 
-      {/* README */}
+      {/* Quick-install snippet */}
+      {installSnippet && (
+        <div className="mb-6 rounded-2xl border border-border bg-surface/40 p-5">
+          <div className="text-xs font-mono uppercase tracking-wider text-muted mb-2">
+            Quick install
+          </div>
+          <pre className="px-4 py-3 rounded-lg bg-bg/70 border border-border text-[13px] font-mono leading-relaxed overflow-x-auto text-text whitespace-pre">
+{installSnippet}
+          </pre>
+          <p className="text-[11px] text-muted mt-2">
+            Inferred from <span className="font-mono">{repo.language ?? 'package'}</span> · always
+            double-check against the official README below.
+          </p>
+        </div>
+      )}
+
+      {/* README — always open, full visual rendering */}
       {readmeHtml && (
-        <details className="rounded-2xl border border-border bg-surface/40 p-6 mb-6" open>
-          <summary className="cursor-pointer text-sm font-semibold mb-3 flex items-center gap-2">
+        <div className="rounded-2xl border border-border bg-surface/40 p-6 mb-6">
+          <div className="text-sm font-semibold mb-4 flex items-center gap-2 pb-3 border-b border-border">
             <Github className="w-4 h-4 text-muted" />
-            README preview
-            {truncated && <span className="text-[10px] font-mono text-muted">(truncated)</span>}
-          </summary>
+            README — rendered from {repo.full_name}
+            {truncated && <span className="text-[10px] font-mono text-muted ml-auto">(truncated)</span>}
+          </div>
           <div
-            className="prose-preview mt-4"
+            className="prose-preview"
             dangerouslySetInnerHTML={{ __html: readmeHtml }}
           />
-        </details>
+        </div>
       )}
 
       <div className="text-xs text-muted text-center border-t border-border pt-6">
@@ -232,6 +264,62 @@ export default async function RepoPreviewPage({ params }: Props) {
       </div>
     </div>
   );
+}
+
+/**
+ * Best-effort install instructions inferred from the repo's language + name.
+ * Conservative: only emits a snippet for high-confidence cases. README is the
+ * source of truth and always rendered below.
+ */
+function inferInstall(repo: { language: string | null; name: string; full_name: string; owner: { login: string }; html_url: string }): string | null {
+  const lang = repo.language?.toLowerCase();
+  const slug = repo.name.toLowerCase();
+  const full = repo.full_name.toLowerCase();
+
+  // Famous package names that map to known registries
+  const NPM_HINTS = ['next', 'react', 'vite', 'svelte', 'astro', 'tailwind', 'shadcn', 'radix', 'zod', 'lucia', 'better-auth', 'tanstack', 'zustand', 'jotai', 'tiptap', 'lexical', 'drizzle', 'prisma', 'kysely', 'react-email', 'maizzle', 'recharts', 'echarts', 'd3', 'biome', 'turbo', 'tsx'];
+  const PY_HINTS = ['scrapy', 'crawl4ai', 'firecrawl', 'aider'];
+  const GO_HINTS = ['colly', 'gocolly'];
+  const SELFHOST_HINTS = ['supabase', 'medusa', 'directus', 'strapi', 'payload', 'plausible', 'umami', 'posthog', 'meilisearch', 'typesense', 'pocketbase', 'ollama', 'chroma', 'weaviate', 'milvus'];
+
+  if (SELFHOST_HINTS.some((h) => full.includes(h))) {
+    return `# Self-hosted — clone + run with Docker (most projects ship a docker-compose.yml)
+git clone ${repo.html_url}
+cd ${repo.name}
+docker compose up -d
+
+# Or follow the official deploy guide in the README below.`;
+  }
+
+  if (lang === 'typescript' || lang === 'javascript' || NPM_HINTS.some((h) => slug.includes(h))) {
+    return `# Install via npm / pnpm / bun:
+pnpm add ${repo.name}
+# or
+npm install ${repo.name}`;
+  }
+
+  if (lang === 'python' || PY_HINTS.some((h) => slug.includes(h))) {
+    return `# Install via pip:
+pip install ${repo.name}
+# or with uv (recommended):
+uv pip install ${repo.name}`;
+  }
+
+  if (lang === 'go' || GO_HINTS.some((h) => slug.includes(h))) {
+    return `# Install as Go dependency:
+go get github.com/${repo.owner.login}/${repo.name}`;
+  }
+
+  if (lang === 'rust') {
+    return `# Add to Cargo.toml:
+cargo add ${repo.name}`;
+  }
+
+  // Fallback — at least give git clone
+  return `# Clone + explore:
+git clone ${repo.html_url}
+cd ${repo.name}
+# Then read the README below for setup steps.`;
 }
 
 function Stat({

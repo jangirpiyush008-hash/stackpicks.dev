@@ -1033,6 +1033,82 @@ export const SEED_REPOS: SeedEntry[] = [
     use_this_if: 'You have 4+ packages in a monorepo with shared dependencies.',
     skip_if: 'You have a single app — pnpm workspaces are enough.',
   },
+
+  // ════════════════════════════════════════════════════════════════
+  // SCRAPING & CRAWLING (8)
+  // ════════════════════════════════════════════════════════════════
+  {
+    full_name: 'mendableai/firecrawl',
+    category_slugs: ['scraping', 'ai-ml'],
+    is_featured: true,
+    curator_take:
+      'The 2026 default for LLM-grade scraping. Fires Playwright behind the scenes, returns clean markdown ready to feed into RAG. Self-host for free or use the hosted tier — both expose the same API. The sweet spot when you want a scraper that knows what a content-page looks like vs a nav-page, and skips the cruft automatically.',
+    use_this_if: 'You\'re building a RAG agent, a competitive-intel tool, or any system that ingests web content as training/search data.',
+    skip_if: 'You\'re scraping structured APIs (JSON endpoints) — overkill. Use plain fetch + Zod.',
+  },
+  {
+    full_name: 'unclecode/crawl4ai',
+    category_slugs: ['scraping', 'ai-ml'],
+    is_featured: false,
+    curator_take:
+      'Python-native LLM-friendly crawler. Strong at extracting structured data (JSON schemas) from messy HTML using an embedded LLM. Heavier setup than Firecrawl but more control over extraction prompts. Best for production pipelines that need deterministic schema output.',
+    use_this_if: 'You\'re in Python, want self-hosted, and need extraction with an exact JSON schema.',
+    skip_if: 'You don\'t need LLM-driven extraction — Scrapy or Crawlee will be cheaper and faster.',
+  },
+  {
+    full_name: 'apify/crawlee',
+    category_slugs: ['scraping'],
+    is_featured: true,
+    curator_take:
+      'Node-native crawler from the Apify team. Built-in queues, retries, proxy rotation, headless browser pool — production patterns out of the box. Switches between Playwright, Puppeteer, and plain HTTP based on the page. Best in class for serious Node-based scraping at scale.',
+    use_this_if: 'You need to crawl hundreds of thousands of pages reliably in TypeScript or Node.',
+    skip_if: 'A 50-line Playwright script will do — Crawlee is overhead for a quick scrape.',
+  },
+  {
+    full_name: 'scrapy/scrapy',
+    category_slugs: ['scraping'],
+    is_featured: false,
+    curator_take:
+      'The Python scraping veteran. Mature ecosystem, plugins for everything (caching, proxies, middlewares), and a years-honed pipeline architecture. Steeper learning curve than the modern alternatives but lower long-term cost when crawls grow beyond a quick weekend script.',
+    use_this_if: 'You\'re a Python team scraping at scale and want middleware/pipeline patterns out of the box.',
+    skip_if: 'You\'re scraping JS-heavy SPAs — Scrapy needs Playwright integration which is awkward; Crawlee is cleaner.',
+  },
+  {
+    full_name: 'microsoft/playwright',
+    category_slugs: ['scraping', 'testing'],
+    is_featured: true,
+    curator_take:
+      'The browser automation library the rest of the scraping tools depend on. Direct API for when you want fine-grained control: stealth mode, anti-bot bypass, multi-context, headless or headed. Also doubles as your E2E test runner.',
+    use_this_if: 'You want a single library that scrapes AND runs your E2E tests — one toolchain, two jobs.',
+    skip_if: 'You only need HTTP + HTML parsing (no JS execution) — Cheerio or BeautifulSoup will be 10x faster.',
+  },
+  {
+    full_name: 'puppeteer/puppeteer',
+    category_slugs: ['scraping'],
+    is_featured: false,
+    curator_take:
+      'Chrome-only browser automation from Google. Slightly more raw than Playwright with fewer batteries included, but lighter weight and battle-tested on Chrome quirks. The choice when Playwright\'s multi-browser layer is unnecessary.',
+    use_this_if: 'You\'re Chrome-only and want a thinner abstraction than Playwright.',
+    skip_if: 'You need Firefox or Safari support — Playwright handles those, Puppeteer does not.',
+  },
+  {
+    full_name: 'cheeriojs/cheerio',
+    category_slugs: ['scraping'],
+    is_featured: false,
+    curator_take:
+      'jQuery-style HTML parsing for Node, with no browser. Ridiculously fast because it never renders JS. The default when you\'re scraping server-rendered pages (most blogs, docs, news, marketplace listings).',
+    use_this_if: 'The page works without JavaScript — view-source contains the content you want.',
+    skip_if: 'The page renders content client-side (SPA, infinite scroll) — you need Playwright/Puppeteer.',
+  },
+  {
+    full_name: 'gocolly/colly',
+    category_slugs: ['scraping'],
+    is_featured: false,
+    curator_take:
+      'Go\'s answer to Scrapy. Built-in rate limiting, caching, parallelism, and storage backends. Compiles to a single binary which makes deployment to a cheap VPS trivial. Use when you want to scrape millions of pages from a ₹500/mo box.',
+    use_this_if: 'You\'re in Go and need scraping with low memory + single-binary deploy.',
+    skip_if: 'You\'re not in Go — Crawlee or Scrapy will have a richer ecosystem.',
+  },
 ];
 
 export const TOTAL_REPOS = SEED_REPOS.length;

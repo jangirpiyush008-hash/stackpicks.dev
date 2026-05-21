@@ -29,6 +29,7 @@ export const CATEGORIES: CategoryMeta[] = [
   { slug: 'rich-text', name: 'Rich Text & Editors', description: 'WYSIWYG, markdown editors, code editors', icon: 'pen-line', sort: 200 },
   { slug: 'frameworks', name: 'Frameworks', description: 'Web frameworks, meta-frameworks', icon: 'boxes', sort: 210 },
   { slug: 'cli-tools', name: 'CLI & Dev Tools', description: 'CLI builders, scaffolders, dev utilities', icon: 'terminal', sort: 220 },
+  { slug: 'scraping', name: 'Scraping & Crawling', description: 'Web scrapers, crawlers, browser automation, HTML/PDF extraction', icon: 'globe-2', sort: 230 },
 ];
 
 export const CATEGORY_BY_SLUG: Record<string, CategoryMeta> = Object.fromEntries(
