@@ -112,6 +112,35 @@ create policy "repo_categories_select_public" on public.repo_categories
   for select using (true);
 
 -- ============================================================================
+-- PREMIUM SUBSCRIPTIONS (₹299/mo) — declared early so collections RLS can reference it
+-- ============================================================================
+create table public.premium_subscriptions (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  razorpay_subscription_id text not null unique,
+  razorpay_customer_id text,
+  plan_id text not null, -- RAZORPAY_PLAN_PREMIUM_MONTHLY
+  status text not null default 'pending', -- pending | active | cancelled | expired | paused
+  current_period_start timestamptz,
+  current_period_end timestamptz,
+  amount_inr int not null, -- in paise
+  created_at timestamptz not null default timezone('utc', now()),
+  updated_at timestamptz not null default timezone('utc', now())
+);
+
+create index premium_subs_user_idx on public.premium_subscriptions (user_id, status);
+
+create trigger premium_subscriptions_updated_at before update on public.premium_subscriptions
+  for each row execute function public.set_updated_at();
+
+alter table public.premium_subscriptions enable row level security;
+
+create policy "premium_subs_select_own" on public.premium_subscriptions
+  for select using (auth.uid() = user_id);
+
+-- Inserts/updates only via service role (webhook handler)
+
+-- ============================================================================
 -- COLLECTIONS ("Best for shadcn stack", "FitProof builder picks")
 -- ============================================================================
 create table public.collections (
@@ -247,35 +276,6 @@ create policy "sponsored_slots_insert_own" on public.sponsored_slots
       where s.id = sponsor_id and s.user_id = auth.uid()
     )
   );
-
--- ============================================================================
--- PREMIUM SUBSCRIPTIONS (₹299/mo)
--- ============================================================================
-create table public.premium_subscriptions (
-  id uuid primary key default uuid_generate_v4(),
-  user_id uuid not null references auth.users(id) on delete cascade,
-  razorpay_subscription_id text not null unique,
-  razorpay_customer_id text,
-  plan_id text not null, -- RAZORPAY_PLAN_PREMIUM_MONTHLY
-  status text not null default 'pending', -- pending | active | cancelled | expired | paused
-  current_period_start timestamptz,
-  current_period_end timestamptz,
-  amount_inr int not null, -- in paise
-  created_at timestamptz not null default timezone('utc', now()),
-  updated_at timestamptz not null default timezone('utc', now())
-);
-
-create index premium_subs_user_idx on public.premium_subscriptions (user_id, status);
-
-create trigger premium_subscriptions_updated_at before update on public.premium_subscriptions
-  for each row execute function public.set_updated_at();
-
-alter table public.premium_subscriptions enable row level security;
-
-create policy "premium_subs_select_own" on public.premium_subscriptions
-  for select using (auth.uid() = user_id);
-
--- Inserts/updates only via service role (webhook handler)
 
 -- ============================================================================
 -- REPO ENGAGEMENT
