@@ -40,9 +40,9 @@ export function GeoPricingCard({
       <div className="absolute -top-3 left-6 px-2.5 py-0.5 rounded-full bg-accent text-bg text-[10px] font-mono uppercase tracking-wider font-bold">
         Lifetime
       </div>
-      <div className="text-xs font-mono uppercase tracking-wider text-accent mb-2">Premium</div>
-      <h2 className="text-2xl font-bold mb-2">The whole stack</h2>
-      <p className="text-muted text-sm mb-6">Pay once. Get every collection, every deep-dive, forever.</p>
+      <div className="text-xs font-mono uppercase tracking-wider text-accent mb-2">Lifetime membership</div>
+      <h2 className="text-2xl font-bold mb-2">Full directory access</h2>
+      <p className="text-muted text-sm mb-6">Pay once. Full service for the lifetime of the platform.</p>
 
       {/* Geo-priced amount */}
       <div className="mb-6">

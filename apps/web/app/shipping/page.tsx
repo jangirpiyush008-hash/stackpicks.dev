@@ -10,22 +10,22 @@ export default function ShippingPage() {
   return (
     <LegalPage title="Delivery & Service Activation" lastUpdated="21 May 2026">
       <p>
-        {ENTITY.brand} is a <strong>fully digital educational platform</strong>. We deliver
-        learning content — not physical goods. There is no shipping, no logistics, no courier
-        involvement. This page exists to satisfy payment-processor and Indian e-commerce
+        {ENTITY.brand} is a <strong>fully digital subscription service</strong>. We deliver access
+        to an online directory — not physical goods. There is no shipping, no logistics, no
+        courier involvement. This page exists to satisfy payment-processor and Indian e-commerce
         disclosure requirements.
       </p>
 
       <h2>1. What gets delivered</h2>
       <ul>
-        <li><strong>Premium learning access (₹99 / $2.99 one-time)</strong> — instant activation of your account, unlocking the full educational library: every curator take, every build-with-AI guide, weekly long-form lessons.</li>
+        <li><strong>Lifetime membership (₹99 / $2.99 one-time)</strong> — instant activation of your account, unlocking the full directory service: every analyst take, every ready-to-ship stack bundle, weekly long-form analyses.</li>
         <li><strong>Sponsored placements</strong> — activation of your slot on the dates you specified at checkout.</li>
         <li><strong>Job posts</strong> — listing goes live on the directory immediately after successful payment.</li>
       </ul>
 
       <h2>2. Activation timeline</h2>
       <ul>
-        <li><strong>Premium learning access:</strong> Activated within <strong>1 minute</strong> of successful Razorpay payment. Login URL + first-time-user guide is emailed immediately.</li>
+        <li><strong>Lifetime membership:</strong> Activated within <strong>1 minute</strong> of successful Razorpay payment. Login URL + onboarding email is sent immediately.</li>
         <li><strong>Sponsored placements:</strong> Activated within <strong>1 hour</strong> after payment, pending review of the creative assets supplied.</li>
         <li><strong>Job posts:</strong> Live within <strong>15 minutes</strong> of payment.</li>
       </ul>

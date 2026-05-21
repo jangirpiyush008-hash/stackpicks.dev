@@ -47,8 +47,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   stackpicks<span className="text-accent">.dev</span>
                 </div>
                 <p className="text-sm text-muted max-w-xs leading-relaxed">
-                  An educational resource for software builders. Curated open-source tools, honest
-                  takes on each, and step-by-step build-with-AI guides.
+                  A paid digital directory service for software builders. Curated open-source
+                  tools, analyst takes, ready-to-ship stack bundles.
                 </p>
                 <div className="mt-5 space-y-2 text-xs">
                   <a

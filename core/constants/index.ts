@@ -49,8 +49,8 @@ export type RepoSortOption = (typeof REPO_SORT_OPTIONS)[number]['value'];
 
 export const SITE = {
   name: 'StackPicks',
-  description: 'Learn what to ship with. A curated educational directory of open-source dev tools with honest curator takes, build-with-AI guides, and curated stacks for every type of project.',
-  tagline: 'The learning resource for builders shipping with open source.',
+  description: 'A professional directory service for software builders. Curated open-source tools, honest analyst takes, ready-to-ship stack bundles, and step-by-step integration guides — all behind a single lifetime membership.',
+  tagline: 'The premium directory service for builders.',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://stackpicks.dev',
   twitter: '@stackpicksdev',
   ogImage: '/og-default.png',
@@ -69,9 +69,9 @@ export const ENTITY = {
   operator: 'Piyush Jangir',
   form: 'sole proprietorship',
   jurisdiction: 'India',
-  category: 'Education / E-learning',
-  categoryShort: 'educational resource',
-  productNoun: 'curriculum',
-  fullDisclosure: 'StackPicks is an educational resource for software builders, operated as a sole proprietorship by Piyush Jangir, based in India.',
+  category: 'Digital Subscription Service',
+  categoryShort: 'professional directory and reference service',
+  productNoun: 'directory',
+  fullDisclosure: 'StackPicks is a digital subscription service providing a professional directory of curated open-source tools, operated as a sole proprietorship by Piyush Jangir, based in India.',
   grievanceOfficer: 'Piyush Jangir',
 } as const;

@@ -3,40 +3,41 @@ import { Sparkles, Compass, Hammer, ScrollText } from 'lucide-react';
 import { ENTITY, CONTACT } from '@stackpicks/core/constants';
 
 export const metadata = {
-  title: 'About — an educational directory for builders',
-  description: 'StackPicks is a learning resource for software builders: curated open-source tools, honest takes on each, and step-by-step build-with-AI guides.',
+  title: 'About — a curated directory service for builders',
+  description: 'StackPicks is a professional directory service for software builders. Paid lifetime membership unlocks curated open-source tools, analyst-grade takes, and ship-ready stack bundles.',
 };
 
 export default function AboutPage() {
   return (
-    <LegalPage title="A learning resource built by builders, for builders." lastUpdated="21 May 2026">
+    <LegalPage title="A directory service built by builders, for builders." lastUpdated="21 May 2026">
       <p className="text-lg leading-relaxed text-text">
-        Every dev tools list on the internet sorts by GitHub stars. We don&apos;t. We teach you
-        what to ship with — and why.
+        Every dev tools list on the internet sorts by GitHub stars. We don&apos;t. We surface what
+        you should actually ship with — and back it with an analyst&apos;s take.
       </p>
 
       <h2>What StackPicks is</h2>
       <p>
-        StackPicks is an <strong>educational platform for software builders</strong>. It teaches
-        you which open-source tools to use for each part of your stack, when to use them, when to
-        skip them, and exactly how to wire them together with an AI coding agent. Think of it as
-        a curriculum disguised as a directory.
+        StackPicks is a <strong>paid digital directory service</strong> for software builders.
+        Members pay a one-time lifetime fee and get curated coverage of every open-source tool
+        worth using, plus ready-to-ship stack bundles for every common project type, plus
+        step-by-step integration guides for AI coding agents.
       </p>
       <p>
-        Most dev directories are scraping operations. Bots pull repository metadata, sort by
+        Most dev directories are scraping operations — bots pull repository metadata, sort by
         popularity, slap on some Tailwind, and call it a product. You learn a tool has 30k stars.
-        You don&apos;t learn whether you should use it. We do the second part — that&apos;s the
-        education.
+        You don&apos;t learn whether you should use it. StackPicks does that second part —
+        that&apos;s the service we charge for.
       </p>
 
-      <h2>What you&apos;ll learn here</h2>
+      <h2>What members get</h2>
       <ul>
-        <li><strong>100+ curated lessons</strong> — one per open-source tool, across 22 stack categories (UI, auth, payments, AI, scraping, animation, and more)</li>
-        <li><strong>13 build-with-AI guides</strong> — full-stack curriculum for shipping a SaaS, a mobile app, an AI agent, a scraper, an e-commerce store, an internal dashboard, and more</li>
-        <li><strong>The &ldquo;use this if&rdquo; clause</strong> on every tool — applied judgment, the part textbooks skip</li>
-        <li><strong>The &ldquo;skip if&rdquo; clause</strong>, because half of engineering education is learning what to leave out</li>
-        <li><strong>Step-by-step AI-agent integration guides</strong> — how to feed each tool to Claude Code, Cursor, Codex, and others on Mac + Windows</li>
-        <li><strong>Live, nightly-refreshed data</strong> so the curriculum never goes stale</li>
+        <li><strong>100+ curated tool listings</strong> across 22 stack categories — UI, auth, payments, AI, scraping, animation, and the boring middleware no one writes about</li>
+        <li><strong>13 ready-to-ship stack bundles</strong> for SaaS, mobile, AI agent, scraper, e-commerce, internal dashboard, content platform, automation, and more</li>
+        <li><strong>The &ldquo;use this if&rdquo; clause</strong> on every tool — applied judgment, not generic praise</li>
+        <li><strong>The &ldquo;skip if&rdquo; clause</strong>, because half of engineering is knowing what to leave out</li>
+        <li><strong>Step-by-step AI-agent integration guides</strong> — how to feed each tool to Claude Code, Cursor, Codex on Mac + Windows</li>
+        <li><strong>Live, nightly-refreshed GitHub data</strong> so the directory never goes stale</li>
+        <li><strong>Members-only Discord</strong>, priority support, and weekly long-form analyses</li>
       </ul>
 
       <h2>What you won&apos;t find</h2>
@@ -48,13 +49,13 @@ export default function AboutPage() {
         <li>A pop-up newsletter modal that follows you down the scroll</li>
       </ul>
 
-      <h2>Who this is for</h2>
+      <h2>Who this service is for</h2>
       <p>
-        Self-taught developers, indie hackers, weekend builders, bootcamp grads, agency engineers,
-        and anyone who has ever spent a Saturday evaluating five state-management libraries before
-        realising they should have just used the boring one. If you&apos;re actively learning to
-        ship — whether it&apos;s a SaaS, a side project, a portfolio app, or your first paid
-        product — StackPicks is the syllabus that catches you up faster than any blog.
+        Solo builders, indie hackers, agency engineers, and tech leads who want a vetted answer
+        instead of a Reddit thread. If you spend a Saturday evaluating five state-management
+        libraries before realising you should have just used the boring one — StackPicks gives
+        you the answer up front. The membership pays for itself the first time it saves you a
+        bad architectural choice.
       </p>
 
       <h2>The India context</h2>
@@ -66,20 +67,21 @@ export default function AboutPage() {
         rest of the world; it just means we don&apos;t pretend US-only assumptions are universal.
       </p>
 
-      <h2>How the education is funded</h2>
+      <h2>How the service is funded</h2>
       <p>
         Five revenue rails, all labelled, none cloaked:
       </p>
       <ol>
-        <li><strong>Premium membership</strong> — ₹99 (or $2.99 intl) one-time, lifetime learning access. Unlocks the full curriculum, the deeper write-ups, and weekly long-form lessons.</li>
+        <li><strong>Lifetime membership</strong> — ₹99 (or $2.99 intl) one-time, lifetime access to the full directory, all bundles, and weekly long-form analyses. The primary revenue line.</li>
         <li><strong>Sponsored listings</strong> — labelled clearly, never replace an honest take</li>
-        <li><strong>Affiliate links</strong> — only where the tool is one we&apos;d teach anyway</li>
+        <li><strong>Affiliate links</strong> — only where the tool is one we&apos;d recommend anyway</li>
         <li><strong>Newsletter sponsorships</strong> — manual, clearly disclosed</li>
-        <li><strong>Job board</strong> — flat fee, no exclusivity, no spam</li>
+        <li><strong>Job board</strong> — flat fee per listing, no exclusivity, no spam</li>
       </ol>
       <p>
-        The free tier stays free forever — a sample lesson per category is enough to evaluate the
-        teaching style. Premium funds the deeper editorial work and keeps the open content honest.
+        A free sample tier stays free forever — six tool listings per category are enough to judge
+        the curation quality. Paid membership funds the deeper editorial work and keeps the open
+        content honest.
       </p>
 
       <h2>The principles</h2>

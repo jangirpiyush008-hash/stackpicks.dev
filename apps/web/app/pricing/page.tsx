@@ -4,33 +4,33 @@ import { PRICING } from '@stackpicks/core/constants';
 import { GeoPricingCard } from '../../components/GeoPricingCard';
 
 export const metadata = {
-  title: 'Pricing — lifetime learning access for ₹99',
-  description: 'Premium learning access is ₹99 in India, $2.99 internationally. Lifetime — every lesson, every build guide, no recurring billing.',
+  title: 'Pricing — lifetime membership for ₹99',
+  description: 'StackPicks lifetime membership is ₹99 in India, $2.99 internationally. One-time payment, no renewals — full directory, all stack bundles, weekly analyses.',
 };
 
 const INR_DISPLAY = (PRICING.premium_lifetime.amount_inr_paise / 100).toLocaleString('en-IN');
 const USD_DISPLAY = (PRICING.premium_lifetime.amount_usd_cents / 100).toFixed(2);
 
 const FEATURES_FREE = [
-  '6 sample tool lessons per category',
+  '6 sample tool listings per category',
   'Live GitHub preview for any repo',
-  'A few open build-with-AI guides',
-  'How-to-use AI agent setup guide',
+  'A few open stack bundles to browse',
+  'AI-agent setup guide',
   'Sponsored placements clearly labelled',
 ];
 
 const FEATURES_PREMIUM = [
   'Everything in Free',
-  'Full curriculum — all 100+ curated tool lessons unlocked',
-  'All 13 build-with-AI guides (SaaS, Mobile, AI agent, scraper, e-commerce…)',
-  'Every "use this if" + "skip if" applied judgment in full',
-  'Weekly long-form lessons (2,000+ words)',
-  'Members-only curated learning paths',
+  'Full directory unlocked — 100+ curated tool listings',
+  'All 13 ready-to-ship stack bundles (SaaS, Mobile, AI agent, scraper, e-commerce, more)',
+  'Every "use this if" + "skip if" analyst judgment in full',
+  'Weekly long-form analyses (2,000+ words)',
+  'Members-only curated collections',
   'Sponsor-free newsletter',
-  'Early access to new lessons & categories',
-  'Private members-only Discord — peer learning + Q&A',
+  'Early access to new tool listings & categories',
+  'Private members-only Discord',
   'Priority email support from the editorial team',
-  'Lifetime — pay once, learn forever',
+  'Lifetime — pay once, full access forever',
 ];
 
 export default function PricingPage() {
@@ -47,12 +47,12 @@ export default function PricingPage() {
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter mb-4">
           Pay once.{' '}
           <span className="bg-gradient-to-r from-accent via-emerald-300 to-cyan-300 bg-clip-text text-transparent">
-            Learn forever.
+            Use forever.
           </span>
         </h1>
         <p className="text-base md:text-lg text-muted max-w-xl mx-auto px-4">
-          No subscriptions, no annual renewals, no &ldquo;your trial ends in 3 days&rdquo; emails.
-          One small price, lifetime access to the full learning library.
+          No recurring billing, no annual renewals, no &ldquo;your trial ends in 3 days&rdquo;
+          emails. One small price, lifetime access to the full directory service.
         </p>
       </header>
 

@@ -15,10 +15,10 @@ export default function RefundPage() {
         protection norms.
       </p>
 
-      <h2>1. Premium learning access (₹99 / $2.99 one-time)</h2>
+      <h2>1. Lifetime membership (₹99 / $2.99 one-time)</h2>
       <ul>
-        <li><strong>Cooling-off period</strong> — full refund within <strong>7 days</strong> of payment, no questions asked. Applies even after you&apos;ve accessed the educational content.</li>
-        <li><strong>After 7 days</strong> — non-refundable, because the membership is a one-time payment for lifetime learning access and the educational content has been delivered</li>
+        <li><strong>Cooling-off period</strong> — full refund within <strong>7 days</strong> of payment, no questions asked. Applies even after you&apos;ve used the directory.</li>
+        <li><strong>After 7 days</strong> — non-refundable, because the membership is a one-time payment for lifetime service access and the service has been delivered</li>
         <li><strong>Service failure</strong> — if the Service is unavailable for more than 30 consecutive days due to our fault, you may request a full refund regardless of purchase date</li>
         <li><strong>Accidental duplicate payment</strong> — refunded fully within 7 business days of being reported</li>
       </ul>
