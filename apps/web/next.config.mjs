@@ -14,9 +14,8 @@ const nextConfig = {
       { protocol: 'https', hostname: 'raw.githubusercontent.com' },
     ],
   },
-  experimental: {
-    typedRoutes: true,
-  },
+  // typedRoutes was experimental and caused inconsistent SWC behavior across
+  // local vs Railway builds. Disable until Next 16 stabilises it.
 };
 
 export default nextConfig;

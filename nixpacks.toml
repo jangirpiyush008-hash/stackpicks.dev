@@ -1,5 +1,6 @@
 # Railway Nixpacks config for the StackPicks pnpm workspace monorepo.
 # Tells Nixpacks: use Node 20 + pnpm 9, install at the root, build only the web app.
+# cache-bust 2026-05-21-1 — bump this comment to force a fresh docker layer cache.
 
 [phases.setup]
 nixPkgs = ["nodejs_20", "pnpm-9_x"]

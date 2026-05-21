@@ -1,4 +1,4 @@
-import type { Metadata, Route } from 'next';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE, CONTACT } from '@stackpicks/core/constants';
 import { Mail, Phone } from 'lucide-react';
@@ -89,7 +89,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <FooterLink href="/about">About</FooterLink>
                 <FooterLink href="/contact">Contact</FooterLink>
                 <FooterLink href="/security">Security</FooterLink>
-                <FooterLink href={'/category/ui-components' as Route}>Categories</FooterLink>
+                <FooterLink href="/category/ui-components">Categories</FooterLink>
               </FooterCol>
 
               <FooterCol title="Legal">
@@ -119,7 +119,7 @@ function FooterCol({ title, children }: { title: string; children: React.ReactNo
   );
 }
 
-function FooterLink({ href, children }: { href: Route; children: React.ReactNode }) {
+function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <li>
       <Link href={href} className="text-sm text-muted hover:text-accent transition">

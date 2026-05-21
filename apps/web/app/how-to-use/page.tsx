@@ -30,7 +30,13 @@ export default function HowToUsePage() {
             </span>
           </h1>
           <p className="text-lg text-muted max-w-2xl mx-auto">
-            Install once, then point any agent at a <Link href="/build" className="text-accent underline underline-offset-2">bundle</Link> or an individual repo. The agent reads our curator takes and writes the integration.
+            Install once, then point any agent at a bundle or an individual repo.
+            The agent reads our curator takes and writes the integration.
+          </p>
+          <p className="text-sm text-muted mt-3">
+            <Link href="/build" className="text-accent underline underline-offset-2">
+              Open a bundle →
+            </Link>
           </p>
         </div>
       </section>
