@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Sparkles, ArrowRight, Github, Star, Check, X } from 'lucide-react';
 import { SEED_REPOS, ownerOf, nameOf } from '../../lib/preview-source';
 import { CATEGORIES, CATEGORY_BY_SLUG } from '../../lib/categories';
+import { INTENT_GROUPS, expandQuery } from '../../lib/intent-presets';
 
 export const metadata = {
   title: 'Preview — the curated 104',
@@ -17,22 +18,26 @@ export default async function PreviewPage({
 }) {
   const { cat, q } = await searchParams;
   const activeCat = cat?.trim().toLowerCase() || null;
-  const query = q?.trim().toLowerCase() || null;
+  const rawQuery = q?.trim() || null;
+  const tokens = rawQuery ? expandQuery(rawQuery) : [];
 
   const filtered = SEED_REPOS.filter((r) => {
     if (activeCat && !r.category_slugs.includes(activeCat)) return false;
-    if (query) {
-      const hay = `${r.full_name} ${r.curator_take} ${r.use_this_if} ${r.skip_if}`.toLowerCase();
-      if (!hay.includes(query)) return false;
-    }
-    return true;
+    if (tokens.length === 0) return true;
+    const catNames = r.category_slugs
+      .map((s) => CATEGORY_BY_SLUG[s]?.name?.toLowerCase() ?? s)
+      .join(' ');
+    const hay = `${r.full_name} ${r.category_slugs.join(' ')} ${catNames} ${r.curator_take} ${r.use_this_if} ${r.skip_if}`.toLowerCase();
+    return tokens.some((t) => hay.includes(t));
   });
 
   const counts = new Map<string, number>();
   for (const r of SEED_REPOS) for (const c of r.category_slugs) counts.set(c, (counts.get(c) ?? 0) + 1);
 
   const featured = filtered.filter((r) => r.is_featured).slice(0, 3);
-  const rest = filtered.filter((r) => !r.is_featured || !featured.includes(r));
+  const featuredSet = new Set(featured.map((r) => r.full_name));
+  const rest = filtered.filter((r) => !featuredSet.has(r.full_name));
+  const isFiltered = !!(activeCat || rawQuery);
 
   return (
     <div>
@@ -42,50 +47,73 @@ export default async function PreviewPage({
           <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-accent/20 rounded-full blur-[140px]" />
           <div className="absolute top-40 right-0 w-[500px] h-[500px] bg-fuchsia-500/10 rounded-full blur-[140px]" />
         </div>
-        <div className="max-w-6xl mx-auto px-4 pt-20 pb-16 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border bg-surface/60 backdrop-blur text-xs text-muted mb-6">
-            <Sparkles className="w-3.5 h-3.5 text-accent" />
-            <span>Preview mode — {SEED_REPOS.length} repos, zero database</span>
-          </div>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-5">
-            The open-source stack,
-            <br />
-            <span className="bg-gradient-to-r from-accent via-emerald-300 to-cyan-300 bg-clip-text text-transparent">
-              curated by builders.
-            </span>
-          </h1>
-          <p className="text-lg text-muted max-w-2xl mx-auto mb-8">
-            Every repo below has been read, used, and given a take. Stop scrolling GitHub trending.
-            We tell you what to use, what to skip, and why.
-          </p>
-          <form action="/preview" method="get" className="max-w-xl mx-auto">
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-surface/80 backdrop-blur focus-within:border-accent transition">
-              <Github className="w-4 h-4 text-muted shrink-0" />
-              <input
-                type="text"
-                name="q"
-                defaultValue={query ?? ''}
-                placeholder="Filter the 104 — try 'auth', 'next.js', 'razorpay'..."
-                className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted/60"
-              />
-              <button className="text-xs font-mono text-muted hover:text-accent transition">↵</button>
+        <div className="max-w-6xl mx-auto px-4 pt-16 pb-12">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border bg-surface/60 backdrop-blur text-xs text-muted mb-6">
+              <Sparkles className="w-3.5 h-3.5 text-accent" />
+              <span>Preview mode — {SEED_REPOS.length} repos, zero database</span>
             </div>
-            <p className="text-xs text-muted mt-3">
-              Or paste any <span className="font-mono text-accent">owner/repo</span> in the top bar
-              to preview a repo not in the directory yet.
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-5">
+              The open-source stack,
+              <br />
+              <span className="bg-gradient-to-r from-accent via-emerald-300 to-cyan-300 bg-clip-text text-transparent">
+                curated by builders.
+              </span>
+            </h1>
+            <p className="text-lg text-muted max-w-2xl mx-auto mb-8">
+              Tell us what you&apos;re building or what you need. We&apos;ll surface the right repo,
+              with an honest take on whether to use it.
             </p>
-          </form>
+            <form action="/preview" method="get" className="max-w-2xl mx-auto">
+              <div className="flex items-center gap-2 px-4 py-3 rounded-xl border border-border bg-surface/80 backdrop-blur focus-within:border-accent transition shadow-lg shadow-accent/5">
+                <Github className="w-4 h-4 text-muted shrink-0" />
+                <input
+                  type="text"
+                  name="q"
+                  defaultValue={rawQuery ?? ''}
+                  placeholder="What are you building? 'mobile app', 'auth + payments', 'AI agent', 'shadcn/ui'..."
+                  className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted/60"
+                />
+                <button className="text-xs font-mono text-muted hover:text-accent transition shrink-0">↵ search</button>
+              </div>
+              <p className="text-xs text-muted mt-3">
+                Or paste a GitHub repo — <span className="font-mono text-accent">owner/repo</span> — to preview it live.
+              </p>
+            </form>
+          </div>
+
+          {/* Intent preset chips */}
+          {!isFiltered && (
+            <div className="space-y-4 max-w-4xl mx-auto">
+              {INTENT_GROUPS.map((group) => (
+                <div key={group.title} className="flex flex-wrap items-center gap-2 justify-center">
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-muted/70 mr-1">
+                    {group.title}
+                  </span>
+                  {group.items.map((it) => (
+                    <Link
+                      key={it.label}
+                      href={`/preview?q=${encodeURIComponent(it.query)}`}
+                      className="text-xs px-3 py-1.5 rounded-full border border-border bg-surface/60 hover:border-accent hover:text-accent transition"
+                    >
+                      {it.label}
+                    </Link>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
       {/* Category filter strip */}
       <section className="border-b border-border sticky top-[57px] bg-bg/85 backdrop-blur z-30">
-        <div className="max-w-6xl mx-auto px-4 py-3 overflow-x-auto">
+        <div className="max-w-6xl mx-auto px-4 py-3 overflow-x-auto no-scrollbar">
           <div className="flex items-center gap-2 min-w-max">
             <Link
               href="/preview"
               className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition border ${
-                !activeCat
+                !activeCat && !rawQuery
                   ? 'bg-accent text-bg border-accent font-semibold'
                   : 'border-border text-muted hover:border-text hover:text-text'
               }`}
@@ -114,8 +142,28 @@ export default async function PreviewPage({
       </section>
 
       <div className="max-w-6xl mx-auto px-4 py-12">
+        {/* Active filter pill */}
+        {isFiltered && (
+          <div className="flex items-center gap-2 mb-5 text-sm">
+            <span className="text-muted">Filtered by</span>
+            {rawQuery && (
+              <span className="px-2.5 py-1 rounded-full border border-accent/40 bg-accent/10 text-accent font-mono text-xs">
+                “{rawQuery}”
+              </span>
+            )}
+            {activeCat && (
+              <span className="px-2.5 py-1 rounded-full border border-accent/40 bg-accent/10 text-accent text-xs">
+                {CATEGORY_BY_SLUG[activeCat]?.name ?? activeCat}
+              </span>
+            )}
+            <Link href="/preview" className="text-xs text-muted hover:text-text underline underline-offset-2">
+              clear
+            </Link>
+          </div>
+        )}
+
         {/* Featured row */}
-        {featured.length > 0 && !query && !activeCat && (
+        {featured.length > 0 && !isFiltered && (
           <section className="mb-14">
             <div className="flex items-baseline gap-3 mb-5">
               <h2 className="text-xl font-bold">Editor&apos;s picks</h2>
@@ -132,18 +180,21 @@ export default async function PreviewPage({
         {/* Result count */}
         <div className="flex items-baseline justify-between mb-5">
           <h2 className="text-xl font-bold">
-            {query ? `Matches for "${query}"` : activeCat ? CATEGORY_BY_SLUG[activeCat]?.name : 'The full list'}
+            {rawQuery ? `Matches for "${rawQuery}"` : activeCat ? CATEGORY_BY_SLUG[activeCat]?.name : 'The full list'}
           </h2>
-          <span className="text-xs text-muted">{rest.length} repos</span>
+          <span className="text-xs text-muted">{(isFiltered ? filtered : rest).length} repos</span>
         </div>
 
-        {rest.length === 0 ? (
-          <div className="border border-border rounded-lg p-12 text-center">
-            <p className="text-muted">No repos match. Try a different filter, or paste an owner/repo in the top bar to preview live.</p>
+        {(isFiltered ? filtered : rest).length === 0 ? (
+          <div className="border border-dashed border-border rounded-lg p-12 text-center">
+            <p className="text-muted">
+              No curated repo matches that yet. Try a different keyword — or paste an{' '}
+              <span className="font-mono text-accent">owner/repo</span> in the top bar to preview any GitHub repo live.
+            </p>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {rest.map((r) => (
+            {(isFiltered ? filtered : rest).map((r) => (
               <RepoCard key={r.full_name} repo={r} />
             ))}
           </div>

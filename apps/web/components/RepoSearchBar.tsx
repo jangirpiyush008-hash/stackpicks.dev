@@ -34,7 +34,11 @@ export function RepoSearchBar({ compact = false }: { compact?: boolean }) {
           type="text"
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder={compact ? 'owner/repo or keyword' : 'Paste owner/repo or search a keyword'}
+          placeholder={
+            compact
+              ? 'What are you building? owner/repo or keyword'
+              : "What are you building? 'mobile app', 'auth', 'razorpay', or owner/repo"
+          }
           className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted/60 min-w-0"
           spellCheck={false}
           autoComplete="off"
