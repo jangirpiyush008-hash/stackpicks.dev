@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Check, IndianRupee, DollarSign } from 'lucide-react';
+import { CouponInput } from './CouponInput';
 
 type Currency = 'INR' | 'USD';
 
@@ -89,6 +90,8 @@ export function GeoPricingCard({
       <p className="text-[11px] text-center text-muted/70 mt-1">
         Auto-priced for your region · Razorpay secure checkout
       </p>
+
+      <CouponInput currency={currency} />
 
       <ul className="mt-6 space-y-2.5">
         {features.map((f) => (

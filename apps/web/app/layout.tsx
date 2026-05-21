@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE, CONTACT, ENTITY } from '@stackpicks/core/constants';
 import { Mail, Phone } from 'lucide-react';
-import { RepoSearchBar } from '../components/RepoSearchBar';
+import { HeaderSearchSlot } from '../components/HeaderSearchSlot';
 import { HeaderNav } from '../components/HeaderNav';
 import './globals.css';
 
@@ -30,9 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/preview" className="font-mono font-bold tracking-tight text-base md:text-lg shrink-0">
               stackpicks<span className="text-accent">.dev</span>
             </Link>
-            <div className="flex-1 min-w-0">
-              <RepoSearchBar compact />
-            </div>
+            <HeaderSearchSlot />
             <HeaderNav />
           </div>
         </header>

@@ -12,6 +12,7 @@ import { MissingRepoForm } from '../../components/MissingRepoForm';
 import { Testimonials } from '../../components/Testimonials';
 import { VisualPreviews } from '../../components/VisualPreviews';
 import { HeroSearchBar } from '../../components/HeroSearchBar';
+import { DidYouMean } from '../../components/DidYouMean';
 
 // Free tier: how many repos render before the paywall.
 // - Unfiltered gallery: 6 sample repos (gives a feel for the curation)
@@ -234,7 +235,12 @@ export default async function PreviewPage({
         {(() => {
           const items = isFiltered ? filtered : rest;
           if (items.length === 0) {
-            return <MissingRepoForm query={rawQuery ?? activeCat ?? ''} />;
+            return (
+              <>
+                {rawQuery && <DidYouMean query={rawQuery} />}
+                <MissingRepoForm query={rawQuery ?? activeCat ?? ''} />
+              </>
+            );
           }
           const limit = isFiltered ? FREE_LIMIT_FILTERED : FREE_LIMIT_DEFAULT;
           const visible = items.slice(0, limit);
