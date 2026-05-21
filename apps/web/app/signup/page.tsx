@@ -2,10 +2,11 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { Sparkles, Check } from 'lucide-react';
 import { AuthForm } from '../../components/AuthForm';
+import { GeoPrice } from '../../components/GeoPrice';
 
 export const metadata = {
   title: 'Create your membership',
-  description: 'Sign up for lifetime access to StackPicks — ₹99 one-time / $2.99 international.',
+  description: 'Sign up for lifetime access to StackPicks. One-time payment, no renewals.',
 };
 
 export const dynamic = 'force-dynamic';
@@ -32,7 +33,9 @@ export default function SignupPage() {
             Create your account
           </h1>
           <p className="text-muted leading-relaxed mb-6">
-            Free to sign up. Premium membership is a one-time payment — <strong className="text-text">₹99</strong> for India or <strong className="text-text">$2.99</strong> internationally — and unlocks the whole directory forever.
+            Free to sign up. Premium membership is a one-time payment of{' '}
+            <GeoPrice className="text-text font-semibold" /> — unlocks the whole directory forever.
+            No renewals, no surprises.
           </p>
           <ul className="space-y-2.5">
             {PERKS.map((p) => (

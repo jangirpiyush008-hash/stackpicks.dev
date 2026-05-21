@@ -73,7 +73,7 @@ export function GeoPricingCard({
           </span>
         </div>
         <div className="text-xs text-muted mt-1.5">
-          {isINR ? 'India · UPI / Cards / Netbanking via Razorpay' : 'International · Cards via Razorpay'}
+          One-time payment · Lifetime access · Secure checkout
         </div>
       </div>
 
@@ -87,8 +87,7 @@ export function GeoPricingCard({
         Razorpay secure checkout · 7-day full refund · GSTIN invoice on request
       </p>
       <p className="text-[11px] text-center text-muted/70 mt-1">
-        Indian customers charged <strong className="text-text">{inrDisplay}</strong> in INR ·{' '}
-        International charged <strong className="text-text">${usdDisplay}</strong> in USD
+        Auto-priced for your region · Razorpay secure checkout
       </p>
 
       <ul className="mt-6 space-y-2.5">

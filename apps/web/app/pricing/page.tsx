@@ -4,8 +4,8 @@ import { PRICING } from '@stackpicks/core/constants';
 import { GeoPricingCard } from '../../components/GeoPricingCard';
 
 export const metadata = {
-  title: 'Pricing — lifetime membership for ₹99',
-  description: 'StackPicks lifetime membership is ₹99 in India, $2.99 internationally. One-time payment, no renewals — full directory, all stack bundles, weekly analyses.',
+  title: 'Pricing — one payment, lifetime access',
+  description: 'StackPicks lifetime membership. One-time payment, no renewals — full directory, all stack bundles, weekly analyses.',
 };
 
 const INR_DISPLAY = (PRICING.premium_lifetime.amount_inr_paise / 100).toLocaleString('en-IN');
@@ -63,7 +63,7 @@ export default function PricingPage() {
           <h2 className="text-2xl font-bold mb-2">Sample</h2>
           <p className="text-muted text-sm mb-6">A taste — enough to see the curation quality.</p>
           <div className="mb-6">
-            <div className="text-4xl font-bold">₹0</div>
+            <div className="text-4xl font-bold">Free</div>
             <div className="text-xs text-muted">Always</div>
           </div>
           <Link
@@ -96,10 +96,10 @@ export default function PricingPage() {
             notice and a data export. See <Link href="/terms" className="text-accent underline underline-offset-2">Terms §5</Link>.
           </Faq>
           <Faq q="Why so cheap?">
-            Because we&apos;d rather have 10,000 members at ₹99 than 100 at ₹999. The math works
-            once volume hits — and at this price you don&apos;t have to think about whether
-            it&apos;s worth it. The directory itself stays free; premium funds the deep editorial
-            work.
+            Because we&apos;d rather have 10,000 members at this rate than 100 at 10x the price.
+            The math works once volume hits — and at this price you don&apos;t have to think about
+            whether it&apos;s worth it. The directory itself stays free; premium funds the deep
+            editorial work.
           </Faq>
           <Faq q="What if I don't like it?">
             Email us within 7 days for a full refund, no questions asked. See <Link href="/refund" className="text-accent underline underline-offset-2">Refund policy</Link>.
