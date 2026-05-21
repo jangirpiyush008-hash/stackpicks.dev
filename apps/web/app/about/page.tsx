@@ -108,8 +108,7 @@ export default function AboutPage() {
       </p>
 
       <p className="mt-10 text-sm">
-        Questions, corrections, a take you disagree with? The <a href="/contact">contact page</a>
-        {' '}has the real email and phone. We read every message.
+        Questions, corrections, a take you disagree with? The <a href="/contact">contact page</a> has the real email and phone. We read every message.
       </p>
     </LegalPage>
   );
