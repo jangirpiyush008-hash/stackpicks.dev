@@ -56,8 +56,12 @@ const FEATURED_REPOS: FeaturedRepo[] = [
   },
 ];
 
-const mshots = (url: string, w = 1280, h = 720) =>
-  `https://s.wordpress.com/mshots/v1/${encodeURIComponent(url)}?w=${w}&h=${h}`;
+/**
+ * Microlink generates a live screenshot of the URL and redirects to the image.
+ * Free, no API key, more reliable than WordPress mshots for indie/dev sites.
+ */
+const microlink = (url: string, w = 1280, h = 720) =>
+  `https://api.microlink.io/?url=${encodeURIComponent(url)}&screenshot&meta=false&embed=screenshot.url&viewport.width=${w}&viewport.height=${h}`;
 
 const ghOg = (fullName: string) =>
   `https://opengraph.githubassets.com/1/${fullName}`;
@@ -112,9 +116,14 @@ export function VisualPreviews() {
 
 function PreviewCard({ repo }: { repo: FeaturedRepo }) {
   const [view, setView] = useState<'live' | 'github'>('live');
+  const [failed, setFailed] = useState(false);
   const [owner, name] = repo.full_name.split('/');
   const avatar = `https://avatars.githubusercontent.com/${owner}`;
-  const imgSrc = view === 'live' ? mshots(repo.demo_url) : ghOg(repo.full_name);
+  // If live screenshot fails to load, gracefully fall back to GitHub OG card
+  const imgSrc =
+    view === 'live' && !failed
+      ? microlink(repo.demo_url)
+      : ghOg(repo.full_name);
 
   return (
     <div className="group relative">
@@ -144,6 +153,10 @@ function PreviewCard({ repo }: { repo: FeaturedRepo }) {
             alt={`${repo.full_name} ${view === 'live' ? 'deployed app' : 'GitHub repo'} preview`}
             className="absolute inset-0 w-full h-full object-cover object-top transition duration-500 group-hover:scale-[1.03]"
             loading="lazy"
+            onError={() => {
+              // Live screenshot failed → fall back to GitHub OG card automatically
+              if (view === 'live') setFailed(true);
+            }}
           />
 
           {/* Bottom gradient + URL pill */}
@@ -169,7 +182,10 @@ function PreviewCard({ repo }: { repo: FeaturedRepo }) {
 
         {/* Toggle strip */}
         <div className="flex items-center gap-1 px-3 pt-3 border-b border-border/50">
-          <ToggleButton active={view === 'live'} onClick={() => setView('live')}>
+          <ToggleButton
+            active={view === 'live'}
+            onClick={() => { setFailed(false); setView('live'); }}
+          >
             <Globe className="w-3 h-3" />
             Live
           </ToggleButton>
