@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
-import { GeoPrice } from './GeoPrice';
+import { UserMenu } from './UserMenu';
 
 const LINKS = [
   { href: '/build', label: 'Build' },
@@ -24,12 +24,7 @@ export function HeaderNav() {
             {l.label}
           </Link>
         ))}
-        <Link
-          href="/login"
-          className="px-4 py-1.5 rounded bg-accent text-bg font-bold hover:opacity-90 transition whitespace-nowrap"
-        >
-          Sign in
-        </Link>
+        <UserMenu />
       </nav>
 
       {/* Mobile toggle */}
@@ -56,13 +51,9 @@ export function HeaderNav() {
                 {l.label}
               </Link>
             ))}
-            <Link
-              href="/login"
-              onClick={() => setOpen(false)}
-              className="mt-2 px-4 py-2.5 rounded-lg bg-accent text-bg font-bold text-center hover:opacity-90 transition"
-            >
-              Sign in
-            </Link>
+            <div className="mt-2 pt-2 border-t border-border">
+              <UserMenu />
+            </div>
           </div>
         </div>
       )}
