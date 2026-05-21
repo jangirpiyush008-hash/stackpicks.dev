@@ -10,8 +10,11 @@ import { INTENT_GROUPS, expandQuery } from '../../lib/intent-presets';
 import { USE_CASE_BUNDLES } from '../../lib/use-case-bundles';
 import { MissingRepoForm } from '../../components/MissingRepoForm';
 
-// Free tier: first N repos visible. The rest are completely hidden behind one CTA.
-const FREE_LIMIT = 6;
+// Free tier: how many repos render before the paywall.
+// - Unfiltered gallery: 6 sample repos (gives a feel for the curation)
+// - Filtered (chip click / search): only 2 — surface a glimpse, lock the rest
+const FREE_LIMIT_DEFAULT = 6;
+const FREE_LIMIT_FILTERED = 2;
 
 const BUNDLE_ICONS: Record<string, LucideIcon> = {
   rocket: Rocket, smartphone: Smartphone, brain: Brain, globe: Globe,
@@ -245,9 +248,9 @@ export default async function PreviewPage({
           if (items.length === 0) {
             return <MissingRepoForm query={rawQuery ?? activeCat ?? ''} />;
           }
-          // Hard gate: only the first FREE_LIMIT repos render. Rest is one CTA.
-          const visible = items.slice(0, FREE_LIMIT);
-          const lockedCount = Math.max(0, items.length - FREE_LIMIT);
+          const limit = isFiltered ? FREE_LIMIT_FILTERED : FREE_LIMIT_DEFAULT;
+          const visible = items.slice(0, limit);
+          const lockedCount = Math.max(0, items.length - limit);
           return (
             <>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

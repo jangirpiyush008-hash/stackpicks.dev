@@ -1,7 +1,7 @@
 # Railway Nixpacks config for the StackPicks pnpm workspace monorepo.
 # Tells Nixpacks: use Node 20 + pnpm 9, install at the root, build only the web app.
-# cache-bust 2026-05-21-2 — bump to invalidate Docker BuildKit layer cache.
-# Reason: /build/* routes were missing from previous build despite source being present.
+# cache-bust 2026-05-21-3 — bump to force Railway to rebuild from latest commit.
+# Reason: /build/* still 404 even after force-dynamic — suspect stale build artifact.
 
 [phases.setup]
 nixPkgs = ["nodejs_20", "pnpm-9_x"]
