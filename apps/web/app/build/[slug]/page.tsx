@@ -7,6 +7,10 @@ import {
 } from 'lucide-react';
 import { USE_CASE_BUNDLES, getBundleBySlug } from '../../../lib/use-case-bundles';
 import { getSeedByFullName } from '../../../lib/preview-source';
+import { UnlockCTA } from '../../../components/UnlockCTA';
+
+// Free preview: show the first N sections in full. The rest is gated behind membership.
+const FREE_SECTION_LIMIT = 3;
 
 // Force dynamic rendering on each request — Railway's prerender step was emitting
 // 404 stubs for these pages in production. Server-side rendering on demand works fine.
@@ -105,7 +109,7 @@ export default async function BundlePage({ params }: { params: Promise<{ slug: s
 
       {/* Sections */}
       <div className="max-w-5xl mx-auto px-4 py-12 space-y-10">
-        {bundle.sections.map((section, i) => (
+        {bundle.sections.slice(0, FREE_SECTION_LIMIT).map((section, i) => (
           <section key={section.title}>
             <div className="flex items-baseline gap-3 mb-5">
               <span className="text-[11px] font-mono text-muted/60">0{i + 1}</span>
@@ -123,6 +127,15 @@ export default async function BundlePage({ params }: { params: Promise<{ slug: s
             )}
           </section>
         ))}
+
+        {bundle.sections.length > FREE_SECTION_LIMIT && (
+          <LockedSectionsPreview
+            lockedSections={bundle.sections.slice(FREE_SECTION_LIMIT)}
+            totalLockedRepos={bundle.sections
+              .slice(FREE_SECTION_LIMIT)
+              .reduce((sum, s) => sum + s.repos.length, 0)}
+          />
+        )}
       </div>
 
       {/* Build with AI — universal guide */}
@@ -200,6 +213,40 @@ Stop and confirm with me after each layer.`}
         </div>
       </section>
     </div>
+  );
+}
+
+function LockedSectionsPreview({
+  lockedSections,
+  totalLockedRepos,
+}: {
+  lockedSections: { title: string; repos: { full_name: string }[] }[];
+  totalLockedRepos: number;
+}) {
+  return (
+    <section className="relative">
+      {/* Teaser: section titles + repo count, but no detail */}
+      <div className="rounded-2xl border border-dashed border-border bg-surface/20 p-6 md:p-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-bg/60 to-bg pointer-events-none" />
+        <div className="relative">
+          <div className="text-xs font-mono uppercase tracking-wider text-muted mb-4">
+            {lockedSections.length} more layers · {totalLockedRepos} more repos · members only
+          </div>
+          <ul className="space-y-2 mb-6 select-none">
+            {lockedSections.map((s) => (
+              <li key={s.title} className="flex items-center gap-3 text-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-muted/40" />
+                <span className="text-muted line-through opacity-50">{s.title}</span>
+                <span className="text-[10px] font-mono text-muted/40 ml-auto">
+                  {s.repos.length} {s.repos.length === 1 ? 'repo' : 'repos'}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <UnlockCTA totalLocked={totalLockedRepos} context="gallery" />
+    </section>
   );
 }
 
