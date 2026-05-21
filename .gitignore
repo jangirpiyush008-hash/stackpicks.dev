@@ -7,6 +7,8 @@ node_modules
 *.log
 .vercel
 dist
-build
+# Build output dirs only — NOT the app route /apps/web/app/build/
+/build/
+/apps/*/build/
 coverage
 .turbo
