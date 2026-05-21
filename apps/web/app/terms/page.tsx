@@ -11,7 +11,9 @@ export default function TermsPage() {
     <LegalPage title="Terms of Service" lastUpdated="21 May 2026">
       <p>
         These Terms govern your access to and use of <strong>{ENTITY.brand}</strong>{' '}
-        (&ldquo;the Service&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;). The Service is operated as
+        (&ldquo;the Service&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;) — an{' '}
+        <strong>educational platform and learning resource</strong> for software builders, focused
+        on curated open-source tools and step-by-step build guides. The Service is operated as
         a <strong>{ENTITY.form}</strong> by <strong>{ENTITY.operator}</strong>, based in {ENTITY.jurisdiction}.
         By using the Service you agree to these Terms. If you don&apos;t agree, please stop using
         the Service.
@@ -24,13 +26,15 @@ export default function TermsPage() {
         <li>You must not be barred from using the Service under applicable Indian or international law</li>
       </ul>
 
-      <h2>2. The directory content</h2>
+      <h2>2. The educational content</h2>
       <p>
-        The directory is editorial content. Curator takes, &ldquo;use this if&rdquo; clauses, and
-        &ldquo;skip if&rdquo; clauses are <strong>opinions</strong>, not professional advice. We
-        believe them at the time of writing, but software changes and so do our opinions. Always
-        verify a tool&apos;s suitability for your specific use case before committing to it in
-        production.
+        StackPicks publishes <strong>educational content</strong>: curated lessons on open-source
+        tools, opinionated takes, &ldquo;use this if&rdquo; / &ldquo;skip if&rdquo; guidance, and
+        step-by-step build-with-AI guides. This material is{' '}
+        <strong>educational opinion, not professional engineering advice</strong>. We believe each
+        take at the time of writing, but software changes and so do our opinions. Always verify a
+        tool&apos;s suitability for your specific use case before committing to it in production
+        — the responsibility for adopting any recommendation lies with you.
       </p>
       <p>
         Repository metadata (stars, forks, license, etc.) is sourced from GitHub and may be up to
@@ -56,13 +60,14 @@ export default function TermsPage() {
         <li>Impersonate any person or misrepresent your affiliation with any organisation</li>
       </ul>
 
-      <h2>5. Premium membership</h2>
+      <h2>5. Premium membership (lifetime learning access)</h2>
       <ul>
         <li>Pricing is <strong>₹99 (INR)</strong> for India or <strong>$2.99 (USD)</strong> internationally — single one-time payment</li>
         <li>All Indian transactions are processed in INR via <strong>Razorpay</strong>; international transactions in USD via the same Razorpay merchant account where supported</li>
-        <li>Payment is one-time and grants <strong>lifetime access</strong> to premium content as it exists today and in the future</li>
-        <li>&ldquo;Lifetime&rdquo; means the operational life of the Service. If we cease operations, we will provide at least 30 days&apos; notice and a data export</li>
-        <li>Refunds are governed by the <a href="/refund">Refund Policy</a></li>
+        <li>Payment unlocks <strong>lifetime access to the full learning library</strong> — every curator take, every build-with-AI guide, every weekly long-form lesson</li>
+        <li>&ldquo;Lifetime&rdquo; means the operational life of the Service. If we cease operations, we will provide at least 30 days&apos; notice and a downloadable archive of paid lessons</li>
+        <li>The educational content is licensed to you for personal learning use only; redistribution or republication requires written permission</li>
+        <li>Refunds are governed by the <a href="/refund">Refund Policy</a> — 7-day cooling off, full refund</li>
         <li>You may not share premium credentials. Detected abuse will result in cancellation without refund</li>
       </ul>
 

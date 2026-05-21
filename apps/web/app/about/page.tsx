@@ -3,38 +3,40 @@ import { Sparkles, Compass, Hammer, ScrollText } from 'lucide-react';
 import { ENTITY, CONTACT } from '@stackpicks/core/constants';
 
 export const metadata = {
-  title: 'About — why this directory exists',
-  description: 'The story behind StackPicks: opinionated open-source curation for builders who are tired of GitHub trending pages.',
+  title: 'About — an educational directory for builders',
+  description: 'StackPicks is a learning resource for software builders: curated open-source tools, honest takes on each, and step-by-step build-with-AI guides.',
 };
 
 export default function AboutPage() {
   return (
-    <LegalPage title="A directory built by builders, for builders." lastUpdated="21 May 2026">
+    <LegalPage title="A learning resource built by builders, for builders." lastUpdated="21 May 2026">
       <p className="text-lg leading-relaxed text-text">
-        Every dev tools list on the internet sorts by GitHub stars. We don&apos;t.
+        Every dev tools list on the internet sorts by GitHub stars. We don&apos;t. We teach you
+        what to ship with — and why.
       </p>
 
-      <h2>The honest reason this exists</h2>
+      <h2>What StackPicks is</h2>
       <p>
-        Most directories are scraping operations. Bots pull repository metadata, sort by popularity,
-        slap on some Tailwind, and call it a product. The information density is high but the
-        signal-to-noise ratio is brutal. You learn that a tool has 30k stars. You don&apos;t learn
-        whether you should use it.
+        StackPicks is an <strong>educational platform for software builders</strong>. It teaches
+        you which open-source tools to use for each part of your stack, when to use them, when to
+        skip them, and exactly how to wire them together with an AI coding agent. Think of it as
+        a curriculum disguised as a directory.
       </p>
       <p>
-        StackPicks is the directory we wished existed when we were shipping our first SaaS at 2 AM
-        and Stack Overflow had run out of opinions. Every entry here has been read, used, broken,
-        and given a take. Some takes are short. Some are blunt. All of them tell you what we&apos;d
-        actually do — not what gets us affiliate commissions.
+        Most dev directories are scraping operations. Bots pull repository metadata, sort by
+        popularity, slap on some Tailwind, and call it a product. You learn a tool has 30k stars.
+        You don&apos;t learn whether you should use it. We do the second part — that&apos;s the
+        education.
       </p>
 
-      <h2>What you&apos;ll find here</h2>
+      <h2>What you&apos;ll learn here</h2>
       <ul>
-        <li><strong>104+ curated repos</strong> across 22 categories — UI, auth, payments, AI, animation, the boring middleware no one writes about</li>
-        <li><strong>A &ldquo;use this if&rdquo; clause</strong> on every entry, so you can match a tool to a real situation</li>
-        <li><strong>A &ldquo;skip if&rdquo; clause</strong>, because half of good engineering is knowing what to leave out</li>
-        <li><strong>Categories that match how builders actually search</strong> — not how Google indexes them</li>
-        <li><strong>Live GitHub data</strong>, refreshed nightly, so stars and last-push dates are never stale</li>
+        <li><strong>100+ curated lessons</strong> — one per open-source tool, across 22 stack categories (UI, auth, payments, AI, scraping, animation, and more)</li>
+        <li><strong>13 build-with-AI guides</strong> — full-stack curriculum for shipping a SaaS, a mobile app, an AI agent, a scraper, an e-commerce store, an internal dashboard, and more</li>
+        <li><strong>The &ldquo;use this if&rdquo; clause</strong> on every tool — applied judgment, the part textbooks skip</li>
+        <li><strong>The &ldquo;skip if&rdquo; clause</strong>, because half of engineering education is learning what to leave out</li>
+        <li><strong>Step-by-step AI-agent integration guides</strong> — how to feed each tool to Claude Code, Cursor, Codex, and others on Mac + Windows</li>
+        <li><strong>Live, nightly-refreshed data</strong> so the curriculum never goes stale</li>
       </ul>
 
       <h2>What you won&apos;t find</h2>
@@ -46,13 +48,13 @@ export default function AboutPage() {
         <li>A pop-up newsletter modal that follows you down the scroll</li>
       </ul>
 
-      <h2>Who we&apos;re for</h2>
+      <h2>Who this is for</h2>
       <p>
-        Solo builders, indie hackers, weekend hackers, agency engineers, and anyone who has ever
-        spent a Saturday evaluating five state management libraries before realising they should
-        have just used the boring one. If you&apos;re building something — whether it&apos;s a SaaS,
-        a side project, a portfolio app, or a tool only your team will ever see — this directory
-        is calibrated for you.
+        Self-taught developers, indie hackers, weekend builders, bootcamp grads, agency engineers,
+        and anyone who has ever spent a Saturday evaluating five state-management libraries before
+        realising they should have just used the boring one. If you&apos;re actively learning to
+        ship — whether it&apos;s a SaaS, a side project, a portfolio app, or your first paid
+        product — StackPicks is the syllabus that catches you up faster than any blog.
       </p>
 
       <h2>The India context</h2>
@@ -64,20 +66,20 @@ export default function AboutPage() {
         rest of the world; it just means we don&apos;t pretend US-only assumptions are universal.
       </p>
 
-      <h2>How we make money</h2>
+      <h2>How the education is funded</h2>
       <p>
-        Five rails, all labelled, none cloaked:
+        Five revenue rails, all labelled, none cloaked:
       </p>
       <ol>
+        <li><strong>Premium membership</strong> — ₹99 (or $2.99 intl) one-time, lifetime learning access. Unlocks the full curriculum, the deeper write-ups, and weekly long-form lessons.</li>
         <li><strong>Sponsored listings</strong> — labelled clearly, never replace an honest take</li>
-        <li><strong>Affiliate links</strong> — only where the tool is one we&apos;d recommend anyway</li>
-        <li><strong>Premium membership</strong> — ₹99 one-time, lifetime access, deeper collections + weekly newsletter</li>
+        <li><strong>Affiliate links</strong> — only where the tool is one we&apos;d teach anyway</li>
         <li><strong>Newsletter sponsorships</strong> — manual, clearly disclosed</li>
         <li><strong>Job board</strong> — flat fee, no exclusivity, no spam</li>
       </ol>
       <p>
-        Every monetisation line is wired so we can keep the directory free for readers. If the
-        directory ever stops being honest, we&apos;ve lost the only moat that matters.
+        The free tier stays free forever — a sample lesson per category is enough to evaluate the
+        teaching style. Premium funds the deeper editorial work and keeps the open content honest.
       </p>
 
       <h2>The principles</h2>

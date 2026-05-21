@@ -10,22 +10,23 @@ export default function ShippingPage() {
   return (
     <LegalPage title="Delivery & Service Activation" lastUpdated="21 May 2026">
       <p>
-        {ENTITY.brand} is a <strong>fully digital service</strong>. There are no physical goods,
-        no shipping, no logistics handling. This page exists to satisfy payment-processor and
-        Indian e-commerce disclosure requirements.
+        {ENTITY.brand} is a <strong>fully digital educational platform</strong>. We deliver
+        learning content — not physical goods. There is no shipping, no logistics, no courier
+        involvement. This page exists to satisfy payment-processor and Indian e-commerce
+        disclosure requirements.
       </p>
 
       <h2>1. What gets delivered</h2>
       <ul>
-        <li><strong>Premium membership (₹99 / $2.99 one-time)</strong> — instant activation of your account, enabling access to the full directory, all bundles, and weekly long-form content.</li>
-        <li><strong>Sponsored listings</strong> — activation of your slot on the dates you specified at checkout.</li>
+        <li><strong>Premium learning access (₹99 / $2.99 one-time)</strong> — instant activation of your account, unlocking the full educational library: every curator take, every build-with-AI guide, weekly long-form lessons.</li>
+        <li><strong>Sponsored placements</strong> — activation of your slot on the dates you specified at checkout.</li>
         <li><strong>Job posts</strong> — listing goes live on the directory immediately after successful payment.</li>
       </ul>
 
       <h2>2. Activation timeline</h2>
       <ul>
-        <li><strong>Premium membership:</strong> Activated within <strong>1 minute</strong> of successful Razorpay payment.</li>
-        <li><strong>Sponsored listings:</strong> Activated within <strong>1 hour</strong> after payment, pending review of the creative assets supplied.</li>
+        <li><strong>Premium learning access:</strong> Activated within <strong>1 minute</strong> of successful Razorpay payment. Login URL + first-time-user guide is emailed immediately.</li>
+        <li><strong>Sponsored placements:</strong> Activated within <strong>1 hour</strong> after payment, pending review of the creative assets supplied.</li>
         <li><strong>Job posts:</strong> Live within <strong>15 minutes</strong> of payment.</li>
       </ul>
       <p>
