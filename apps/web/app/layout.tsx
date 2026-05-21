@@ -33,7 +33,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <RepoSearchBar compact />
             </div>
             <nav className="hidden md:flex items-center gap-5 text-sm text-muted shrink-0">
+              <Link href="/build" className="hover:text-text transition">Build</Link>
               <Link href="/preview" className="hover:text-text transition">Browse</Link>
+              <Link href="/how-to-use" className="hover:text-text transition">How it works</Link>
               <Link href="/pricing" className="hover:text-text transition">Pricing</Link>
               <Link
                 href="/pricing"
@@ -77,16 +79,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
 
               <FooterCol title="Product">
+                <FooterLink href="/build">Bundles</FooterLink>
                 <FooterLink href="/preview">Directory</FooterLink>
+                <FooterLink href="/how-to-use">How it works</FooterLink>
                 <FooterLink href="/pricing">Pricing</FooterLink>
-                <FooterLink href={'/category/ui-components' as Route}>Categories</FooterLink>
-                <FooterLink href="/contact">Sponsor</FooterLink>
               </FooterCol>
 
               <FooterCol title="Company">
                 <FooterLink href="/about">About</FooterLink>
                 <FooterLink href="/contact">Contact</FooterLink>
                 <FooterLink href="/security">Security</FooterLink>
+                <FooterLink href={'/category/ui-components' as Route}>Categories</FooterLink>
               </FooterCol>
 
               <FooterCol title="Legal">

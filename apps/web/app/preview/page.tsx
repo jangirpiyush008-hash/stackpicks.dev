@@ -1,8 +1,20 @@
 import Link from 'next/link';
-import { Sparkles, ArrowRight, Github, Star, Check, X } from 'lucide-react';
+import {
+  Sparkles, ArrowRight, Github, Star, Check, X,
+  Rocket, Smartphone, Brain, Globe, LayoutDashboard, Chrome, Workflow,
+  Megaphone, Handshake, ShoppingBag, Terminal, PenLine, type LucideIcon,
+} from 'lucide-react';
 import { SEED_REPOS, ownerOf, nameOf } from '../../lib/preview-source';
 import { CATEGORIES, CATEGORY_BY_SLUG } from '../../lib/categories';
 import { INTENT_GROUPS, expandQuery } from '../../lib/intent-presets';
+import { USE_CASE_BUNDLES } from '../../lib/use-case-bundles';
+
+const BUNDLE_ICONS: Record<string, LucideIcon> = {
+  rocket: Rocket, smartphone: Smartphone, brain: Brain, globe: Globe,
+  'layout-dashboard': LayoutDashboard, chrome: Chrome, workflow: Workflow,
+  megaphone: Megaphone, handshake: Handshake, 'shopping-bag': ShoppingBag,
+  terminal: Terminal, 'pen-line': PenLine,
+};
 
 export const metadata = {
   title: 'Preview — the curated 104',
@@ -140,6 +152,45 @@ export default async function PreviewPage({
           </div>
         </div>
       </section>
+
+      {/* "What are you building?" bundles strip */}
+      {!isFiltered && (
+        <section className="border-b border-border bg-bg/30">
+          <div className="max-w-6xl mx-auto px-4 py-10">
+            <div className="flex items-baseline justify-between mb-5">
+              <h2 className="text-xl md:text-2xl font-bold">What are you building today?</h2>
+              <Link href="/build" className="text-xs text-muted hover:text-accent transition">
+                All {USE_CASE_BUNDLES.length} bundles →
+              </Link>
+            </div>
+            <p className="text-sm text-muted mb-6 max-w-2xl">
+              Each bundle is a full stack — UI, auth, DB, payments, the works. Open one, feed it to
+              your AI agent, ship the thing. <Link href="/how-to-use" className="text-accent underline underline-offset-2">How it works →</Link>
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {USE_CASE_BUNDLES.slice(0, 8).map((b) => {
+                const Icon = BUNDLE_ICONS[b.icon] ?? Rocket;
+                const repoCount = b.sections.reduce((n, s) => n + s.repos.length, 0);
+                return (
+                  <Link
+                    key={b.slug}
+                    href={`/build/${b.slug}`}
+                    className="group rounded-xl border border-border bg-surface/40 p-4 hover:border-accent/60 transition relative overflow-hidden"
+                  >
+                    <div className={`absolute inset-0 -z-10 bg-gradient-to-br ${b.gradient} opacity-20 group-hover:opacity-35 transition`} />
+                    <div className="w-9 h-9 rounded-lg bg-bg/70 backdrop-blur border border-border flex items-center justify-center mb-3">
+                      <Icon className="w-4 h-4 text-accent" />
+                    </div>
+                    <div className="font-semibold text-sm mb-1 group-hover:text-accent transition">{b.title}</div>
+                    <div className="text-[11px] text-muted line-clamp-2 mb-2">{b.pitch}</div>
+                    <div className="text-[10px] font-mono text-muted/70">{repoCount} repos</div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       <div className="max-w-6xl mx-auto px-4 py-12">
         {/* Active filter pill */}
