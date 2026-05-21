@@ -1,0 +1,11 @@
+{
+  "name": "stackpicks-scripts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@stackpicks/core": "workspace:*",
+    "tsx": "^4.19.0",
+    "dotenv": "^16.4.0"
+  }
+}

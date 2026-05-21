@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    background: theme('colors.bg');
+    color: theme('colors.text');
+    font-feature-settings: "cv11", "ss01";
+  }
+  ::selection {
+    background: theme('colors.accent');
+    color: theme('colors.bg');
+  }
+}

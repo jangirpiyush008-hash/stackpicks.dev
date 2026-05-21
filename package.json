@@ -1,0 +1,24 @@
+{
+  "name": "stackpicks",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "workspaces": [
+    "apps/*",
+    "core"
+  ],
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "start": "pnpm --filter web start",
+    "lint": "pnpm --filter web lint",
+    "typecheck": "pnpm --filter web typecheck",
+    "db:push": "supabase db push",
+    "db:reset": "supabase db reset",
+    "db:types": "supabase gen types typescript --local > core/db/database.types.ts"
+  },
+  "devDependencies": {
+    "supabase": "^1.200.0",
+    "typescript": "^5.5.0"
+  }
+}
