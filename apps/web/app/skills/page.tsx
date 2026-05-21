@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import {
   Megaphone, Handshake, Instagram, PenLine, Brain, BarChart3, Cloud, Workflow,
+  Palette, Smartphone, Server, Rocket,
   ArrowRight, Sparkles, type LucideIcon,
 } from 'lucide-react';
 import { SKILL_TRACKS } from '../../lib/skill-tracks';
@@ -19,6 +20,10 @@ const ICONS: Record<string, LucideIcon> = {
   'bar-chart-3': BarChart3,
   cloud: Cloud,
   workflow: Workflow,
+  palette: Palette,
+  smartphone: Smartphone,
+  server: Server,
+  rocket: Rocket,
 };
 
 export default function SkillsIndexPage() {

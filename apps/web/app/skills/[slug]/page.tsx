@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
   Megaphone, Handshake, Instagram, PenLine, Brain, BarChart3, Cloud, Workflow,
+  Palette, Smartphone, Server, Rocket,
   ArrowLeft, ArrowRight, Sparkles, Check, type LucideIcon,
 } from 'lucide-react';
 import { SKILL_TRACKS, getSkillTrackBySlug } from '../../../lib/skill-tracks';
@@ -23,6 +24,10 @@ const ICONS: Record<string, LucideIcon> = {
   'bar-chart-3': BarChart3,
   cloud: Cloud,
   workflow: Workflow,
+  palette: Palette,
+  smartphone: Smartphone,
+  server: Server,
+  rocket: Rocket,
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
