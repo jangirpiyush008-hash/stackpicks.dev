@@ -24,14 +24,11 @@ export function HeaderNav() {
             {l.label}
           </Link>
         ))}
-        <Link href="/login" className="hover:text-text transition">
-          Sign in
-        </Link>
         <Link
-          href="/signup"
-          className="px-3 py-1.5 rounded bg-accent text-bg font-semibold hover:opacity-90 transition whitespace-nowrap"
+          href="/login"
+          className="px-4 py-1.5 rounded bg-accent text-bg font-bold hover:opacity-90 transition whitespace-nowrap"
         >
-          Get <GeoPrice />
+          Sign in
         </Link>
       </nav>
 
@@ -62,16 +59,9 @@ export function HeaderNav() {
             <Link
               href="/login"
               onClick={() => setOpen(false)}
-              className="text-base text-text/90 hover:text-accent transition py-1.5"
+              className="mt-2 px-4 py-2.5 rounded-lg bg-accent text-bg font-bold text-center hover:opacity-90 transition"
             >
               Sign in
-            </Link>
-            <Link
-              href="/signup"
-              onClick={() => setOpen(false)}
-              className="mt-2 px-4 py-2.5 rounded-lg bg-accent text-bg font-semibold text-center hover:opacity-90 transition"
-            >
-              Get lifetime — <GeoPrice />
             </Link>
           </div>
         </div>
