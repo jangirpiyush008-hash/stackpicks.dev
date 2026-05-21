@@ -10,6 +10,7 @@ import {
   Megaphone, Handshake, ShoppingBag, Terminal, PenLine, type LucideIcon,
 } from 'lucide-react';
 import { USE_CASE_BUNDLES } from '../lib/use-case-bundles';
+import { UnlockCTA, FREE_TRENDING_LIMIT } from '../components/UnlockCTA';
 
 const BUNDLE_ICONS: Record<string, LucideIcon> = {
   rocket: Rocket, smartphone: Smartphone, brain: Brain, globe: Globe,
@@ -133,13 +134,16 @@ export default async function HomePage() {
       <section id="trending" className="mb-16">
         <div className="flex items-baseline justify-between mb-6">
           <h2 className="text-2xl font-bold">Trending this week</h2>
-          <a href="/all" className="text-sm text-muted hover:text-text">See all →</a>
+          <a href="/pricing" className="text-sm text-muted hover:text-accent transition">Unlock all →</a>
         </div>
-        <div className="grid md:grid-cols-2 gap-4">
-          {trending.map((repo) => (
+        <div className="grid sm:grid-cols-2 gap-4">
+          {trending.slice(0, FREE_TRENDING_LIMIT).map((repo) => (
             <RepoCard key={repo.id} repo={repo} />
           ))}
         </div>
+        {trending.length > FREE_TRENDING_LIMIT && (
+          <UnlockCTA totalLocked={trending.length - FREE_TRENDING_LIMIT} context="trending" />
+        )}
       </section>
 
       {/* Newsletter capture */}

@@ -6,16 +6,37 @@ import { Check, IndianRupee, DollarSign } from 'lucide-react';
 
 type Currency = 'INR' | 'USD';
 
-function detectCurrency(): Currency {
+let cached: Currency | null = null;
+
+async function detectCurrency(): Promise<Currency> {
+  if (cached) return cached;
   if (typeof window === 'undefined') return 'INR';
   try {
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    if (tz === 'Asia/Kolkata' || tz === 'Asia/Calcutta') return 'INR';
-    const lang = navigator.language || '';
-    if (lang.endsWith('-IN') || lang.startsWith('hi')) return 'INR';
-    return 'USD';
+    const res = await fetch('https://ipapi.co/country/', { cache: 'no-store' });
+    if (res.ok) {
+      const country = (await res.text()).trim().toUpperCase();
+      cached = country === 'IN' ? 'INR' : 'USD';
+      return cached;
+    }
   } catch {
-    return 'INR';
+    /* fall through */
+  }
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (tz === 'Asia/Kolkata' || tz === 'Asia/Calcutta') {
+      cached = 'INR';
+      return cached;
+    }
+    const lang = navigator.language || '';
+    if (lang.endsWith('-IN') || lang.startsWith('hi')) {
+      cached = 'INR';
+      return cached;
+    }
+    cached = 'USD';
+    return cached;
+  } catch {
+    cached = 'INR';
+    return cached;
   }
 }
 
@@ -30,7 +51,7 @@ export function GeoPricingCard({
 }) {
   const [currency, setCurrency] = useState<Currency>('INR');
   useEffect(() => {
-    setCurrency(detectCurrency());
+    detectCurrency().then(setCurrency);
   }, []);
 
   const isINR = currency === 'INR';
@@ -44,7 +65,6 @@ export function GeoPricingCard({
       <h2 className="text-2xl font-bold mb-2">Full directory access</h2>
       <p className="text-muted text-sm mb-6">Pay once. Full service for the lifetime of the platform.</p>
 
-      {/* Geo-priced amount */}
       <div className="mb-6">
         <div className="flex items-baseline gap-1 text-accent">
           {isINR ? <IndianRupee className="w-8 h-8" /> : <DollarSign className="w-8 h-8" />}
@@ -66,7 +86,6 @@ export function GeoPricingCard({
       <p className="text-[11px] text-center text-muted mt-2">
         Razorpay secure checkout · 7-day full refund · GSTIN invoice on request
       </p>
-      {/* Razorpay reviewers (and confused customers) always see the INR amount */}
       <p className="text-[11px] text-center text-muted/70 mt-1">
         Indian customers charged <strong className="text-text">{inrDisplay}</strong> in INR ·{' '}
         International charged <strong className="text-text">${usdDisplay}</strong> in USD

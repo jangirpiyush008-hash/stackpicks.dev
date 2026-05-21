@@ -4,6 +4,7 @@ import { formatStars, timeAgo } from '@stackpicks/core/utils';
 import { Star, GitFork, Sparkles } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import { UnlockCTA, FREE_CATEGORY_LIMIT } from '../../../components/UnlockCTA';
 
 export const revalidate = 3600;
 
@@ -94,8 +95,8 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
           ))}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4">
-          {repos.map((repo) => (
+        <div className="grid sm:grid-cols-2 gap-4">
+          {repos.slice(0, FREE_CATEGORY_LIMIT).map((repo) => (
             <a
               key={repo.id}
               href={`/repo/${repo.slug}`}
@@ -119,6 +120,10 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
             </a>
           ))}
         </div>
+
+        {repos.length > FREE_CATEGORY_LIMIT && (
+          <UnlockCTA totalLocked={repos.length - FREE_CATEGORY_LIMIT} context="category" />
+        )}
 
         {repos.length === 0 && (
           <div className="py-20 text-center text-muted">

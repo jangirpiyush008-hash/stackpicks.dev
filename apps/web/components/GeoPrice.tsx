@@ -5,24 +5,50 @@ import { useEffect, useState } from 'react';
 const INR = '₹99';
 const USD = '$2.99';
 
-type Currency = 'INR' | 'USD';
+type Currency = 'INR' | 'USD' | null;
 
-function detectCurrency(): Currency {
+let cached: Currency = null; // module-level cache so we hit the API at most once per session
+
+async function detectCurrency(): Promise<Currency> {
+  if (cached) return cached;
   if (typeof window === 'undefined') return 'INR';
+
+  // Strategy 1: IP-based country lookup (VPN-aware — this is the source of truth).
+  try {
+    const res = await fetch('https://ipapi.co/country/', { cache: 'no-store' });
+    if (res.ok) {
+      const country = (await res.text()).trim().toUpperCase();
+      cached = country === 'IN' ? 'INR' : 'USD';
+      return cached;
+    }
+  } catch {
+    /* network error — fall through */
+  }
+
+  // Strategy 2: fallback to timezone + browser locale (less accurate but works offline)
   try {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    if (tz === 'Asia/Kolkata' || tz === 'Asia/Calcutta') return 'INR';
+    if (tz === 'Asia/Kolkata' || tz === 'Asia/Calcutta') {
+      cached = 'INR';
+      return cached;
+    }
     const lang = navigator.language || '';
-    if (lang.endsWith('-IN') || lang === 'hi' || lang.startsWith('hi-')) return 'INR';
-    return 'USD';
+    if (lang.endsWith('-IN') || lang.startsWith('hi')) {
+      cached = 'INR';
+      return cached;
+    }
+    cached = 'USD';
+    return cached;
   } catch {
-    return 'INR';
+    cached = 'INR';
+    return cached;
   }
 }
 
 /**
- * Inline price chip — flips between ₹99 / $2.99 on the client based on user locale.
- * Renders INR by default so SSR + India users see the right thing instantly.
+ * Inline price chip — flips between ₹99 / $2.99 on the client based on user's real
+ * IP location. Renders INR by default during SSR + first paint so India users see
+ * the right thing instantly, then re-renders if the IP says otherwise.
  */
 export function GeoPrice({
   className,
@@ -33,9 +59,11 @@ export function GeoPrice({
   prefix?: string;
   suffix?: string;
 }) {
-  const [currency, setCurrency] = useState<Currency>('INR');
+  const [currency, setCurrency] = useState<'INR' | 'USD'>('INR');
   useEffect(() => {
-    setCurrency(detectCurrency());
+    detectCurrency().then((c) => {
+      if (c) setCurrency(c);
+    });
   }, []);
   const price = currency === 'INR' ? INR : USD;
   return (
@@ -48,9 +76,11 @@ export function GeoPrice({
 }
 
 export function GeoPriceFull({ className }: { className?: string }) {
-  const [currency, setCurrency] = useState<Currency>('INR');
+  const [currency, setCurrency] = useState<'INR' | 'USD'>('INR');
   useEffect(() => {
-    setCurrency(detectCurrency());
+    detectCurrency().then((c) => {
+      if (c) setCurrency(c);
+    });
   }, []);
   return (
     <span className={className}>
