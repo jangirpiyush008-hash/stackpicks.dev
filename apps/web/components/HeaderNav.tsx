@@ -7,6 +7,7 @@ import { GeoPrice } from './GeoPrice';
 
 const LINKS = [
   { href: '/build', label: 'Build' },
+  { href: '/skills', label: 'Skills' },
   { href: '/preview', label: 'Browse' },
   { href: '/how-to-use', label: 'How it works' },
   { href: '/pricing', label: 'Pricing' },

@@ -18,6 +18,7 @@ const STATIC_PATHS: MetadataRoute.Sitemap = [
   { url: `${SITE.url}/security`, changeFrequency: 'yearly', priority: 0.3 },
   { url: `${SITE.url}/login`, changeFrequency: 'monthly', priority: 0.4 },
   { url: `${SITE.url}/signup`, changeFrequency: 'monthly', priority: 0.6 },
+  { url: `${SITE.url}/skills`, changeFrequency: 'weekly', priority: 0.85 },
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
