@@ -53,8 +53,10 @@ async function githubGraphQL<T>(query: string, variables: Record<string, unknown
   }
 
   const json = (await res.json()) as { data?: T; errors?: GitHubError[] };
+  // GitHub returns partial data + per-alias errors when some repos in a batch
+  // can't be resolved. We want the valid ones — only throw if there is no data at all.
   if (json.errors?.length) {
-    throw new Error(`GitHub GraphQL errors: ${json.errors.map((e) => e.message).join('; ')}`);
+    console.warn(`GitHub GraphQL partial errors (continuing with valid data): ${json.errors.map((e) => e.message).join('; ')}`);
   }
   if (!json.data) throw new Error('GitHub GraphQL returned no data');
   return json.data;
