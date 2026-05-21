@@ -1,0 +1,14 @@
+# Railway Nixpacks config for the StackPicks pnpm workspace monorepo.
+# Tells Nixpacks: use Node 20 + pnpm 9, install at the root, build only the web app.
+
+[phases.setup]
+nixPkgs = ["nodejs_20", "pnpm-9_x"]
+
+[phases.install]
+cmds = ["pnpm install --frozen-lockfile"]
+
+[phases.build]
+cmds = ["pnpm --filter web build"]
+
+[start]
+cmd = "pnpm --filter web start"
