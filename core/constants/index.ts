@@ -4,10 +4,11 @@
  */
 
 export const PRICING = {
-  premium_monthly: {
-    label: 'Premium Monthly',
-    amount_inr_paise: 29900, // ₹299
-    description: 'Full collections, weekly deep dives, private newsletter, Discord',
+  premium_lifetime: {
+    label: 'Premium Lifetime',
+    amount_inr_paise: 9900, // ₹99 one-time, lifetime access
+    amount_usd_cents: 199, // $1.99 international
+    description: 'One payment. Lifetime access. Every curator take, every collection, future-proof.',
   },
   sponsor_category_top: {
     label: 'Category Top Slot',
@@ -52,4 +53,12 @@ export const SITE = {
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://stackpicks.dev',
   twitter: '@stackpicksdev',
   ogImage: '/og-default.png',
+} as const;
+
+export const CONTACT = {
+  email: 'nuvexalearning@gmail.com',
+  phone: '+91 9667879848',
+  phoneE164: '+919667879848',
+  hours: 'Monday – Friday, 10:00 – 18:00 IST',
+  responseTime: 'within 48 hours on business days',
 } as const;
