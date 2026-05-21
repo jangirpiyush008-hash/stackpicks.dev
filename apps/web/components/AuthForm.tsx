@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Loader2, Github } from 'lucide-react';
 import { getSupabaseBrowser } from '../lib/supabase-browser';
+
+type OAuthProvider = 'google' | 'github';
 
 interface Props {
   mode: 'login' | 'signup';
@@ -60,21 +62,21 @@ export function AuthForm({ mode }: Props) {
     }
   };
 
-  const signInWithGoogle = async () => {
+  const signInWithProvider = async (provider: OAuthProvider) => {
     setStatus('submitting');
     setErrorMsg('');
     try {
       const supabase = getSupabaseBrowser();
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider,
         options: {
           redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
         },
       });
       if (error) throw error;
-      // Will redirect to Google
+      // Will redirect to provider
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Google sign-in failed');
+      setErrorMsg(err instanceof Error ? err.message : `${provider} sign-in failed`);
       setStatus('error');
     }
   };
@@ -96,15 +98,27 @@ export function AuthForm({ mode }: Props) {
 
   return (
     <div>
-      <button
-        type="button"
-        onClick={signInWithGoogle}
-        disabled={status === 'submitting'}
-        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-text/95 text-bg font-medium hover:bg-text transition disabled:opacity-50"
-      >
-        <GoogleG />
-        Continue with Google
-      </button>
+      <div className="grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          onClick={() => signInWithProvider('google')}
+          disabled={status === 'submitting'}
+          className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-text/95 text-bg font-medium text-sm hover:bg-text transition disabled:opacity-50"
+        >
+          <GoogleG />
+          <span className="hidden sm:inline">Google</span>
+          <span className="sm:hidden">Google</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => signInWithProvider('github')}
+          disabled={status === 'submitting'}
+          className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-surface border border-border text-text font-medium text-sm hover:bg-bg/60 hover:border-text/40 transition disabled:opacity-50"
+        >
+          <Github className="w-4 h-4" />
+          GitHub
+        </button>
+      </div>
 
       <div className="flex items-center gap-3 my-5">
         <span className="flex-1 h-px bg-border" />
