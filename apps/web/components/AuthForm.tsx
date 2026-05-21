@@ -8,6 +8,10 @@ import { getSupabaseBrowser } from '../lib/supabase-browser';
 
 type OAuthProvider = 'google' | 'github';
 
+// Always redirect back to the live site, regardless of where the user clicked.
+// Removes any dependency on window.location.origin which can be localhost in dev.
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://stackpicks.dev';
+
 interface Props {
   mode: 'login' | 'signup';
 }
@@ -45,7 +49,7 @@ export function AuthForm({ mode }: Props) {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+            emailRedirectTo: `${SITE_URL}/auth/callback?next=${encodeURIComponent(next)}`,
           },
         });
         if (error) throw error;
@@ -70,7 +74,7 @@ export function AuthForm({ mode }: Props) {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+          redirectTo: `${SITE_URL}/auth/callback?next=${encodeURIComponent(next)}`,
         },
       });
       if (error) throw error;

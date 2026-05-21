@@ -5,6 +5,9 @@ import { Mail, Loader2, Check } from 'lucide-react';
 import Link from 'next/link';
 import { getSupabaseBrowser } from '../lib/supabase-browser';
 
+// Always reset-password back on the live site.
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://stackpicks.dev';
+
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'submitting' | 'sent' | 'error'>('idle');
@@ -17,7 +20,7 @@ export function ForgotPasswordForm() {
     try {
       const supabase = getSupabaseBrowser();
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${SITE_URL}/reset-password`,
       });
       if (error) throw error;
       setStatus('sent');
