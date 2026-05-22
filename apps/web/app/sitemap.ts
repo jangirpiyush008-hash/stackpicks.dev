@@ -1,5 +1,6 @@
 import { SITE } from '@stackpicks/core/constants';
 import { COMPARISONS } from '../lib/comparisons';
+import { BLOG_POSTS } from '../lib/blog';
 import type { MetadataRoute } from 'next';
 
 // Generate at request time, not build time — avoids needing DB env at build.
@@ -13,6 +14,7 @@ const STATIC_PATHS: MetadataRoute.Sitemap = [
   { url: `${SITE.url}/skills`, changeFrequency: 'weekly', priority: 0.9 },
   { url: `${SITE.url}/how-to-use`, changeFrequency: 'monthly', priority: 0.7 },
   { url: `${SITE.url}/compare`, changeFrequency: 'weekly', priority: 0.85 },
+  { url: `${SITE.url}/blog`, changeFrequency: 'weekly', priority: 0.9 },
   { url: `${SITE.url}/pricing`, changeFrequency: 'monthly', priority: 0.85 },
   { url: `${SITE.url}/about`, changeFrequency: 'monthly', priority: 0.5 },
   { url: `${SITE.url}/contact`, changeFrequency: 'monthly', priority: 0.5 },
@@ -56,10 +58,17 @@ const COMPARE_PATHS: MetadataRoute.Sitemap = COMPARISONS.map((c) => ({
   priority: 0.8,
 }));
 
+const BLOG_PATHS: MetadataRoute.Sitemap = BLOG_POSTS.map((p) => ({
+  url: `${SITE.url}/blog/${p.slug}`,
+  lastModified: p.updated_at,
+  changeFrequency: 'monthly',
+  priority: 0.85,
+}));
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // If Supabase env isn't set, return static paths only so the build still succeeds.
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    return [...STATIC_PATHS, ...BUNDLE_PATHS, ...SKILL_PATHS, ...COMPARE_PATHS];
+    return [...STATIC_PATHS, ...BUNDLE_PATHS, ...SKILL_PATHS, ...COMPARE_PATHS, ...BLOG_PATHS];
   }
 
   try {
@@ -109,12 +118,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...BUNDLE_PATHS,
       ...SKILL_PATHS,
       ...COMPARE_PATHS,
+      ...BLOG_PATHS,
       ...categoryPaths,
       ...collectionPaths,
       ...repoPaths,
     ];
   } catch (err) {
     console.error('Sitemap generation failed, falling back to static paths:', err);
-    return [...STATIC_PATHS, ...BUNDLE_PATHS, ...SKILL_PATHS, ...COMPARE_PATHS];
+    return [...STATIC_PATHS, ...BUNDLE_PATHS, ...SKILL_PATHS, ...COMPARE_PATHS, ...BLOG_PATHS];
   }
 }
