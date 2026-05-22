@@ -21,7 +21,8 @@ function authHeader(): string {
 }
 
 export interface CreateOrderInput {
-  amount_paise: number;
+  amount: number;            // smallest unit: paise for INR, cents for USD
+  currency?: 'INR' | 'USD';  // defaults to INR
   receipt: string;
   notes?: Record<string, string>;
 }
@@ -35,6 +36,9 @@ export interface RazorpayOrder {
 }
 
 export async function createOrder(input: CreateOrderInput): Promise<RazorpayOrder> {
+  if (input.amount < 100) {
+    throw new Error('Razorpay minimum amount is 100 (paise or cents)');
+  }
   const res = await fetch(`${RZP_BASE}/orders`, {
     method: 'POST',
     headers: {
@@ -42,15 +46,16 @@ export async function createOrder(input: CreateOrderInput): Promise<RazorpayOrde
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      amount: input.amount_paise,
-      currency: 'INR',
+      amount: input.amount,
+      currency: input.currency ?? 'INR',
       receipt: input.receipt,
       notes: input.notes ?? {},
     }),
   });
 
   if (!res.ok) {
-    throw new Error(`Razorpay createOrder failed: ${res.status} ${await res.text()}`);
+    const errText = await res.text();
+    throw new Error(`Razorpay createOrder failed: ${res.status} ${errText}`);
   }
 
   return (await res.json()) as RazorpayOrder;

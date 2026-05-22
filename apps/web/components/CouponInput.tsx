@@ -5,7 +5,7 @@ import { Tag, Check, X, Loader2, ChevronDown } from 'lucide-react';
 
 type Currency = 'INR' | 'USD';
 
-interface ValidCoupon {
+export interface AppliedCoupon {
   code: string;
   base_label: string;
   discount_label: string;
@@ -13,12 +13,20 @@ interface ValidCoupon {
   is_free: boolean;
 }
 
-export function CouponInput({ currency = 'INR' }: { currency?: Currency }) {
+export function CouponInput({
+  currency = 'INR',
+  onApply,
+  onRemove,
+}: {
+  currency?: Currency;
+  onApply?: (coupon: AppliedCoupon) => void;
+  onRemove?: () => void;
+}) {
   const [open, setOpen] = useState(false);
   const [code, setCode] = useState('');
   const [status, setStatus] = useState<'idle' | 'validating' | 'valid' | 'invalid'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
-  const [coupon, setCoupon] = useState<ValidCoupon | null>(null);
+  const [coupon, setCoupon] = useState<AppliedCoupon | null>(null);
 
   const apply = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,6 +58,7 @@ export function CouponInput({ currency = 'INR' }: { currency?: Currency }) {
       }
       setCoupon(body.data);
       setStatus('valid');
+      onApply?.(body.data);
     } catch {
       setErrorMsg('Network error — try again');
       setStatus('invalid');
@@ -61,6 +70,7 @@ export function CouponInput({ currency = 'INR' }: { currency?: Currency }) {
     setCoupon(null);
     setErrorMsg('');
     setCode('');
+    onRemove?.();
   };
 
   if (status === 'valid' && coupon) {

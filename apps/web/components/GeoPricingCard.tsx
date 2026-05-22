@@ -1,9 +1,9 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Check, IndianRupee, DollarSign } from 'lucide-react';
-import { CouponInput } from './CouponInput';
+import { CouponInput, type AppliedCoupon } from './CouponInput';
+import { CheckoutButton } from './CheckoutButton';
 
 type Currency = 'INR' | 'USD';
 
@@ -51,6 +51,8 @@ export function GeoPricingCard({
   features: string[];
 }) {
   const [currency, setCurrency] = useState<Currency>('INR');
+  const [coupon, setCoupon] = useState<AppliedCoupon | null>(null);
+
   useEffect(() => {
     detectCurrency().then(setCurrency);
   }, []);
@@ -67,23 +69,44 @@ export function GeoPricingCard({
       <p className="text-muted text-sm mb-6">Pay once. Full service for the lifetime of the platform.</p>
 
       <div className="mb-6">
-        <div className="flex items-baseline gap-1 text-accent">
-          {isINR ? <IndianRupee className="w-8 h-8" /> : <DollarSign className="w-8 h-8" />}
-          <span className="text-5xl md:text-6xl font-bold tracking-tighter">
-            {isINR ? inrDisplay : usdDisplay}
-          </span>
-        </div>
-        <div className="text-xs text-muted mt-1.5">
-          One-time payment · Lifetime access · Secure checkout
-        </div>
+        {coupon ? (
+          // Coupon applied — show original (struck) + final
+          <>
+            <div className="flex items-baseline gap-3 flex-wrap">
+              <div className="flex items-baseline gap-1 text-muted line-through">
+                {isINR ? <IndianRupee className="w-5 h-5" /> : <DollarSign className="w-5 h-5" />}
+                <span className="text-2xl font-bold tracking-tighter">
+                  {isINR ? inrDisplay : usdDisplay}
+                </span>
+              </div>
+              <div className="flex items-baseline gap-1 text-accent">
+                {isINR ? <IndianRupee className="w-8 h-8" /> : <DollarSign className="w-8 h-8" />}
+                <span className="text-5xl md:text-6xl font-bold tracking-tighter">
+                  {coupon.is_free ? 'FREE' : coupon.final_label.replace(/^[₹$]/, '')}
+                </span>
+              </div>
+            </div>
+            <div className="text-xs text-accent mt-1.5 font-mono">
+              Coupon <strong>{coupon.code}</strong> · You save {coupon.discount_label}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex items-baseline gap-1 text-accent">
+              {isINR ? <IndianRupee className="w-8 h-8" /> : <DollarSign className="w-8 h-8" />}
+              <span className="text-5xl md:text-6xl font-bold tracking-tighter">
+                {isINR ? inrDisplay : usdDisplay}
+              </span>
+            </div>
+            <div className="text-xs text-muted mt-1.5">
+              One-time payment · Lifetime access · Secure checkout
+            </div>
+          </>
+        )}
       </div>
 
-      <Link
-        href="/contact"
-        className="block text-center px-5 py-3 rounded-lg bg-accent text-bg font-semibold hover:opacity-90 transition"
-      >
-        Get lifetime access
-      </Link>
+      <CheckoutButton currency={currency} couponCode={coupon?.code ?? null} />
+
       <p className="text-[11px] text-center text-muted mt-2">
         Razorpay secure checkout · 7-day full refund · GSTIN invoice on request
       </p>
@@ -91,7 +114,7 @@ export function GeoPricingCard({
         Auto-priced for your region · Razorpay secure checkout
       </p>
 
-      <CouponInput currency={currency} />
+      <CouponInput currency={currency} onApply={setCoupon} onRemove={() => setCoupon(null)} />
 
       <ul className="mt-6 space-y-2.5">
         {features.map((f) => (

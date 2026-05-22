@@ -82,7 +82,8 @@ export async function POST(req: NextRequest) {
 
     // Create Razorpay order
     const order = await createOrder({
-      amount_paise,
+      amount: amount_paise,
+      currency: 'INR',
       receipt: `slot_${slot.id.slice(0, 20)}`,
       notes: {
         purpose: 'sponsored_slot',
