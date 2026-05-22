@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Users, IndianRupee, TrendingUp, Sparkles, Clock, Activity,
-  RefreshCw, ExternalLink, Send, Loader2,
+  RefreshCw, ExternalLink, Send, Loader2, Rocket, Check, Copy,
 } from 'lucide-react';
 
 interface LaunchData {
@@ -18,6 +18,55 @@ interface LaunchData {
 
 const PH_KEY = 'sp_admin_ph_slug';
 const HN_KEY = 'sp_admin_hn_id';
+const CHECKLIST_KEY = 'sp_admin_launch_checklist';
+
+const LAUNCH_CHECKLIST = [
+  { id: 'ph', label: 'ProductHunt submitted', url: 'https://www.producthunt.com/posts/new' },
+  { id: 'ph_comment', label: 'Maker comment posted on PH', url: null },
+  { id: 'linkedin', label: 'LinkedIn post live', url: 'https://www.linkedin.com/feed/' },
+  { id: 'twitter', label: 'Twitter / X thread posted', url: 'https://x.com/compose/post' },
+  { id: 'hn', label: 'Hacker News Show HN posted', url: 'https://news.ycombinator.com/submit' },
+  { id: 'reddit_sp', label: 'Reddit r/SideProject post', url: 'https://www.reddit.com/r/SideProject/submit' },
+  { id: 'reddit_webdev', label: 'Reddit r/webdev post', url: 'https://www.reddit.com/r/webdev/submit' },
+  { id: 'reddit_oss', label: 'Reddit r/opensource post', url: 'https://www.reddit.com/r/opensource/submit' },
+  { id: 'ih', label: 'IndieHackers milestone post', url: 'https://www.indiehackers.com/post' },
+  { id: 'betalist', label: 'BetaList submitted', url: 'https://betalist.com/submit' },
+  { id: 'devhunt', label: 'DevHunt submitted', url: 'https://devhunt.org/submit' },
+  { id: 'alttto', label: 'AlternativeTo submitted', url: 'https://alternativeto.net/software/submit' },
+  { id: 'dms', label: '15 personal DMs sent', url: null },
+  { id: 'indexnow', label: 'IndexNow launch push run', url: null },
+];
+
+const SHARE_TEMPLATES = {
+  twitter: `Spent 4 hours picking a UI library last week.
+Not coding. Picking.
+
+Built StackPicks to fix it →
+
+100+ open-source dev tools, each with a "use this if / skip if" take written by a human.
+22 categories, 13 stack bundles, 12 skill tracks.
+
+₹99 lifetime. https://stackpicks.dev`,
+
+  whatsapp: `Hey — launching StackPicks today on ProductHunt.
+
+100+ curated open-source dev tools with honest "use this if / skip if" takes. 13 stack bundles, 12 skill tracks. ₹99 lifetime.
+
+Would mean a lot if you'd check it out + share if useful:
+https://stackpicks.dev
+
+Thank you!`,
+
+  linkedin_dm: `Hey — launching StackPicks today.
+
+100+ curated open-source dev tools, each with an honest "use this if / skip if" take. 13 ready-to-ship stack bundles. ₹99 lifetime, no renewals.
+
+Site: https://stackpicks.dev
+
+If you have 60 seconds — would love your honest reaction in the comments on my LinkedIn post.
+
+Thanks!`,
+};
 
 export function AdminLaunchPanel({ data }: { data: LaunchData }) {
   const router = useRouter();
@@ -28,12 +77,44 @@ export function AdminLaunchPanel({ data }: { data: LaunchData }) {
   const [pushing, setPushing] = useState(false);
   const [pushResult, setPushResult] = useState('');
   const [autoRefresh, setAutoRefresh] = useState(false);
+  const [checked, setChecked] = useState<Record<string, boolean>>({});
+  const [copyFeedback, setCopyFeedback] = useState('');
 
-  // Load saved PH slug + HN ID from localStorage so they persist between sessions
+  // Load saved PH slug + HN ID + checklist from localStorage
   useEffect(() => {
     setPhSlug(localStorage.getItem(PH_KEY) ?? '');
     setHnId(localStorage.getItem(HN_KEY) ?? '');
+    try {
+      setChecked(JSON.parse(localStorage.getItem(CHECKLIST_KEY) ?? '{}'));
+    } catch { /* ignore */ }
   }, []);
+
+  const toggleCheck = (id: string) => {
+    setChecked((prev) => {
+      const next = { ...prev, [id]: !prev[id] };
+      localStorage.setItem(CHECKLIST_KEY, JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const resetChecklist = () => {
+    if (!confirm('Reset the entire launch checklist?')) return;
+    setChecked({});
+    localStorage.removeItem(CHECKLIST_KEY);
+  };
+
+  const copyText = async (text: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopyFeedback(`✓ Copied ${label}`);
+      setTimeout(() => setCopyFeedback(''), 2000);
+    } catch {
+      setCopyFeedback(`✗ Copy failed`);
+      setTimeout(() => setCopyFeedback(''), 2000);
+    }
+  };
+
+  const completedCount = Object.values(checked).filter(Boolean).length;
 
   // Fetch external rankings
   const refreshExternals = async () => {
@@ -88,17 +169,26 @@ export function AdminLaunchPanel({ data }: { data: LaunchData }) {
     refreshExternals();
   };
 
-  const pushIndexNow = async () => {
+  const pushIndexNow = async (mode: 'default' | 'launch' = 'default') => {
     setPushing(true);
     setPushResult('');
     try {
-      const res = await fetch('/api/admin/indexnow', {
+      const path = mode === 'launch' ? '/api/admin/indexnow?mode=launch' : '/api/admin/indexnow';
+      const res = await fetch(path, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: '{}',
       });
       const j = await res.json();
       setPushResult(j.ok ? `✓ pushed ${j.pushed} URLs (HTTP ${j.status})` : `✗ ${j.error}`);
+      if (j.ok && mode === 'launch') {
+        // Auto-tick the indexnow checkbox
+        setChecked((prev) => {
+          const next = { ...prev, indexnow: true };
+          localStorage.setItem(CHECKLIST_KEY, JSON.stringify(next));
+          return next;
+        });
+      }
     } catch (e) {
       setPushResult(`✗ ${e instanceof Error ? e.message : 'failed'}`);
     } finally {
@@ -133,12 +223,22 @@ export function AdminLaunchPanel({ data }: { data: LaunchData }) {
 
         <button
           type="button"
-          onClick={pushIndexNow}
+          onClick={() => pushIndexNow('default')}
           disabled={pushing}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-accent/15 border border-accent/40 text-accent hover:bg-accent/25 text-xs transition disabled:opacity-50"
         >
           {pushing ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
-          Push to IndexNow
+          Push 6 core URLs
+        </button>
+
+        <button
+          type="button"
+          onClick={() => pushIndexNow('launch')}
+          disabled={pushing}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-accent text-bg font-bold text-xs hover:opacity-90 transition disabled:opacity-50"
+        >
+          {pushing ? <Loader2 className="w-3 h-3 animate-spin" /> : <Rocket className="w-3 h-3" />}
+          🚀 LAUNCH PUSH — all 32 URLs
         </button>
 
         {pushResult && (
@@ -294,7 +394,7 @@ export function AdminLaunchPanel({ data }: { data: LaunchData }) {
         </div>
 
         {/* Recent payments */}
-        <div className="rounded-2xl border border-accent/30 bg-accent/5 overflow-hidden">
+        <div className="rounded-2xl border border-accent/30 bg-accent/5 overflow-hidden" id="recent-payments-section">
           <div className="px-4 py-2 border-b border-accent/30 bg-accent/10 text-[10px] font-mono uppercase tracking-wider text-accent flex items-center gap-1.5">
             <Sparkles className="w-3 h-3" />
             Latest payments
@@ -317,6 +417,135 @@ export function AdminLaunchPanel({ data }: { data: LaunchData }) {
           </div>
         </div>
       </div>
+
+      {/* ─── Launch checklist ──────────────────────────────────────── */}
+      <div className="rounded-2xl border border-border bg-surface/30 p-4">
+        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+          <div className="flex items-center gap-2">
+            <div className="text-[10px] font-mono uppercase tracking-wider text-muted">
+              Launch checklist
+            </div>
+            <span className="text-xs text-muted">
+              {completedCount} / {LAUNCH_CHECKLIST.length} done
+            </span>
+            <div className="w-32 h-1.5 bg-border rounded-full overflow-hidden">
+              <div
+                className="h-full bg-accent transition-all"
+                style={{ width: `${(completedCount / LAUNCH_CHECKLIST.length) * 100}%` }}
+              />
+            </div>
+          </div>
+          {completedCount > 0 && (
+            <button
+              type="button"
+              onClick={resetChecklist}
+              className="text-[10px] text-muted hover:text-red-300 transition"
+            >
+              Reset
+            </button>
+          )}
+        </div>
+        <div className="grid sm:grid-cols-2 gap-2">
+          {LAUNCH_CHECKLIST.map((item) => (
+            <label
+              key={item.id}
+              className={`flex items-center gap-2 px-3 py-2 rounded border text-xs cursor-pointer transition ${
+                checked[item.id]
+                  ? 'border-accent/40 bg-accent/5 text-text/60 line-through'
+                  : 'border-border hover:border-accent/50'
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={!!checked[item.id]}
+                onChange={() => toggleCheck(item.id)}
+                className="accent-accent"
+              />
+              <span className="flex-1">{item.label}</span>
+              {item.url && (
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-muted/60 hover:text-accent transition"
+                  title="Open"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* ─── Quick-copy share templates ─────────────────────────────── */}
+      <div className="rounded-2xl border border-border bg-surface/30 p-4">
+        <div className="text-[10px] font-mono uppercase tracking-wider text-muted mb-3">
+          Quick-copy share templates
+        </div>
+        <div className="space-y-2">
+          <CopyRow
+            label="Twitter / X thread (1st tweet)"
+            text={SHARE_TEMPLATES.twitter}
+            onCopy={() => copyText(SHARE_TEMPLATES.twitter, 'Twitter')}
+          />
+          <CopyRow
+            label="WhatsApp / personal DM"
+            text={SHARE_TEMPLATES.whatsapp}
+            onCopy={() => copyText(SHARE_TEMPLATES.whatsapp, 'WhatsApp')}
+          />
+          <CopyRow
+            label="LinkedIn DM (to your contacts)"
+            text={SHARE_TEMPLATES.linkedin_dm}
+            onCopy={() => copyText(SHARE_TEMPLATES.linkedin_dm, 'LinkedIn DM')}
+          />
+        </div>
+        {copyFeedback && (
+          <div className={`mt-2 text-xs font-mono ${copyFeedback.startsWith('✓') ? 'text-accent' : 'text-red-300'}`}>
+            {copyFeedback}
+          </div>
+        )}
+        <p className="text-[10px] text-muted/60 mt-3">
+          For the full launch post library (ProductHunt maker comment, HN Show HN body, full LinkedIn post, etc.) see <span className="font-mono text-accent/70">launch/LAUNCH-POSTS.md</span> in the repo.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function CopyRow({
+  label, text, onCopy,
+}: {
+  label: string;
+  text: string;
+  onCopy: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded border border-border bg-bg/40">
+      <div className="flex items-center justify-between gap-2 px-3 py-2">
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          className="text-xs text-text hover:text-accent transition flex-1 text-left"
+        >
+          {open ? '▾' : '▸'} {label}
+        </button>
+        <button
+          type="button"
+          onClick={onCopy}
+          className="inline-flex items-center gap-1 px-2 py-1 rounded bg-accent text-bg text-[10px] font-bold uppercase tracking-wider hover:opacity-90 transition"
+        >
+          <Copy className="w-3 h-3" />
+          Copy
+        </button>
+      </div>
+      {open && (
+        <pre className="px-3 py-2 border-t border-border text-[11px] text-muted whitespace-pre-wrap font-sans leading-relaxed">
+          {text}
+        </pre>
+      )}
     </div>
   );
 }

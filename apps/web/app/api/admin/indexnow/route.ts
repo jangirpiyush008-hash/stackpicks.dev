@@ -30,7 +30,42 @@ export async function POST(req: NextRequest) {
     `${SITE.url}/how-to-use`,
   ];
 
-  const urls = body.urls?.length ? body.urls : defaultUrls;
+  // "Launch mode" — push everything important (used on launch day)
+  const launchUrls = [
+    ...defaultUrls,
+    `${SITE.url}/about`,
+    // All 13 stack bundles
+    `${SITE.url}/build/ship-a-saas`,
+    `${SITE.url}/build/mobile-app`,
+    `${SITE.url}/build/ai-agent`,
+    `${SITE.url}/build/marketing-website`,
+    `${SITE.url}/build/internal-dashboard`,
+    `${SITE.url}/build/chrome-extension`,
+    `${SITE.url}/build/automation-workflow`,
+    `${SITE.url}/build/marketing-stack`,
+    `${SITE.url}/build/sales-crm-stack`,
+    `${SITE.url}/build/e-commerce`,
+    `${SITE.url}/build/developer-tools`,
+    `${SITE.url}/build/content-platform`,
+    `${SITE.url}/build/web-scraper`,
+    // All 12 skill tracks
+    `${SITE.url}/skills/marketing`,
+    `${SITE.url}/skills/sales-outreach`,
+    `${SITE.url}/skills/social-media`,
+    `${SITE.url}/skills/linkedin-personal-brand`,
+    `${SITE.url}/skills/ai-ml`,
+    `${SITE.url}/skills/data-analytics`,
+    `${SITE.url}/skills/devops-infra`,
+    `${SITE.url}/skills/automation`,
+    `${SITE.url}/skills/design`,
+    `${SITE.url}/skills/mobile-dev`,
+    `${SITE.url}/skills/backend-apis`,
+    `${SITE.url}/skills/founder-os`,
+  ];
+
+  const url = new URL(req.url);
+  const mode = url.searchParams.get('mode');
+  const urls = body.urls?.length ? body.urls : mode === 'launch' ? launchUrls : defaultUrls;
 
   const payload = {
     host: HOST,
