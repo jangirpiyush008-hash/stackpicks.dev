@@ -17,6 +17,24 @@ export function BlogContent({ content }: { content: string }) {
     let partKey = 0;
 
     while (remaining.length > 0) {
+      // Image ![alt](url) — must come before link match since it starts with !
+      const imgMatch = remaining.match(/^(.*?)!\[([^\]]*)\]\(([^)]+)\)/s);
+      if (imgMatch) {
+        if (imgMatch[1]) parts.push(<span key={`${baseKey}-${partKey++}`}>{imgMatch[1]}</span>);
+        parts.push(
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={`${baseKey}-${partKey++}`}
+            src={imgMatch[3]}
+            alt={imgMatch[2]}
+            loading="lazy"
+            className="my-6 rounded-lg border border-border w-full h-auto block"
+          />
+        );
+        remaining = remaining.slice(imgMatch[0].length);
+        continue;
+      }
+
       // Link [text](url)
       const linkMatch = remaining.match(/^(.*?)\[([^\]]+)\]\(([^)]+)\)/s);
       if (linkMatch) {

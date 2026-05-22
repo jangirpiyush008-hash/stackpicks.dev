@@ -90,6 +90,17 @@ export default async function BlogPostPage({
         </Link>
 
         <header className="mb-10 pb-6 border-b border-border">
+          {/* Hero image — dynamic, auto-generated per post via opengraph-image.tsx */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`/blog/${slug}/opengraph-image`}
+            alt={post.title}
+            width={1200}
+            height={630}
+            loading="eager"
+            className="w-full h-auto rounded-2xl border border-border mb-8"
+          />
+
           <div className="flex items-baseline gap-3 mb-3 text-[10px] font-mono uppercase tracking-wider text-muted flex-wrap">
             <span className="text-accent">{post.category}</span>
             <span>·</span>

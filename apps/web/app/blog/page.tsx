@@ -52,32 +52,44 @@ export default function BlogIndex() {
           </p>
         </header>
 
-        <div className="space-y-6">
+        <div className="grid sm:grid-cols-2 gap-6">
           {sorted.map((post) => (
             <Link
               key={post.slug}
               href={`/blog/${post.slug}`}
-              className="block p-6 rounded-2xl border border-border hover:border-accent bg-surface/30 hover:bg-surface/60 transition group"
+              className="block rounded-2xl border border-border hover:border-accent bg-surface/30 hover:bg-surface/60 transition group overflow-hidden"
             >
-              <div className="flex items-baseline gap-3 mb-2 text-[10px] font-mono uppercase tracking-wider text-muted">
-                <span className="text-accent">{post.category}</span>
-                <span>·</span>
-                <span className="flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
-                  {post.reading_time} min read
-                </span>
-                <span>·</span>
-                <span>{new Date(post.published_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-              </div>
-              <h2 className="text-2xl font-bold mb-2 group-hover:text-accent transition tracking-tight">
-                {post.title}
-              </h2>
-              <p className="text-sm text-muted leading-relaxed mb-3 line-clamp-2">
-                {post.excerpt}
-              </p>
-              <div className="inline-flex items-center gap-1.5 text-xs text-accent">
-                Read post
-                <ArrowRight className="w-3 h-3" />
+              {/* Thumbnail — auto-generated per post */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`/blog/${post.slug}/opengraph-image`}
+                alt={post.title}
+                width={1200}
+                height={630}
+                loading="lazy"
+                className="w-full h-auto border-b border-border"
+              />
+              <div className="p-5">
+                <div className="flex items-baseline gap-2 mb-2 text-[10px] font-mono uppercase tracking-wider text-muted flex-wrap">
+                  <span className="text-accent">{post.category}</span>
+                  <span>·</span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {post.reading_time} min
+                  </span>
+                  <span>·</span>
+                  <span>{new Date(post.published_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
+                </div>
+                <h2 className="text-xl font-bold mb-2 group-hover:text-accent transition tracking-tight leading-snug">
+                  {post.title}
+                </h2>
+                <p className="text-sm text-muted leading-relaxed mb-3 line-clamp-2">
+                  {post.excerpt}
+                </p>
+                <div className="inline-flex items-center gap-1.5 text-xs text-accent">
+                  Read post
+                  <ArrowRight className="w-3 h-3" />
+                </div>
               </div>
             </Link>
           ))}
