@@ -1293,6 +1293,371 @@ export const SEED_REPOS: SeedEntry[] = [
     use_this_if: 'You\'re on Bun and want a framework that leverages every Bun perf optimization.',
     skip_if: 'You need to run on Node too — Hono is multi-runtime.',
   },
+
+  // ════════════════════════════════════════════════════════════════
+  // CREATIVE / VIDEO EDITING (5)
+  // ════════════════════════════════════════════════════════════════
+  {
+    full_name: 'remotion-dev/remotion',
+    category_slugs: ['frameworks'],
+    is_featured: true,
+    curator_take:
+      'Build videos programmatically in React. Write JSX, render MP4. Used by agencies for data-driven videos (sports highlights, social-media variations, podcast clips). The "video as code" movement\'s flagship.',
+    use_this_if: 'You need to generate many video variations programmatically (per-user content, automated social clips).',
+    skip_if: 'You\'re editing a single video by hand — DaVinci Resolve or CapCut is faster.',
+  },
+  {
+    full_name: 'mifi/editly',
+    category_slugs: ['cli-tools'],
+    is_featured: false,
+    curator_take:
+      'Declarative video editing in Node.js. Define a JSON spec, get an MP4. Lighter than Remotion — no React, just FFmpeg under the hood. Best for batch video pipelines where you don\'t need JSX.',
+    use_this_if: 'You need to compose videos from clips/images in Node scripts.',
+    skip_if: 'You need React composition or complex animations — Remotion wins.',
+  },
+  {
+    full_name: 'harry0703/MoneyPrinterTurbo',
+    category_slugs: ['ai-ml', 'cli-tools'],
+    is_featured: true,
+    curator_take:
+      'AI-generated short-form videos (TikTok/Reels/Shorts) from text. Generates script + voice + subtitles + b-roll automatically. ~25k stars and viral on Instagram dev community. The "passive income content factory" backend.',
+    use_this_if: 'You want to automate short-form video creation for social media at scale.',
+    skip_if: 'You care about quality + originality — the output looks templated.',
+  },
+  {
+    full_name: 'OpenShot/openshot-qt',
+    category_slugs: ['cli-tools'],
+    is_featured: false,
+    curator_take:
+      'Cross-platform desktop video editor. Drag-and-drop timeline, transitions, effects. Best for casual creators editing single videos. Closest OSS Premiere alternative for hobbyists.',
+    use_this_if: 'You\'re editing video casually and want a desktop app, not a scripted pipeline.',
+    skip_if: 'You need pro color grading — DaVinci Resolve free is more powerful.',
+  },
+  {
+    full_name: 'CapSoftware/Cap',
+    category_slugs: ['cli-tools'],
+    is_featured: true,
+    curator_take:
+      'Open-source Loom + Screen Studio alternative. Screen + camera recording with smooth zoom effects. Mac-first, expanding to Windows. The fastest-growing screen recorder in 2026 — Loom users escaping pricing.',
+    use_this_if: 'You record demo videos / tutorials and want Loom features without subscription.',
+    skip_if: 'You need cross-platform yesterday — Cap is still Mac-best.',
+  },
+
+  // ════════════════════════════════════════════════════════════════
+  // IMAGE EDITING (4)
+  // ════════════════════════════════════════════════════════════════
+  {
+    full_name: 'photopea/photopea',
+    category_slugs: ['cli-tools'],
+    is_featured: true,
+    curator_take:
+      'Photoshop in your browser. Full PSD support, all the layer/filter tools, no install. Free to use, ad-supported. Used by millions of designers who can\'t justify Adobe\'s monthly fee.',
+    use_this_if: 'You need Photoshop occasionally and don\'t want the $20/mo subscription.',
+    skip_if: 'You\'re a daily power user — desktop Photoshop has subtle perf advantages.',
+  },
+  {
+    full_name: 'darktable-org/darktable',
+    category_slugs: ['cli-tools'],
+    is_featured: false,
+    curator_take:
+      'Open-source RAW photo editor. Lightroom alternative with non-destructive editing, advanced color tools, tethered shooting. Used by serious photographers escaping Adobe Cloud.',
+    use_this_if: 'You shoot RAW and want a Lightroom-quality editor with no subscription.',
+    skip_if: 'You only edit JPEGs — Lightroom Mobile free tier is enough.',
+  },
+  {
+    full_name: 'inkscape/inkscape',
+    category_slugs: ['design-systems'],
+    is_featured: false,
+    curator_take:
+      'Open-source vector graphics editor. Illustrator alternative with full SVG support. Used for logos, icons, infographics, anything vector.',
+    use_this_if: 'You design vector graphics and want SVG-native portability.',
+    skip_if: 'You\'re collaborative-design-focused — Penpot/Figma have better team features.',
+  },
+  {
+    full_name: 'KDE/krita',
+    category_slugs: ['design-systems'],
+    is_featured: false,
+    curator_take:
+      'Digital painting + illustration. Procreate alternative on desktop. Used by professional illustrators, comic artists, concept designers. Brush engine is industry-grade.',
+    use_this_if: 'You\'re a digital illustrator and want a desktop Procreate.',
+    skip_if: 'You only need basic image editing — overkill.',
+  },
+
+  // ════════════════════════════════════════════════════════════════
+  // AI IMAGE + VIDEO GENERATION (6)
+  // ════════════════════════════════════════════════════════════════
+  {
+    full_name: 'comfyanonymous/ComfyUI',
+    category_slugs: ['ai-ml'],
+    is_featured: true,
+    curator_take:
+      'Node-based Stable Diffusion UI — the industry standard for production image generation pipelines. ~60k stars. Steeper learning curve than Fooocus but unmatched control. Powers most professional AI image work in 2026.',
+    use_this_if: 'You\'re doing serious AI image generation — variations, controlnets, custom pipelines.',
+    skip_if: 'You just want a prompt → image flow — Fooocus is 10× easier to start.',
+  },
+  {
+    full_name: 'AUTOMATIC1111/stable-diffusion-webui',
+    category_slugs: ['ai-ml'],
+    is_featured: true,
+    curator_take:
+      'The OG Stable Diffusion UI. ~145k stars, still the most-installed SD interface globally. Extensive plugin ecosystem. Best balance of features and ease-of-use.',
+    use_this_if: 'You want SD with extensions for img2img, ControlNet, LoRA training, all in one UI.',
+    skip_if: 'You want node-based workflows — ComfyUI is the modern pick.',
+  },
+  {
+    full_name: 'lllyasviel/Fooocus',
+    category_slugs: ['ai-ml'],
+    is_featured: true,
+    curator_take:
+      'One-click image generation built on SDXL. Easier than ComfyUI/A1111. Pre-tuned defaults that look great out of the box. ~45k stars. Best entry point for AI image generation.',
+    use_this_if: 'You\'re new to AI image generation and want results in 5 minutes.',
+    skip_if: 'You need fine-grained control or ControlNet — ComfyUI.',
+  },
+  {
+    full_name: 'black-forest-labs/flux',
+    category_slugs: ['ai-ml'],
+    is_featured: true,
+    curator_take:
+      'Flux.1 — Midjourney-quality image model, open-source. Released by ex-Stable Diffusion researchers. ~25k stars. The hottest open image model in 2026. Hard to run locally without serious GPU; usually accessed via API services.',
+    use_this_if: 'You want best-in-class open image generation quality.',
+    skip_if: 'You\'re on consumer hardware — SDXL via Fooocus runs locally easier.',
+  },
+  {
+    full_name: 'invoke-ai/InvokeAI',
+    category_slugs: ['ai-ml'],
+    is_featured: false,
+    curator_take:
+      'Pro Stable Diffusion UI with multi-user, project management, and a cleaner UX than A1111. Used by AI studios + agencies running SD as a service. ~25k stars.',
+    use_this_if: 'You\'re running SD for a team or as a service.',
+    skip_if: 'You\'re solo and don\'t need user management — A1111 has more extensions.',
+  },
+  {
+    full_name: 'Tencent-Hunyuan/HunyuanVideo',
+    category_slugs: ['ai-ml'],
+    is_featured: true,
+    curator_take:
+      'Tencent\'s open-source text-to-video model. The OSS Sora alternative — generates 5-10 second clips from text prompts. ~12k stars. The first open video model that doesn\'t look like a slideshow.',
+    use_this_if: 'You want to generate AI video locally or self-host video gen.',
+    skip_if: 'You need real-time / consumer-friendly results — proprietary Sora/Veo are still ahead.',
+  },
+
+  // ════════════════════════════════════════════════════════════════
+  // AUTO-POST / SOCIAL AUTOMATION (3)
+  // ════════════════════════════════════════════════════════════════
+  {
+    full_name: 'gitroomhq/postiz-app',
+    category_slugs: ['devops'],
+    is_featured: true,
+    curator_take:
+      'Open-source Buffer/Hootsuite. Schedule posts to X, LinkedIn, Instagram, Threads, TikTok, YouTube, Facebook, Pinterest, more. AI-generated captions, team workflows. ~22k stars — the OSS social scheduler everyone\'s switching to.',
+    use_this_if: 'You\'re running multi-platform social content and want to escape Buffer\'s pricing.',
+    skip_if: 'You only post to 1-2 platforms — native scheduling in each is simpler.',
+  },
+  {
+    full_name: 'inulute/mixpost',
+    category_slugs: ['devops'],
+    is_featured: false,
+    curator_take:
+      'Self-hosted social media management. Lighter than Postiz, PHP-based. Best if your stack is PHP-heavy or you want a minimal social scheduler.',
+    use_this_if: 'You\'re PHP-shop and want self-hosted social posting.',
+    skip_if: 'You\'re a TS/Node team — Postiz has better DX.',
+  },
+  {
+    full_name: 'mautic/mautic',
+    category_slugs: ['email', 'devops'],
+    is_featured: false,
+    curator_take:
+      'Mature open-source marketing automation. Email campaigns, lead scoring, segmentation, landing pages. The HubSpot alternative when you want full control. ~8k stars, used by enterprises.',
+    use_this_if: 'You need full-stack marketing automation (email + social + landing pages) self-hosted.',
+    skip_if: 'You only need newsletters — Listmonk is lighter.',
+  },
+
+  // ════════════════════════════════════════════════════════════════
+  // WEBSITE COMPONENTS (5)
+  // ════════════════════════════════════════════════════════════════
+  {
+    full_name: 'DavidHDev/react-bits',
+    category_slugs: ['ui-components', 'animation'],
+    is_featured: true,
+    curator_take:
+      'Animated React UI components for landing pages. Aceternity-style aesthetics, actively maintained, copy-paste primitives. ~12k stars. The right pick for "wow-factor" marketing sites in 2026.',
+    use_this_if: 'You\'re building a marketing site or landing page that needs Instagram-worthy animations.',
+    skip_if: 'You need accessibility-first primitives — shadcn/Radix are better for apps.',
+  },
+  {
+    full_name: 'animata-design/animata',
+    category_slugs: ['ui-components', 'animation'],
+    is_featured: true,
+    curator_take:
+      'Animated component snippets. Hover effects, scroll animations, transitions — all copy-paste with Framer Motion. ~4k stars. Beautiful Instagram-friendly aesthetics. Free.',
+    use_this_if: 'You want premium-looking animations on your site without coding them yourself.',
+    skip_if: 'You\'re shipping internal tools — overkill.',
+  },
+  {
+    full_name: 'origin-space/originui',
+    category_slugs: ['ui-components', 'design-systems'],
+    is_featured: true,
+    curator_take:
+      'Beautiful shadcn-style components with much more breadth — 300+ components vs shadcn\'s ~50. ~4k stars and fast-growing. The most-loved new UI lib of 2026.',
+    use_this_if: 'You like shadcn\'s philosophy but want more components out of the box.',
+    skip_if: 'You\'re committed to shadcn\'s minimal core — Origin is more opinionated.',
+  },
+  {
+    full_name: 'saadeghi/daisyui',
+    category_slugs: ['ui-components'],
+    is_featured: true,
+    curator_take:
+      'Tailwind component classes — no JS, just CSS. Add `btn btn-primary` and you have a styled button. ~33k stars. Best for teams that want Tailwind ergonomics without writing component CSS.',
+    use_this_if: 'You\'re on Tailwind and want pre-styled component classes (no React/Vue required).',
+    skip_if: 'You need interactive components like Combobox or Dialog — DaisyUI is style-only.',
+  },
+  {
+    full_name: 'markmead/hyperui',
+    category_slugs: ['ui-components'],
+    is_featured: false,
+    curator_take:
+      'Free Tailwind UI blocks — heroes, pricing tables, cards, navigation. Copy-paste sections for marketing sites. ~11k stars. Best for non-designers who need to ship a marketing page fast.',
+    use_this_if: 'You need marketing site sections and you don\'t want to design from scratch.',
+    skip_if: 'You need full-stack components like Forms or Tables — pick shadcn/MUI.',
+  },
+
+  // ════════════════════════════════════════════════════════════════
+  // APP / MOBILE COMPONENTS (4)
+  // ════════════════════════════════════════════════════════════════
+  {
+    full_name: 'gluestack/gluestack-ui',
+    category_slugs: ['mobile', 'ui-components'],
+    is_featured: true,
+    curator_take:
+      'Universal React Native + Web components. Same code → mobile + web. The new RN UI standard, replacing NativeBase. ~5k stars and growing.',
+    use_this_if: 'You\'re shipping a React Native app + web with shared component code.',
+    skip_if: 'You\'re web-only — shadcn is purpose-built for web React.',
+  },
+  {
+    full_name: 'gorhom/react-native-bottom-sheet',
+    category_slugs: ['mobile'],
+    is_featured: false,
+    curator_take:
+      'The bottom sheet every React Native app uses. Performant, gesture-perfect, smooth on iOS + Android. ~7k stars. Industry standard.',
+    use_this_if: 'You\'re building an RN app and need a bottom sheet (you will).',
+    skip_if: 'You\'re web-only.',
+  },
+  {
+    full_name: 'Shopify/react-native-skia',
+    category_slugs: ['mobile', 'animation'],
+    is_featured: false,
+    curator_take:
+      'High-performance 2D graphics for React Native using Google\'s Skia engine. Powers modern RN animations, custom drawing, shaders. ~8k stars. Used by Shopify\'s own apps.',
+    use_this_if: 'You need custom graphics, charts, or complex animations in a React Native app.',
+    skip_if: 'You only need basic UI animations — Reanimated handles those.',
+  },
+  {
+    full_name: 'software-mansion/react-native-reanimated',
+    category_slugs: ['mobile', 'animation'],
+    is_featured: true,
+    curator_take:
+      'The animation library for React Native. Runs animations on the UI thread (60fps even with JS thread busy). ~9k stars. Default pick for any serious RN app.',
+    use_this_if: 'You\'re building any React Native app with animations.',
+    skip_if: 'You\'re web-only — pick Framer Motion / Motion instead.',
+  },
+
+  // ════════════════════════════════════════════════════════════════
+  // 3D ELEMENTS (5)
+  // ════════════════════════════════════════════════════════════════
+  {
+    full_name: 'mrdoob/three.js',
+    category_slugs: ['animation', 'frameworks'],
+    is_featured: true,
+    curator_take:
+      'THE 3D library for the web. Powers most browser 3D experiences. ~105k stars. WebGL-based, broad ecosystem, decade-mature. Foundation of every web 3D project in 2026.',
+    use_this_if: 'You\'re building any 3D web experience — visualizations, games, product 3D.',
+    skip_if: 'You\'re doing simple 3D images — CSS 3D transforms might be enough.',
+  },
+  {
+    full_name: 'pmndrs/react-three-fiber',
+    category_slugs: ['animation', 'frameworks'],
+    is_featured: true,
+    curator_take:
+      'React renderer for Three.js. Declarative 3D — `<mesh>` instead of imperative JS. ~30k stars. The way React devs do 3D.',
+    use_this_if: 'You\'re a React dev wanting to add 3D without learning imperative Three.js.',
+    skip_if: 'You\'re not using React — vanilla Three.js or Threlte are alternatives.',
+  },
+  {
+    full_name: 'pmndrs/drei',
+    category_slugs: ['animation'],
+    is_featured: false,
+    curator_take:
+      'Three.js helpers for React Three Fiber — cameras, controls, environments, primitives. ~9k stars. The companion library every R3F dev uses.',
+    use_this_if: 'You\'re using R3F and don\'t want to write camera controls from scratch.',
+    skip_if: 'You\'re not using R3F.',
+  },
+  {
+    full_name: 'antimatter15/splat',
+    category_slugs: ['animation', 'ai-ml'],
+    is_featured: false,
+    curator_take:
+      '3D Gaussian Splatting renderer in the browser. The hottest 3D rendering technique in 2026 — photorealistic 3D from photos. ~4k stars. Future of capturing real-world 3D scenes.',
+    use_this_if: 'You\'re experimenting with Gaussian Splatting for real-world 3D capture.',
+    skip_if: 'You need classic mesh-based 3D — three.js is more mature.',
+  },
+  {
+    full_name: 'threlte/threlte',
+    category_slugs: ['animation', 'frameworks'],
+    is_featured: false,
+    curator_take:
+      'Three.js for Svelte. Same declarative 3D model as R3F but for Svelte users. ~2k stars.',
+    use_this_if: 'You\'re using SvelteKit and want declarative 3D.',
+    skip_if: 'You\'re not on Svelte.',
+  },
+
+  // ════════════════════════════════════════════════════════════════
+  // ANIMATIONS + UI MOTION (5)
+  // ════════════════════════════════════════════════════════════════
+  {
+    full_name: 'rive-app/rive-renderer',
+    category_slugs: ['animation'],
+    is_featured: true,
+    curator_take:
+      'Interactive animations for every platform. Design in Rive Editor → ship to web, iOS, Android, Flutter, React Native. The After Effects killer for interactive content. ~6k stars.',
+    use_this_if: 'You design complex interactive animations and need cross-platform export.',
+    skip_if: 'You\'re doing simple CSS animations — Framer Motion is lighter.',
+  },
+  {
+    full_name: 'theatre-js/theatre',
+    category_slugs: ['animation'],
+    is_featured: true,
+    curator_take:
+      'Animation editor for the web — keyframe-based, scrubable, plays nice with Three.js. ~11k stars. Powers high-end web design studios doing cinematic web experiences.',
+    use_this_if: 'You need cinematic / scroll-tied animations beyond what Framer Motion offers.',
+    skip_if: 'Your animations are mostly hover/transitions — Framer Motion is simpler.',
+  },
+  {
+    full_name: 'formkit/auto-animate',
+    category_slugs: ['animation'],
+    is_featured: false,
+    curator_take:
+      'Add a `data-auto-animate` attribute, get smooth list animations automatically. ~11k stars. The simplest animation tool in JS — one line of code.',
+    use_this_if: 'You want auto-animations on lists/grids without any animation code.',
+    skip_if: 'You need control over individual transitions — Framer Motion.',
+  },
+  {
+    full_name: 'darkroomengineering/lenis',
+    category_slugs: ['animation'],
+    is_featured: true,
+    curator_take:
+      'The smooth-scroll library every Awwwards-winning site uses in 2026. Frame-perfect inertia scrolling. ~9k stars. Required on any "wow factor" portfolio or marketing site.',
+    use_this_if: 'You\'re building a marketing site or portfolio and want premium-feel scrolling.',
+    skip_if: 'You\'re building an app where users scroll fast — smooth scroll fights them.',
+  },
+  {
+    full_name: 'motion-canvas/motion-canvas',
+    category_slugs: ['animation'],
+    is_featured: false,
+    curator_take:
+      'Programmatically animate complex scenes for tutorials and explainer videos. Used by 3Blue1Brown-style channels. ~17k stars. TypeScript + Konva-style API.',
+    use_this_if: 'You\'re making explainer videos or tutorials with programmatic animations.',
+    skip_if: 'You\'re doing UI animations — Framer Motion is the right tool.',
+  },
 ];
 
 export const TOTAL_REPOS = SEED_REPOS.length;
