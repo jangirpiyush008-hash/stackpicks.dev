@@ -1,7 +1,7 @@
 import { adminClient, getRepoBySlug } from '@stackpicks/core/db';
 import { buildMeta, softwareJsonLd, breadcrumbJsonLd } from '@stackpicks/core/seo';
 import { formatStars, timeAgo, formatIST } from '@stackpicks/core/utils';
-import { Star, GitFork, Eye, AlertCircle, ExternalLink, Check, X } from 'lucide-react';
+import { Star, GitFork, Eye, AlertCircle, ExternalLink, Check, X, Zap, Target, Tag } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { EmbedBadge } from '../../../components/EmbedBadge';
@@ -106,11 +106,92 @@ export default async function RepoPage({ params }: PageProps) {
           </div>
         </div>
 
+        {/* TL;DR card — quick scan for new visitors */}
+        <section
+          aria-labelledby="tldr-heading"
+          className="mb-8 rounded-2xl border-2 border-accent/40 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent p-6 md:p-7"
+        >
+          <h2
+            id="tldr-heading"
+            className="text-[10px] font-mono uppercase tracking-[0.2em] text-accent mb-4 inline-flex items-center gap-2"
+          >
+            <Zap className="w-3 h-3" />
+            TL;DR · 30-second scan
+          </h2>
+
+          <div className="space-y-4">
+            {/* What it is */}
+            <div className="flex items-start gap-3">
+              <div className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center shrink-0 mt-0.5">
+                <Zap className="w-3.5 h-3.5 text-accent" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[10px] font-mono uppercase tracking-wider text-muted mb-1">
+                  What it is
+                </div>
+                <p className="text-text leading-relaxed">
+                  <strong className="font-bold">{repo.name}</strong>{repo.language ? ` (${repo.language})` : ''} — {repo.description ?? `${repo.full_name} on GitHub.`}
+                </p>
+              </div>
+            </div>
+
+            {/* What it does for you */}
+            {repo.use_this_if && (
+              <div className="flex items-start gap-3">
+                <div className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center shrink-0 mt-0.5">
+                  <Target className="w-3.5 h-3.5 text-accent" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-muted mb-1">
+                    What it does for you
+                  </div>
+                  <p className="text-text leading-relaxed">{repo.use_this_if}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Best for / Categories */}
+            {repo.categories.length > 0 && (
+              <div className="flex items-start gap-3">
+                <div className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center shrink-0 mt-0.5">
+                  <Tag className="w-3.5 h-3.5 text-accent" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-muted mb-1">
+                    Best for
+                  </div>
+                  <p className="text-text leading-relaxed">
+                    {repo.categories.map((c) => c.name).join(' · ')}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Quick stats inline */}
+            <div className="flex items-center gap-4 text-xs text-muted pt-2 border-t border-accent/15">
+              <span className="inline-flex items-center gap-1.5">
+                <Star className="w-3 h-3 text-accent" />
+                <strong className="text-text">{formatStars(repo.stars)}</strong> GitHub stars
+              </span>
+              {repo.license && (
+                <span className="inline-flex items-center gap-1.5">
+                  License: <strong className="text-text">{repo.license}</strong>
+                </span>
+              )}
+              {repo.pushed_at && (
+                <span>Last updated {timeAgo(repo.pushed_at)}</span>
+              )}
+            </div>
+          </div>
+        </section>
+
         {/* Curator take (the differentiator) */}
         {repo.curator_take && (
           <div className="mb-8 p-6 rounded border border-accent/30 bg-accent/5">
-            <div className="text-xs font-mono text-accent mb-2">EDITOR'S TAKE</div>
-            <p className="text-text">{repo.curator_take}</p>
+            <div className="text-xs font-mono text-accent mb-2 inline-flex items-center gap-2">
+              EDITOR'S DEEP TAKE
+            </div>
+            <p className="text-text leading-relaxed">{repo.curator_take}</p>
           </div>
         )}
 
