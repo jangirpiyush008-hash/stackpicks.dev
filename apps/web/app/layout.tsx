@@ -119,6 +119,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <ul className="space-y-1.5">
                     <li><Link href="/preview" className="text-muted hover:text-accent transition">Browse 100+ tools</Link></li>
                     <li><Link href="/blog" className="text-muted hover:text-accent transition">Blog · stack guides</Link></li>
+                    <li><Link href="/alternatives" className="text-muted hover:text-accent transition">SaaS alternatives</Link></li>
                     <li><Link href="/compare" className="text-muted hover:text-accent transition">Open-source comparisons</Link></li>
                     <li><Link href="/build" className="text-muted hover:text-accent transition">Pick a stack</Link></li>
                     <li><Link href="/skills" className="text-muted hover:text-accent transition">By discipline</Link></li>
