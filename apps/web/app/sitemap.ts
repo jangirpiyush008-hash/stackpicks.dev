@@ -25,6 +25,7 @@ const STATIC_PATHS: MetadataRoute.Sitemap = [
   { url: `${SITE.url}/self-hosted`, changeFrequency: 'weekly', priority: 0.9 },
   { url: `${SITE.url}/migrate`, changeFrequency: 'weekly', priority: 0.9 },
   { url: `${SITE.url}/for`, changeFrequency: 'weekly', priority: 0.85 },
+  { url: `${SITE.url}/github`, changeFrequency: 'daily', priority: 0.95 },
   { url: `${SITE.url}/pricing`, changeFrequency: 'monthly', priority: 0.85 },
   { url: `${SITE.url}/about`, changeFrequency: 'monthly', priority: 0.5 },
   { url: `${SITE.url}/contact`, changeFrequency: 'monthly', priority: 0.5 },

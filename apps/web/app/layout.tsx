@@ -121,6 +121,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <li><Link href="/blog" className="text-muted hover:text-accent transition">Blog · stack guides</Link></li>
                     <li><Link href="/alternatives" className="text-muted hover:text-accent transition">SaaS alternatives</Link></li>
                     <li><Link href="/best" className="text-muted hover:text-accent transition">Best-of rankings</Link></li>
+                    <li><Link href="/github" className="text-muted hover:text-accent transition">Best GitHub repos</Link></li>
                     <li><Link href="/awesome" className="text-muted hover:text-accent transition">Awesome lists</Link></li>
                     <li><Link href="/self-hosted" className="text-muted hover:text-accent transition">Self-hosted</Link></li>
                     <li><Link href="/migrate" className="text-muted hover:text-accent transition">Migration guides</Link></li>
