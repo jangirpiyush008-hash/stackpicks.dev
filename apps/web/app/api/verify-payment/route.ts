@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseServer } from '../../../lib/supabase-server';
+import { adminClient } from '@stackpicks/core/db';
 import { verifyPaymentSignature } from '@stackpicks/core/razorpay';
 
 export const runtime = 'nodejs';
@@ -84,13 +85,15 @@ export async function POST(req: NextRequest) {
     console.warn('[verify-payment] could not fetch order details:', err);
   }
 
-  // 4. Insert / update premium subscription. Idempotent on the order id.
-  const { error: subErr } = await supabase
+  // 4. Insert / update premium subscription via SERVICE-ROLE client.
+  //    User-context client is blocked by RLS for INSERTs on this table.
+  const admin = adminClient();
+  const { error: subErr } = await admin
     .from('premium_subscriptions')
     .upsert(
       {
         user_id: user.id,
-        razorpay_subscription_id: razorpay_order_id, // we use order_id since this is one-time, not recurring
+        razorpay_subscription_id: razorpay_order_id, // one-time payment, use order_id as unique key
         razorpay_customer_id: razorpay_payment_id,
         plan_id: 'lifetime',
         status: 'active',
@@ -102,27 +105,37 @@ export async function POST(req: NextRequest) {
     );
 
   if (subErr) {
-    console.error('[verify-payment] subscription insert failed:', subErr);
+    console.error('[verify-payment] subscription insert failed:', {
+      code: subErr.code,
+      message: subErr.message,
+      details: subErr.details,
+      hint: subErr.hint,
+    });
     return NextResponse.json(
-      { ok: false, error: 'db_error', message: 'Payment verified but membership grant failed. Email support with the payment ID.' },
+      {
+        ok: false,
+        error: 'db_error',
+        message: 'Payment verified but membership grant failed. Email support with the payment ID — we will manually grant access.',
+        payment_id: razorpay_payment_id,
+      },
       { status: 500 }
     );
   }
 
-  // 5. If a coupon was applied, record the redemption
+  // 5. If a coupon was applied, record the redemption (also via service role)
   if (coupon_code) {
     try {
-      const { data: coupon } = await supabase
+      const { data: coupon } = await admin
         .from('coupons')
         .select('id, value, kind')
         .ilike('code', coupon_code)
         .maybeSingle();
       if (coupon) {
-        await supabase.from('coupon_redemptions').insert({
+        await admin.from('coupon_redemptions').insert({
           coupon_id: coupon.id,
           user_id: user.id,
           user_email: user.email,
-          original_amount_paise: orderAmount, // close enough — original was pre-discount
+          original_amount_paise: orderAmount,
           discount_amount_paise: 0,
           final_amount_paise: orderAmount,
           razorpay_payment_id,
