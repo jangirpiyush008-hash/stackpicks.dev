@@ -50,6 +50,8 @@ Most "top 10" blog posts are auto-generated SEO spam. This isn't one of those. B
 
 ## 1. shadcn/ui — the new default
 
+![shadcn/ui — copy-paste React components built on Radix + Tailwind](https://opengraph.githubassets.com/1/shadcn-ui/ui)
+
 [shadcn/ui](/repo/shadcn-ui--ui) is technically not a library. It's a CLI tool that copies component code (built on Radix + Tailwind) directly into your project. You own every file. No npm dependency to update.
 
 This sounds like a downside until you live with it. When the maintainer ships a new variant, you decide whether to merge it. When you need to customize the underlying component, you're not fighting an opaque library — you're editing your own code.
@@ -59,6 +61,8 @@ This sounds like a downside until you live with it. When the maintainer ships a 
 **Skip shadcn/ui if:** you want a single \`npm install\` and tons of components like a date picker, drag-and-drop, or rich data grid. shadcn/ui leaves those to you.
 
 ## 2. Mantine — batteries included done right
+
+![Mantine — 100+ React components with hooks, forms, and a theme system](https://opengraph.githubassets.com/1/mantinedev/mantine)
 
 [Mantine](/repo/mantinedev--mantine) is the answer for teams that want to ship fast without writing CSS. 100+ components, 50+ hooks, theme system, forms, notifications, modals, date pickers — everything ships in the box.
 
@@ -91,6 +95,8 @@ The tradeoff: Material Design is opinionated. If you don't want your app to look
 [**Full MUI vs Ant Design comparison →**](/compare/material-ui-vs-ant-design)
 
 ## 5. Radix UI Primitives — bring your own styles
+
+![Radix UI Primitives — unstyled accessible component library](https://opengraph.githubassets.com/1/radix-ui/primitives)
 
 [Radix Primitives](/repo/radix-ui--primitives) is the unstyled component library that shadcn/ui is built on. Maximum accessibility, full keyboard navigation, ARIA-correct out of the box. You add the CSS.
 
@@ -190,6 +196,8 @@ After building production AI agents on all four major frameworks, here's the hon
 
 ## 1. LangChain — the kitchen sink
 
+![LangChain — the dominant LLM framework with broadest ecosystem](https://opengraph.githubassets.com/1/langchain-ai/langchain)
+
 [LangChain](/repo/langchain-ai--langchain) is the OG. 100k+ stars, support for every LLM provider, every vector DB, every chunking strategy. Chains, agents, memory, tools, callbacks — it has everything.
 
 The strength is also the weakness. LangChain's abstractions are deep. You'll spend the first week understanding what a \`Runnable\` is. The TypeScript version (\`langchain-js\`) trails the Python version by 6-12 months.
@@ -202,6 +210,8 @@ The strength is also the weakness. LangChain's abstractions are deep. You'll spe
 
 ## 2. LlamaIndex — RAG done right
 
+![LlamaIndex — RAG-first framework for retrieval-augmented generation](https://opengraph.githubassets.com/1/run-llama/llama_index)
+
 [LlamaIndex](/repo/run-llama--llama_index) is built for one thing: retrieval-augmented generation. Document loaders, chunking, embeddings, query engines — all optimized for "find the right context, then ask the LLM."
 
 If your use case is "answer questions over my docs/PDFs/database," LlamaIndex will get you there in less code than LangChain.
@@ -213,6 +223,8 @@ If your use case is "answer questions over my docs/PDFs/database," LlamaIndex wi
 **Pro tip:** use LlamaIndex *inside* LangChain. They're not mutually exclusive.
 
 ## 3. CrewAI — opinionated multi-agent
+
+![CrewAI — role-based multi-agent orchestration framework](https://opengraph.githubassets.com/1/crewAIInc/crewAI)
 
 [CrewAI](/repo/crewAIInc--crewAI) takes a different philosophy: agents have **roles** (Researcher, Writer, Reviewer) and **goals**. You define the crew, give them tasks, and they collaborate.
 
@@ -254,6 +266,8 @@ Every agent framework needs a vector store. The honest picks:
 See our [vector DB comparisons](/category/vector-databases) for detail.
 
 ## Local LLM serving — Ollama is the answer
+
+![Ollama — run Llama 3, Qwen, DeepSeek locally with one command](https://opengraph.githubassets.com/1/ollama/ollama)
 
 [Ollama](/repo/ollama--ollama) is the easiest way to run Llama, Mistral, Qwen, DeepSeek locally. Whether you're prototyping or shipping a privacy-sensitive product, this is what your AI framework should talk to in development.
 
@@ -308,6 +322,8 @@ This is the exact stack StackPicks itself runs on. We chose every piece by livin
 
 ## 1. Frontend — Next.js 15 + shadcn/ui
 
+![Next.js — the React framework for production with App Router](https://opengraph.githubassets.com/1/vercel/next.js)
+
 [Next.js 15](/repo/vercel--next.js) is the right default in 2026. Server Components reduce client JS by 60-80%. The App Router is finally stable. Vercel and Railway both support it natively.
 
 Build with [**shadcn/ui**](/repo/shadcn-ui--ui) for components. You copy the code into your project — no npm dependency to break in 6 months. Backed by Radix primitives so accessibility is correct out of the box.
@@ -317,6 +333,8 @@ For complete UI library tradeoffs, see [**Best Open-Source UI Libraries 2026**](
 **Animation layer:** [Motion (Framer Motion)](/repo/motiondivision--motion). React-first. Use for page transitions, micro-interactions, scroll reveals.
 
 ## 2. Backend — Supabase
+
+![Supabase — Postgres, Auth, Storage, Edge Functions in one platform](https://opengraph.githubassets.com/1/supabase/supabase)
 
 [Supabase](/repo/supabase--supabase) is the right default in 2026 for solo founders and small teams. You get:
 
@@ -464,6 +482,8 @@ Cursor is a fork of VS Code with deep AI integration. ~$20/month, premium models
 
 ## 2. Aider — the terminal power user's pick
 
+![Aider — AI pair programmer in your terminal, works with any LLM](https://opengraph.githubassets.com/1/Aider-AI/aider)
+
 [Aider](/repo/Aider-AI--aider) is open-source, runs in your terminal, and works with any LLM (Claude, GPT-4, DeepSeek, local Ollama).
 
 **Why I love Aider:**
@@ -482,6 +502,8 @@ Cursor is a fork of VS Code with deep AI integration. ~$20/month, premium models
 **Skip Aider if:** you want inline tab completion or you prefer a visual IDE.
 
 ## 3. Cline — open-source autonomous agent in VS Code
+
+![Cline — open-source autonomous coding agent for VS Code](https://opengraph.githubassets.com/1/cline/cline)
 
 [Cline](/repo/cline--cline) (formerly Claude Dev) runs as a VS Code extension. It's an autonomous coding agent — give it a task, it plans, edits files, runs shell commands, recovers from errors.
 
@@ -609,6 +631,8 @@ Three things changed:
 
 ### Notion → AppFlowy
 
+![AppFlowy — open-source Notion alternative built in Rust + Flutter](https://opengraph.githubassets.com/1/AppFlowy-IO/AppFlowy)
+
 The closest 1:1 Notion clone. Block editor, databases, kanban views, AI features baked in. Built in Rust + Flutter so it's fast on every platform.
 
 **What to do:**
@@ -624,6 +648,8 @@ The closest 1:1 Notion clone. Block editor, databases, kanban views, AI features
 
 ### Slack → Mattermost
 
+![Mattermost — Slack alternative with full history and self-hosting](https://opengraph.githubassets.com/1/mattermost/mattermost)
+
 Slack's free tier limits message history to 90 days. Pay $12.50/user/month for unlimited. Mattermost is unlimited, self-hosted, with all the features (channels, DMs, threads, integrations).
 
 **What to do:**
@@ -637,6 +663,8 @@ Slack's free tier limits message history to 90 days. Pay $12.50/user/month for u
 [Full alternatives guide](/alternatives/slack).
 
 ### Calendly → Cal.com
+
+![Cal.com — open-source Calendly with team scheduling and payments](https://opengraph.githubassets.com/1/calcom/cal.com)
 
 [Cal.com](/repo/cal-com--cal.com) has every Calendly feature plus team scheduling, payments, workflows. Open-source. Self-host or use the cloud free tier.
 
@@ -686,6 +714,8 @@ End-to-end encrypted video calls. No account needed for users (they just need a 
 2. Self-host: \`docker-compose up -d\` with Jitsi Meet's compose
 
 ### Zapier → n8n
+
+![n8n — Zapier alternative with 400+ integrations and code nodes](https://opengraph.githubassets.com/1/n8n-io/n8n)
 
 [n8n](/repo/n8n-io--n8n) is the dominant Zapier killer. 400+ integrations, code nodes, AI nodes, visual workflow editor.
 
@@ -960,6 +990,8 @@ This is the exact stack I'd use, with one-line install commands and the curator 
 ## The exact stack — full picks
 
 ### 1. Frontend framework: Next.js 15
+
+![Next.js 15 — the React framework with App Router and Server Components](https://opengraph.githubassets.com/1/vercel/next.js)
 
 \`\`\`bash
 pnpm create next-app@latest my-mvp --typescript --tailwind --app
