@@ -77,6 +77,56 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <HideOnAdmin>
         <footer className="border-t border-border mt-20">
           <div className="max-w-6xl mx-auto px-4 py-12">
+            {/* SEO link block — internal links from every page → boosts crawl + topical authority */}
+            <div className="mb-10 pb-10 border-b border-border">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-xs">
+                <div>
+                  <div className="font-mono uppercase tracking-wider text-text/80 mb-3">Popular categories</div>
+                  <ul className="space-y-1.5">
+                    <li><Link href="/category/ui-components" className="text-muted hover:text-accent transition">UI components</Link></li>
+                    <li><Link href="/category/animation" className="text-muted hover:text-accent transition">Animation libraries</Link></li>
+                    <li><Link href="/category/ai-tooling" className="text-muted hover:text-accent transition">AI tooling</Link></li>
+                    <li><Link href="/category/authentication" className="text-muted hover:text-accent transition">Authentication</Link></li>
+                    <li><Link href="/category/forms" className="text-muted hover:text-accent transition">Forms + validation</Link></li>
+                    <li><Link href="/category/state-management" className="text-muted hover:text-accent transition">State management</Link></li>
+                  </ul>
+                </div>
+                <div>
+                  <div className="font-mono uppercase tracking-wider text-text/80 mb-3">Stack bundles</div>
+                  <ul className="space-y-1.5">
+                    <li><Link href="/build/ship-a-saas" className="text-muted hover:text-accent transition">Ship a SaaS</Link></li>
+                    <li><Link href="/build/ai-agent" className="text-muted hover:text-accent transition">AI agent stack</Link></li>
+                    <li><Link href="/build/mobile-app" className="text-muted hover:text-accent transition">Mobile app stack</Link></li>
+                    <li><Link href="/build/web-scraper" className="text-muted hover:text-accent transition">Web scraper</Link></li>
+                    <li><Link href="/build/chrome-extension" className="text-muted hover:text-accent transition">Chrome extension</Link></li>
+                    <li><Link href="/build/e-commerce" className="text-muted hover:text-accent transition">E-commerce</Link></li>
+                  </ul>
+                </div>
+                <div>
+                  <div className="font-mono uppercase tracking-wider text-text/80 mb-3">Skill tracks</div>
+                  <ul className="space-y-1.5">
+                    <li><Link href="/skills/ai-ml" className="text-muted hover:text-accent transition">AI / ML toolkit</Link></li>
+                    <li><Link href="/skills/marketing" className="text-muted hover:text-accent transition">Marketing OSS</Link></li>
+                    <li><Link href="/skills/data-analytics" className="text-muted hover:text-accent transition">Data + analytics</Link></li>
+                    <li><Link href="/skills/devops-infra" className="text-muted hover:text-accent transition">DevOps + infra</Link></li>
+                    <li><Link href="/skills/automation" className="text-muted hover:text-accent transition">Automation</Link></li>
+                    <li><Link href="/skills/founder-os" className="text-muted hover:text-accent transition">Founder OS</Link></li>
+                  </ul>
+                </div>
+                <div>
+                  <div className="font-mono uppercase tracking-wider text-text/80 mb-3">Get started</div>
+                  <ul className="space-y-1.5">
+                    <li><Link href="/preview" className="text-muted hover:text-accent transition">Browse 100+ tools</Link></li>
+                    <li><Link href="/build" className="text-muted hover:text-accent transition">Pick a stack</Link></li>
+                    <li><Link href="/skills" className="text-muted hover:text-accent transition">By discipline</Link></li>
+                    <li><Link href="/how-to-use" className="text-muted hover:text-accent transition">AI agent setup</Link></li>
+                    <li><Link href="/pricing" className="text-muted hover:text-accent transition">Pricing</Link></li>
+                    <li><Link href="/submit-repo" className="text-muted hover:text-accent transition">Submit a repo</Link></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
             <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-10">
               <div className="col-span-2 md:col-span-2">
                 <div className="font-mono font-bold tracking-tight text-lg mb-2">

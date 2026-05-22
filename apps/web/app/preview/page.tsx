@@ -14,6 +14,7 @@ import { VisualPreviews } from '../../components/VisualPreviews';
 import { HeroSearchBar } from '../../components/HeroSearchBar';
 import { DidYouMean } from '../../components/DidYouMean';
 import { getIsMember } from '../../lib/membership';
+import { faqJsonLd, breadcrumbJsonLd } from '@stackpicks/core/seo';
 
 // Free tier: how many repos render before the paywall.
 // - Unfiltered gallery: 6 sample repos (gives a feel for the curation)
@@ -70,6 +71,27 @@ export default async function PreviewPage({
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: 'Home', path: '/' },
+            { name: 'Browse', path: '/preview' },
+          ])),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqJsonLd([
+            { question: 'What is StackPicks?', answer: 'StackPicks is a curated directory of 100+ open-source developer tools across 22 categories, hand-picked with build-or-skip analyst takes — not raw GitHub star rankings.' },
+            { question: 'Are all the tools really open-source?', answer: 'Yes — every tool listed is open-source on GitHub with a permissive license (MIT, Apache 2, BSD, AGPL where noted). Check each repo page for its specific license.' },
+            { question: 'How do you choose which tools to feature?', answer: 'We evaluate maintenance velocity, community size, real-world usage at production teams, license safety, and whether the tool solves a problem better than commercial alternatives. Every listing has a curator take explaining why it earned its spot.' },
+            { question: 'How often is the directory updated?', answer: 'Star counts and metadata refresh daily via the GitHub API. New tools are added weekly based on community submissions and editorial review.' },
+            { question: 'Can I submit a tool to be featured?', answer: 'Yes — lifetime members can submit repos via /submit-repo. The editorial team reviews each submission within 7 days. Best picks get featured on the homepage with a curator take.' },
+          ])),
+        }}
+      />
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border">
         <div className="absolute inset-0 -z-10 opacity-40">

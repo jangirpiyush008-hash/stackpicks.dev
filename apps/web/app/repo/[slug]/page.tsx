@@ -1,5 +1,5 @@
 import { adminClient, getRepoBySlug } from '@stackpicks/core/db';
-import { buildMeta, softwareJsonLd } from '@stackpicks/core/seo';
+import { buildMeta, softwareJsonLd, breadcrumbJsonLd } from '@stackpicks/core/seo';
 import { formatStars, timeAgo, formatIST } from '@stackpicks/core/utils';
 import { Star, GitFork, Eye, AlertCircle, ExternalLink, Check, X } from 'lucide-react';
 import { notFound } from 'next/navigation';
@@ -16,9 +16,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const supabase = adminClient();
   const repo = await getRepoBySlug(supabase, slug);
   if (!repo) return {};
+  const lang = repo.language ? ` (${repo.language})` : '';
+  const take = (repo.curator_take ?? repo.description ?? '').slice(0, 140).trim();
   return buildMeta({
-    title: `${repo.full_name}`,
-    description: repo.curator_take ?? repo.description ?? `${repo.full_name} on GitHub`,
+    title: `${repo.name}${lang} — review, pros, cons & alternatives`,
+    description: take || `${repo.full_name}: curator take, install guide, and open-source alternatives. ${formatStars(repo.stars)} stars on GitHub.`,
     path: `/repo/${slug}`,
   });
 }
@@ -34,6 +36,16 @@ export default async function RepoPage({ params }: PageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareJsonLd(repo)) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: 'Home', path: '/' },
+            { name: 'Browse', path: '/preview' },
+            { name: repo.name, path: `/repo/${slug}` },
+          ])),
+        }}
       />
       <div className="max-w-4xl mx-auto px-4 py-10">
         {/* Header */}

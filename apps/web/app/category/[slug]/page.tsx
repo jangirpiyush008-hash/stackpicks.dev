@@ -1,5 +1,5 @@
 import { adminClient, listRepos, getCategoryBySlug, getActiveSponsoredSlots } from '@stackpicks/core/db';
-import { buildMeta, categoryJsonLd } from '@stackpicks/core/seo';
+import { buildMeta, categoryJsonLd, breadcrumbJsonLd, itemListJsonLd } from '@stackpicks/core/seo';
 import { formatStars, timeAgo } from '@stackpicks/core/utils';
 import { Star, GitFork, Sparkles } from 'lucide-react';
 import { notFound } from 'next/navigation';
@@ -22,10 +22,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const category = await getCategoryBySlug(supabase, slug);
   if (!category) return {};
   return buildMeta({
-    title: `Best ${category.name} — Open Source`,
+    title: `Best ${category.name} open-source tools — curated with build-or-skip takes`,
     description:
       category.description ??
-      `Top open-source ${category.name.toLowerCase()} libraries, curated with build-or-skip takes.`,
+      `The top open-source ${category.name.toLowerCase()} tools, ranked by builders for builders. Curator takes, install guides, and honest pros & cons.`,
     path: `/category/${slug}`,
   });
 }
@@ -55,6 +55,25 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(categoryJsonLd(category)) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: 'Home', path: '/' },
+            { name: 'Browse', path: '/preview' },
+            { name: category.name, path: `/category/${slug}` },
+          ])),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(itemListJsonLd(
+            visibleRepos.map((r) => ({ name: r.full_name, path: `/repo/${r.slug}` })),
+            `Best ${category.name} open-source tools`
+          )),
+        }}
       />
       <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="mb-8">
