@@ -8,6 +8,7 @@ import { HeaderNav } from '../components/HeaderNav';
 import { HideOnAdmin } from '../components/HideOnAdmin';
 import { NewsletterPopup } from '../components/NewsletterPopup';
 import { FooterNewsletter } from '../components/FooterNewsletter';
+import { Analytics } from '../components/Analytics';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -220,6 +221,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {/* Newsletter signup — 30s delay + exit-intent triggered; hides on admin/auth */}
         <NewsletterPopup />
+
+        {/* Analytics — env-driven; supports Plausible, PostHog, GA4, Umami in parallel */}
+        <Analytics />
       </body>
     </html>
   );
