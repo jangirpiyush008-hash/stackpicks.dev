@@ -5,7 +5,8 @@ import { AdminUserRow } from '../../components/AdminUserRow';
 import { AdminLoginForm } from '../../components/AdminLoginForm';
 import { AdminCoupons } from '../../components/AdminCoupons';
 import { LogoutButton } from '../../components/LogoutButton';
-import { Shield, Users, Sparkles, IndianRupee, LogOut, Tag } from 'lucide-react';
+import { AdminLaunchPanel } from '../../components/AdminLaunchPanel';
+import { Shield, Users, Sparkles, IndianRupee, LogOut, Tag, Rocket } from 'lucide-react';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -85,10 +86,66 @@ export default async function AdminPage({
   const totalUsers = allUsers.length;
   const paidUsers = rows.filter((r) => r.is_member).length;
   const freeUsers = totalUsers - paidUsers;
-  const totalRevenuePaise = (subsRes.data ?? [])
-    .filter((s) => s.status === 'active')
-    .reduce((sum, s) => sum + ((s.amount_inr as number) || 0), 0);
+  const activeSubs = (subsRes.data ?? []).filter((s) => s.status === 'active');
+  const totalRevenuePaise = activeSubs.reduce((sum, s) => sum + ((s.amount_inr as number) || 0), 0);
   const totalRevenueINR = Math.round(totalRevenuePaise / 100);
+
+  // ─── Launch metrics: time-bucketed counts ───────────────────────────
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+  const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+  const last7d = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const last1h = new Date(now.getTime() - 60 * 60 * 1000).toISOString();
+
+  const signups24h = allUsers.filter((u) => u.created_at >= last24h).length;
+  const signups1h = allUsers.filter((u) => u.created_at >= last1h).length;
+  const signupsToday = allUsers.filter((u) => u.created_at >= startOfToday).length;
+  const signups7d = allUsers.filter((u) => u.created_at >= last7d).length;
+
+  const paidToday = activeSubs.filter((s) => (s.current_period_start as string) >= startOfToday).length;
+  const paid24h = activeSubs.filter((s) => (s.current_period_start as string) >= last24h).length;
+  const paid7d = activeSubs.filter((s) => (s.current_period_start as string) >= last7d).length;
+
+  const revenue24hPaise = activeSubs
+    .filter((s) => (s.current_period_start as string) >= last24h)
+    .reduce((sum, s) => sum + ((s.amount_inr as number) || 0), 0);
+  const revenueTodayPaise = activeSubs
+    .filter((s) => (s.current_period_start as string) >= startOfToday)
+    .reduce((sum, s) => sum + ((s.amount_inr as number) || 0), 0);
+  const revenue7dPaise = activeSubs
+    .filter((s) => (s.current_period_start as string) >= last7d)
+    .reduce((sum, s) => sum + ((s.amount_inr as number) || 0), 0);
+
+  const recentSignups = allUsers
+    .slice()
+    .sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
+    .slice(0, 10)
+    .map((u) => ({ email: u.email ?? '(no email)', created_at: u.created_at }));
+
+  const recentPayments = activeSubs
+    .slice()
+    .sort((a, b) => ((a.current_period_start as string) < (b.current_period_start as string) ? 1 : -1))
+    .slice(0, 10)
+    .map((s) => ({
+      user_id: s.user_id as string,
+      amount: (s.amount_inr as number) || 0,
+      at: s.current_period_start as string,
+      plan: s.plan_id as string,
+    }));
+
+  const launchMetrics = {
+    signups: { hour: signups1h, today: signupsToday, last24h: signups24h, last7d: signups7d, total: totalUsers },
+    paid: { today: paidToday, last24h: paid24h, last7d: paid7d, total: paidUsers },
+    revenue: {
+      today: Math.round(revenueTodayPaise / 100),
+      last24h: Math.round(revenue24hPaise / 100),
+      last7d: Math.round(revenue7dPaise / 100),
+      total: totalRevenueINR,
+    },
+    recentSignups,
+    recentPayments,
+    conversionRate: totalUsers > 0 ? Math.round((paidUsers / totalUsers) * 1000) / 10 : 0,
+  };
 
   return (
     <div className="min-h-screen bg-bg">
@@ -127,6 +184,16 @@ export default async function AdminPage({
             value={`₹${totalRevenueINR.toLocaleString('en-IN')}`}
           />
         </div>
+
+        {/* LAUNCH METRICS — real-time pulse for launch day */}
+        <section className="mb-12">
+          <div className="flex items-baseline gap-3 mb-4">
+            <Rocket className="w-4 h-4 text-muted" />
+            <h2 className="text-lg font-bold">Launch metrics</h2>
+            <span className="text-xs text-muted">live · refresh page to update</span>
+          </div>
+          <AdminLaunchPanel data={launchMetrics} />
+        </section>
 
         {/* USERS */}
         <section className="mb-12">
