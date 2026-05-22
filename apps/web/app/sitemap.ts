@@ -4,6 +4,7 @@ import { BLOG_POSTS } from '../lib/blog';
 import { ALTERNATIVES } from '../lib/saas-alternatives';
 import { BEST_OF } from '../lib/best-of';
 import { AWESOME } from '../lib/awesome';
+import { SELF_HOSTED, MIGRATIONS, FOR_AUDIENCE } from '../lib/keyword-pages';
 import type { MetadataRoute } from 'next';
 
 // Generate at request time, not build time — avoids needing DB env at build.
@@ -21,6 +22,9 @@ const STATIC_PATHS: MetadataRoute.Sitemap = [
   { url: `${SITE.url}/alternatives`, changeFrequency: 'weekly', priority: 0.95 },
   { url: `${SITE.url}/best`, changeFrequency: 'weekly', priority: 0.9 },
   { url: `${SITE.url}/awesome`, changeFrequency: 'weekly', priority: 0.9 },
+  { url: `${SITE.url}/self-hosted`, changeFrequency: 'weekly', priority: 0.9 },
+  { url: `${SITE.url}/migrate`, changeFrequency: 'weekly', priority: 0.9 },
+  { url: `${SITE.url}/for`, changeFrequency: 'weekly', priority: 0.85 },
   { url: `${SITE.url}/pricing`, changeFrequency: 'monthly', priority: 0.85 },
   { url: `${SITE.url}/about`, changeFrequency: 'monthly', priority: 0.5 },
   { url: `${SITE.url}/contact`, changeFrequency: 'monthly', priority: 0.5 },
@@ -89,10 +93,28 @@ const AWESOME_PATHS: MetadataRoute.Sitemap = AWESOME.map((a) => ({
   priority: 0.9,
 }));
 
+const SELF_HOSTED_PATHS: MetadataRoute.Sitemap = SELF_HOSTED.map((s) => ({
+  url: `${SITE.url}/self-hosted/${s.slug}`,
+  changeFrequency: 'monthly',
+  priority: 0.85,
+}));
+
+const MIGRATE_PATHS: MetadataRoute.Sitemap = MIGRATIONS.map((m) => ({
+  url: `${SITE.url}/migrate/${m.slug}`,
+  changeFrequency: 'monthly',
+  priority: 0.85,
+}));
+
+const FOR_PATHS: MetadataRoute.Sitemap = FOR_AUDIENCE.map((a) => ({
+  url: `${SITE.url}/for/${a.slug}`,
+  changeFrequency: 'monthly',
+  priority: 0.8,
+}));
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // If Supabase env isn't set, return static paths only so the build still succeeds.
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    return [...STATIC_PATHS, ...BUNDLE_PATHS, ...SKILL_PATHS, ...COMPARE_PATHS, ...BLOG_PATHS, ...ALT_PATHS, ...BEST_PATHS, ...AWESOME_PATHS];
+    return [...STATIC_PATHS, ...BUNDLE_PATHS, ...SKILL_PATHS, ...COMPARE_PATHS, ...BLOG_PATHS, ...ALT_PATHS, ...BEST_PATHS, ...AWESOME_PATHS, ...SELF_HOSTED_PATHS, ...MIGRATE_PATHS, ...FOR_PATHS];
   }
 
   try {
@@ -146,12 +168,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...ALT_PATHS,
       ...BEST_PATHS,
       ...AWESOME_PATHS,
+      ...SELF_HOSTED_PATHS,
+      ...MIGRATE_PATHS,
+      ...FOR_PATHS,
       ...categoryPaths,
       ...collectionPaths,
       ...repoPaths,
     ];
   } catch (err) {
     console.error('Sitemap generation failed, falling back to static paths:', err);
-    return [...STATIC_PATHS, ...BUNDLE_PATHS, ...SKILL_PATHS, ...COMPARE_PATHS, ...BLOG_PATHS, ...ALT_PATHS, ...BEST_PATHS, ...AWESOME_PATHS];
+    return [...STATIC_PATHS, ...BUNDLE_PATHS, ...SKILL_PATHS, ...COMPARE_PATHS, ...BLOG_PATHS, ...ALT_PATHS, ...BEST_PATHS, ...AWESOME_PATHS, ...SELF_HOSTED_PATHS, ...MIGRATE_PATHS, ...FOR_PATHS];
   }
 }
