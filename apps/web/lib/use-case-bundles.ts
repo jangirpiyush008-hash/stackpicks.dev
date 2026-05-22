@@ -101,7 +101,15 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
       {
         title: 'Animation + polish',
         repos: [
-          { full_name: 'framer/motion', reason: 'Production motion library. Required for landing pages that need to feel premium.' },
+          { full_name: 'motiondivision/motion', reason: 'Production motion library (formerly Framer Motion). Required for landing pages that need to feel premium.' },
+          { full_name: 'darkroomengineering/lenis', reason: 'Smooth scroll — used by every Awwwards-winning site in 2026.' },
+        ],
+      },
+      {
+        title: 'Scheduling + workflows',
+        repos: [
+          { full_name: 'calcom/cal.com', reason: 'Open-source Calendly. Embed booking in your app or use cloud free tier.' },
+          { full_name: 'inngest/inngest', reason: 'Durable functions for background jobs, webhooks, scheduled tasks. The 2026 TS queue.' },
         ],
       },
       {
@@ -194,6 +202,20 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
         repos: [
           { full_name: 'software-mansion/react-native-reanimated', reason: 'Animations that run on the UI thread. Mandatory for production-feel apps.' },
           { full_name: 'software-mansion/react-native-gesture-handler', reason: 'Native gesture system. Pair with Reanimated for swipeable lists.' },
+          { full_name: 'gorhom/react-native-bottom-sheet', reason: 'The bottom sheet every RN app uses. Gesture-perfect, smooth on iOS + Android.' },
+          { full_name: 'Shopify/react-native-skia', reason: 'High-perf 2D graphics — needed for custom drawings, animated charts, complex transitions.' },
+        ],
+      },
+      {
+        title: 'UI components (modern)',
+        repos: [
+          { full_name: 'gluestack-ui/gluestack-ui', reason: 'The new RN+web universal UI library. Replaces NativeBase, simpler than Tamagui.' },
+        ],
+      },
+      {
+        title: 'Cross-platform desktop (bonus)',
+        repos: [
+          { full_name: 'tauri-apps/tauri', reason: 'Tauri 2 ships desktop + iOS + Android from a single Rust+JS codebase. The 2026 dark horse for cross-platform.' },
         ],
       },
       {
@@ -243,6 +265,22 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
         title: 'Local LLM',
         repos: [
           { full_name: 'ollama/ollama', reason: 'Run Llama 3, Qwen, Mistral on your machine. One curl install, full local privacy.' },
+          { full_name: 'vllm-project/vllm', reason: 'Production LLM serving — 10-24× faster than HF Transformers for batched inference. Used at scale by Mistral, Together AI.' },
+          { full_name: 'open-webui/open-webui', reason: 'ChatGPT-clone UI for your Ollama. Multi-user, RAG, plugins. The default frontend for local LLMs.' },
+        ],
+      },
+      {
+        title: 'Voice AI (optional)',
+        repos: [
+          { full_name: 'pipecat-ai/pipecat', reason: 'Open-source voice AI pipelines. Build phone agents that call APIs + speak responses.' },
+          { full_name: 'livekit/livekit', reason: 'WebRTC infrastructure for real-time voice/video. Powers OpenAI Realtime API.' },
+        ],
+      },
+      {
+        title: 'AI coding agents (developer use)',
+        repos: [
+          { full_name: 'Aider-AI/aider', reason: 'Terminal AI pair programmer. Bring your own LLM. Git-native — every edit becomes a commit.' },
+          { full_name: 'cline/cline', reason: 'Autonomous VS Code agent. Free, open-source, brings your own API key. The OSS Cursor alternative.' },
         ],
       },
       {
@@ -266,6 +304,10 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
           { full_name: 'run-llama/llama_index', reason: 'Better than Langchain for pure RAG — indexing, query engines, and retrievers are first-class.' },
           { full_name: 'microsoft/autogen', reason: 'Multi-agent orchestration. Use when one LLM call is not enough.' },
           { full_name: 'pydantic/pydantic-ai', reason: 'Type-safe agent framework if you\'re Python-native. Smaller surface area than Langchain.' },
+          { full_name: 'crewAIInc/crewAI', reason: 'Role-based multi-agent crews. Ships fast — the easiest framework for production agent teams.' },
+          { full_name: 'mastra-ai/mastra', reason: 'TS-native AI framework. The LangChain alternative if you\'re Node/TypeScript-first.' },
+          { full_name: 'stanfordnlp/dspy', reason: 'Program LLMs instead of prompting. Optimises prompts automatically — Stanford research-grade.' },
+          { full_name: 'BerriAI/litellm', reason: 'Universal proxy for 100+ LLM providers. Switch from OpenAI to Claude with one line.' },
         ],
       },
       {
@@ -329,6 +371,16 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
         title: 'UI + Animation',
         repos: [
           { full_name: 'shadcn-ui/ui', reason: 'Hero, pricing, FAQ, navbar — copy in, customize, ship.' },
+          { full_name: 'origin-space/origin-ui', reason: 'shadcn-style components with 300+ pieces. Best for marketing site sections.' },
+          { full_name: 'DavidHDev/react-bits', reason: 'Animated React components — Instagram-worthy hero sections.' },
+          { full_name: 'saadeghi/daisyui', reason: 'Pure Tailwind components — no JS required.' },
+          { full_name: 'markmead/hyperui', reason: 'Free Tailwind UI blocks — drop-in marketing sections.' },
+        ],
+      },
+      {
+        title: 'Server-rendered (alternative to React)',
+        repos: [
+          { full_name: 'bigskysoftware/htmx', reason: 'HTML over the wire. No JS bundle, no build step. The anti-SPA movement\'s flagship.' },
         ],
       },
       {
@@ -356,7 +408,18 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
       {
         title: 'Animation + motion',
         repos: [
-          { full_name: 'framer/motion', reason: 'Required for landing pages that need to feel premium.' },
+          { full_name: 'motiondivision/motion', reason: 'Production motion (formerly Framer Motion). Required for landing pages that feel premium.' },
+          { full_name: 'darkroomengineering/lenis', reason: 'The smooth-scroll library every Awwwards-winning site uses in 2026.' },
+          { full_name: 'theatre-js/theatre', reason: 'Keyframe + scrub animation editor — for cinematic scroll-tied web experiences.' },
+          { full_name: 'rive-app/rive-runtime', reason: 'Interactive animations exported from Rive Editor. After Effects killer.' },
+          { full_name: 'formkit/auto-animate', reason: 'One-line magic — add `data-auto-animate` to any list, get smooth animations.' },
+        ],
+      },
+      {
+        title: '3D / WebGL (for hero impact)',
+        repos: [
+          { full_name: 'mrdoob/three.js', reason: '105k stars. The 3D library powering every "wow factor" landing page.' },
+          { full_name: 'pmndrs/react-three-fiber', reason: 'Declarative React renderer for Three.js. The way React devs do 3D.' },
         ],
       },
       {
