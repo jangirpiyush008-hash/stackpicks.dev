@@ -4,6 +4,7 @@ import { SITE, CONTACT, ENTITY } from '@stackpicks/core/constants';
 import { Mail, Phone } from 'lucide-react';
 import { HeaderSearchSlot } from '../components/HeaderSearchSlot';
 import { HeaderNav } from '../components/HeaderNav';
+import { HideOnAdmin } from '../components/HideOnAdmin';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="font-sans antialiased min-h-screen flex flex-col">
+        <HideOnAdmin>
         <header className="border-b border-border sticky top-0 z-40 bg-bg/80 backdrop-blur">
           <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-2 md:gap-4">
             <Link href="/preview" className="font-mono font-bold tracking-tight text-base md:text-lg shrink-0">
@@ -34,9 +36,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <HeaderNav />
           </div>
         </header>
+        </HideOnAdmin>
 
         <main className="flex-1">{children}</main>
 
+        <HideOnAdmin>
         <footer className="border-t border-border mt-20">
           <div className="max-w-6xl mx-auto px-4 py-12">
             <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-10">
@@ -98,6 +102,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </div>
         </footer>
+        </HideOnAdmin>
       </body>
     </html>
   );

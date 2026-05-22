@@ -2,7 +2,8 @@ import { notFound, redirect } from 'next/navigation';
 import { adminClient } from '@stackpicks/core/db';
 import { isAdmin } from '../../lib/admin';
 import { AdminUserRow } from '../../components/AdminUserRow';
-import { Shield, Users, Sparkles, IndianRupee } from 'lucide-react';
+import { LogoutButton } from '../../components/LogoutButton';
+import { Shield, Users, Sparkles, IndianRupee, LogOut } from 'lucide-react';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -31,9 +32,9 @@ export default async function AdminPage({
   // 1) Gate: must be signed in AND email must be in ADMIN_EMAIL allowlist
   const gate = await isAdmin();
   if (!gate.ok) {
-    // If signed in but not admin -> 404 (hide the page exists).
-    // If not signed in -> bounce to login.
-    if (!gate.email) redirect('/login?next=/admin');
+    // Not signed in -> route to the dedicated admin login console.
+    // Signed in but not authorized -> 404 (hide the page exists).
+    if (!gate.email) redirect('/admin/login');
     notFound();
   }
 
@@ -93,12 +94,18 @@ export default async function AdminPage({
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-2">
+      <div className="flex items-center gap-3 mb-2 flex-wrap">
         <Shield className="w-5 h-5 text-accent" />
         <h1 className="text-2xl md:text-3xl font-bold">Admin</h1>
         <span className="text-[10px] font-mono uppercase tracking-wider text-muted bg-surface border border-border px-2 py-0.5 rounded-full">
-          Signed in as {gate.email}
+          {gate.email}
         </span>
+        <div className="ml-auto">
+          <LogoutButton>
+            <LogOut className="w-3.5 h-3.5" />
+            Sign out
+          </LogoutButton>
+        </div>
       </div>
       <p className="text-sm text-muted mb-8">
         Internal. Not indexed. Audit-trail prints to server logs on every grant/revoke.
