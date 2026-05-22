@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { Sparkles, Github, LayoutDashboard, User } from 'lucide-react';
 import { getSupabaseServer } from '../../lib/supabase-server';
 import { deriveDisplayUser } from '../../lib/auth-user';
+import { getIsMember } from '../../lib/membership';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,16 +18,7 @@ export default async function DashboardPage() {
   if (!user) redirect('/login?next=/dashboard');
 
   const display = deriveDisplayUser(user);
-
-  // Check active lifetime membership (RLS allows user to read own subscription)
-  const { data: sub } = await supabase
-    .from('premium_subscriptions')
-    .select('id')
-    .eq('user_id', user.id)
-    .eq('status', 'active')
-    .limit(1)
-    .maybeSingle();
-  const isMember = !!sub;
+  const isMember = await getIsMember();
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">

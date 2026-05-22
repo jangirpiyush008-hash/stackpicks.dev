@@ -5,6 +5,7 @@ import { getSupabaseServer } from '../../lib/supabase-server';
 import { deriveDisplayUser } from '../../lib/auth-user';
 import { LogoutButton } from '../../components/LogoutButton';
 import { formatIST } from '@stackpicks/core/utils';
+import { getIsMember } from '../../lib/membership';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,17 +20,7 @@ export default async function ProfilePage() {
   if (!user) redirect('/login?next=/profile');
 
   const display = deriveDisplayUser(user);
-
-  // Active lifetime membership? RLS allows user to read own subscription row.
-  const { data: sub } = await supabase
-    .from('premium_subscriptions')
-    .select('id')
-    .eq('user_id', user.id)
-    .eq('status', 'active')
-    .limit(1)
-    .maybeSingle();
-  const isMember = !!sub;
-
+  const isMember = await getIsMember();
   const memberSince = user.created_at ? formatIST(user.created_at) : '—';
 
   // Load this user's repo submissions (count + recent)
