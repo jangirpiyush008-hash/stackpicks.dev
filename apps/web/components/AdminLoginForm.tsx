@@ -48,7 +48,10 @@ export function AdminLoginForm() {
       }
 
       setStep('granted');
-      setTimeout(() => router.push('/admin'), 800);
+      setTimeout(() => {
+        router.push('/admin');
+        router.refresh();
+      }, 600);
     } catch (e2) {
       setErr(e2 instanceof Error ? `SYSTEM_ERR: ${e2.message}` : 'SYSTEM_ERR: unknown');
       setStep('idle');
