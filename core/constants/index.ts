@@ -57,7 +57,7 @@ export const SITE = {
 } as const;
 
 export const CONTACT = {
-  email: 'nuvexalearning@gmail.com',
+  email: 'stackpicks.dev@gmail.com',
   phone: '+91 9667879848',
   phoneE164: '+919667879848',
   hours: 'Monday – Friday, 10:00 – 18:00 IST',

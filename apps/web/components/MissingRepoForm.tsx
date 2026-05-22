@@ -112,7 +112,7 @@ export function MissingRepoForm({ query, subtle = false }: { query: string; subt
           </div>
           {state === 'error' && (
             <p className="md:col-span-2 text-xs text-red-400">
-              Could not submit: {errorMsg}. Email <span className="font-mono">nuvexalearning@gmail.com</span> instead.
+              Could not submit: {errorMsg}. Email <span className="font-mono">stackpicks.dev@gmail.com</span> instead.
             </p>
           )}
         </form>
