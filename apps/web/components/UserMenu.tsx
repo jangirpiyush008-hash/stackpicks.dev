@@ -61,15 +61,18 @@ export function UserMenu() {
         setUser(base);
         return;
       }
-      // RLS allows the signed-in user to read their own subscription row.
-      const { data: sub } = await supabase
-        .from('premium_subscriptions')
-        .select('id')
-        .eq('user_id', (authUser as { id: string }).id)
-        .eq('status', 'active')
-        .limit(1)
-        .maybeSingle();
-      setUser({ ...base, isMember: !!sub });
+      // Set base immediately so name/email shows even if the membership
+      // lookup is slow or fails. Then upgrade with is_member.
+      setUser(base);
+      try {
+        const res = await fetch('/api/me/membership', { cache: 'no-store' });
+        const body = await res.json();
+        if (body?.is_member) {
+          setUser({ ...base, isMember: true });
+        }
+      } catch {
+        /* leave isMember=false on error */
+      }
     };
 
     supabase.auth.getUser().then(async ({ data }) => {

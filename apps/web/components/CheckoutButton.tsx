@@ -60,15 +60,14 @@ export function CheckoutButton({ currency, couponCode }: Props) {
         setIsMember(false);
         return;
       }
-      // RLS allows the signed-in user to read their own subscription row.
-      const { data: sub } = await supabase
-        .from('premium_subscriptions')
-        .select('id')
-        .eq('user_id', authed.id)
-        .eq('status', 'active')
-        .limit(1)
-        .maybeSingle();
-      setIsMember(!!sub);
+      // Use the server endpoint — service-role read, no RLS surprises.
+      try {
+        const res = await fetch('/api/me/membership', { cache: 'no-store' });
+        const body = await res.json();
+        setIsMember(!!body?.is_member);
+      } catch {
+        setIsMember(false);
+      }
     };
 
     supabase.auth.getUser().then(({ data }) => sync(data.user as { id: string } | null));
