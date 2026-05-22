@@ -68,6 +68,88 @@ If you have 60 seconds — would love your honest reaction in the comments on my
 Thanks!`,
 };
 
+// Long-form posts pre-built for one-click compose
+const LINKEDIN_POST = `8 months ago I realized something embarrassing.
+
+I'd spent 4 hours picking a UI library for a side project. Not coding. Just choosing.
+
+shadcn? Aceternity? Mantine? Radix? Headless UI?
+
+Every blog post said "top 10 React libraries you must use in 2026."
+Every star count looked impressive. Every AI agent recommended the same overhyped repo.
+
+None of it told me what I actually needed:
+- Which library plays nice with my existing Tailwind setup?
+- Which one is still being maintained in 6 months?
+- What's the actual tradeoff if I pick this one?
+
+So I built StackPicks.
+
+100+ open-source dev tools.
+22 categories.
+13 ready-to-ship stack bundles.
+12 skill tracks (AI/ML, marketing, data, DevOps, founder OS).
+
+Every tool has a 100-word analyst take in plain English — "use this if you're already on Next.js + Tailwind, skip if you've already migrated to shadcn, the cost isn't worth it."
+
+No hedging. No buzzwords. No emojis in the curator takes.
+
+The pricing: ₹99 INR (or $2.99 USD outside India). Lifetime access. One payment, no renewals, ever.
+
+It's live at stackpicks.dev
+
+I'd rather have 1,000 builders shipping than 50 reluctant subscribers. The price is low on purpose.
+
+What I'd love your help with:
+• If you build software → try it. Tell me which takes are wrong.
+• If you know an OSS maintainer → I want their honest input.
+• If you find it useful → share it with one other dev.
+
+The curated takes are the moat. Anyone can scrape GitHub. Nobody can clone an honest opinion.
+
+Link: stackpicks.dev
+
+#OpenSource #DeveloperTools #BuildInPublic #IndianStartup`;
+
+const TWITTER_THREAD = [
+  `Spent 4 hours picking a UI library last week.
+Not coding. Picking.
+
+Built StackPicks to fix it →
+
+100+ open-source dev tools.
+Every one has a "use this if / skip if" take written by a human.
+22 categories, 13 stack bundles, 12 skill tracks.
+
+₹99 lifetime. stackpicks.dev`,
+
+  `The 13 stacks:
+→ Ship a SaaS
+→ Mobile app
+→ AI agent
+→ Web scraper
+→ Chrome extension
+→ E-commerce
+→ Marketing site
+→ Internal dashboard
+→ Automation workflow
+→ Sales/CRM stack
+→ Marketing stack
+→ Developer tools
+→ Content platform
+
+Pick one, get the whole stack curated.`,
+
+  `What's the moat?
+
+Anyone can scrape GitHub for star counts.
+Nobody can clone an honest curator take.
+
+"Use this if you're on Next.js 15. Skip if you've already migrated to React 19 RSC — the cost isn't worth it."
+
+That's the actual product. Try /preview to see them all.`,
+];
+
 export function AdminLaunchPanel({ data }: { data: LaunchData }) {
   const router = useRouter();
   const [phSlug, setPhSlug] = useState('');
@@ -550,6 +632,114 @@ export function AdminLaunchPanel({ data }: { data: LaunchData }) {
         <p className="text-[10px] text-muted/60 mt-3">
           For the full launch post library (ProductHunt maker comment, HN Show HN body, full LinkedIn post, etc.) see <span className="font-mono text-accent/70">launch/LAUNCH-POSTS.md</span> in the repo.
         </p>
+      </div>
+
+      {/* ─── One-click post buttons ───────────────────────────────── */}
+      <div className="rounded-2xl border border-accent/30 bg-accent/5 p-4">
+        <div className="text-[10px] font-mono uppercase tracking-wider text-accent mb-1">
+          ⚡ One-click post (pre-filled compose)
+        </div>
+        <p className="text-[11px] text-muted mb-3">
+          Opens LinkedIn / X with your launch post already typed. You just click "Post". 100% within ToS, full algorithmic reach.
+        </p>
+
+        <div className="grid sm:grid-cols-3 gap-2">
+          {/* LinkedIn */}
+          <button
+            type="button"
+            onClick={async () => {
+              await navigator.clipboard.writeText(LINKEDIN_POST).catch(() => {});
+              window.open('https://www.linkedin.com/feed/?shareActive=true', '_blank', 'noopener');
+              setCopyFeedback('✓ LinkedIn post copied. Paste into the compose box.');
+              setTimeout(() => setCopyFeedback(''), 5000);
+            }}
+            className="px-3 py-2.5 rounded bg-[#0a66c2] text-white text-xs font-bold hover:opacity-90 transition flex items-center justify-center gap-2"
+          >
+            <Send className="w-3.5 h-3.5" />
+            Post on LinkedIn
+          </button>
+
+          {/* X / Twitter — tweet #1 via intent URL (auto-prefills) */}
+          <button
+            type="button"
+            onClick={() => {
+              const tweet = encodeURIComponent(TWITTER_THREAD[0]);
+              window.open(`https://twitter.com/intent/tweet?text=${tweet}`, '_blank', 'noopener');
+              setCopyFeedback('✓ X opened with tweet 1 pre-filled. Post it, then come back for tweet 2.');
+              setTimeout(() => setCopyFeedback(''), 6000);
+            }}
+            className="px-3 py-2.5 rounded bg-black text-white text-xs font-bold hover:opacity-90 transition flex items-center justify-center gap-2"
+          >
+            <Send className="w-3.5 h-3.5" />
+            Post on X (tweet 1/3)
+          </button>
+
+          {/* X tweet #2 */}
+          <button
+            type="button"
+            onClick={() => {
+              const tweet = encodeURIComponent(TWITTER_THREAD[1]);
+              window.open(`https://twitter.com/intent/tweet?text=${tweet}`, '_blank', 'noopener');
+              setCopyFeedback('✓ Tweet 2/3 ready. Reply to your first tweet with this one.');
+              setTimeout(() => setCopyFeedback(''), 6000);
+            }}
+            className="px-3 py-2.5 rounded border border-border hover:border-accent text-xs transition flex items-center justify-center gap-2"
+          >
+            X tweet 2/3 (reply)
+          </button>
+        </div>
+
+        <div className="grid sm:grid-cols-3 gap-2 mt-2">
+          {/* X tweet #3 */}
+          <button
+            type="button"
+            onClick={() => {
+              const tweet = encodeURIComponent(TWITTER_THREAD[2]);
+              window.open(`https://twitter.com/intent/tweet?text=${tweet}`, '_blank', 'noopener');
+              setCopyFeedback('✓ Tweet 3/3 ready. Reply to your last tweet with this final one.');
+              setTimeout(() => setCopyFeedback(''), 6000);
+            }}
+            className="px-3 py-2.5 rounded border border-border hover:border-accent text-xs transition flex items-center justify-center gap-2"
+          >
+            X tweet 3/3 (reply)
+          </button>
+
+          {/* Open Buffer for scheduling */}
+          <a
+            href="https://buffer.com/login"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-2.5 rounded border border-accent/40 text-accent hover:bg-accent/10 text-xs transition flex items-center justify-center gap-2"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            Schedule via Buffer
+          </a>
+
+          {/* WhatsApp share (works on mobile) */}
+          <button
+            type="button"
+            onClick={() => {
+              const msg = encodeURIComponent(SHARE_TEMPLATES.whatsapp);
+              window.open(`https://wa.me/?text=${msg}`, '_blank', 'noopener');
+            }}
+            className="px-3 py-2.5 rounded bg-[#25d366] text-white text-xs font-bold hover:opacity-90 transition flex items-center justify-center gap-2"
+          >
+            <Send className="w-3.5 h-3.5" />
+            WhatsApp share
+          </button>
+        </div>
+
+        <details className="mt-3 text-[11px]">
+          <summary className="cursor-pointer text-muted hover:text-accent transition">
+            How this works (and what it can't do)
+          </summary>
+          <div className="mt-2 text-muted leading-relaxed space-y-1.5 pl-3">
+            <p><strong className="text-accent/70">LinkedIn</strong> — text auto-copies to clipboard, the compose page opens, you paste with Cmd+V and hit Post. LinkedIn doesn't support URL pre-fill (the only platform that doesn't), but the copy step takes 2 seconds.</p>
+            <p><strong className="text-accent/70">X / Twitter</strong> — text is fully pre-filled via intent URL. You click → tweet appears → click Post. Zero copy-paste.</p>
+            <p><strong className="text-accent/70">For a 3-tweet thread on X</strong> — post tweet 1 first, then click "tweet 2 (reply)" while keeping the first tab open. On X, reply to your own tweet to chain.</p>
+            <p><strong className="text-accent/70">Want true auto-posting?</strong> Use Buffer (free) — paste the post once Sunday, set time for Tuesday 7:30 AM IST, it fires automatically. Or pay $100/mo for X API direct posting from here (not worth it for a one-shot launch).</p>
+          </div>
+        </details>
       </div>
     </div>
   );
