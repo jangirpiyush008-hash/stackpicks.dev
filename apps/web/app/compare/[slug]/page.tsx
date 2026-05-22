@@ -26,8 +26,8 @@ export async function generateMetadata(
   const aName = a.full_name.split('/')[1];
   const bName = b.full_name.split('/')[1];
   return buildMeta({
-    title: `${aName} vs ${bName} — honest open-source comparison (2026)`,
-    description: `${c.one_liner.slice(0, 150)} Side-by-side comparison of ${a.full_name} and ${b.full_name} with curator takes, pros & cons, and "which should you pick".`,
+    title: `${aName} vs ${bName} — GitHub Repo Comparison (Honest 2026 Take)`,
+    description: `${c.one_liner.slice(0, 140)} Side-by-side comparison of ${a.full_name} and ${b.full_name} GitHub repos: curator takes, pros & cons, which to pick.`,
     path: `/compare/${slug}`,
   });
 }

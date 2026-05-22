@@ -20,8 +20,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const lang = repo.language ? ` (${repo.language})` : '';
   const take = (repo.curator_take ?? repo.description ?? '').slice(0, 140).trim();
   return buildMeta({
-    title: `${repo.name}${lang} — review, pros, cons & alternatives`,
-    description: take || `${repo.full_name}: curator take, install guide, and open-source alternatives. ${formatStars(repo.stars)} stars on GitHub.`,
+    title: `${repo.full_name} — GitHub repo review${lang} · pros, cons, alternatives`,
+    description: take || `${repo.full_name} on GitHub: curator take, install guide, open-source alternatives, and honest "use this if / skip if" clauses. ${formatStars(repo.stars)} GitHub stars.`,
     path: `/repo/${slug}`,
   });
 }

@@ -46,8 +46,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!b) return {};
   const totalRepos = b.sections.reduce((n, s) => n + s.repos.length, 0);
   return buildMeta({
-    title: `${b.title} — open-source stack with ${totalRepos} curated repos`,
-    description: `${b.description} Hand-picked open-source repos with curator takes, install instructions, and AI-agent ready prompts.`,
+    title: `${b.title} — ${totalRepos} Best GitHub Repos to Build It (Curated)`,
+    description: `${b.description} Hand-picked open-source GitHub repos with curator takes, install instructions, and AI-agent ready prompts.`,
     path: `/build/${slug}`,
   });
 }

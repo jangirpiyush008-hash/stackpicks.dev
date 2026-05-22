@@ -18,8 +18,8 @@ export async function generateMetadata(
   const page = getForAudienceBySlug(slug);
   if (!page) return {};
   return buildMeta({
-    title: `Open-Source Software for ${page.audience} (2026) — Curated Stack`,
-    description: `Curated open-source tools for ${page.audience.toLowerCase()}. ${page.picks.length} picks across every category your team needs — most with free tiers or self-host options.`,
+    title: `Best Open-Source GitHub Repos for ${page.audience} (2026)`,
+    description: `Curated open-source GitHub repos for ${page.audience.toLowerCase()}. ${page.picks.length} picks across every category your team needs — most with free tiers or self-host options.`,
     path: `/for/${slug}`,
   });
 }

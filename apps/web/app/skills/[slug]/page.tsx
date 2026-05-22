@@ -37,8 +37,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const s = getSkillTrackBySlug(slug);
   if (!s) return {};
   return buildMeta({
-    title: `${s.title} — ${s.repos.length} curated open-source tools`,
-    description: `${s.description} The exact open-source toolkit pros use, with curator takes and install guides.`,
+    title: `${s.title} — ${s.repos.length} Best GitHub Repos (Curated Toolkit)`,
+    description: `${s.description} The exact open-source GitHub repos pros use, with curator takes and install guides.`,
     path: `/skills/${slug}`,
   });
 }

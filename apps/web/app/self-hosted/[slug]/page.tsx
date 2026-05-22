@@ -18,8 +18,8 @@ export async function generateMetadata(
   const page = getSelfHostedBySlug(slug);
   if (!page) return {};
   return buildMeta({
-    title: `Self-Hosted ${page.display} — Best Open-Source Picks (2026)`,
-    description: `Curated self-hosted ${page.display.toLowerCase()} options for 2026. ${page.picks.length} open-source picks with one-liner takes, licenses, and which to deploy on your server.`,
+    title: `Best Self-Hosted ${page.display} — Open-Source GitHub Repos (2026)`,
+    description: `Curated self-hosted ${page.display.toLowerCase()} from GitHub. ${page.picks.length} open-source picks with one-liner takes, licenses, and which to deploy on your server.`,
     path: `/self-hosted/${slug}`,
   });
 }

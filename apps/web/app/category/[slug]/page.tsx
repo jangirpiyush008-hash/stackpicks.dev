@@ -22,10 +22,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const category = await getCategoryBySlug(supabase, slug);
   if (!category) return {};
   return buildMeta({
-    title: `Best ${category.name} open-source tools — curated with build-or-skip takes`,
+    title: `Best ${category.name} — Open-Source GitHub Repos, Curated (2026)`,
     description:
       category.description ??
-      `The top open-source ${category.name.toLowerCase()} tools, ranked by builders for builders. Curator takes, install guides, and honest pros & cons.`,
+      `The best open-source GitHub repos for ${category.name.toLowerCase()}, ranked by builders for builders. Curator takes, install guides, honest pros & cons — not auto-generated star-count listicles.`,
     path: `/category/${slug}`,
   });
 }

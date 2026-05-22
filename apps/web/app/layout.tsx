@@ -12,26 +12,41 @@ import './globals.css';
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.name} — Curated open-source dev tools, stacks & skill tracks`,
+    default: `${SITE.name} — Best Open-Source GitHub Repos, Curated for Builders`,
     template: `%s — ${SITE.name}`,
   },
   description: SITE.description,
   applicationName: SITE.name,
   authors: [{ name: ENTITY.operator }],
   keywords: [
+    // Open-source patterns
     'open source tools',
     'open source dev tools',
     'best open source libraries',
     'open source alternatives',
     'open source stack',
-    'AI dev tools',
-    'GitHub starred tools',
-    'shadcn',
-    'Next.js stack',
-    'lifetime developer tools',
-    'curated GitHub repos',
     'open source directory',
     'open source for builders',
+    'open source software',
+    // GitHub patterns (people search both)
+    'github repos',
+    'best github repos',
+    'top github repos',
+    'trending github repos',
+    'popular github repos',
+    'useful github repos',
+    'curated github repos',
+    'github projects',
+    'github starred repos',
+    'github awesome lists',
+    // Use-case + tech
+    'AI dev tools',
+    'shadcn alternatives',
+    'Next.js stack',
+    'self-hosted software',
+    'lifetime developer tools',
+    'open source SaaS alternatives',
+    // Indian context
     'Indian dev directory',
   ],
   openGraph: {

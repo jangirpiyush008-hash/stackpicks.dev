@@ -19,8 +19,8 @@ export async function generateMetadata(
   if (!page) return {};
   const totalRepos = page.sections.reduce((n, s) => n + s.repos.length, 0);
   return buildMeta({
-    title: `Awesome ${page.topic} — ${totalRepos} Curated Open-Source Picks (2026)`,
-    description: `Curated awesome list of ${totalRepos} open-source ${page.topic} libraries in 2026. Each pick has a one-liner take, GitHub link, and is ranked by curator opinion — not raw star counts.`,
+    title: `Awesome ${page.topic} — ${totalRepos} Best GitHub Repos (Curated 2026)`,
+    description: `Awesome ${page.topic} list: ${totalRepos} best open-source GitHub repos with one-liner curator takes. Ranked by builders for builders — not raw GitHub star counts.`,
     path: `/awesome/${slug}`,
   });
 }

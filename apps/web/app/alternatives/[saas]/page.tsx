@@ -19,8 +19,8 @@ export async function generateMetadata(
   if (!page) return {};
   const topPick = page.picks[0]?.short_name ?? 'open-source picks';
   return buildMeta({
-    title: `Best Open-Source Alternatives to ${page.saas_name} (2026) — ${topPick} & more`,
-    description: `Curated open-source alternatives to ${page.saas_name} with honest takes. ${page.picks.length} picks ranked, self-host options, license details, and which to pick for your team.`,
+    title: `Best Open-Source ${page.saas_name} Alternatives on GitHub (2026) — ${topPick} & more`,
+    description: `Curated open-source GitHub repos that replace ${page.saas_name}. ${page.picks.length} picks ranked with honest takes, self-host options, license details, and which to pick for your team.`,
     path: `/alternatives/${saas}`,
   });
 }
