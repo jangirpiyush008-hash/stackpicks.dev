@@ -163,9 +163,50 @@ export function AdminLaunchPanel({ data }: { data: LaunchData }) {
     return () => clearInterval(interval);
   }, [autoRefresh, router, phSlug, hnId]);
 
+  // Extract slug from any pasted URL — accepts:
+  //   "stackpicks"
+  //   "https://www.producthunt.com/products/stackpicks"
+  //   "https://www.producthunt.com/products/stackpicks?launch=stackpicks"
+  //   "https://producthunt.com/posts/stackpicks"
+  const normalizePhSlug = (input: string): string => {
+    const trimmed = input.trim();
+    if (!trimmed) return '';
+    if (!trimmed.includes('producthunt.com')) return trimmed;
+    try {
+      const u = new URL(trimmed);
+      const parts = u.pathname.split('/').filter(Boolean);
+      // /products/<slug> or /posts/<slug>
+      const i = parts.findIndex((p) => p === 'products' || p === 'posts');
+      if (i !== -1 && parts[i + 1]) return parts[i + 1];
+      return parts[parts.length - 1] || '';
+    } catch {
+      return trimmed;
+    }
+  };
+
+  // Extract HN ID from any input — accepts:
+  //   "38492711"
+  //   "https://news.ycombinator.com/item?id=38492711"
+  const normalizeHnId = (input: string): string => {
+    const trimmed = input.trim();
+    if (!trimmed) return '';
+    if (/^\d+$/.test(trimmed)) return trimmed;
+    try {
+      const u = new URL(trimmed);
+      const id = u.searchParams.get('id');
+      if (id) return id;
+    } catch { /* not a URL */ }
+    const match = trimmed.match(/\d+/);
+    return match ? match[0] : '';
+  };
+
   const saveTracking = () => {
-    localStorage.setItem(PH_KEY, phSlug.trim());
-    localStorage.setItem(HN_KEY, hnId.trim());
+    const cleanPh = normalizePhSlug(phSlug);
+    const cleanHn = normalizeHnId(hnId);
+    setPhSlug(cleanPh);
+    setHnId(cleanHn);
+    localStorage.setItem(PH_KEY, cleanPh);
+    localStorage.setItem(HN_KEY, cleanHn);
     refreshExternals();
   };
 
