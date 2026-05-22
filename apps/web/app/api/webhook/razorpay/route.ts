@@ -64,7 +64,42 @@ export async function POST(req: NextRequest) {
         const purpose = payment.notes?.purpose as string | undefined;
         const targetId = payment.notes?.target_id as string | undefined;
 
-        if (purpose === 'sponsored_slot' && targetId) {
+        // Defense-in-depth: if the browser-based verify-payment ever fails,
+        // this webhook still grants lifetime access using notes.user_id.
+        if (purpose === 'lifetime_membership') {
+          const userId = payment.notes?.user_id as string | undefined;
+          if (userId) {
+            const { error: subErr } = await supabase
+              .from('premium_subscriptions')
+              .upsert(
+                {
+                  user_id: userId,
+                  razorpay_subscription_id: payment.order_id,
+                  razorpay_customer_id: payment.id,
+                  plan_id: 'lifetime',
+                  status: 'active',
+                  amount_inr: payment.currency === 'INR' ? payment.amount : 0,
+                  current_period_start: new Date().toISOString(),
+                  current_period_end: new Date('2099-12-31').toISOString(),
+                },
+                { onConflict: 'razorpay_subscription_id' }
+              );
+            if (subErr) {
+              console.error('[webhook] lifetime upsert failed:', subErr);
+            } else {
+              console.log(JSON.stringify({
+                type: 'webhook_lifetime_granted',
+                user_id: userId,
+                order_id: payment.order_id,
+                payment_id: payment.id,
+                amount: payment.amount,
+                currency: payment.currency,
+              }));
+            }
+          } else {
+            console.warn('[webhook] lifetime_membership payment with no user_id in notes:', payment.id);
+          }
+        } else if (purpose === 'sponsored_slot' && targetId) {
           await supabase
             .from('sponsored_slots')
             .update({
