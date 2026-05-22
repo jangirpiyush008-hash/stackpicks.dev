@@ -9,6 +9,7 @@ import { SKILL_TRACKS, getSkillTrackBySlug } from '../../../lib/skill-tracks';
 import { getSeedByFullName } from '../../../lib/preview-source';
 import { UnlockCTA } from '../../../components/UnlockCTA';
 import { getIsMember } from '../../../lib/membership';
+import { buildMeta, breadcrumbJsonLd, courseJsonLd, itemListJsonLd } from '@stackpicks/core/seo';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -35,10 +36,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const s = getSkillTrackBySlug(slug);
   if (!s) return {};
-  return {
-    title: `${s.title} — ${s.repos.length} OSS tools curated`,
-    description: s.description,
-  };
+  return buildMeta({
+    title: `${s.title} — ${s.repos.length} curated open-source tools`,
+    description: `${s.description} The exact open-source toolkit pros use, with curator takes and install guides.`,
+    path: `/skills/${slug}`,
+  });
 }
 
 export default async function SkillTrackPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -56,6 +58,35 @@ export default async function SkillTrackPage({ params }: { params: Promise<{ slu
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: 'Home', path: '/' },
+            { name: 'Skills', path: '/skills' },
+            { name: track.title, path: `/skills/${track.slug}` },
+          ])),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(courseJsonLd({
+            name: track.title,
+            description: track.description,
+            path: `/skills/${track.slug}`,
+          })),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(itemListJsonLd(
+            track.repos.map((r) => ({ name: r.full_name, path: `/skills/${track.slug}#${r.full_name.replace('/', '-')}` })),
+            `${track.title} — ${track.repos.length} curated open-source tools`
+          )),
+        }}
+      />
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border">
         <div className={`absolute inset-0 -z-10 bg-gradient-to-br ${track.gradient} opacity-30 pointer-events-none`} />

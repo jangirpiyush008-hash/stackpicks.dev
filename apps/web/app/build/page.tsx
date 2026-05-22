@@ -5,16 +5,18 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { USE_CASE_BUNDLES } from '../../lib/use-case-bundles';
+import { buildMeta, itemListJsonLd, breadcrumbJsonLd } from '@stackpicks/core/seo';
 
 // Force dynamic rendering — avoid Railway prerender 404 caused by the very large
 // bundles file. Re-evaluate making this static once Next.js 15.6+ ships.
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export const metadata = {
-  title: 'Build with AI — pick a stack',
-  description: '13 curated full-stack bundles for builders. Pick what you\'re building, get every repo you need, point your AI agent at it.',
-};
+export const metadata = buildMeta({
+  title: 'Build with AI — 13 ready-to-ship open-source stack bundles',
+  description: 'Curated full-stack bundles for builders: SaaS, mobile, AI agent, web scraper, Chrome extension, e-commerce, marketing site, internal dashboard + more. Every repo you need, hand-picked for AI agents.',
+  path: '/build',
+});
 
 const ICONS: Record<string, LucideIcon> = {
   rocket: Rocket,
@@ -40,6 +42,24 @@ const DIFFICULTY_LABEL = {
 export default function BuildIndexPage() {
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: 'Home', path: '/' },
+            { name: 'Build with AI', path: '/build' },
+          ])),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(itemListJsonLd(
+            USE_CASE_BUNDLES.map((b) => ({ name: b.title, path: `/build/${b.slug}` })),
+            'Open-source stack bundles for builders'
+          )),
+        }}
+      />
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border">
         <div className="absolute inset-0 -z-10 opacity-40">

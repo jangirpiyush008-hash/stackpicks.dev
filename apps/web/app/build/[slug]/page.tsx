@@ -9,6 +9,7 @@ import { USE_CASE_BUNDLES, getBundleBySlug } from '../../../lib/use-case-bundles
 import { getSeedByFullName } from '../../../lib/preview-source';
 import { UnlockCTA } from '../../../components/UnlockCTA';
 import { getIsMember } from '../../../lib/membership';
+import { buildMeta, breadcrumbJsonLd, itemListJsonLd } from '@stackpicks/core/seo';
 
 // Free preview: show the first N sections in full. The rest is gated behind membership.
 const FREE_SECTION_LIMIT = 3;
@@ -43,10 +44,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const b = getBundleBySlug(slug);
   if (!b) return {};
-  return {
-    title: `${b.title} — bundle of ${b.sections.reduce((n, s) => n + s.repos.length, 0)} repos`,
-    description: b.description,
-  };
+  const totalRepos = b.sections.reduce((n, s) => n + s.repos.length, 0);
+  return buildMeta({
+    title: `${b.title} — open-source stack with ${totalRepos} curated repos`,
+    description: `${b.description} Hand-picked open-source repos with curator takes, install instructions, and AI-agent ready prompts.`,
+    path: `/build/${slug}`,
+  });
 }
 
 export default async function BundlePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -58,9 +61,29 @@ export default async function BundlePage({ params }: { params: Promise<{ slug: s
   const totalRepos = bundle.sections.reduce((n, s) => n + s.repos.length, 0);
   const isMember = await getIsMember();
   const visibleSections = isMember ? bundle.sections : bundle.sections.slice(0, FREE_SECTION_LIMIT);
+  const allRepos = bundle.sections.flatMap((s) => s.repos.map((r) => r.full_name));
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: 'Home', path: '/' },
+            { name: 'Build with AI', path: '/build' },
+            { name: bundle.title, path: `/build/${bundle.slug}` },
+          ])),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(itemListJsonLd(
+            allRepos.map((fn) => ({ name: fn, path: `/build/${bundle.slug}#${fn.replace('/', '-')}` })),
+            `${bundle.title} — open-source stack (${totalRepos} repos)`
+          )),
+        }}
+      />
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border">
         <div className={`absolute inset-0 -z-10 bg-gradient-to-br ${bundle.gradient} opacity-30`} />

@@ -5,11 +5,13 @@ import {
   ArrowRight, Sparkles, type LucideIcon,
 } from 'lucide-react';
 import { SKILL_TRACKS } from '../../lib/skill-tracks';
+import { buildMeta, itemListJsonLd, breadcrumbJsonLd } from '@stackpicks/core/seo';
 
-export const metadata = {
-  title: 'Skills — open-source toolkits by discipline',
-  description: '8 curated skill tracks for marketers, sales, creators, AI engineers, data folks, devops, and operators. The exact OSS tools pros use.',
-};
+export const metadata = buildMeta({
+  title: 'Skill tracks — 12 open-source toolkits for marketers, sales, AI, data & devs',
+  description: 'Curated open-source tools by discipline: marketing, sales outreach, social media, LinkedIn personal brand, AI/ML, data analytics, DevOps, automation, design, mobile, backend APIs, founder OS. The exact OSS pros actually use.',
+  path: '/skills',
+});
 
 const ICONS: Record<string, LucideIcon> = {
   megaphone: Megaphone,
@@ -29,6 +31,24 @@ const ICONS: Record<string, LucideIcon> = {
 export default function SkillsIndexPage() {
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: 'Home', path: '/' },
+            { name: 'Skills', path: '/skills' },
+          ])),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(itemListJsonLd(
+            SKILL_TRACKS.map((s) => ({ name: s.title, path: `/skills/${s.slug}` })),
+            'Open-source skill tracks by discipline'
+          )),
+        }}
+      />
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border">
         <div className="absolute inset-0 -z-10 opacity-40 pointer-events-none">

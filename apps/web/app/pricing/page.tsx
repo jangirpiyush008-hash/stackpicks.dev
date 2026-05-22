@@ -2,11 +2,13 @@ import Link from 'next/link';
 import { Check, Sparkles } from 'lucide-react';
 import { PRICING } from '@stackpicks/core/constants';
 import { GeoPricingCard } from '../../components/GeoPricingCard';
+import { buildMeta, productJsonLd, breadcrumbJsonLd, faqJsonLd } from '@stackpicks/core/seo';
 
-export const metadata = {
-  title: 'Pricing — one payment, lifetime access',
-  description: 'StackPicks lifetime membership. One-time payment, no renewals — full directory, all stack bundles, weekly analyses.',
-};
+export const metadata = buildMeta({
+  title: 'Pricing — ₹99 lifetime access to the curated open-source directory',
+  description: 'One-time ₹99 (or $2.99) — lifetime access to 100+ curated open-source tools, 13 ready-to-ship stack bundles, and 12 skill tracks. No renewals, no subscription, no upsells.',
+  path: '/pricing',
+});
 
 const INR_DISPLAY = (PRICING.premium_lifetime.amount_inr_paise / 100).toLocaleString('en-IN');
 const USD_DISPLAY = (PRICING.premium_lifetime.amount_usd_cents / 100).toFixed(2);
@@ -33,9 +35,42 @@ const FEATURES_PREMIUM = [
   'Lifetime — pay once, full access forever',
 ];
 
+const FAQ_ITEMS = [
+  { question: 'Is this really lifetime access?', answer: 'Yes. One ₹99 payment unlocks the full directory, all 13 stack bundles, and all 12 skill tracks for the lifetime of the platform — no renewals, no subscription, no surprise charges.' },
+  { question: 'What payment methods are supported?', answer: 'Indian users pay ₹99 via Razorpay (UPI, cards, net-banking, wallets). International users pay $2.99 via Razorpay’s international gateway. GSTIN invoice available on request.' },
+  { question: 'Is there a refund policy?', answer: '7-day full refund — no questions asked. Email stackpicks.dev@gmail.com within 7 days of purchase and we refund instantly.' },
+  { question: 'What’s included in the lifetime membership?', answer: '100+ curated open-source tools with analyst-grade takes (use this if / skip if), 13 ready-to-ship stack bundles (SaaS, mobile, AI agent, e-commerce, web scraper, more), 12 skill tracks for marketing/sales/AI/data/design/dev, and weekly long-form analyses.' },
+  { question: 'Can I use these tools commercially?', answer: 'Yes — every tool we list is open-source. Check each repo’s license (MIT, Apache 2, BSD, etc.) on its detail page. StackPicks is a directory; we don’t restrict your use of the underlying tools.' },
+];
+
 export default function PricingPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-12 md:py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(productJsonLd({
+            name: 'StackPicks Lifetime Membership',
+            description: 'Lifetime access to 100+ curated open-source dev tools, 13 stack bundles, 12 skill tracks.',
+            priceINR: Math.round(PRICING.premium_lifetime.amount_inr_paise / 100),
+            priceUSD: Math.round((PRICING.premium_lifetime.amount_usd_cents as number) / 100),
+            path: '/pricing',
+          })),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: 'Home', path: '/' },
+            { name: 'Pricing', path: '/pricing' },
+          ])),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(FAQ_ITEMS)) }}
+      />
       <header className="text-center mb-10 md:mb-14 relative">
         <div className="absolute inset-0 -z-10 opacity-30">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-accent/20 rounded-full blur-[120px]" />

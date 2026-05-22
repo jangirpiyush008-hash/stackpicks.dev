@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE, CONTACT, ENTITY } from '@stackpicks/core/constants';
+import { organizationJsonLd, websiteJsonLd } from '@stackpicks/core/seo';
 import { Mail, Phone } from 'lucide-react';
 import { HeaderSearchSlot } from '../components/HeaderSearchSlot';
 import { HeaderNav } from '../components/HeaderNav';
@@ -10,21 +11,54 @@ import './globals.css';
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.name} — Curated open-source dev tools`,
+    default: `${SITE.name} — Curated open-source dev tools, stacks & skill tracks`,
     template: `%s — ${SITE.name}`,
   },
   description: SITE.description,
+  applicationName: SITE.name,
+  authors: [{ name: ENTITY.operator }],
+  keywords: [
+    'open source tools',
+    'open source dev tools',
+    'best open source libraries',
+    'open source alternatives',
+    'open source stack',
+    'AI dev tools',
+    'GitHub starred tools',
+    'shadcn',
+    'Next.js stack',
+    'lifetime developer tools',
+    'curated GitHub repos',
+    'open source directory',
+    'open source for builders',
+    'Indian dev directory',
+  ],
   openGraph: {
     type: 'website',
     siteName: SITE.name,
     locale: 'en_IN',
+    url: SITE.url,
   },
   twitter: { card: 'summary_large_image', site: SITE.twitter },
+  alternates: { canonical: SITE.url },
+  category: 'technology',
+  formatDetection: { telephone: false, email: false, address: false },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        {/* Site-wide structured data — appears on every page, helps SERP sitelinks + brand */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
+        />
+      </head>
       <body className="font-sans antialiased min-h-screen flex flex-col">
         <HideOnAdmin>
         <header className="border-b border-border sticky top-0 z-40 bg-bg/80 backdrop-blur">

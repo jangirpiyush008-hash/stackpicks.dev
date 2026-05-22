@@ -8,24 +8,50 @@ export const revalidate = 3600;
 const STATIC_PATHS: MetadataRoute.Sitemap = [
   { url: `${SITE.url}/`, changeFrequency: 'daily', priority: 1 },
   { url: `${SITE.url}/preview`, changeFrequency: 'daily', priority: 0.95 },
-  { url: `${SITE.url}/pricing`, changeFrequency: 'monthly', priority: 0.9 },
+  { url: `${SITE.url}/build`, changeFrequency: 'weekly', priority: 0.9 },
+  { url: `${SITE.url}/skills`, changeFrequency: 'weekly', priority: 0.9 },
+  { url: `${SITE.url}/how-to-use`, changeFrequency: 'monthly', priority: 0.7 },
+  { url: `${SITE.url}/pricing`, changeFrequency: 'monthly', priority: 0.85 },
   { url: `${SITE.url}/about`, changeFrequency: 'monthly', priority: 0.5 },
   { url: `${SITE.url}/contact`, changeFrequency: 'monthly', priority: 0.5 },
-  { url: `${SITE.url}/privacy`, changeFrequency: 'yearly', priority: 0.3 },
-  { url: `${SITE.url}/terms`, changeFrequency: 'yearly', priority: 0.3 },
-  { url: `${SITE.url}/refund`, changeFrequency: 'yearly', priority: 0.3 },
-  { url: `${SITE.url}/shipping`, changeFrequency: 'yearly', priority: 0.3 },
-  { url: `${SITE.url}/international-payments`, changeFrequency: 'yearly', priority: 0.3 },
-  { url: `${SITE.url}/security`, changeFrequency: 'yearly', priority: 0.3 },
-  { url: `${SITE.url}/login`, changeFrequency: 'monthly', priority: 0.4 },
-  { url: `${SITE.url}/signup`, changeFrequency: 'monthly', priority: 0.6 },
-  { url: `${SITE.url}/skills`, changeFrequency: 'weekly', priority: 0.85 },
+  { url: `${SITE.url}/privacy`, changeFrequency: 'yearly', priority: 0.2 },
+  { url: `${SITE.url}/terms`, changeFrequency: 'yearly', priority: 0.2 },
+  { url: `${SITE.url}/refund`, changeFrequency: 'yearly', priority: 0.2 },
+  { url: `${SITE.url}/shipping`, changeFrequency: 'yearly', priority: 0.2 },
+  { url: `${SITE.url}/international-payments`, changeFrequency: 'yearly', priority: 0.2 },
+  { url: `${SITE.url}/security`, changeFrequency: 'yearly', priority: 0.2 },
+  { url: `${SITE.url}/signup`, changeFrequency: 'monthly', priority: 0.5 },
 ];
+
+// Bundles + skill tracks are static TS — hardcoded slugs.
+const BUNDLE_SLUGS = [
+  'ship-a-saas', 'mobile-app', 'ai-agent', 'marketing-website', 'internal-dashboard',
+  'chrome-extension', 'automation-workflow', 'marketing-stack', 'sales-crm-stack',
+  'e-commerce', 'developer-tools', 'content-platform', 'web-scraper',
+];
+
+const SKILL_SLUGS = [
+  'marketing', 'sales-outreach', 'social-media', 'linkedin-personal-brand',
+  'ai-ml', 'data-analytics', 'devops-infra', 'automation',
+  'design', 'mobile-dev', 'backend-apis', 'founder-os',
+];
+
+const BUNDLE_PATHS: MetadataRoute.Sitemap = BUNDLE_SLUGS.map((slug) => ({
+  url: `${SITE.url}/build/${slug}`,
+  changeFrequency: 'weekly',
+  priority: 0.85,
+}));
+
+const SKILL_PATHS: MetadataRoute.Sitemap = SKILL_SLUGS.map((slug) => ({
+  url: `${SITE.url}/skills/${slug}`,
+  changeFrequency: 'weekly',
+  priority: 0.85,
+}));
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // If Supabase env isn't set, return static paths only so the build still succeeds.
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    return STATIC_PATHS;
+    return [...STATIC_PATHS, ...BUNDLE_PATHS, ...SKILL_PATHS];
   }
 
   try {
@@ -70,9 +96,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.8,
       })) ?? [];
 
-    return [...STATIC_PATHS, ...categoryPaths, ...collectionPaths, ...repoPaths];
+    return [
+      ...STATIC_PATHS,
+      ...BUNDLE_PATHS,
+      ...SKILL_PATHS,
+      ...categoryPaths,
+      ...collectionPaths,
+      ...repoPaths,
+    ];
   } catch (err) {
     console.error('Sitemap generation failed, falling back to static paths:', err);
-    return STATIC_PATHS;
+    return [...STATIC_PATHS, ...BUNDLE_PATHS, ...SKILL_PATHS];
   }
 }
