@@ -85,6 +85,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <FooterLink href="/privacy">Privacy</FooterLink>
                 <FooterLink href="/refund">Refunds</FooterLink>
                 <FooterLink href="/shipping">Delivery</FooterLink>
+                <FooterLink href="/international-payments">International payments</FooterLink>
               </FooterCol>
             </div>
 
