@@ -72,7 +72,7 @@ export const SEED_REPOS: SeedEntry[] = [
     skip_if: 'You need cutting-edge features — release cadence has slowed and momentum has shifted to shadcn/Base UI.',
   },
   {
-    full_name: 'nextui-org/nextui',
+    full_name: 'heroui-inc/heroui',
     category_slugs: ['ui-components'],
     is_featured: false,
     curator_take:
@@ -224,7 +224,7 @@ export const SEED_REPOS: SeedEntry[] = [
     skip_if: 'You need the full timeline/scroll control of GSAP or the React integration of Motion.',
   },
   {
-    full_name: 'magic-ui-design/magic-ui',
+    full_name: 'magicuidesign/magicui',
     category_slugs: ['animation', 'ui-components'],
     is_featured: false,
     curator_take:
@@ -452,7 +452,7 @@ export const SEED_REPOS: SeedEntry[] = [
     skip_if: 'You want schema migration tooling and a managed query layer — pick Drizzle.',
   },
   {
-    full_name: 'edgedb/edgedb',
+    full_name: 'geldata/gel',
     category_slugs: ['database'],
     is_featured: false,
     curator_take:
@@ -830,7 +830,7 @@ export const SEED_REPOS: SeedEntry[] = [
     skip_if: 'You are happy with Meilisearch — no reason to switch.',
   },
   {
-    full_name: 'orama/orama',
+    full_name: 'askorama/orama',
     category_slugs: ['search'],
     is_featured: false,
     curator_take:
@@ -945,7 +945,7 @@ export const SEED_REPOS: SeedEntry[] = [
     skip_if: 'You want fast adoption with sensible defaults — Tiptap.',
   },
   {
-    full_name: 'BlockNote/BlockNote',
+    full_name: 'TypeCellOS/BlockNote',
     category_slugs: ['rich-text'],
     is_featured: false,
     curator_take:
@@ -1016,7 +1016,7 @@ export const SEED_REPOS: SeedEntry[] = [
     skip_if: 'You have native modules or third-party tools assuming Node — verify compatibility first.',
   },
   {
-    full_name: 'tsx-shell/tsx',
+    full_name: 'privatenumber/tsx',
     category_slugs: ['cli-tools'],
     is_featured: false,
     curator_take:
@@ -1025,7 +1025,7 @@ export const SEED_REPOS: SeedEntry[] = [
     skip_if: 'You are on Bun — it does this natively.',
   },
   {
-    full_name: 'turbo-build/turbo',
+    full_name: 'vercel/turborepo',
     category_slugs: ['cli-tools', 'devops'],
     is_featured: false,
     curator_take:
@@ -1038,7 +1038,7 @@ export const SEED_REPOS: SeedEntry[] = [
   // SCRAPING & CRAWLING (8)
   // ════════════════════════════════════════════════════════════════
   {
-    full_name: 'mendableai/firecrawl',
+    full_name: 'firecrawl/firecrawl',
     category_slugs: ['scraping', 'ai-ml'],
     is_featured: true,
     curator_take:
@@ -1072,15 +1072,6 @@ export const SEED_REPOS: SeedEntry[] = [
       'The Python scraping veteran. Mature ecosystem, plugins for everything (caching, proxies, middlewares), and a years-honed pipeline architecture. Steeper learning curve than the modern alternatives but lower long-term cost when crawls grow beyond a quick weekend script.',
     use_this_if: 'You\'re a Python team scraping at scale and want middleware/pipeline patterns out of the box.',
     skip_if: 'You\'re scraping JS-heavy SPAs — Scrapy needs Playwright integration which is awkward; Crawlee is cleaner.',
-  },
-  {
-    full_name: 'microsoft/playwright',
-    category_slugs: ['scraping', 'testing'],
-    is_featured: true,
-    curator_take:
-      'The browser automation library the rest of the scraping tools depend on. Direct API for when you want fine-grained control: stealth mode, anti-bot bypass, multi-context, headless or headed. Also doubles as your E2E test runner.',
-    use_this_if: 'You want a single library that scrapes AND runs your E2E tests — one toolchain, two jobs.',
-    skip_if: 'You only need HTTP + HTML parsing (no JS execution) — Cheerio or BeautifulSoup will be 10x faster.',
   },
   {
     full_name: 'puppeteer/puppeteer',
@@ -1141,7 +1132,7 @@ export const SEED_REPOS: SeedEntry[] = [
     skip_if: 'You need a full-stack framework with views — Next.js or SvelteKit are more complete.',
   },
   {
-    full_name: 'paul-gauthier/aider',
+    full_name: 'Aider-AI/aider',
     category_slugs: ['ai-ml', 'cli-tools'],
     is_featured: true,
     curator_take:
@@ -1204,7 +1195,7 @@ export const SEED_REPOS: SeedEntry[] = [
     skip_if: 'You prefer lighter dependencies — Inngest has smaller surface.',
   },
   {
-    full_name: 'cal-com/cal.com',
+    full_name: 'calcom/cal.com',
     category_slugs: ['frameworks'],
     is_featured: true,
     curator_take:
@@ -1454,7 +1445,7 @@ export const SEED_REPOS: SeedEntry[] = [
     skip_if: 'You only post to 1-2 platforms — native scheduling in each is simpler.',
   },
   {
-    full_name: 'inulute/mixpost',
+    full_name: 'inovector/MixPost',
     category_slugs: ['devops'],
     is_featured: false,
     curator_take:
@@ -1485,7 +1476,7 @@ export const SEED_REPOS: SeedEntry[] = [
     skip_if: 'You need accessibility-first primitives — shadcn/Radix are better for apps.',
   },
   {
-    full_name: 'animata-design/animata',
+    full_name: 'animata-design/animations',
     category_slugs: ['ui-components', 'animation'],
     is_featured: true,
     curator_take:
@@ -1494,7 +1485,7 @@ export const SEED_REPOS: SeedEntry[] = [
     skip_if: 'You\'re shipping internal tools — overkill.',
   },
   {
-    full_name: 'origin-space/originui',
+    full_name: 'origin-space/origin-ui',
     category_slugs: ['ui-components', 'design-systems'],
     is_featured: true,
     curator_take:
@@ -1614,7 +1605,7 @@ export const SEED_REPOS: SeedEntry[] = [
   // ANIMATIONS + UI MOTION (5)
   // ════════════════════════════════════════════════════════════════
   {
-    full_name: 'rive-app/rive-renderer',
+    full_name: 'rive-app/rive',
     category_slugs: ['animation'],
     is_featured: true,
     curator_take:
