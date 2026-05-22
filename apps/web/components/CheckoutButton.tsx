@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Loader2, Lock, ArrowRight, Check } from 'lucide-react';
+import { Loader2, Lock, ArrowRight, Check, Sparkles } from 'lucide-react';
 import { getSupabaseBrowser } from '../lib/supabase-browser';
 
 // Razorpay's checkout.js is loaded once and exposes window.Razorpay
@@ -45,17 +46,36 @@ interface Props {
 export function CheckoutButton({ currency, couponCode }: Props) {
   const router = useRouter();
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
+  const [isMember, setIsMember] = useState<boolean | null>(null);
   const [status, setStatus] = useState<'idle' | 'loading' | 'paying' | 'verifying' | 'done' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
-  // Check auth state on mount + listen for changes
+  // Check auth + membership state on mount; listen for changes
   useEffect(() => {
     const supabase = getSupabaseBrowser();
-    supabase.auth.getUser().then(({ data }) => setSignedIn(!!data.user));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      setSignedIn(!!session?.user);
+
+    const sync = async (authed: { id: string } | null) => {
+      setSignedIn(!!authed);
+      if (!authed) {
+        setIsMember(false);
+        return;
+      }
+      // RLS allows the signed-in user to read their own subscription row.
+      const { data: sub } = await supabase
+        .from('premium_subscriptions')
+        .select('id')
+        .eq('user_id', authed.id)
+        .eq('status', 'active')
+        .limit(1)
+        .maybeSingle();
+      setIsMember(!!sub);
+    };
+
+    supabase.auth.getUser().then(({ data }) => sync(data.user as { id: string } | null));
+    const { data: authSub } = supabase.auth.onAuthStateChange((_e, session) => {
+      sync((session?.user as { id: string } | null) ?? null);
     });
-    return () => sub.subscription.unsubscribe();
+    return () => authSub.subscription.unsubscribe();
   }, []);
 
   const startCheckout = async () => {
@@ -86,7 +106,18 @@ export function CheckoutButton({ currency, couponCode }: Props) {
         return;
       }
 
-      // 3a. Free coupon path — no payment needed, membership granted server-side
+      // 3a. Already a member — server detected an active subscription. Don't re-charge.
+      if (orderBody.already_member) {
+        setIsMember(true);
+        setStatus('done');
+        setTimeout(() => {
+          router.push('/dashboard');
+          router.refresh();
+        }, 1200);
+        return;
+      }
+
+      // 3b. Free coupon path — no payment needed, membership granted server-side
       if (orderBody.free) {
         setStatus('done');
         setTimeout(() => router.push('/dashboard'), 1200);
@@ -168,6 +199,27 @@ export function CheckoutButton({ currency, couponCode }: Props) {
   };
 
   // ---- UI states ----
+
+  // Already a lifetime member — don't show the buy button, route to dashboard instead.
+  if (isMember === true) {
+    return (
+      <div className="rounded-lg border border-accent/40 bg-accent/10 p-4 text-center">
+        <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-accent/20 mb-2">
+          <Sparkles className="w-5 h-5 text-accent" />
+        </div>
+        <div className="font-bold text-text mb-1">You&apos;re a lifetime member</div>
+        <p className="text-xs text-muted mb-3">Full directory + bundles already unlocked.</p>
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-bg font-semibold text-sm hover:opacity-90 transition"
+        >
+          Open dashboard
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
+    );
+  }
+
   if (status === 'done') {
     return (
       <div className="rounded-lg border border-accent/40 bg-accent/10 p-4 text-center">

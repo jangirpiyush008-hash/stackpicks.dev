@@ -37,6 +37,22 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // 1a. Already a lifetime member? Don't charge again — bounce them to dashboard.
+  const { data: existing } = await supabase
+    .from('premium_subscriptions')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('status', 'active')
+    .limit(1)
+    .maybeSingle();
+  if (existing) {
+    return NextResponse.json({
+      ok: true,
+      already_member: true,
+      message: 'You already have lifetime access.',
+    });
+  }
+
   // 2. Calculate amount — start with base, then apply coupon if present + valid
   let amount: number = baseAmount(currency);
   let appliedCoupon: { id: string; code: string; discount_amount: number } | null = null;
