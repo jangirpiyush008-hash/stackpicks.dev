@@ -4,6 +4,7 @@ import { formatStars, timeAgo, formatIST } from '@stackpicks/core/utils';
 import { Star, GitFork, Eye, AlertCircle, ExternalLink, Check, X } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import { EmbedBadge } from '../../../components/EmbedBadge';
 
 export const revalidate = 3600;
 
@@ -167,6 +168,9 @@ export default async function RepoPage({ params }: PageProps) {
             </div>
           </div>
         )}
+
+        {/* Embed badge — drives backlinks from OSS maintainers */}
+        <EmbedBadge slug={slug} repoName={repo.full_name} />
 
         {/* Metadata */}
         <div className="text-xs text-muted border-t border-border pt-6">

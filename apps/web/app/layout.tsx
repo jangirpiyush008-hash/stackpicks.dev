@@ -6,6 +6,7 @@ import { Mail, Phone } from 'lucide-react';
 import { HeaderSearchSlot } from '../components/HeaderSearchSlot';
 import { HeaderNav } from '../components/HeaderNav';
 import { HideOnAdmin } from '../components/HideOnAdmin';
+import { NewsletterPopup } from '../components/NewsletterPopup';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -188,6 +189,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </footer>
         </HideOnAdmin>
+
+        {/* Newsletter signup — 30s delay + exit-intent triggered; hides on admin/auth */}
+        <NewsletterPopup />
       </body>
     </html>
   );
