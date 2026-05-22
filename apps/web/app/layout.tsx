@@ -7,6 +7,7 @@ import { HeaderSearchSlot } from '../components/HeaderSearchSlot';
 import { HeaderNav } from '../components/HeaderNav';
 import { HideOnAdmin } from '../components/HideOnAdmin';
 import { NewsletterPopup } from '../components/NewsletterPopup';
+import { FooterNewsletter } from '../components/FooterNewsletter';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -175,6 +176,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <Phone className="w-3.5 h-3.5" />
                     {CONTACT.phone}
                   </a>
+                </div>
+
+                {/* Inline newsletter — always visible, no popup needed */}
+                <div className="mt-6 pt-5 border-t border-border">
+                  <FooterNewsletter />
                 </div>
               </div>
 
