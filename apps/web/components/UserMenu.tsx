@@ -48,43 +48,40 @@ function deriveUser(authUser: {
 export function UserMenu() {
   const router = useRouter();
   const [user, setUser] = useState<SessionUser | null>(null);
+  const [isMember, setIsMember] = useState(false);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  // 1) Track auth state — sets/clears user, no membership coupling here.
   useEffect(() => {
     const supabase = getSupabaseBrowser();
-
-    const hydrate = async (authUser: Parameters<typeof deriveUser>[0]) => {
-      const base = deriveUser(authUser);
-      if (!base || !authUser) {
-        setUser(base);
-        return;
-      }
-      // Set base immediately so name/email shows even if the membership
-      // lookup is slow or fails. Then upgrade with is_member.
-      setUser(base);
-      try {
-        const res = await fetch('/api/me/membership', { cache: 'no-store' });
-        const body = await res.json();
-        if (body?.is_member) {
-          setUser({ ...base, isMember: true });
-        }
-      } catch {
-        /* leave isMember=false on error */
-      }
-    };
-
-    supabase.auth.getUser().then(async ({ data }) => {
-      await hydrate(data.user);
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(deriveUser(data.user));
       setLoading(false);
     });
-
-    const { data: authSub } = supabase.auth.onAuthStateChange((_event, session) => {
-      hydrate(session?.user ?? null);
+    const { data: authSub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUser(deriveUser(session?.user ?? null));
     });
     return () => authSub.subscription.unsubscribe();
   }, []);
+
+  // 2) Independent membership fetch — runs whenever user changes.
+  // Stored as its own state so auth events can never race it back to false.
+  useEffect(() => {
+    if (!user) {
+      setIsMember(false);
+      return;
+    }
+    let cancelled = false;
+    fetch('/api/me/membership', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((body) => {
+        if (!cancelled) setIsMember(!!body?.is_member);
+      })
+      .catch(() => { /* leave false */ });
+    return () => { cancelled = true; };
+  }, [user?.email]);
 
   useEffect(() => {
     if (!open) return;
@@ -175,7 +172,7 @@ export function UserMenu() {
               <span className="text-[10px] font-mono uppercase tracking-wider text-muted">
                 Membership
               </span>
-              {user.isMember ? (
+              {isMember ? (
                 <span className="text-[10px] font-mono uppercase tracking-wider text-accent bg-accent/15 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
                   <Sparkles className="w-3 h-3" />
                   Lifetime
