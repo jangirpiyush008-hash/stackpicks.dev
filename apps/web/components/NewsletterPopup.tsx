@@ -50,6 +50,17 @@ export function NewsletterPopup() {
     };
   }, [pathname]);
 
+  // Dismiss via ESC key when popup is open
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') dismiss();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
   const dismiss = () => {
     setOpen(false);
     try {
@@ -86,21 +97,27 @@ export function NewsletterPopup() {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in">
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in"
+      onClick={(e) => {
+        // Click outside the dialog dismisses
+        if (e.target === e.currentTarget) dismiss();
+      }}
+    >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="newsletter-title"
         className="relative w-full max-w-md rounded-2xl border border-accent/40 bg-bg shadow-2xl shadow-accent/10 overflow-hidden"
       >
-        {/* Close */}
+        {/* Close — bigger, more obvious */}
         <button
           type="button"
           onClick={dismiss}
-          className="absolute top-3 right-3 p-1.5 rounded-full text-muted hover:text-text hover:bg-surface/60 transition"
-          aria-label="Close"
+          aria-label="Close newsletter popup"
+          className="absolute top-2 right-2 z-10 w-9 h-9 rounded-full bg-surface/80 hover:bg-red-500/20 text-muted hover:text-red-300 transition flex items-center justify-center border border-border hover:border-red-500/40"
         >
-          <X className="w-4 h-4" />
+          <X className="w-5 h-5" />
         </button>
 
         {/* Lime accent glow */}
@@ -162,6 +179,16 @@ export function NewsletterPopup() {
                 <p className="text-[10px] text-muted/70 text-center">
                   Free · No spam · Unsubscribe anytime · ~2,000 builders subscribed
                 </p>
+
+                <div className="text-center pt-2">
+                  <button
+                    type="button"
+                    onClick={dismiss}
+                    className="text-xs text-muted hover:text-text underline underline-offset-2 transition"
+                  >
+                    Maybe later
+                  </button>
+                </div>
               </form>
             </>
           )}
