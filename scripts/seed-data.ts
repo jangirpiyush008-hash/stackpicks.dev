@@ -1109,6 +1109,190 @@ export const SEED_REPOS: SeedEntry[] = [
     use_this_if: 'You\'re in Go and need scraping with low memory + single-binary deploy.',
     skip_if: 'You\'re not in Go — Crawlee or Scrapy will have a richer ecosystem.',
   },
+
+  // ════════════════════════════════════════════════════════════════
+  // TRENDING 2026 — high-impact newer picks
+  // ════════════════════════════════════════════════════════════════
+  {
+    full_name: 'bigskysoftware/htmx',
+    category_slugs: ['frameworks'],
+    is_featured: true,
+    curator_take:
+      'The anti-SPA. HTMX lets you build interactive UIs by adding HTML attributes — no React, no build step, no JS bundle. Server returns HTML fragments, client swaps them in. Massive trending growth in 2026 as the React-fatigue movement matures. ~40k stars. Best for content sites, internal tools, and anyone tired of npm dependency hell.',
+    use_this_if: 'You\'re building a server-rendered app and want interactivity without a JS framework.',
+    skip_if: 'Your app is genuinely client-heavy (drag editor, real-time canvas) — React/Vue/Svelte still win there.',
+  },
+  {
+    full_name: 'tauri-apps/tauri',
+    category_slugs: ['frameworks', 'mobile'],
+    is_featured: true,
+    curator_take:
+      'Build desktop apps with web tech + a Rust shell. 5-10× lighter than Electron (3-10MB bundles vs 100MB+). Tauri 2.0 added mobile so the same codebase ships to macOS/Windows/Linux/iOS/Android. The right pick in 2026 if you want native apps without writing native code.',
+    use_this_if: 'You want a cross-platform desktop or mobile app using web technologies with a small bundle.',
+    skip_if: 'You need deep platform integrations only available in native SDKs.',
+  },
+  {
+    full_name: 'honojs/hono',
+    category_slugs: ['frameworks'],
+    is_featured: true,
+    curator_take:
+      'Ultra-fast TypeScript web framework that runs on Cloudflare Workers, Vercel Edge, Bun, Deno, and Node. ~18k stars and one of the most-loved frameworks in 2026 State of JS. The right pick if Express feels old and you want edge-first performance with great TS DX.',
+    use_this_if: 'You\'re building APIs and want edge runtime support with first-class TypeScript.',
+    skip_if: 'You need a full-stack framework with views — Next.js or SvelteKit are more complete.',
+  },
+  {
+    full_name: 'paul-gauthier/aider',
+    category_slugs: ['ai-ml', 'cli-tools'],
+    is_featured: true,
+    curator_take:
+      'AI pair programmer in your terminal. Connect to Claude, GPT-4, DeepSeek, or local Ollama. Edits files, runs tests, makes commits. ~25k stars and growing fast. The CLI alternative to Cursor for developers who prefer terminal workflows.',
+    use_this_if: 'You want AI-assisted coding without leaving your terminal, and full control over which model to use.',
+    skip_if: 'You prefer a full IDE with inline AI suggestions — Cursor is closer to that.',
+  },
+  {
+    full_name: 'cline/cline',
+    category_slugs: ['ai-ml', 'devops'],
+    is_featured: true,
+    curator_take:
+      'Open-source autonomous coding agent for VS Code. Reads your codebase, plans edits, executes shell commands, recovers from errors. Fastest-growing AI coding agent on GitHub in 2026 (formerly Claude Dev). Free, open-source, bring-your-own-API-key.',
+    use_this_if: 'You use VS Code and want a fully autonomous coding agent that can plan and execute multi-file changes.',
+    skip_if: 'You want lightweight inline completions — GitHub Copilot is more focused.',
+  },
+  {
+    full_name: 'stanfordnlp/dspy',
+    category_slugs: ['ai-ml'],
+    is_featured: true,
+    curator_take:
+      'Stanford\'s framework for programming with LLMs instead of prompting them. You define what you want; DSPy optimizes the prompt automatically. Trending in 2026 as the "next layer" above LangChain. Best for production AI systems where you need reproducible, optimizable LLM pipelines.',
+    use_this_if: 'You\'re building production AI systems and want a more rigorous abstraction than ad-hoc prompts.',
+    skip_if: 'You\'re prototyping simple chat — DSPy\'s mental model is more demanding than direct prompting.',
+  },
+  {
+    full_name: 'mastra-ai/mastra',
+    category_slugs: ['ai-ml'],
+    is_featured: true,
+    curator_take:
+      'JavaScript-native AI agent framework. Workflows, agents, memory, RAG, evals — all in TypeScript. Created by the team behind Gatsby. Fastest-growing JS AI framework in 2026. The right pick if you want LangChain-style power but in TS rather than Python.',
+    use_this_if: 'You\'re building AI products in TypeScript/Node and want a complete framework (agents + workflows + evals).',
+    skip_if: 'You\'re Python-first — LangChain has a deeper Python ecosystem.',
+  },
+  {
+    full_name: 'vllm-project/vllm',
+    category_slugs: ['ai-ml'],
+    is_featured: true,
+    curator_take:
+      'Production LLM serving. 10-24× faster than naive Hugging Face Transformers for batched inference. Used by Mistral, Together AI, and most enterprise LLM teams running open models in production. ~30k stars. The standard for self-hosted LLM inference at scale in 2026.',
+    use_this_if: 'You\'re running open-source LLMs in production and need real throughput.',
+    skip_if: 'You\'re running a personal LLM on a laptop — Ollama is simpler.',
+  },
+  {
+    full_name: 'inngest/inngest',
+    category_slugs: ['devops'],
+    is_featured: true,
+    curator_take:
+      'Durable functions for TypeScript. Schedule jobs, run workflows, retry on failure — all with type-safe code. Replaces Bull/BullMQ + custom retry logic. Self-host or use cloud. The right pick for queueing + workflows in 2026 TS stacks.',
+    use_this_if: 'You need durable background jobs or multi-step workflows with retries.',
+    skip_if: 'You\'re running simple cron jobs — node-cron or Vercel Cron are simpler.',
+  },
+  {
+    full_name: 'triggerdotdev/trigger.dev',
+    category_slugs: ['devops'],
+    is_featured: false,
+    curator_take:
+      'Open-source Inngest alternative with a richer dashboard. Same model: TypeScript-first durable functions, queues, schedules. Visual debug timeline is industry-best. Self-host or use cloud.',
+    use_this_if: 'You want a polished UI for monitoring workflows in addition to durable execution.',
+    skip_if: 'You prefer lighter dependencies — Inngest has smaller surface.',
+  },
+  {
+    full_name: 'cal-com/cal.com',
+    category_slugs: ['frameworks'],
+    is_featured: true,
+    curator_take:
+      'Calendly killer. Open-source scheduling with team availability, workflows, payments, video integration. Used by Y Combinator, MIT, thousands of teams. Self-host or use the free cloud tier. ~35k stars.',
+    use_this_if: 'You need Calendly-style scheduling with full ownership or self-hosting.',
+    skip_if: 'You only need solo booking and don\'t mind Calendly\'s free tier.',
+  },
+  {
+    full_name: 'n8n-io/n8n',
+    category_slugs: ['devops'],
+    is_featured: true,
+    curator_take:
+      'Zapier killer. 400+ integrations, visual node editor, code/AI nodes, self-host with Docker. ~75k stars. The dominant open-source automation platform in 2026. Self-host costs $0 vs Zapier\'s per-task pricing.',
+    use_this_if: 'You\'re hitting Zapier\'s per-task limits or want code-level workflow customization.',
+    skip_if: 'You only need 2-3 simple automations — Zapier free tier is faster to set up.',
+  },
+  {
+    full_name: 'AppFlowy-IO/AppFlowy',
+    category_slugs: ['cms-content'],
+    is_featured: true,
+    curator_take:
+      'The closest Notion clone in 2026. Block editor, databases, kanban, AI features. Built in Rust + Flutter so it\'s fast on every platform. Self-host or use the cloud tier. ~60k stars and shipping aggressively.',
+    use_this_if: 'You want a Notion replacement with self-hosting and full data ownership.',
+    skip_if: 'Your team is deeply embedded in Notion templates and integrations.',
+  },
+  {
+    full_name: 'twentyhq/twenty',
+    category_slugs: ['cms-content'],
+    is_featured: false,
+    curator_take:
+      'Modern open-source CRM with Notion-style UI. GraphQL API, custom objects, beautiful UX. ~22k stars. The default OSS CRM pick in 2026 — escapes Salesforce/HubSpot per-user pricing.',
+    use_this_if: 'You\'re escaping HubSpot/Salesforce per-user pricing and want a modern CRM you can self-host.',
+    skip_if: 'You need a 10-year-mature CRM with every enterprise feature — Salesforce still wins on breadth.',
+  },
+  {
+    full_name: 'makeplane/plane',
+    category_slugs: ['cms-content'],
+    is_featured: true,
+    curator_take:
+      'Linear/Jira killer. Cycles, modules, views, custom workflows, beautiful UI. ~30k stars. The default project management pick for engineering teams that want OSS in 2026.',
+    use_this_if: 'You want Linear-style project management with self-hosting and no per-user fees.',
+    skip_if: 'Your team is already deep in Jira — migration cost is real.',
+  },
+  {
+    full_name: 'BerriAI/litellm',
+    category_slugs: ['ai-ml'],
+    is_featured: false,
+    curator_take:
+      'Universal proxy/SDK for any LLM API — OpenAI, Anthropic, Gemini, Mistral, Cohere, Bedrock, local Ollama, 100+ providers. Same interface for all. Built-in spend tracking, rate limiting, caching. The right pick if you want to abstract LLM provider lock-in.',
+    use_this_if: 'You\'re calling multiple LLM providers and want a unified interface plus cost tracking.',
+    skip_if: 'You\'re only using one provider — direct SDK is simpler.',
+  },
+  {
+    full_name: 'livekit/livekit',
+    category_slugs: ['frameworks'],
+    is_featured: false,
+    curator_take:
+      'Open-source WebRTC infrastructure. Build voice/video apps without renting Twilio. Used by OpenAI for Realtime API. Self-host the SFU or use their cloud. The right pick for any product needing real-time audio/video in 2026.',
+    use_this_if: 'You\'re building voice/video features (telehealth, voice AI, live streaming).',
+    skip_if: 'You only need basic recorded video — file storage + HLS is simpler.',
+  },
+  {
+    full_name: 'pipecat-ai/pipecat',
+    category_slugs: ['ai-ml'],
+    is_featured: false,
+    curator_take:
+      'Open-source voice AI orchestration. Build voice agents that call APIs, transcribe, generate, speak — all in pipelines. Pairs with LiveKit for real-time. Fastest-growing voice AI framework in 2026.',
+    use_this_if: 'You\'re building voice AI products (phone agents, voice assistants).',
+    skip_if: 'You\'re building text-only AI — overkill.',
+  },
+  {
+    full_name: 'aidenybai/million',
+    category_slugs: ['frameworks'],
+    is_featured: false,
+    curator_take:
+      'Drop-in React replacement renderer that\'s ~70% faster on benchmark UIs. One import, no rewrites. Use the `block()` wrapper around expensive components for huge speedups. Best for data-heavy React dashboards.',
+    use_this_if: 'You have a React app with slow re-renders and don\'t want to rewrite to Solid.',
+    skip_if: 'Your React app is already fast — Million adds complexity for marginal gain.',
+  },
+  {
+    full_name: 'elysiajs/elysia',
+    category_slugs: ['frameworks'],
+    is_featured: false,
+    curator_take:
+      'Ergonomic web framework built for Bun. Insane TypeScript inference — your routes infer client types automatically. Faster than Express, Fastify, Hono on Bun benchmarks. Best for Bun-first projects that want maximum DX.',
+    use_this_if: 'You\'re on Bun and want a framework that leverages every Bun perf optimization.',
+    skip_if: 'You need to run on Node too — Hono is multi-runtime.',
+  },
 ];
 
 export const TOTAL_REPOS = SEED_REPOS.length;
