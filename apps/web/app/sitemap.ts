@@ -2,6 +2,7 @@ import { SITE } from '@stackpicks/core/constants';
 import { COMPARISONS } from '../lib/comparisons';
 import { BLOG_POSTS } from '../lib/blog';
 import { ALTERNATIVES } from '../lib/saas-alternatives';
+import { BEST_OF } from '../lib/best-of';
 import type { MetadataRoute } from 'next';
 
 // Generate at request time, not build time — avoids needing DB env at build.
@@ -17,6 +18,7 @@ const STATIC_PATHS: MetadataRoute.Sitemap = [
   { url: `${SITE.url}/compare`, changeFrequency: 'weekly', priority: 0.85 },
   { url: `${SITE.url}/blog`, changeFrequency: 'weekly', priority: 0.9 },
   { url: `${SITE.url}/alternatives`, changeFrequency: 'weekly', priority: 0.95 },
+  { url: `${SITE.url}/best`, changeFrequency: 'weekly', priority: 0.9 },
   { url: `${SITE.url}/pricing`, changeFrequency: 'monthly', priority: 0.85 },
   { url: `${SITE.url}/about`, changeFrequency: 'monthly', priority: 0.5 },
   { url: `${SITE.url}/contact`, changeFrequency: 'monthly', priority: 0.5 },
@@ -73,10 +75,16 @@ const ALT_PATHS: MetadataRoute.Sitemap = ALTERNATIVES.map((a) => ({
   priority: 0.9,
 }));
 
+const BEST_PATHS: MetadataRoute.Sitemap = BEST_OF.map((b) => ({
+  url: `${SITE.url}/best/${b.slug}`,
+  changeFrequency: 'monthly',
+  priority: 0.85,
+}));
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // If Supabase env isn't set, return static paths only so the build still succeeds.
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    return [...STATIC_PATHS, ...BUNDLE_PATHS, ...SKILL_PATHS, ...COMPARE_PATHS, ...BLOG_PATHS, ...ALT_PATHS];
+    return [...STATIC_PATHS, ...BUNDLE_PATHS, ...SKILL_PATHS, ...COMPARE_PATHS, ...BLOG_PATHS, ...ALT_PATHS, ...BEST_PATHS];
   }
 
   try {
@@ -128,12 +136,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...COMPARE_PATHS,
       ...BLOG_PATHS,
       ...ALT_PATHS,
+      ...BEST_PATHS,
       ...categoryPaths,
       ...collectionPaths,
       ...repoPaths,
     ];
   } catch (err) {
     console.error('Sitemap generation failed, falling back to static paths:', err);
-    return [...STATIC_PATHS, ...BUNDLE_PATHS, ...SKILL_PATHS, ...COMPARE_PATHS, ...BLOG_PATHS, ...ALT_PATHS];
+    return [...STATIC_PATHS, ...BUNDLE_PATHS, ...SKILL_PATHS, ...COMPARE_PATHS, ...BLOG_PATHS, ...ALT_PATHS, ...BEST_PATHS];
   }
 }
