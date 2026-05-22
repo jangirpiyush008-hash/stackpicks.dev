@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { UserMenu } from './UserMenu';
 
@@ -15,6 +16,21 @@ const LINKS = [
 
 export function HeaderNav() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  // Auto-close the mobile sheet whenever the route changes —
+  // catches Sign-in clicks (in UserMenu) + any other future child links.
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  // Lock body scroll while the mobile sheet is open
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    document.body.style.overflow = open ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
   return (
     <>
       {/* Desktop */}
