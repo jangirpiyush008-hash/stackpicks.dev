@@ -5,8 +5,11 @@ import { Star, GitFork, Sparkles } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { UnlockCTA, FREE_CATEGORY_LIMIT } from '../../../components/UnlockCTA';
+import { getIsMember } from '../../../lib/membership';
 
-export const revalidate = 3600;
+// force-dynamic so per-user membership unlocks render correctly
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -35,14 +38,17 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
   const category = await getCategoryBySlug(supabase, slug);
   if (!category) notFound();
 
-  const [repos, sponsored] = await Promise.all([
+  const [repos, sponsored, isMember] = await Promise.all([
     listRepos(supabase, {
       categorySlug: slug,
       sort: (sort as any) ?? 'trending',
       limit: 48,
     }),
     getActiveSponsoredSlots(supabase, 'category_top', category.id),
+    getIsMember(),
   ]);
+
+  const visibleRepos = isMember ? repos : repos.slice(0, FREE_CATEGORY_LIMIT);
 
   return (
     <>
@@ -96,7 +102,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         </div>
 
         <div className="grid sm:grid-cols-2 gap-4">
-          {repos.slice(0, FREE_CATEGORY_LIMIT).map((repo) => (
+          {visibleRepos.map((repo) => (
             <a
               key={repo.id}
               href={`/repo/${repo.slug}`}
@@ -121,7 +127,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
           ))}
         </div>
 
-        {repos.length > FREE_CATEGORY_LIMIT && (
+        {!isMember && repos.length > FREE_CATEGORY_LIMIT && (
           <UnlockCTA totalLocked={repos.length - FREE_CATEGORY_LIMIT} context="category" />
         )}
 

@@ -13,6 +13,7 @@ import { Testimonials } from '../../components/Testimonials';
 import { VisualPreviews } from '../../components/VisualPreviews';
 import { HeroSearchBar } from '../../components/HeroSearchBar';
 import { DidYouMean } from '../../components/DidYouMean';
+import { getIsMember } from '../../lib/membership';
 
 // Free tier: how many repos render before the paywall.
 // - Unfiltered gallery: 6 sample repos (gives a feel for the curation)
@@ -32,6 +33,10 @@ export const metadata = {
   description: 'Visual preview of every repo in the StackPicks v1 directory. No login, no DB — pure curator opinion.',
 };
 
+// force-dynamic so per-user membership unlocks render correctly
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 type SearchParams = { cat?: string; q?: string };
 
 export default async function PreviewPage({
@@ -43,6 +48,7 @@ export default async function PreviewPage({
   const activeCat = cat?.trim().toLowerCase() || null;
   const rawQuery = q?.trim() || null;
   const tokens = rawQuery ? expandQuery(rawQuery) : [];
+  const isMember = await getIsMember();
 
   const filtered = SEED_REPOS.filter((r) => {
     if (activeCat && !r.category_slugs.includes(activeCat)) return false;
@@ -243,8 +249,8 @@ export default async function PreviewPage({
             );
           }
           const limit = isFiltered ? FREE_LIMIT_FILTERED : FREE_LIMIT_DEFAULT;
-          const visible = items.slice(0, limit);
-          const lockedCount = Math.max(0, items.length - limit);
+          const visible = isMember ? items : items.slice(0, limit);
+          const lockedCount = isMember ? 0 : Math.max(0, items.length - limit);
           return (
             <>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

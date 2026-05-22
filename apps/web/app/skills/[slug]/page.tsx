@@ -8,6 +8,7 @@ import {
 import { SKILL_TRACKS, getSkillTrackBySlug } from '../../../lib/skill-tracks';
 import { getSeedByFullName } from '../../../lib/preview-source';
 import { UnlockCTA } from '../../../components/UnlockCTA';
+import { getIsMember } from '../../../lib/membership';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -46,8 +47,9 @@ export default async function SkillTrackPage({ params }: { params: Promise<{ slu
   if (!track) notFound();
 
   const Icon = ICONS[track.icon] ?? Brain;
-  const visible = track.repos.slice(0, FREE_TOOL_LIMIT);
-  const lockedCount = Math.max(0, track.repos.length - FREE_TOOL_LIMIT);
+  const isMember = await getIsMember();
+  const visible = isMember ? track.repos : track.repos.slice(0, FREE_TOOL_LIMIT);
+  const lockedCount = isMember ? 0 : Math.max(0, track.repos.length - FREE_TOOL_LIMIT);
   const lockedSubcategories = Array.from(
     new Set(track.repos.slice(FREE_TOOL_LIMIT).map((r) => r.subcategory))
   );
@@ -82,7 +84,7 @@ export default async function SkillTrackPage({ params }: { params: Promise<{ slu
               For: {track.audience}
             </span>
             <span className="px-3 py-1 rounded-full border border-border bg-surface/60 backdrop-blur text-muted">
-              {track.repos.length} tools · {FREE_TOOL_LIMIT} free preview
+              {isMember ? `${track.repos.length} tools · all unlocked` : `${track.repos.length} tools · ${FREE_TOOL_LIMIT} free preview`}
             </span>
           </div>
         </div>
@@ -91,7 +93,9 @@ export default async function SkillTrackPage({ params }: { params: Promise<{ slu
       {/* Free preview tools */}
       <div className="max-w-5xl mx-auto px-4 py-12">
         <div className="flex items-baseline gap-3 mb-6">
-          <h2 className="text-xl md:text-2xl font-bold">Top {FREE_TOOL_LIMIT} tools — free preview</h2>
+          <h2 className="text-xl md:text-2xl font-bold">
+            {isMember ? `All ${track.repos.length} tools` : `Top ${FREE_TOOL_LIMIT} tools — free preview`}
+          </h2>
           <span className="text-xs text-muted ml-auto">
             {lockedCount > 0 && `${lockedCount} more locked`}
           </span>

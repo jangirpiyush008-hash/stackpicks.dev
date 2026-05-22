@@ -8,6 +8,7 @@ import {
 import { USE_CASE_BUNDLES, getBundleBySlug } from '../../../lib/use-case-bundles';
 import { getSeedByFullName } from '../../../lib/preview-source';
 import { UnlockCTA } from '../../../components/UnlockCTA';
+import { getIsMember } from '../../../lib/membership';
 
 // Free preview: show the first N sections in full. The rest is gated behind membership.
 const FREE_SECTION_LIMIT = 3;
@@ -55,6 +56,8 @@ export default async function BundlePage({ params }: { params: Promise<{ slug: s
 
   const Icon = ICONS[bundle.icon] ?? Rocket;
   const totalRepos = bundle.sections.reduce((n, s) => n + s.repos.length, 0);
+  const isMember = await getIsMember();
+  const visibleSections = isMember ? bundle.sections : bundle.sections.slice(0, FREE_SECTION_LIMIT);
 
   return (
     <div>
@@ -109,7 +112,7 @@ export default async function BundlePage({ params }: { params: Promise<{ slug: s
 
       {/* Sections */}
       <div className="max-w-5xl mx-auto px-4 py-12 space-y-10">
-        {bundle.sections.slice(0, FREE_SECTION_LIMIT).map((section, i) => (
+        {visibleSections.map((section, i) => (
           <section key={section.title}>
             <div className="flex items-baseline gap-3 mb-5">
               <span className="text-[11px] font-mono text-muted/60">0{i + 1}</span>
@@ -128,7 +131,7 @@ export default async function BundlePage({ params }: { params: Promise<{ slug: s
           </section>
         ))}
 
-        {bundle.sections.length > FREE_SECTION_LIMIT && (
+        {!isMember && bundle.sections.length > FREE_SECTION_LIMIT && (
           <LockedSectionsPreview
             lockedSections={bundle.sections.slice(FREE_SECTION_LIMIT)}
             totalLockedRepos={bundle.sections
