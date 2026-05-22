@@ -19,7 +19,17 @@ export default async function ProfilePage() {
   if (!user) redirect('/login?next=/profile');
 
   const display = deriveDisplayUser(user);
-  const isMember = false; // TODO: wire to premium_subscriptions
+
+  // Active lifetime membership? RLS allows user to read own subscription row.
+  const { data: sub } = await supabase
+    .from('premium_subscriptions')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('status', 'active')
+    .limit(1)
+    .maybeSingle();
+  const isMember = !!sub;
+
   const memberSince = user.created_at ? formatIST(user.created_at) : '—';
 
   // Load this user's repo submissions (count + recent)

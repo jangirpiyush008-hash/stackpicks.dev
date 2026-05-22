@@ -41,7 +41,7 @@ function deriveUser(authUser: {
     name,
     initials,
     avatarUrl,
-    isMember: false, // TODO: read from premium_subscriptions when payments ship
+    isMember: false, // hydrated separately via premium_subscriptions check
   };
 }
 
@@ -55,15 +55,32 @@ export function UserMenu() {
   useEffect(() => {
     const supabase = getSupabaseBrowser();
 
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(deriveUser(data.user));
+    const hydrate = async (authUser: Parameters<typeof deriveUser>[0]) => {
+      const base = deriveUser(authUser);
+      if (!base || !authUser) {
+        setUser(base);
+        return;
+      }
+      // RLS allows the signed-in user to read their own subscription row.
+      const { data: sub } = await supabase
+        .from('premium_subscriptions')
+        .select('id')
+        .eq('user_id', (authUser as { id: string }).id)
+        .eq('status', 'active')
+        .limit(1)
+        .maybeSingle();
+      setUser({ ...base, isMember: !!sub });
+    };
+
+    supabase.auth.getUser().then(async ({ data }) => {
+      await hydrate(data.user);
       setLoading(false);
     });
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(deriveUser(session?.user ?? null));
+    const { data: authSub } = supabase.auth.onAuthStateChange((_event, session) => {
+      hydrate(session?.user ?? null);
     });
-    return () => sub.subscription.unsubscribe();
+    return () => authSub.subscription.unsubscribe();
   }, []);
 
   useEffect(() => {

@@ -17,7 +17,16 @@ export default async function DashboardPage() {
   if (!user) redirect('/login?next=/dashboard');
 
   const display = deriveDisplayUser(user);
-  const isMember = false; // TODO: wire to premium_subscriptions when payments ship
+
+  // Check active lifetime membership (RLS allows user to read own subscription)
+  const { data: sub } = await supabase
+    .from('premium_subscriptions')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('status', 'active')
+    .limit(1)
+    .maybeSingle();
+  const isMember = !!sub;
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
