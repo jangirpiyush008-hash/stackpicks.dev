@@ -115,11 +115,14 @@ export function CouponInput({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="mt-4 inline-flex items-center gap-1.5 text-xs text-muted hover:text-accent transition"
+        className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-dashed border-accent/50 bg-accent/5 hover:bg-accent/10 hover:border-accent text-sm font-medium text-accent transition group"
       >
-        <Tag className="w-3 h-3" />
-        Got a coupon code?
-        <ChevronDown className="w-3 h-3" />
+        <Tag className="w-4 h-4" />
+        Have a coupon code?
+        <span className="text-[10px] font-mono uppercase tracking-wider text-accent/80 group-hover:text-accent">
+          Click to redeem
+        </span>
+        <ChevronDown className="w-4 h-4" />
       </button>
     );
   }
