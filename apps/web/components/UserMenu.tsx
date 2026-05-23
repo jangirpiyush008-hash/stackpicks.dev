@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { LayoutDashboard, User, Github, LogOut, ChevronDown, Sparkles } from 'lucide-react';
 import { getSupabaseBrowser } from '../lib/supabase-browser';
+import { identifyUser, resetUser } from '../lib/track';
 
 interface SessionUser {
   email: string | null;
@@ -54,14 +55,32 @@ export function UserMenu() {
   const menuRef = useRef<HTMLDivElement>(null);
 
   // 1) Track auth state — sets/clears user, no membership coupling here.
+  //    Also identifies the user to analytics so anonymous trails get linked.
   useEffect(() => {
     const supabase = getSupabaseBrowser();
     supabase.auth.getUser().then(({ data }) => {
       setUser(deriveUser(data.user));
       setLoading(false);
+      if (data.user) {
+        identifyUser(data.user.id, {
+          email: data.user.email,
+          name: (data.user.user_metadata?.full_name as string) ?? null,
+          created_at: data.user.created_at,
+        });
+      }
     });
-    const { data: authSub } = supabase.auth.onAuthStateChange((_e, session) => {
+    const { data: authSub } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(deriveUser(session?.user ?? null));
+      if (event === 'SIGNED_IN' && session?.user) {
+        identifyUser(session.user.id, {
+          email: session.user.email,
+          name: (session.user.user_metadata?.full_name as string) ?? null,
+          created_at: session.user.created_at,
+        });
+      }
+      if (event === 'SIGNED_OUT') {
+        resetUser();
+      }
     });
     return () => authSub.subscription.unsubscribe();
   }, []);

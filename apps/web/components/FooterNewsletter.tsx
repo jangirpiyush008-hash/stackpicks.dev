@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Mail, Check, Loader2 } from 'lucide-react';
+import { events } from '../lib/track';
 
 export function FooterNewsletter() {
   const [email, setEmail] = useState('');
@@ -27,6 +28,7 @@ export function FooterNewsletter() {
       }
       setStatus('done');
       setEmail('');
+      events.newsletterSignup('footer');
     } catch (e2) {
       setError(e2 instanceof Error ? e2.message : 'Network error');
       setStatus('error');

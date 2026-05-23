@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Mail, X, Check, Sparkles } from 'lucide-react';
+import { events } from '../lib/track';
 
 const STORAGE_KEY = 'sp_newsletter_popup_dismissed';
 const SHOW_DELAY_MS = 30_000; // 30s after page load OR exit-intent — whichever fires first
@@ -86,6 +87,7 @@ export function NewsletterPopup() {
         return;
       }
       setStatus('done');
+      events.newsletterSignup('popup');
       // Auto-close after 4 sec
       setTimeout(dismiss, 4000);
     } catch (e2) {

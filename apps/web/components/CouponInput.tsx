@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Tag, Check, X, Loader2, ChevronDown } from 'lucide-react';
+import { events } from '../lib/track';
 
 type Currency = 'INR' | 'USD';
 
@@ -58,6 +59,7 @@ export function CouponInput({
       }
       setCoupon(body.data);
       setStatus('valid');
+      events.couponApplied(body.data.code, body.data.is_free ? 'free' : 'discount');
       onApply?.(body.data);
     } catch {
       setErrorMsg('Network error — try again');

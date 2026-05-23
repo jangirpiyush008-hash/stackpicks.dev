@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Loader2, Lock, ArrowRight, Check, Sparkles } from 'lucide-react';
 import { getSupabaseBrowser } from '../lib/supabase-browser';
+import { events } from '../lib/track';
 
 // Razorpay's checkout.js is loaded once and exposes window.Razorpay
 interface RazorpayInstance {
@@ -87,6 +88,9 @@ export function CheckoutButton({ currency, couponCode }: Props) {
       return;
     }
 
+    // Analytics: user clicked the buy button
+    events.checkoutStarted(currency, 0, couponCode ?? undefined);
+
     try {
       // 2. Load Razorpay script
       await loadRazorpayScript();
@@ -167,10 +171,19 @@ export function CheckoutButton({ currency, couponCode }: Props) {
             });
             const verifyBody = await verifyRes.json();
             if (!verifyRes.ok || !verifyBody.ok) {
+              events.paymentFailed(verifyBody.error ?? 'verify_failed');
               setErrorMsg(verifyBody.message ?? 'Payment received but verification failed. Email support with payment ID.');
               setStatus('error');
               return;
             }
+            // Analytics: revenue event — flows into PostHog's $revenue aggregations
+            events.paymentSuccess({
+              amount: orderBody.data.amount,
+              currency,
+              payment_id: response.razorpay_payment_id,
+              order_id: response.razorpay_order_id,
+              coupon: couponCode,
+            });
             setStatus('done');
             setTimeout(() => {
               router.push('/dashboard');
