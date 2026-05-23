@@ -177,7 +177,7 @@ function RepoCard({ repo }: { repo: Awaited<ReturnType<typeof listRepos>>[number
     >
       <div className="flex items-start justify-between mb-2">
         <div className="min-w-0">
-          <RepoOwnerLink owner={repo.owner} size="xs" />
+          <RepoOwnerLink owner={repo.owner} size="xs" showLabel />
           <div className="font-bold text-lg mt-0.5 truncate">{repo.name}</div>
         </div>
         <ExternalLink className="w-4 h-4 text-muted shrink-0" />

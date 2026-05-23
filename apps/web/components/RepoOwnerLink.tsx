@@ -18,6 +18,8 @@ interface Props {
 export function RepoOwnerLink({ owner, size = 'sm', showLabel = false, className = '' }: Props) {
   const dim = size === 'xs' ? 16 : size === 'sm' ? 20 : 28;
   const textSize = size === 'xs' ? 'text-[11px]' : size === 'sm' ? 'text-xs' : 'text-sm';
+  // Big detail-page label vs compact card label
+  const labelText = size === 'md' ? 'Built by' : 'by';
 
   return (
     <a
@@ -28,7 +30,7 @@ export function RepoOwnerLink({ owner, size = 'sm', showLabel = false, className
       className={`inline-flex items-center gap-1.5 font-mono ${textSize} text-muted hover:text-accent transition group ${className}`}
       title={`${owner} on GitHub — original maintainer`}
     >
-      {showLabel && <span className="text-muted/70">Built by</span>}
+      {showLabel && <span className="text-muted/70 font-sans not-italic">{labelText}</span>}
       <img
         src={`https://github.com/${owner}.png?size=${dim * 2}`}
         alt=""
@@ -71,7 +73,7 @@ export function RepoOwnerAvatar({ owner, size = 36, className = '' }: { owner: s
   );
 }
 
-export function RepoOwnerName({ owner, className = '' }: { owner: string; className?: string }) {
+export function RepoOwnerName({ owner, withByLabel = true, className = '' }: { owner: string; withByLabel?: boolean; className?: string }) {
   return (
     <a
       href={`https://github.com/${owner}`}
@@ -79,9 +81,10 @@ export function RepoOwnerName({ owner, className = '' }: { owner: string; classN
       rel="noopener noreferrer nofollow"
       onClick={(e) => e.stopPropagation()}
       title={`Built by ${owner}`}
-      className={`font-mono text-[11px] text-muted hover:text-accent transition truncate block ${className}`}
+      className={`text-[11px] text-muted hover:text-accent transition truncate inline-flex items-center gap-1 max-w-full ${className}`}
     >
-      {owner}
+      {withByLabel && <span className="text-muted/60">by</span>}
+      <span className="font-mono truncate">{owner}</span>
     </a>
   );
 }

@@ -128,7 +128,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
               href={`/repo/${repo.slug}`}
               className="p-5 rounded border border-border hover:border-accent transition"
             >
-              <RepoOwnerLink owner={repo.owner} size="xs" />
+              <RepoOwnerLink owner={repo.owner} size="xs" showLabel />
               <div className="font-bold text-lg mb-1 mt-0.5">{repo.name}</div>
               <p className="text-sm text-muted line-clamp-2 mb-3">{repo.description}</p>
               <div className="flex items-center gap-4 text-xs text-muted">
