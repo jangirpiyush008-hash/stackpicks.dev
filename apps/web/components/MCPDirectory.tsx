@@ -1,0 +1,318 @@
+'use client';
+
+import { useMemo, useState } from 'react';
+import { Search, Copy, Check, ExternalLink, Cpu, Cloud, Globe, X } from 'lucide-react';
+import { MCP_SERVERS, MCP_CATEGORIES, type MCPServer, type MCPCategory } from '../lib/mcp-connectors';
+
+export function MCPDirectory() {
+  const [query, setQuery] = useState('');
+  const [activeCat, setActiveCat] = useState<MCPCategory | 'all'>('all');
+  const [activeSource, setActiveSource] = useState<'all' | 'official' | 'vendor' | 'community'>('all');
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return MCP_SERVERS.filter((s) => {
+      if (activeCat !== 'all' && !s.categories.includes(activeCat)) return false;
+      if (activeSource !== 'all' && s.source !== activeSource) return false;
+      if (!q) return true;
+      return (
+        s.name.toLowerCase().includes(q) ||
+        s.publisher.toLowerCase().includes(q) ||
+        s.description.toLowerCase().includes(q) ||
+        s.use_case.toLowerCase().includes(q) ||
+        s.github?.toLowerCase().includes(q) ||
+        (s.tags ?? []).some((t) => t.toLowerCase().includes(q))
+      );
+    });
+  }, [query, activeCat, activeSource]);
+
+  return (
+    <div>
+      {/* Search */}
+      <div className="relative mb-6">
+        <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search MCP servers — 'postgres', 'slack', 'browser', 'figma'..."
+          className="w-full pl-11 pr-10 py-3.5 rounded-xl bg-surface border border-border focus:border-accent outline-none text-sm transition"
+        />
+        {query && (
+          <button
+            type="button"
+            onClick={() => setQuery('')}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-text transition"
+            aria-label="Clear search"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+
+      {/* Source filter chips */}
+      <div className="flex flex-wrap gap-2 mb-3">
+        {([
+          { v: 'all', label: 'All sources' },
+          { v: 'official', label: 'Official (Anthropic)' },
+          { v: 'vendor', label: 'Vendor-built' },
+          { v: 'community', label: 'Community' },
+        ] as const).map(({ v, label }) => (
+          <button
+            key={v}
+            type="button"
+            onClick={() => setActiveSource(v)}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${
+              activeSource === v
+                ? 'bg-accent text-bg'
+                : 'border border-border text-muted hover:border-accent hover:text-text'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* Category chips */}
+      <div className="flex flex-wrap gap-2 mb-8 pb-6 border-b border-border">
+        <button
+          type="button"
+          onClick={() => setActiveCat('all')}
+          className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${
+            activeCat === 'all'
+              ? 'bg-text text-bg'
+              : 'border border-border text-muted hover:border-text hover:text-text'
+          }`}
+        >
+          All categories
+        </button>
+        {MCP_CATEGORIES.map((c) => {
+          const count = MCP_SERVERS.filter((s) => s.categories.includes(c.slug)).length;
+          if (count === 0) return null;
+          return (
+            <button
+              key={c.slug}
+              type="button"
+              onClick={() => setActiveCat(c.slug)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition inline-flex items-center gap-1.5 ${
+                activeCat === c.slug
+                  ? 'bg-accent/20 border border-accent text-accent'
+                  : 'border border-border text-muted hover:border-accent/50 hover:text-text'
+              }`}
+            >
+              {c.name}
+              <span className={`text-[10px] font-mono ${activeCat === c.slug ? 'text-accent' : 'text-muted/60'}`}>
+                {count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Result count */}
+      <div className="text-xs font-mono text-muted mb-4">
+        {filtered.length} {filtered.length === 1 ? 'server' : 'servers'}
+        {activeCat !== 'all' && <> in <span className="text-text">{MCP_CATEGORIES.find(c => c.slug === activeCat)?.name}</span></>}
+        {query && <> matching <span className="text-text">"{query}"</span></>}
+      </div>
+
+      {/* Grid */}
+      {filtered.length === 0 ? (
+        <div className="text-center py-16 border border-dashed border-border rounded-xl">
+          <Search className="w-8 h-8 text-muted mx-auto mb-3" />
+          <p className="text-muted">No MCP servers match that filter.</p>
+          <button
+            type="button"
+            onClick={() => { setQuery(''); setActiveCat('all'); setActiveSource('all'); }}
+            className="mt-3 text-xs text-accent hover:underline"
+          >
+            Reset filters
+          </button>
+        </div>
+      ) : (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filtered.map((s) => <MCPCard key={s.slug} server={s} />)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MCPCard({ server: s }: { server: MCPServer }) {
+  const [copied, setCopied] = useState<string | null>(null);
+
+  const installCmd =
+    s.install.npx ?? s.install.uvx ?? s.install.docker ?? s.install.pip ?? s.install.remote ?? '';
+  const installLabel =
+    s.install.npx ? 'npx' :
+    s.install.uvx ? 'uvx' :
+    s.install.docker ? 'docker' :
+    s.install.pip ? 'pip' :
+    s.install.remote ? 'remote' : '';
+
+  const copy = (txt: string, key: string) => {
+    navigator.clipboard.writeText(txt).then(() => {
+      setCopied(key);
+      setTimeout(() => setCopied(null), 1500);
+    });
+  };
+
+  const sourceBadge =
+    s.source === 'official' ? { bg: 'bg-accent/20', fg: 'text-accent', label: 'Official' } :
+    s.source === 'vendor'   ? { bg: 'bg-blue-500/20', fg: 'text-blue-300', label: 'Vendor' } :
+                              { bg: 'bg-fuchsia-500/15', fg: 'text-fuchsia-300', label: 'Community' };
+
+  const transportIcon =
+    s.transport.includes('http') || s.transport.includes('sse')
+      ? <Cloud className="w-3 h-3" />
+      : <Cpu className="w-3 h-3" />;
+  const transportLabel = s.install.remote ? 'Remote' : 'Local';
+
+  return (
+    <div className="rounded-xl border border-border bg-surface/40 p-5 hover:border-accent/40 transition flex flex-col">
+      {/* Header — publisher attribution */}
+      <div className="flex items-start gap-3 mb-3">
+        {s.publisher_github ? (
+          <a
+            href={`https://github.com/${s.publisher_github}`}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            title={`${s.publisher} on GitHub — original maintainer`}
+            className="shrink-0"
+          >
+            <img
+              src={`https://avatars.githubusercontent.com/${s.publisher_github}`}
+              alt=""
+              width={36}
+              height={36}
+              loading="lazy"
+              className="rounded-md border border-border bg-surface hover:border-accent transition"
+            />
+          </a>
+        ) : (
+          <div className="w-9 h-9 rounded-md bg-bg border border-border flex items-center justify-center shrink-0">
+            <Globe className="w-4 h-4 text-muted" />
+          </div>
+        )}
+
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="font-bold leading-tight truncate">{s.name}</div>
+            <span className={`text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded ${sourceBadge.bg} ${sourceBadge.fg} shrink-0`}>
+              {sourceBadge.label}
+            </span>
+          </div>
+          {s.publisher_github ? (
+            <a
+              href={`https://github.com/${s.publisher_github}`}
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+              className="font-mono text-[11px] text-muted hover:text-accent transition truncate block"
+              title={`Built by ${s.publisher}`}
+            >
+              {s.publisher}
+            </a>
+          ) : (
+            <div className="font-mono text-[11px] text-muted truncate">{s.publisher}</div>
+          )}
+        </div>
+      </div>
+
+      {/* Description + use case */}
+      <p className="text-sm text-text leading-relaxed mb-2">{s.description}</p>
+      <p className="text-xs text-muted italic leading-relaxed mb-4 line-clamp-2">→ {s.use_case}</p>
+
+      {/* Meta */}
+      <div className="flex items-center gap-3 mb-3 text-[10px] font-mono uppercase tracking-wider text-muted">
+        <span className="inline-flex items-center gap-1">
+          {transportIcon}
+          {transportLabel}
+        </span>
+        {s.requires_auth && (
+          <span className="inline-flex items-center gap-1 text-amber-300/80">
+            Auth required
+          </span>
+        )}
+      </div>
+
+      {/* Categories */}
+      <div className="flex flex-wrap gap-1 mb-4">
+        {s.categories.slice(0, 3).map((cat) => {
+          const cName = MCP_CATEGORIES.find((c) => c.slug === cat)?.name ?? cat;
+          return (
+            <span key={cat} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-border/40 text-muted">
+              {cName}
+            </span>
+          );
+        })}
+      </div>
+
+      {/* Install command */}
+      {installCmd && (
+        <div className="mt-auto">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-muted">
+              Install · {installLabel}
+            </span>
+            <button
+              type="button"
+              onClick={() => copy(installCmd, 'install')}
+              className="text-[10px] font-mono text-muted hover:text-accent transition inline-flex items-center gap-1"
+            >
+              {copied === 'install' ? (
+                <>
+                  <Check className="w-3 h-3" /> Copied
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3 h-3" /> Copy
+                </>
+              )}
+            </button>
+          </div>
+          <pre className="bg-bg/80 border border-border rounded-md px-2.5 py-2 text-[11px] font-mono text-text overflow-x-auto whitespace-nowrap leading-tight">
+            {installCmd}
+          </pre>
+        </div>
+      )}
+
+      {/* Links */}
+      <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-border/50">
+        {s.github && (
+          <a
+            href={`https://github.com/${s.github}`}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            className="text-[11px] font-medium text-muted hover:text-accent transition inline-flex items-center gap-1"
+          >
+            <ExternalLink className="w-3 h-3" />
+            GitHub
+          </a>
+        )}
+        {s.docs && (
+          <a
+            href={s.docs}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            className="text-[11px] font-medium text-muted hover:text-accent transition inline-flex items-center gap-1"
+          >
+            <ExternalLink className="w-3 h-3" />
+            Docs
+          </a>
+        )}
+        {s.install.remote && (
+          <a
+            href={s.install.remote}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            className="text-[11px] font-medium text-muted hover:text-accent transition inline-flex items-center gap-1"
+            title="Remote MCP endpoint URL"
+          >
+            <Cloud className="w-3 h-3" />
+            Endpoint
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}

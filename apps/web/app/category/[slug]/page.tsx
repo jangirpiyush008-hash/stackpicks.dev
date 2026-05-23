@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { UnlockCTA, FREE_CATEGORY_LIMIT } from '../../../components/UnlockCTA';
 import { getIsMember } from '../../../lib/membership';
+import { RepoOwnerLink } from '../../../components/RepoOwnerLink';
 
 // force-dynamic so per-user membership unlocks render correctly
 export const dynamic = 'force-dynamic';
@@ -127,8 +128,8 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
               href={`/repo/${repo.slug}`}
               className="p-5 rounded border border-border hover:border-accent transition"
             >
-              <div className="font-mono text-xs text-muted">{repo.owner}</div>
-              <div className="font-bold text-lg mb-1">{repo.name}</div>
+              <RepoOwnerLink owner={repo.owner} size="xs" />
+              <div className="font-bold text-lg mb-1 mt-0.5">{repo.name}</div>
               <p className="text-sm text-muted line-clamp-2 mb-3">{repo.description}</p>
               <div className="flex items-center gap-4 text-xs text-muted">
                 <span className="flex items-center gap-1">

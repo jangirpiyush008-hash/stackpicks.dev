@@ -14,6 +14,7 @@ import { UnlockCTA, FREE_TRENDING_LIMIT } from '../components/UnlockCTA';
 import { Testimonials } from '../components/Testimonials';
 import { VisualPreviews } from '../components/VisualPreviews';
 import { HeroSearchBar } from '../components/HeroSearchBar';
+import { RepoOwnerLink } from '../components/RepoOwnerLink';
 
 const BUNDLE_ICONS: Record<string, LucideIcon> = {
   rocket: Rocket, smartphone: Smartphone, brain: Brain, globe: Globe,
@@ -175,11 +176,11 @@ function RepoCard({ repo }: { repo: Awaited<ReturnType<typeof listRepos>>[number
       className="block p-5 rounded border border-border hover:border-accent transition"
     >
       <div className="flex items-start justify-between mb-2">
-        <div>
-          <div className="font-mono text-xs text-muted">{repo.owner}</div>
-          <div className="font-bold text-lg">{repo.name}</div>
+        <div className="min-w-0">
+          <RepoOwnerLink owner={repo.owner} size="xs" />
+          <div className="font-bold text-lg mt-0.5 truncate">{repo.name}</div>
         </div>
-        <ExternalLink className="w-4 h-4 text-muted" />
+        <ExternalLink className="w-4 h-4 text-muted shrink-0" />
       </div>
       <p className="text-sm text-muted line-clamp-2 mb-3">{repo.description}</p>
       <div className="flex items-center gap-4 text-xs text-muted">

@@ -664,14 +664,14 @@ Slack's free tier limits message history to 90 days. Pay $12.50/user/month for u
 
 ### Calendly → Cal.com
 
-![Cal.com — open-source Calendly with team scheduling and payments](https://opengraph.githubassets.com/1/calcom/cal.com)
+![Cal.com — open-source Calendly with team scheduling and payments](https://opengraph.githubassets.com/1/calcom/cal.diy)
 
 [Cal.com](/repo/cal-com--cal.com) has every Calendly feature plus team scheduling, payments, workflows. Open-source. Self-host or use the cloud free tier.
 
 **What to do:**
 
 1. Quickest path: sign up at cal.com (free tier covers solo + small teams)
-2. Self-host: \`git clone https://github.com/calcom/cal.com && pnpm install && pnpm dev\`
+2. Self-host: \`git clone https://github.com/calcom/cal.diy && pnpm install && pnpm dev\`
 3. Connect Google/Outlook calendar
 4. Update your booking link everywhere (LinkedIn, email signature)
 

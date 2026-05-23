@@ -410,7 +410,7 @@ export const FOR_AUDIENCE: ForAudiencePage[] = [
       { category: 'CRM', full_name: 'twentyhq/twenty', short_name: 'Twenty', why: 'Modern OSS CRM. Self-host for $0/month vs Hubspot\'s $1500/year minimum.' },
       { category: 'Email marketing', full_name: 'knadh/listmonk', short_name: 'Listmonk', why: 'Self-hosted newsletter. ~$5/mo for 100k subscribers vs Mailchimp\'s $300+.' },
       { category: 'Analytics', full_name: 'plausible/analytics', short_name: 'Plausible', why: 'Privacy-first, cookie-free. $9/mo for the cloud (or self-host free).' },
-      { category: 'Scheduling', full_name: 'calcom/cal.com', short_name: 'Cal.com', why: 'Calendly replacement. Free for solo founders, OSS for teams.' },
+      { category: 'Scheduling', full_name: 'calcom/cal.diy', short_name: 'Cal.com', why: 'Calendly replacement. Free for solo founders, OSS for teams.' },
       { category: 'Automation', full_name: 'n8n-io/n8n', short_name: 'n8n', why: 'Zapier replacement with code nodes. Self-host for unlimited workflows.' },
       { category: 'Team chat', full_name: 'mattermost/mattermost', short_name: 'Mattermost', why: 'Slack replacement with full message history (Slack free = 90 days only).' },
       { category: 'Docs/Wiki', full_name: 'outline/outline', short_name: 'Outline', why: 'Clean team wiki. Self-host or use the affordable cloud.' },
@@ -476,7 +476,7 @@ export const FOR_AUDIENCE: ForAudiencePage[] = [
     intro: 'Run your small business on open-source software in 2026. CRM, email, accounting, scheduling — all the systems you need without monthly subscription fees that eat your margin.',
     picks: [
       { category: 'CRM', full_name: 'EspoCRM/EspoCRM', short_name: 'EspoCRM', why: 'Feature-complete CRM. Sales pipelines, customer database, automations.' },
-      { category: 'Scheduling', full_name: 'calcom/cal.com', short_name: 'Cal.com', why: 'Free Calendly. Embed booking widget on your website.' },
+      { category: 'Scheduling', full_name: 'calcom/cal.diy', short_name: 'Cal.com', why: 'Free Calendly. Embed booking widget on your website.' },
       { category: 'Email marketing', full_name: 'knadh/listmonk', short_name: 'Listmonk', why: 'Newsletter without Mailchimp fees. Pay for sending only.' },
       { category: 'Website', full_name: 'WordPress/WordPress', short_name: 'WordPress', why: 'Still dominant for small biz sites. 1000s of themes + plugins.' },
       { category: 'Invoicing', full_name: 'invoiceninja/invoices', short_name: 'Invoice Ninja', why: 'Send invoices, accept payments, track expenses. Free for solo, paid for teams.' },

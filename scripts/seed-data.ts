@@ -232,15 +232,6 @@ export const SEED_REPOS: SeedEntry[] = [
     use_this_if: 'You need animated marketing landing components fast and you are already on shadcn + Tailwind.',
     skip_if: 'You are building a utility app where animation is decoration — focus on UX, not flair.',
   },
-  {
-    full_name: 'aceternity/ui',
-    category_slugs: ['animation', 'ui-components'],
-    is_featured: false,
-    curator_take:
-      'Premium-feeling animated components for landing pages. Free core + paid pro. Useful as a reference even if you do not use the components directly — the source shows good Motion patterns.',
-    use_this_if: 'You are shipping a SaaS landing page and want premium-feeling motion without a designer.',
-    skip_if: 'You need consistent product UI components — these are landing-page flair, not a design system.',
-  },
 
   // ════════════════════════════════════════════════════════════════
   // AI & ML (10)
@@ -830,7 +821,7 @@ export const SEED_REPOS: SeedEntry[] = [
     skip_if: 'You are happy with Meilisearch — no reason to switch.',
   },
   {
-    full_name: 'askorama/orama',
+    full_name: 'oramasearch/orama',
     category_slugs: ['search'],
     is_featured: false,
     curator_take:
@@ -1195,7 +1186,7 @@ export const SEED_REPOS: SeedEntry[] = [
     skip_if: 'You prefer lighter dependencies — Inngest has smaller surface.',
   },
   {
-    full_name: 'calcom/cal.com',
+    full_name: 'calcom/cal.diy',
     category_slugs: ['frameworks'],
     is_featured: true,
     curator_take:
@@ -1378,7 +1369,7 @@ export const SEED_REPOS: SeedEntry[] = [
   // AI IMAGE + VIDEO GENERATION (6)
   // ════════════════════════════════════════════════════════════════
   {
-    full_name: 'comfyanonymous/ComfyUI',
+    full_name: 'Comfy-Org/ComfyUI',
     category_slugs: ['ai-ml'],
     is_featured: true,
     curator_take:
@@ -1476,22 +1467,13 @@ export const SEED_REPOS: SeedEntry[] = [
     skip_if: 'You need accessibility-first primitives — shadcn/Radix are better for apps.',
   },
   {
-    full_name: 'animata-design/animations',
+    full_name: 'codse/animata',
     category_slugs: ['ui-components', 'animation'],
     is_featured: true,
     curator_take:
       'Animated component snippets. Hover effects, scroll animations, transitions — all copy-paste with Framer Motion. ~4k stars. Beautiful Instagram-friendly aesthetics. Free.',
     use_this_if: 'You want premium-looking animations on your site without coding them yourself.',
     skip_if: 'You\'re shipping internal tools — overkill.',
-  },
-  {
-    full_name: 'origin-space/origin-ui',
-    category_slugs: ['ui-components', 'design-systems'],
-    is_featured: true,
-    curator_take:
-      'Beautiful shadcn-style components with much more breadth — 300+ components vs shadcn\'s ~50. ~4k stars and fast-growing. The most-loved new UI lib of 2026.',
-    use_this_if: 'You like shadcn\'s philosophy but want more components out of the box.',
-    skip_if: 'You\'re committed to shadcn\'s minimal core — Origin is more opinionated.',
   },
   {
     full_name: 'saadeghi/daisyui',
@@ -1605,7 +1587,7 @@ export const SEED_REPOS: SeedEntry[] = [
   // ANIMATIONS + UI MOTION (5)
   // ════════════════════════════════════════════════════════════════
   {
-    full_name: 'rive-app/rive',
+    full_name: 'rive-app/rive-runtime',
     category_slugs: ['animation'],
     is_featured: true,
     curator_take:

@@ -322,16 +322,34 @@ function RepoCard({ fullName, reason }: { fullName: string; reason: string }) {
       className="group block rounded-xl border border-border bg-surface/40 p-5 hover:border-accent/60 transition relative"
     >
       <div className="flex items-start gap-3 mb-3">
-        <img
-          src={`https://avatars.githubusercontent.com/${owner}`}
-          alt=""
-          width={36}
-          height={36}
-          className="rounded-md border border-border bg-surface shrink-0"
-          loading="lazy"
-        />
+        <a
+          href={`https://github.com/${owner}`}
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          onClick={(e) => e.stopPropagation()}
+          title={`${owner} on GitHub — original maintainer`}
+          className="shrink-0"
+        >
+          <img
+            src={`https://avatars.githubusercontent.com/${owner}`}
+            alt=""
+            width={36}
+            height={36}
+            className="rounded-md border border-border bg-surface hover:border-accent transition"
+            loading="lazy"
+          />
+        </a>
         <div className="min-w-0 flex-1">
-          <div className="font-mono text-[11px] text-muted truncate">{owner}</div>
+          <a
+            href={`https://github.com/${owner}`}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            onClick={(e) => e.stopPropagation()}
+            className="font-mono text-[11px] text-muted hover:text-accent transition truncate block"
+            title={`Built by ${owner}`}
+          >
+            {owner}
+          </a>
           <div className="font-bold text-base leading-tight group-hover:text-accent transition truncate">{name}</div>
         </div>
         <ArrowRight className="w-4 h-4 text-muted group-hover:text-accent group-hover:translate-x-0.5 transition shrink-0" />

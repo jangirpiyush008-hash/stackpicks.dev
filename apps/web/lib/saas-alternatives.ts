@@ -501,7 +501,7 @@ export const ALTERNATIVES: AlternativePage[] = [
     saas_blurb: 'Calendly is the dominant scheduling tool. Open-source alternatives let you self-host, brand fully, and skip per-user pricing.',
     picks: [
       {
-        full_name: 'calcom/cal.com',
+        full_name: 'calcom/cal.diy',
         short_name: 'Cal.com',
         curator_take: 'Cal.com is the Calendly killer. Open-source, self-host or use the cloud (free tier). All features Calendly has, plus team scheduling, workflows, payments, routing forms. Built on Next.js + Postgres. The dominant pick.',
         use_this_if: 'You want Calendly\'s functionality with full ownership and no per-user pricing.',

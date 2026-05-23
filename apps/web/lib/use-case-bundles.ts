@@ -108,7 +108,7 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
       {
         title: 'Scheduling + workflows',
         repos: [
-          { full_name: 'calcom/cal.com', reason: 'Open-source Calendly. Embed booking in your app or use cloud free tier.' },
+          { full_name: 'calcom/cal.diy', reason: 'Open-source Calendly. Embed booking in your app or use cloud free tier.' },
           { full_name: 'inngest/inngest', reason: 'Durable functions for background jobs, webhooks, scheduled tasks. The 2026 TS queue.' },
         ],
       },
@@ -840,7 +840,7 @@ export const USE_CASE_BUNDLES: UseCaseBundle[] = [
       {
         title: 'Scheduling',
         repos: [
-          { full_name: 'calcom/cal.com', reason: 'Open-source Calendly alternative. Embed in lead emails or self-host.' },
+          { full_name: 'calcom/cal.diy', reason: 'Open-source Calendly alternative. Embed in lead emails or self-host.' },
         ],
       },
       {

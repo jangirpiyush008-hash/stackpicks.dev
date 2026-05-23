@@ -5,6 +5,7 @@ import { Star, GitFork, Eye, AlertCircle, ExternalLink, Check, X, Zap, Target, T
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { EmbedBadge } from '../../../components/EmbedBadge';
+import { RepoOwnerLink } from '../../../components/RepoOwnerLink';
 
 export const revalidate = 3600;
 
@@ -51,8 +52,8 @@ export default async function RepoPage({ params }: PageProps) {
       <div className="max-w-4xl mx-auto px-4 py-10">
         {/* Header */}
         <div className="mb-8">
-          <div className="font-mono text-sm text-muted">{repo.owner}</div>
-          <h1 className="text-4xl font-bold tracking-tight mt-1">{repo.name}</h1>
+          <RepoOwnerLink owner={repo.owner} size="md" showLabel />
+          <h1 className="text-4xl font-bold tracking-tight mt-2">{repo.name}</h1>
           <p className="text-lg text-muted mt-3">{repo.description}</p>
 
           <div className="flex flex-wrap items-center gap-4 mt-6 text-sm text-muted">
