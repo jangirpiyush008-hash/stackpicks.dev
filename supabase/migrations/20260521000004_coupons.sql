@@ -32,6 +32,12 @@ alter table public.coupons enable row level security;
 create policy "coupons_select_active" on public.coupons
   for select using (is_active = true);
 
+-- IMPORTANT: RLS only kicks in *after* table-level GRANTs. Without these,
+-- anon/authenticated sessions cannot see active coupons even with the policy
+-- above, so /api/checkout/lifetime silently fails to apply discounts and
+-- bills the full base price. (Caught this 3 days before launch.)
+grant select on public.coupons to anon, authenticated;
+
 -- Track which user redeemed which coupon — so we know who got what
 create table if not exists public.coupon_redemptions (
   id uuid primary key default uuid_generate_v4(),
