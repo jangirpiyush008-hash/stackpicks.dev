@@ -82,19 +82,37 @@ export default async function RepoPreviewPage({ params }: Props) {
         <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full blur-3xl opacity-25" style={{ background: lc }} />
         <div className="relative">
           <div className="flex items-start gap-4 mb-5">
-            <img
-              src={repo.owner.avatar_url}
-              alt={repo.owner.login}
-              width={56}
-              height={56}
-              className="rounded-lg border border-border bg-surface"
-            />
+            <a
+              href={`https://github.com/${repo.owner.login}`}
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+              title={`${repo.owner.login} on GitHub — original maintainer`}
+              className="shrink-0"
+            >
+              <img
+                src={repo.owner.avatar_url}
+                alt={repo.owner.login}
+                width={56}
+                height={56}
+                className="rounded-lg border border-border bg-surface hover:border-accent transition"
+              />
+            </a>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 text-sm text-muted">
-                <span className="font-mono">{repo.owner.login}</span>
-                <span>/</span>
+                <span className="text-muted/70 text-xs">Built by</span>
+                <a
+                  href={`https://github.com/${repo.owner.login}`}
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                  className="font-mono text-text hover:text-accent transition inline-flex items-center gap-1"
+                  title={`${repo.owner.login} on GitHub`}
+                >
+                  {repo.owner.login}
+                  <ExternalLink className="w-3 h-3 opacity-60" />
+                </a>
+                <span className="text-muted/50">/</span>
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight mt-1">
                 {repo.name}
               </h1>
               {repo.description && (

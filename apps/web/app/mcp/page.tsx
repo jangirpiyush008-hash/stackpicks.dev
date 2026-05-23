@@ -78,8 +78,11 @@ export default function MCPPage() {
           How to connect an MCP server in 60 seconds
         </h2>
         <p className="text-sm text-muted mb-5">
-          Same shape across all clients — Claude Desktop, Cursor, Cline, Windsurf. Find their config file
-          and add one of the snippets below.
+          Two ways: <strong className="text-text">one-click</strong> via the
+          <em className="text-accent not-italic"> Add to Cursor </em>
+          button on each card (Cursor opens with the config pre-filled), or paste the
+          JSON block into your client's config file. Works identically across Claude
+          Desktop, Claude Code, Cursor, Cline, Windsurf — same shape.
         </p>
 
         <div className="grid md:grid-cols-2 gap-5 mb-6">

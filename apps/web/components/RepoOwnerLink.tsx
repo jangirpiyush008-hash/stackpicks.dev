@@ -42,3 +42,46 @@ export function RepoOwnerLink({ owner, size = 'sm', showLabel = false, className
     </a>
   );
 }
+
+// Split-element variant for cards that already have a separate avatar + text
+// layout (preview / build / etc). Render the avatar with <RepoOwnerAvatar/>
+// and the inline owner mono text with <RepoOwnerName/>. Both stop propagation
+// so they don't fire the parent card's <Link>.
+
+export function RepoOwnerAvatar({ owner, size = 36, className = '' }: { owner: string; size?: number; className?: string }) {
+  return (
+    <a
+      href={`https://github.com/${owner}`}
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+      onClick={(e) => e.stopPropagation()}
+      title={`${owner} on GitHub — original maintainer`}
+      className={`shrink-0 ${className}`}
+    >
+      <img
+        src={`https://avatars.githubusercontent.com/${owner}`}
+        alt=""
+        width={size}
+        height={size}
+        loading="lazy"
+        referrerPolicy="no-referrer"
+        className="rounded-md border border-border bg-surface hover:border-accent transition block"
+      />
+    </a>
+  );
+}
+
+export function RepoOwnerName({ owner, className = '' }: { owner: string; className?: string }) {
+  return (
+    <a
+      href={`https://github.com/${owner}`}
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+      onClick={(e) => e.stopPropagation()}
+      title={`Built by ${owner}`}
+      className={`font-mono text-[11px] text-muted hover:text-accent transition truncate block ${className}`}
+    >
+      {owner}
+    </a>
+  );
+}

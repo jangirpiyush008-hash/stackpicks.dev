@@ -15,6 +15,7 @@ import { HeroSearchBar } from '../../components/HeroSearchBar';
 import { DidYouMean } from '../../components/DidYouMean';
 import { getIsMember } from '../../lib/membership';
 import { faqJsonLd, breadcrumbJsonLd } from '@stackpicks/core/seo';
+import { RepoOwnerAvatar, RepoOwnerName } from '../../components/RepoOwnerLink';
 
 // Free tier: how many repos render before the paywall.
 // - Unfiltered gallery: 6 sample repos (gives a feel for the curation)
@@ -348,34 +349,9 @@ function RepoCard({ repo, featured = false }: { repo: typeof SEED_REPOS[number];
         </div>
       )}
       <div className="flex items-start gap-3 mb-3">
-        <a
-          href={`https://github.com/${owner}`}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          onClick={(e) => e.stopPropagation()}
-          title={`${owner} on GitHub — original maintainer`}
-          className="shrink-0"
-        >
-          <img
-            src={`https://avatars.githubusercontent.com/${owner}`}
-            alt=""
-            width={36}
-            height={36}
-            className="rounded-md border border-border bg-surface hover:border-accent transition"
-            loading="lazy"
-          />
-        </a>
+        <RepoOwnerAvatar owner={owner} size={36} />
         <div className="min-w-0">
-          <a
-            href={`https://github.com/${owner}`}
-            target="_blank"
-            rel="noopener noreferrer nofollow"
-            onClick={(e) => e.stopPropagation()}
-            className="font-mono text-[11px] text-muted hover:text-accent transition truncate block"
-            title={`Built by ${owner}`}
-          >
-            {owner}
-          </a>
+          <RepoOwnerName owner={owner} />
           <div className="font-bold text-base leading-tight group-hover:text-accent transition truncate">{name}</div>
         </div>
       </div>

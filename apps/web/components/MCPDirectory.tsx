@@ -1,8 +1,44 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Search, Copy, Check, ExternalLink, Cpu, Cloud, Globe, X } from 'lucide-react';
+import { Search, Copy, Check, ExternalLink, Cpu, Cloud, Globe, X, Zap } from 'lucide-react';
 import { MCP_SERVERS, MCP_CATEGORIES, type MCPServer, type MCPCategory } from '../lib/mcp-connectors';
+
+// Build the JSON config block users paste into claude_desktop_config.json /
+// .cursor/mcp.json / cline_mcp_settings.json. Same shape across all clients.
+function buildClientConfig(s: MCPServer): { command: string; args: string[]; env?: Record<string, string> } | { url: string } {
+  if (s.install.remote) return { url: s.install.remote };
+
+  const cmd = s.install.npx ?? s.install.uvx ?? s.install.docker ?? s.install.pip ?? '';
+  const [command, ...args] = cmd.split(/\s+/).filter(Boolean);
+  // Strip leading "env FOO=bar" — clients should set env via the env field.
+  const env: Record<string, string> = {};
+  let workingArgs = args;
+  if (command === 'env') {
+    let i = 0;
+    while (i < args.length && args[i].includes('=')) {
+      const [k, v] = args[i].split('=', 2);
+      env[k] = v ?? '';
+      i += 1;
+    }
+    workingArgs = args.slice(i);
+    const real = workingArgs.shift();
+    return { command: real ?? 'npx', args: workingArgs, env: Object.keys(env).length ? env : undefined };
+  }
+  return { command, args: workingArgs };
+}
+
+function buildCursorDeeplink(s: MCPServer): string {
+  // Format: cursor://anysphere.cursor-deeplink/mcp/install?name=NAME&config=BASE64
+  const cfg = buildClientConfig(s);
+  const b64 = typeof window === 'undefined' ? '' : window.btoa(JSON.stringify(cfg));
+  return `cursor://anysphere.cursor-deeplink/mcp/install?name=${encodeURIComponent(s.slug)}&config=${encodeURIComponent(b64)}`;
+}
+
+function buildClaudeConfigSnippet(s: MCPServer): string {
+  const cfg = buildClientConfig(s);
+  return JSON.stringify({ mcpServers: { [s.slug]: cfg } }, null, 2);
+}
 
 export function MCPDirectory() {
   const [query, setQuery] = useState('');
@@ -276,8 +312,41 @@ function MCPCard({ server: s }: { server: MCPServer }) {
         </div>
       )}
 
-      {/* Links */}
-      <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-border/50">
+      {/* Connect to a client — primary CTAs */}
+      <div className="grid grid-cols-2 gap-2 mt-4">
+        <a
+          href={buildCursorDeeplink(s)}
+          onClick={() => {
+            // Best-effort UX: also copy the Claude config to clipboard so users
+            // who don't have Cursor can paste into Claude Desktop instead.
+            try { navigator.clipboard.writeText(buildClaudeConfigSnippet(s)); } catch { /* ignore */ }
+          }}
+          className="text-[11px] font-bold inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-accent text-bg hover:opacity-90 transition"
+          title="Open Cursor and install this MCP server (one click)"
+        >
+          <Zap className="w-3 h-3" />
+          Add to Cursor
+        </a>
+        <button
+          type="button"
+          onClick={() => copy(buildClaudeConfigSnippet(s), 'claude')}
+          className="text-[11px] font-medium inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-border bg-bg/40 hover:border-accent hover:text-accent text-text transition"
+          title="Copy the JSON block to paste into claude_desktop_config.json"
+        >
+          {copied === 'claude' ? (
+            <>
+              <Check className="w-3 h-3" /> Claude config copied
+            </>
+          ) : (
+            <>
+              <Copy className="w-3 h-3" /> Copy for Claude
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Secondary links */}
+      <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-border/50">
         {s.github && (
           <a
             href={`https://github.com/${s.github}`}
