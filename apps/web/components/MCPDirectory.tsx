@@ -28,10 +28,15 @@ function buildClientConfig(s: MCPServer): { command: string; args: string[]; env
   return { command, args: workingArgs };
 }
 
+// SSR-safe base64. Building this at render time on the server would emit an
+// empty config to the rendered HTML and React doesn't recompute on hydrate
+// (the href would be permanently broken). So we *always* build the deeplink
+// inside the click handler, after we know `window` exists.
 function buildCursorDeeplink(s: MCPServer): string {
-  // Format: cursor://anysphere.cursor-deeplink/mcp/install?name=NAME&config=BASE64
   const cfg = buildClientConfig(s);
-  const b64 = typeof window === 'undefined' ? '' : window.btoa(JSON.stringify(cfg));
+  const b64 = typeof window === 'undefined'
+    ? Buffer.from(JSON.stringify(cfg)).toString('base64')
+    : window.btoa(JSON.stringify(cfg));
   return `cursor://anysphere.cursor-deeplink/mcp/install?name=${encodeURIComponent(s.slug)}&config=${encodeURIComponent(b64)}`;
 }
 
@@ -218,39 +223,43 @@ function MCPCard({ server: s }: { server: MCPServer }) {
           >
             <img
               src={`https://avatars.githubusercontent.com/${s.publisher_github}`}
-              alt=""
-              width={36}
-              height={36}
+              alt={s.publisher}
+              width={40}
+              height={40}
               loading="lazy"
               className="rounded-md border border-border bg-surface hover:border-accent transition"
             />
           </a>
         ) : (
-          <div className="w-9 h-9 rounded-md bg-bg border border-border flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-md bg-bg border border-border flex items-center justify-center shrink-0">
             <Globe className="w-4 h-4 text-muted" />
           </div>
         )}
 
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 flex-wrap">
-            <div className="font-bold leading-tight truncate">{s.name}</div>
+          <div className="flex items-center gap-2 flex-wrap mb-0.5">
+            <div className="font-bold text-base leading-tight truncate">{s.name}</div>
             <span className={`text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded ${sourceBadge.bg} ${sourceBadge.fg} shrink-0`}>
               {sourceBadge.label}
             </span>
           </div>
-          {s.publisher_github ? (
-            <a
-              href={`https://github.com/${s.publisher_github}`}
-              target="_blank"
-              rel="noopener noreferrer nofollow"
-              className="font-mono text-[11px] text-muted hover:text-accent transition truncate block"
-              title={`Built by ${s.publisher}`}
-            >
-              {s.publisher}
-            </a>
-          ) : (
-            <div className="font-mono text-[11px] text-muted truncate">{s.publisher}</div>
-          )}
+          <div className="flex items-center gap-1 text-[11px]">
+            <span className="text-muted/70">Built by</span>
+            {s.publisher_github ? (
+              <a
+                href={`https://github.com/${s.publisher_github}`}
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                className="font-mono text-text font-medium hover:text-accent transition truncate inline-flex items-center gap-0.5"
+                title={`${s.publisher} on GitHub`}
+              >
+                {s.publisher}
+                <ExternalLink className="w-2.5 h-2.5 opacity-60" />
+              </a>
+            ) : (
+              <span className="font-mono text-text font-medium truncate">{s.publisher}</span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -314,19 +323,34 @@ function MCPCard({ server: s }: { server: MCPServer }) {
 
       {/* Connect to a client — primary CTAs */}
       <div className="grid grid-cols-2 gap-2 mt-4">
-        <a
-          href={buildCursorDeeplink(s)}
+        <button
+          type="button"
           onClick={() => {
-            // Best-effort UX: also copy the Claude config to clipboard so users
-            // who don't have Cursor can paste into Claude Desktop instead.
+            // Build the deeplink at click-time so we know window is real.
+            // Also copy the Claude config to clipboard as a fallback for
+            // users who don't have Cursor installed.
+            const deeplink = buildCursorDeeplink(s);
             try { navigator.clipboard.writeText(buildClaudeConfigSnippet(s)); } catch { /* ignore */ }
+            setCopied('cursor');
+            setTimeout(() => setCopied(null), 1800);
+            // Navigate to the cursor:// URL. Browsers prompt to open Cursor;
+            // if not installed, the page stays put and the clipboard fallback applies.
+            window.location.href = deeplink;
           }}
           className="text-[11px] font-bold inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-accent text-bg hover:opacity-90 transition"
           title="Open Cursor and install this MCP server (one click)"
         >
-          <Zap className="w-3 h-3" />
-          Add to Cursor
-        </a>
+          {copied === 'cursor' ? (
+            <>
+              <Check className="w-3 h-3" /> Opening Cursor…
+            </>
+          ) : (
+            <>
+              <Zap className="w-3 h-3" />
+              Add to Cursor
+            </>
+          )}
+        </button>
         <button
           type="button"
           onClick={() => copy(buildClaudeConfigSnippet(s), 'claude')}
@@ -335,7 +359,7 @@ function MCPCard({ server: s }: { server: MCPServer }) {
         >
           {copied === 'claude' ? (
             <>
-              <Check className="w-3 h-3" /> Claude config copied
+              <Check className="w-3 h-3" /> Copied for Claude
             </>
           ) : (
             <>
