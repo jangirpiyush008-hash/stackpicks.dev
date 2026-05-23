@@ -19,8 +19,250 @@ export interface BlogPost {
 }
 
 const TODAY = '2026-05-22';
+const NEW_TODAY = '2026-05-23';
 
 export const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: 'mcp-explained',
+    title: 'MCP Servers Explained — The 2026 Guide to Model Context Protocol (89 Servers Reviewed)',
+    excerpt: 'Complete guide to MCP (Model Context Protocol): what it is, how it works, the best 89 servers for Claude / Cursor / Cline / Windsurf, and how to install your first one in 60 seconds.',
+    query: 'mcp servers guide model context protocol',
+    monthly_searches: 14500,
+    reading_time: 11,
+    published_at: NEW_TODAY,
+    updated_at: NEW_TODAY,
+    author: 'Piyush Jangir',
+    category: 'AI Tooling',
+    content: `If you opened Claude Desktop, Cursor, or Cline in the last six months, you've seen the **"Add MCP server"** prompt. If you ignored it because the docs felt like reading an RFC — this is the guide you needed.
+
+By the end of this post, you'll know:
+
+1. What MCP actually is (in plain English, not Anthropic's spec language)
+2. The 6 server categories worth installing first
+3. How to connect one in 60 seconds without editing JSON
+4. Which servers to install for AI agents, databases, browsers, and ops work
+5. The directory of [**89 production-ready MCP servers**](/mcp) — free, searchable, with copy-paste install commands
+
+## What is MCP?
+
+**Model Context Protocol (MCP)** is an open standard [Anthropic](https://www.anthropic.com/news/model-context-protocol) released in November 2024 that lets any LLM client talk to any external tool through a single JSON-RPC interface.
+
+Think of it as **USB-C for AI agents**. Before MCP, every coding assistant rebuilt the same tool integrations from scratch — Cursor wrote its own GitHub plugin, Cline wrote its own, Windsurf wrote its own. After MCP, they all use the same servers.
+
+The spec is now governed by [modelcontextprotocol.io](https://modelcontextprotocol.io/) with an active [open-source SDK ecosystem on GitHub](https://github.com/modelcontextprotocol). Microsoft, GitHub, Cloudflare, Stripe, Supabase, and Sentry have all shipped first-party MCP servers in 2025-2026.
+
+![Model Context Protocol — official reference servers from Anthropic](https://opengraph.githubassets.com/1/modelcontextprotocol/servers)
+
+### The 3 pieces
+
+| Piece | What it is | Example |
+|---|---|---|
+| **MCP client** | Your AI app — Claude Desktop, Cursor, Cline, Windsurf | Claude Desktop |
+| **MCP server** | A tiny process that exposes tools to the client | \`@modelcontextprotocol/server-postgres\` |
+| **Transport** | How they talk — stdio (local), HTTP, or SSE (remote) | stdio for local, SSE for SaaS |
+
+The client launches the server on demand. The server exposes tools (functions the LLM can call) and resources (read-only data the LLM can fetch). All requests are typed and validated against the [official schema](https://github.com/modelcontextprotocol/specification).
+
+## Why this matters in 2026
+
+Before MCP, giving Claude access to your Postgres database meant writing custom function-calling glue, hosting it, and updating it every time the schema changed. **Now you install one package and Claude has full schema introspection + query capability:**
+
+\`\`\`bash
+npx -y @modelcontextprotocol/server-postgres \\
+  "postgresql://user:pass@host/db"
+\`\`\`
+
+That's the entire integration. Same pattern for Slack, GitHub, Figma, Sentry, Linear, Notion, Vercel — [89 servers and counting](/mcp).
+
+> **Why I'm bullish on MCP:** unlike most "AI plumbing" standards, MCP got real adoption inside its first six months. GitHub Copilot, Cursor, Cline, Windsurf, Continue, Zed, even Cursor competitors like Codeium have all shipped MCP support. When that many independent vendors converge on a spec, it's no longer a proposal — it's the substrate.
+
+## The 6 server categories you actually use
+
+After reviewing [89 production MCP servers](/mcp), six categories cover 90% of real workflows. Here's where to start.
+
+### 1. Filesystem + Code
+
+The most important MCP server you'll ever install.
+
+\`\`\`bash
+npx -y @modelcontextprotocol/server-filesystem /Users/you/projects
+\`\`\`
+
+Now Claude can read, write, search, and edit files in your project without copy-paste. Pairs with the [GitHub MCP server](https://github.com/github/github-mcp-server) (Microsoft-built, official) for full PR workflows.
+
+**Best agents for this:** Cursor (built-in), Cline (best file editor UX), Windsurf (Codeium's IDE), or just use Claude Desktop with Anthropic's reference filesystem server.
+
+### 2. Database (Postgres, Supabase, MongoDB, Redis)
+
+Once you give an agent direct DB access, you stop writing CRUD code.
+
+| Server | Best for | Maintainer |
+|---|---|---|
+| [Postgres MCP](/mcp#postgres) | Read-only queries with schema introspection | Anthropic |
+| [Supabase MCP](/mcp#supabase) | Full project ops + migrations | Supabase team |
+| [Neon MCP](/mcp#neon) | Per-task DB branches | Neon team |
+| [MongoDB MCP](/mcp#mongodb) | Document CRUD + aggregations | MongoDB team |
+| [Redis MCP](/mcp#redis) | Cache inspection + vector search | Redis team |
+
+Supabase published a [great walkthrough](https://supabase.com/docs/guides/getting-started/mcp) for wiring their MCP into Cursor. The same pattern works for any database server.
+
+![Supabase MCP — Postgres + Auth + Storage + Edge Functions via Claude](https://opengraph.githubassets.com/1/supabase-community/supabase-mcp)
+
+### 3. Browser automation (Playwright, Puppeteer, Browserbase, Firecrawl)
+
+The 2026 game-changer for scraping and QA.
+
+- **[Playwright MCP](https://github.com/microsoft/playwright-mcp)** (Microsoft) — best for cross-browser testing
+- **[Browserbase MCP](https://docs.browserbase.com/integrations/mcp)** — cloud Chrome with residential IPs (bypasses bot detection)
+- **[Firecrawl MCP](https://docs.firecrawl.dev/mcp)** — crawl entire sites, extract LLM-ready Markdown in one call
+
+Pair any browser MCP with a vector DB (see below) for the cheapest RAG pipeline you'll ever build.
+
+### 4. Vector databases (Pinecone, Qdrant, Chroma, Weaviate)
+
+For long-term agent memory or RAG. Each of the four big vector DBs ships an official MCP server now:
+
+| Server | Hosting | Free tier |
+|---|---|---|
+| [Pinecone MCP](/mcp#pinecone) | Serverless cloud | 1 project, 100k vectors |
+| [Qdrant MCP](/mcp#qdrant) | Cloud or self-host | 4 GB free cluster |
+| [Chroma MCP](/mcp#chroma) | Embedded or remote | Unlimited self-host |
+| [Weaviate MCP](/mcp#weaviate) | Cloud or self-host | 14-day sandbox |
+
+For a side-project, **Chroma** is the right answer — embeds into your agent process, no API key, no rate limits.
+
+### 5. SaaS ops (Linear, Notion, Slack, Stripe, Vercel, Cloudflare)
+
+This is where MCP earns its keep for shipping teams. One prompt → real action across your full SaaS stack.
+
+\`\`\`text
+"Find the bug from yesterday's Sentry alert, open a Linear issue for it,
+assign to me, post a Slack thread linking the issue, and create a PR
+with the fix on a new branch."
+\`\`\`
+
+Each of those verbs is a different MCP server. They all run together because they share the same protocol.
+
+Anthropic [maintains a list](https://github.com/modelcontextprotocol/servers) of the reference + community servers. The [Anthropic blog](https://www.anthropic.com/news/agent-capabilities-api) covers the agent capabilities API that powers most of this.
+
+### 6. Search (Perplexity, Exa, Tavily, Brave)
+
+When the agent needs current information.
+
+- **[Perplexity Sonar MCP](https://www.perplexity.ai/hub/blog/perplexity-sonar-api)** — best for real-time news + cited answers
+- **[Exa MCP](https://exa.ai/)** — neural search tuned for LLMs (better than Google for niche tech docs)
+- **[Tavily MCP](https://tavily.com/)** — search + scrape pipeline in one tool, 1k free queries/month
+- **[Brave Search MCP](/mcp#brave-search)** — cheap general-purpose web search
+
+For [agent-grade research workflows](/build/ai-agent), pick **Tavily** — it's the only one of these built specifically for the LLM agent use case.
+
+## How to install your first MCP server in 60 seconds
+
+You have two paths.
+
+### Path A — One-click via [stackpicks.dev/mcp](/mcp)
+
+Every card in our [MCP directory](/mcp) has an **"Add to Cursor"** button. Click it → Cursor opens with the install dialog pre-filled → confirm → done.
+
+If you don't have Cursor, the same click also copies the equivalent JSON to your clipboard so you can paste it into Claude Desktop config.
+
+### Path B — Edit your client's JSON config
+
+| Client | Config file path |
+|---|---|
+| **Claude Desktop** (Mac) | \`~/Library/Application Support/Claude/claude_desktop_config.json\` |
+| **Claude Desktop** (Windows) | \`%APPDATA%\\Claude\\claude_desktop_config.json\` |
+| **Claude Code** | Same as Claude Desktop, or use \`claude mcp add\` CLI |
+| **Cursor** | \`~/.cursor/mcp.json\` |
+| **Cline** (VS Code) | Settings UI → MCP Servers |
+| **Windsurf** | \`~/.codeium/windsurf/mcp_config.json\` |
+
+The JSON shape is identical across all clients:
+
+\`\`\`json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/you/projects"
+      ]
+    }
+  }
+}
+\`\`\`
+
+Save, restart the client, and the tools appear under the agent's "available tools" list. That's it.
+
+## Recommended starter set (5 servers, 5 minutes)
+
+If you're new to MCP, install these five and you'll cover 80% of real workflows on day one:
+
+| # | Server | What it gives you |
+|---|---|---|
+| 1 | [Filesystem](/mcp#filesystem) | Agent edits files in your project |
+| 2 | [GitHub](/mcp#github) | Issues, PRs, code search, Actions |
+| 3 | [Fetch](/mcp#fetch) | "Read this URL" capability |
+| 4 | [Sequential Thinking](/mcp#sequential-thinking) | Forces step-by-step planning |
+| 5 | [Memory](/mcp#memory) | Persistent knowledge graph across sessions |
+
+All five are official Anthropic reference servers, zero auth required for filesystem / fetch / sequential-thinking / memory. Just one GitHub PAT for the GitHub server.
+
+## Security: what you're actually authorizing
+
+MCP servers run as **local subprocesses with the same permissions as your terminal**. The filesystem server can read any file under the path you scope it to. The database server has whatever role you give it. Treat them like CLI tools you're installing globally:
+
+1. **Read the source** before installing community servers — every server in [our directory](/mcp) links to its GitHub repo so you can audit before running.
+2. **Scope filesystem access narrowly** — point the filesystem server at \`/Users/you/projects\`, not \`/\`.
+3. **Use read-only DB credentials** for the agent's first DB connection. Promote to read-write only when you've seen what the agent does.
+4. **Prefer remote MCP for SaaS** — services like Stripe, Linear, Sentry, Cloudflare run their servers themselves (over OAuth) so you never hold raw API keys.
+
+The [official MCP security guide](https://modelcontextprotocol.io/docs/concepts/security) covers permission scoping in detail.
+
+## When MCP isn't the right answer
+
+Be honest about this. MCP is excellent for **interactive agent workflows** — a developer running Claude / Cursor / Cline against tools. It's not always the right answer for:
+
+- **Production automated agents** that run unattended. For those, native APIs are usually safer + faster.
+- **Pure RAG retrieval** where you just want to plug a vector DB into a LangChain pipeline. The MCP overhead doesn't help.
+- **Multi-tenant SaaS embedding an agent for your own customers.** You probably want a fixed tool surface, not user-installable MCP servers.
+
+For those workflows, see our guide on [open-source AI agent frameworks](/blog/open-source-ai-agent-frameworks-compared) — LangChain, LlamaIndex, CrewAI, Mastra, AutoGen.
+
+## The full 89-server directory
+
+[Browse the directory →](/mcp) Free, searchable, no signup, copy-paste install commands. Filters for:
+
+- Category (AI, Database, DevOps, Productivity, Communication, Design, Search, Browser, Payments, Cloud, Storage, Analytics, E-commerce, CRM, Code/Dev, Security, Media, Vector DB)
+- Source (Official Anthropic, Vendor-built, Community)
+- Transport (local stdio vs remote HTTP/SSE)
+
+Every entry credits the original maintainer with a link to their GitHub profile. We update the list monthly — [submit a server here](/contact?subject=mcp-submission) if you've built one we missed.
+
+## Beyond MCP — the full open-source stack
+
+MCP servers expose individual tools. Building a real product still needs the underlying open-source primitives — UI, database, auth, payments, deployment.
+
+That's the rest of [StackPicks](/preview): **165+ curated open-source repos** with honest curator takes, "use this if / skip if" clauses, and stack bundles for common products.
+
+If you're building an [AI agent product](/build/ai-agent), [SaaS](/build/ship-a-saas), or [mobile app](/build/build-a-mobile-app) on top of MCP — the bundles save you the 8-12 hours of "which library do I pick" research per category.
+
+[**Lifetime membership is ₹99 (or $2.99 international).**](/pricing) Pay once, get the full directory + every stack bundle + every skill track forever. The [MCP directory](/mcp) stays free for everyone.
+
+## Further reading
+
+- [Anthropic's official MCP announcement](https://www.anthropic.com/news/model-context-protocol) — the original release post
+- [modelcontextprotocol.io](https://modelcontextprotocol.io/) — the open spec + SDK docs
+- [GitHub: modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers) — reference server implementations
+- [Cursor's MCP docs](https://docs.cursor.com/context/model-context-protocol) — client-side integration
+- [Cloudflare's agents platform](https://developers.cloudflare.com/agents/) — remote MCP at scale
+- [Supabase MCP getting-started](https://supabase.com/docs/guides/getting-started/mcp) — wiring Supabase to Cursor in 5 min
+
+If this was useful and you want to skip the research → [grab lifetime access for ₹99](/pricing) or [browse the free MCP directory](/mcp). Both start in 30 seconds.
+`,
+  },
   {
     slug: 'best-open-source-ui-libraries-2026',
     title: 'Best Open-Source UI Libraries in 2026 — Honest Comparison',
