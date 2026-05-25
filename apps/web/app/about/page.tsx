@@ -1,14 +1,48 @@
 import { LegalPage } from '../../components/LegalPage';
 import { Sparkles, Compass, Hammer, ScrollText } from 'lucide-react';
-import { ENTITY, CONTACT } from '@stackpicks/core/constants';
+import { ENTITY, CONTACT, SITE } from '@stackpicks/core/constants';
+import { breadcrumbJsonLd } from '@stackpicks/core/seo';
 
 export const metadata = {
   title: 'About — a curated directory service for builders',
   description: 'StackPicks is a professional directory service for software builders. Paid lifetime membership unlocks curated open-source tools, analyst-grade takes, and ship-ready stack bundles.',
+  alternates: { canonical: `${SITE.url}/about` },
+};
+
+// AboutPage schema — explicitly tells Google this is the brand's About page,
+// which feeds knowledge-panel + brand SERP elements.
+const aboutSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: `About — ${SITE.name}`,
+  url: `${SITE.url}/about`,
+  description: 'StackPicks is a paid digital directory service for software builders. Curated open-source tools with honest takes, plus ship-ready stack bundles.',
+  mainEntity: {
+    '@type': 'Organization',
+    name: SITE.name,
+    url: SITE.url,
+    foundingDate: '2026-05',
+    founder: { '@type': 'Person', name: ENTITY.operator, url: `${SITE.url}/about/piyush-jangir` },
+    description: SITE.description,
+  },
 };
 
 export default function AboutPage() {
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: 'Home', path: '/' },
+            { name: 'About', path: '/about' },
+          ])),
+        }}
+      />
     <LegalPage title="A directory service built by builders, for builders." lastUpdated="21 May 2026">
       <p className="text-lg leading-relaxed text-text">
         Every dev tools list on the internet sorts by GitHub stars. We don&apos;t. We surface what
@@ -126,6 +160,7 @@ export default function AboutPage() {
         certified Indian payment processor.
       </p>
     </LegalPage>
+    </>
   );
 }
 

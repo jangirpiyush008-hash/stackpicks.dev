@@ -150,7 +150,11 @@ function PreviewCard({ repo }: { repo: FeaturedRepo }) {
           <img
             key={imgSrc}
             src={imgSrc}
-            alt={`${repo.full_name} ${view === 'live' ? 'deployed app' : 'GitHub repo'} preview`}
+            alt={
+              view === 'live'
+                ? `Live screenshot of ${repo.full_name} — ${repo.short}. Deployed at ${new URL(repo.demo_url).hostname.replace(/^www\./, '')}.`
+                : `GitHub repository card for ${repo.full_name} — ${repo.short}. Open-source on github.com.`
+            }
             className="absolute inset-0 w-full h-full object-cover object-top transition duration-500 group-hover:scale-[1.03]"
             loading="lazy"
             onError={() => {
