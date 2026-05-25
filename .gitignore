@@ -12,3 +12,5 @@ dist
 /apps/*/build/
 coverage
 .turbo
+
+.claude/scheduled_tasks.lock
