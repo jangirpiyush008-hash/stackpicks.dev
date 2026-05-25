@@ -9,6 +9,7 @@ import { HideOnAdmin } from '../components/HideOnAdmin';
 import { NewsletterPopup } from '../components/NewsletterPopup';
 import { FooterNewsletter } from '../components/FooterNewsletter';
 import { Analytics } from '../components/Analytics';
+import { UtmOutboundHandler } from '../components/UtmOutboundHandler';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -224,6 +225,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {/* Analytics — env-driven; supports Plausible, PostHog, GA4, Umami in parallel */}
         <Analytics />
+
+        {/* Global outbound-UTM rewriter — stamps every external link click with
+            ?utm_source=stackpicks.dev so the destination site sees us as referrer */}
+        <UtmOutboundHandler />
       </body>
     </html>
   );
