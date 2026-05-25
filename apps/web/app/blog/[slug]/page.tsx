@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft, Clock, Calendar, User, ArrowRight, Sparkles } from 'lucide-react';
 import { getBlogPostBySlug, BLOG_POSTS, getAllBlogSlugs } from '../../../lib/blog';
 import { BlogContent } from '../../../components/BlogContent';
+import { AuthorByline, QuickAnswer } from '../../../components/AuthorByline';
 import { buildMeta, breadcrumbJsonLd, faqJsonLd } from '@stackpicks/core/seo';
 import { SITE } from '@stackpicks/core/constants';
 import type { Metadata } from 'next';
@@ -79,6 +80,12 @@ export default async function BlogPostPage({
           ])),
         }}
       />
+      {post.faqs && post.faqs.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(post.faqs)) }}
+        />
+      )}
 
       <div className="max-w-3xl mx-auto px-4 py-10">
         <Link
@@ -112,25 +119,43 @@ export default async function BlogPostPage({
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 leading-tight">
             {post.title}
           </h1>
-          <p className="text-lg text-muted leading-relaxed mb-5">
+          <p className="text-lg text-muted leading-relaxed">
             {post.excerpt}
           </p>
-          <div className="flex items-center gap-5 text-xs text-muted">
-            <span className="flex items-center gap-1.5">
-              <User className="w-3.5 h-3.5" />
-              {post.author}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5" />
-              Published {new Date(post.published_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-            </span>
-            {post.updated_at !== post.published_at && (
-              <span className="text-accent">· Updated {new Date(post.updated_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-            )}
-          </div>
         </header>
 
+        <AuthorByline
+          author={post.author}
+          publishedAt={post.published_at}
+          updatedAt={post.updated_at}
+          readingTime={post.reading_time}
+        />
+
+        {post.quick_answer && (
+          <QuickAnswer>{post.quick_answer}</QuickAnswer>
+        )}
+
         <BlogContent content={post.content} />
+
+        {post.faqs && post.faqs.length > 0 && (
+          <section className="mt-12 pt-8 border-t border-border">
+            <h2 className="text-2xl font-bold mb-6">Frequently asked questions</h2>
+            <div className="space-y-5">
+              {post.faqs.map((faq) => (
+                <details
+                  key={faq.question}
+                  className="group rounded-xl border border-border bg-surface/30 p-5 open:border-accent/40"
+                >
+                  <summary className="cursor-pointer font-semibold text-text list-none flex items-start justify-between gap-3">
+                    <span>{faq.question}</span>
+                    <span className="text-accent text-xl leading-none group-open:rotate-45 transition shrink-0">+</span>
+                  </summary>
+                  <p className="mt-3 text-sm text-muted leading-relaxed">{faq.answer}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className="mt-16 mb-8 p-6 md:p-8 rounded-2xl border border-accent/40 bg-accent/5 text-center">
           <Sparkles className="w-5 h-5 text-accent mx-auto mb-3" />

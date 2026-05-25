@@ -16,6 +16,12 @@ export interface BlogPost {
   author: string;
   category: string;
   content: string;           // Markdown-like (we'll render with simple parser)
+  // GEO: 1-2 sentence answer-first block AI engines lift as the citation snippet.
+  // Keep under 350 chars. Optional — falls back to excerpt if missing.
+  quick_answer?: string;
+  // GEO: FAQ pairs that get serialized as FAQPage JSON-LD for AI Overviews +
+  // "People also ask" rich results. 3-5 questions is the sweet spot.
+  faqs?: { question: string; answer: string }[];
 }
 
 const TODAY = '2026-05-22';
@@ -33,6 +39,29 @@ export const BLOG_POSTS: BlogPost[] = [
     updated_at: NEW_TODAY,
     author: 'Piyush Jangir',
     category: 'AI Tooling',
+    quick_answer: 'MCP (Model Context Protocol) is an open standard Anthropic released in November 2024 that lets any LLM client — Claude, Cursor, Cline, Windsurf — talk to any external tool through a single JSON-RPC interface. Install an MCP server (e.g. `npx @modelcontextprotocol/server-postgres`) and your AI agent gains real tool access: read your database, edit files, post to Slack, deploy to Vercel. As of May 2026, there are 89+ production MCP servers across 18 categories.',
+    faqs: [
+      {
+        question: 'What is MCP (Model Context Protocol)?',
+        answer: 'MCP is an open standard released by Anthropic in November 2024 that lets any LLM client (Claude Desktop, Cursor, Cline, Windsurf, Continue) talk to any external tool through a single JSON-RPC interface. Think of it as USB-C for AI agents — one protocol, hundreds of compatible tools.',
+      },
+      {
+        question: 'Which MCP servers should I install first?',
+        answer: 'For day-one productivity, install five official Anthropic reference servers: Filesystem (file edits), GitHub (issues/PRs), Fetch (read URLs), Sequential Thinking (better planning), and Memory (persistent knowledge graph). Together they cover 80% of real agent workflows.',
+      },
+      {
+        question: 'How do I install an MCP server in Claude Desktop?',
+        answer: 'Edit ~/Library/Application Support/Claude/claude_desktop_config.json (Mac) and add a "mcpServers" block with a command + args. Save and restart Claude. The new tools appear in the agent\'s available tools list. Same JSON shape works for Cursor (.cursor/mcp.json), Cline (settings UI), and Windsurf.',
+      },
+      {
+        question: 'Is MCP safe? What permissions am I granting?',
+        answer: 'MCP servers run as local subprocesses with the same permissions as your terminal. Scope filesystem servers narrowly (project folder, not home), use read-only DB credentials initially, and audit community server source before installing. Prefer remote MCP for SaaS tools (Stripe, Linear, Sentry) so you never hold raw API keys.',
+      },
+      {
+        question: 'Which LLM clients support MCP in 2026?',
+        answer: 'Claude Desktop, Claude Code (CLI), Cursor, Cline (VS Code), Windsurf (Codeium IDE), Continue, Zed, and several smaller agents. MCP has become the de facto agent-tool standard since Anthropic released it in Nov 2024.',
+      },
+    ],
     content: `If you opened Claude Desktop, Cursor, or Cline in the last six months, you've seen the **"Add MCP server"** prompt. If you ignored it because the docs felt like reading an RFC — this is the guide you needed.
 
 By the end of this post, you'll know:

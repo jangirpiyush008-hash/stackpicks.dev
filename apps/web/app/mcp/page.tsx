@@ -1,9 +1,36 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { buildMeta } from '@stackpicks/core/seo';
+import { buildMeta, faqJsonLd, itemListJsonLd, breadcrumbJsonLd } from '@stackpicks/core/seo';
 import { Plug, Sparkles, ArrowRight, BookOpen } from 'lucide-react';
 import { MCPDirectory } from '../../components/MCPDirectory';
 import { MCP_SERVERS, MCP_CATEGORIES } from '../../lib/mcp-connectors';
+
+const MCP_FAQS = [
+  {
+    question: 'What is the Model Context Protocol (MCP)?',
+    answer: 'MCP is an open standard released by Anthropic in November 2024. It defines a single JSON-RPC interface so any LLM client (Claude, Cursor, Cline, Windsurf, Continue) can connect to any external tool — databases, GitHub, Slack, Figma — without writing custom integration code.',
+  },
+  {
+    question: 'How many MCP servers exist in May 2026?',
+    answer: 'StackPicks has indexed 89 production-ready MCP servers across 18 categories. The ecosystem includes ~15 official Anthropic reference servers, ~35 vendor-built servers from companies like GitHub, Cloudflare, Stripe, Supabase, and ~40 high-quality community servers.',
+  },
+  {
+    question: 'How do I install an MCP server?',
+    answer: 'Two paths: (1) Click "Add to Cursor" on any card here — Cursor opens with the install dialog pre-filled. (2) Manually edit your client config: claude_desktop_config.json (Claude Desktop), .cursor/mcp.json (Cursor), or the settings UI (Cline/Windsurf). The JSON shape is identical across all clients.',
+  },
+  {
+    question: 'Which MCP servers should I install first?',
+    answer: 'Start with five official Anthropic servers: Filesystem (file edits), GitHub (issues + PRs), Fetch (read URLs), Sequential Thinking (better planning), and Memory (persistent knowledge graph). Together they cover 80% of real workflows. All are listed in the directory above.',
+  },
+  {
+    question: 'Are remote MCP servers different from local?',
+    answer: 'Yes. Local MCP servers run as subprocesses on your machine (stdio transport). Remote MCP servers are hosted by the vendor and authenticate via OAuth — Linear, Sentry, PostHog, Cloudflare, Vercel ship remote servers so you never hold raw API keys. Both are listed with their transport type in the directory.',
+  },
+  {
+    question: 'Is this MCP directory free?',
+    answer: 'Yes. The full 89-server MCP directory is free, no signup required. Curated paid content lives at /preview (165+ open-source repos with curator takes) and the stack bundles at /build. Lifetime access is ₹99 / $2.99.',
+  },
+];
 
 export const revalidate = 3600;
 
@@ -25,6 +52,28 @@ export default function MCPPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(MCP_FAQS)) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: 'Home', path: '/' },
+            { name: 'MCP Connectors', path: '/mcp' },
+          ])),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(itemListJsonLd(
+            MCP_SERVERS.slice(0, 50).map((s) => ({ name: s.name, path: `/mcp#${s.slug}` })),
+            'MCP Servers Directory'
+          )),
+        }}
+      />
       {/* Hero */}
       <header className="mb-10">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-accent/40 bg-accent/5 text-[10px] font-mono uppercase tracking-wider text-accent mb-4">
@@ -157,6 +206,25 @@ export default function MCPPage() {
               Browse free samples
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* FAQ — GEO bait, gets cited in AI Overviews */}
+      <section className="mt-12 pt-8 border-t border-border">
+        <h2 className="text-2xl font-bold mb-6">Frequently asked questions</h2>
+        <div className="space-y-4">
+          {MCP_FAQS.map((faq) => (
+            <details
+              key={faq.question}
+              className="group rounded-xl border border-border bg-surface/30 p-5 open:border-accent/40"
+            >
+              <summary className="cursor-pointer font-semibold text-text list-none flex items-start justify-between gap-3">
+                <span>{faq.question}</span>
+                <span className="text-accent text-xl leading-none group-open:rotate-45 transition shrink-0">+</span>
+              </summary>
+              <p className="mt-3 text-sm text-muted leading-relaxed">{faq.answer}</p>
+            </details>
+          ))}
         </div>
       </section>
 
