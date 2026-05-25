@@ -98,3 +98,38 @@ export function dailySalt(): string {
   const istDate = new Date(now.getTime() + istOffset);
   return istDate.toISOString().slice(0, 10);
 }
+
+/**
+ * Append UTM tracking params to an outbound destination URL so the destination
+ * site can attribute traffic back to StackPicks in their own analytics. This
+ * is the reciprocal-growth play: maintainers see us as a top referrer and
+ * (often) reach out, link back, or feature us.
+ *
+ * Skips:
+ * - mailto:, tel:, javascript: and other non-http schemes
+ * - URLs that already carry utm_source (don't override partner attribution)
+ * - URLs we can't parse (returns original unchanged)
+ */
+export function appendUtm(
+  destination: string,
+  opts: { source?: string; medium?: string; campaign?: string; content?: string } = {}
+): string {
+  if (!destination) return destination;
+
+  // Bail on non-http schemes and same-origin links
+  if (!/^https?:\/\//i.test(destination)) return destination;
+
+  try {
+    const url = new URL(destination);
+    // Don't override partner / affiliate attribution that's already on the URL
+    if (url.searchParams.has('utm_source')) return destination;
+
+    url.searchParams.set('utm_source', opts.source ?? 'stackpicks.dev');
+    url.searchParams.set('utm_medium', opts.medium ?? 'referral');
+    url.searchParams.set('utm_campaign', opts.campaign ?? 'directory');
+    if (opts.content) url.searchParams.set('utm_content', opts.content);
+    return url.toString();
+  } catch {
+    return destination;
+  }
+}

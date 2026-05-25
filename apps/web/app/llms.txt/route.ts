@@ -41,6 +41,7 @@ The differentiator vs. other dev-tool directories: opinionated takes, not star c
 
 - [Browse all 165 curated repos](${site}/preview): Live GitHub stats + curator takes
 - [89 MCP servers directory](${site}/mcp): Model Context Protocol servers for Claude, Cursor, Cline, Windsurf — searchable with copy-paste install commands
+- [Best tools by use case](${site}/tools): Curated picks for video, photo, audio, 3D, design, AI image generation, screen recording, note-taking — open-source flagged
 - [13 stack bundles](${site}/build): Full stacks for SaaS, mobile, AI agents, scrapers, dashboards, marketing sites — each with 20-40 curated repos
 - [12 skill tracks](${site}/skills): Curated learning paths (AI/ML, frontend, backend, DevOps, mobile, design, etc.)
 - [Compare any two repos](${site}/compare): Side-by-side curator-take comparisons

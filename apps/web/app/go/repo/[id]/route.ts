@@ -1,5 +1,5 @@
 import { adminClient } from '@stackpicks/core/db';
-import { hashIP, dailySalt } from '@stackpicks/core/utils';
+import { hashIP, dailySalt, appendUtm } from '@stackpicks/core/utils';
 import { redirect } from 'next/navigation';
 import { NextRequest } from 'next/server';
 
@@ -16,7 +16,7 @@ export async function GET(req: NextRequest, { params }: Params) {
 
   const { data: repo, error } = await supabase
     .from('repos')
-    .select('id, github_url, affiliate_url')
+    .select('id, github_url, affiliate_url, full_name')
     .eq('id', id)
     .eq('is_published', true)
     .maybeSingle();
@@ -25,8 +25,16 @@ export async function GET(req: NextRequest, { params }: Params) {
     redirect('/');
   }
 
-  const destination = repo.affiliate_url || repo.github_url;
   const isAffiliate = Boolean(repo.affiliate_url);
+  // Only stamp UTM on non-affiliate destinations (affiliate links carry their
+  // own tracking and ours would conflict with the partner's attribution).
+  const rawDestination = repo.affiliate_url || repo.github_url;
+  const destination = isAffiliate
+    ? rawDestination
+    : appendUtm(rawDestination, {
+        campaign: 'directory',
+        content: repo.full_name ?? undefined,
+      });
 
   // Fire-and-forget log; don't block redirect on it.
   try {

@@ -1,5 +1,5 @@
 import { adminClient } from '@stackpicks/core/db';
-import { hashIP, dailySalt } from '@stackpicks/core/utils';
+import { hashIP, dailySalt, appendUtm } from '@stackpicks/core/utils';
 import { redirect } from 'next/navigation';
 import { NextRequest } from 'next/server';
 
@@ -36,6 +36,12 @@ export async function GET(req: NextRequest, { params }: Params) {
 
   if (!destination) redirect('/');
 
+  // Stamp UTM so the sponsor sees stackpicks.dev as the referrer in their analytics
+  const trackedDestination = appendUtm(destination, {
+    campaign: 'sponsored',
+    content: id,
+  });
+
   // Log + increment counter
   try {
     const ip =
@@ -60,5 +66,5 @@ export async function GET(req: NextRequest, { params }: Params) {
     console.error('Sponsored click log failed (non-blocking):', err);
   }
 
-  redirect(destination);
+  redirect(trackedDestination);
 }
