@@ -6,8 +6,8 @@ import { SITE } from '@stackpicks/core/constants';
 import { BLOG_POSTS } from '../../../lib/blog';
 
 export const metadata: Metadata = buildMeta({
-  title: 'Piyush Jangir — Author, builder, and head of affiliate marketing at HYPD',
-  description: 'Piyush Jangir is the founder of StackPicks and Head of Affiliate Marketing at HYPD. Self-taught builder shipping open-source dev tools and curator content since 2019. Based in Mumbai, India.',
+  title: 'Piyush Jangir — Founder of StackPicks · Builder · Curator',
+  description: 'Piyush Jangir is the founder of StackPicks — an opinionated directory of open-source dev tools. Self-taught builder shipping products and curator content since 2019. Based in Mumbai, India.',
   path: '/about/piyush-jangir',
 });
 
@@ -17,11 +17,11 @@ const PERSON_SCHEMA = {
   name: 'Piyush Jangir',
   url: `${SITE.url}/about/piyush-jangir`,
   image: 'https://github.com/jangirpiyush008-hash.png',
-  jobTitle: 'Head of Affiliate Marketing',
+  jobTitle: 'Founder',
   worksFor: {
     '@type': 'Organization',
-    name: 'HYPD',
-    url: 'https://hypd.com',
+    name: 'StackPicks',
+    url: SITE.url,
   },
   sameAs: [
     'https://github.com/jangirpiyush008-hash',
@@ -30,14 +30,13 @@ const PERSON_SCHEMA = {
   ],
   knowsAbout: [
     'Open-source software',
-    'Affiliate marketing',
-    'Creator commerce',
     'Next.js',
     'Supabase',
     'Razorpay',
     'TypeScript',
     'Model Context Protocol (MCP)',
     'AI coding tools',
+    'Indie SaaS',
   ],
   alumniOf: 'Self-taught',
   nationality: { '@type': 'Country', name: 'India' },
@@ -86,10 +85,10 @@ export default function PiyushAboutPage() {
                 <BadgeCheck className="w-5 h-5 text-accent" />
               </div>
               <p className="text-muted text-sm leading-relaxed">
-                Head of Affiliate Marketing at <a href="https://hypd.com" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">HYPD</a> · Founder of <Link href="/" className="text-accent hover:underline">StackPicks</Link> · Builder since 2019.
+                Founder of <Link href="/" className="text-accent hover:underline">StackPicks</Link> · Self-taught builder shipping products since 2019.
               </p>
               <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted font-mono">
-                <span className="inline-flex items-center gap-1"><Briefcase className="w-3 h-3" /> Creator commerce, India</span>
+                <span className="inline-flex items-center gap-1"><Briefcase className="w-3 h-3" /> Builder &amp; curator</span>
                 <span className="inline-flex items-center gap-1"><MapPin className="w-3 h-3" /> Mumbai, IN</span>
               </div>
             </div>
@@ -117,20 +116,19 @@ export default function PiyushAboutPage() {
           <h2 className="text-2xl font-bold tracking-tight">About</h2>
           <p>
             I'm Piyush Jangir — a self-taught builder from Mumbai, India. I've been
-            shipping products since 2019 across creator commerce, marketing, and
+            shipping products since 2019 across marketing, indie SaaS, and
             developer tooling.
           </p>
           <p>
-            By day, I lead affiliate marketing at <a href="https://hypd.com" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">HYPD</a> —
-            a creator commerce platform serving 50,000+ Indian creators. We
-            tackle the messy intersection of social commerce, payments, and
-            influencer monetization in the Indian market.
+            I founded <Link href="/" className="text-accent hover:underline">StackPicks</Link> in 2026
+            — an opinionated directory of open-source dev tools with honest
+            curator takes. The site indexes 165+ repos and 89 MCP servers, all
+            reviewed personally with explicit "use this if / skip if" trade-offs.
           </p>
           <p>
-            By night, I build and write at <Link href="/" className="text-accent hover:underline">StackPicks</Link> —
-            an opinionated directory of open-source dev tools with curator
-            takes. The site indexes 165+ repos and 89 MCP servers, all reviewed
-            personally with explicit "use this if / skip if" trade-offs.
+            My day job is in growth and affiliate marketing for an Indian D2C platform
+            — the experience of running paid + organic campaigns at scale informs
+            how I think about builder products and SaaS economics.
           </p>
 
           <h2 className="text-2xl font-bold tracking-tight mt-10">What I write about</h2>

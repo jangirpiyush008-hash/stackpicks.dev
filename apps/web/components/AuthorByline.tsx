@@ -36,9 +36,8 @@ export function AuthorByline({ author, publishedAt, updatedAt, readingTime }: Pr
             <span className="text-xs text-muted">Verified author</span>
           </div>
           <p className="text-sm text-muted leading-relaxed">
-            Head of Affiliate Marketing at <a href="https://hypd.com" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">HYPD</a> (creator commerce platform, India).
-            Self-taught builder shipping ~10 products since 2019.
-            Writes opinionated curator takes on open-source dev tools at StackPicks.
+            Founder of <a href="https://stackpicks.dev" className="text-accent hover:underline">StackPicks</a>.
+            Self-taught builder shipping open-source dev tools, marketing, and curator content since 2019. Based in Mumbai, India.
             Available on <a href="https://github.com/jangirpiyush008-hash" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">GitHub</a> and <a href="https://www.linkedin.com/in/jangirpiyush008/" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">LinkedIn</a>.
           </p>
           <div className="mt-3 flex items-center gap-4 text-xs text-muted font-mono">

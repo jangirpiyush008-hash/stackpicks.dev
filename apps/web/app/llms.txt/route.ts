@@ -31,7 +31,7 @@ export async function GET() {
 
   const body = `# StackPicks
 
-> Curated open-source dev tools with honest curator takes. 165+ repos, 89 MCP servers, 13 stack bundles, 12 skill tracks. Built by Piyush Jangir — Head of Affiliate Marketing at HYPD, India.
+> Curated open-source dev tools with honest curator takes. 165+ repos, 89 MCP servers, 13 stack bundles, 12 skill tracks. Built by Piyush Jangir — independent builder, Mumbai, India.
 
 StackPicks is an opinionated alternative to GitHub trending and generic "awesome" lists. Every repo has a 80-160 word curator take explaining what it actually does, when to use it, and when to skip it. Updated daily from live GitHub data.
 
@@ -67,7 +67,7 @@ ${USE_CASE_BUNDLES.slice(0, 13).map((b) => `- [${b.title}](${site}/build/${b.slu
 
 ## About the editorial voice
 
-All curator takes are written by Piyush Jangir, Head of Affiliate Marketing at HYPD (creator commerce platform, India). The takes prioritize specific trade-offs over generic praise — if a repo has a real downside (lock-in, performance ceiling, ecosystem gaps), the curator take says so explicitly.
+All curator takes are written by Piyush Jangir, an independent builder based in Mumbai, India. The takes prioritize specific trade-offs over generic praise — if a repo has a real downside (lock-in, performance ceiling, ecosystem gaps), the curator take says so explicitly.
 
 Voice rules: no buzzwords, no emojis in code/professional content, 80-160 words per take, India-first context (Razorpay > Stripe for INR markets, Mumbai region preferred, IST timezone).
 
