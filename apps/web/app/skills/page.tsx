@@ -8,7 +8,7 @@ import { SKILL_TRACKS } from '../../lib/skill-tracks';
 import { buildMeta, itemListJsonLd, breadcrumbJsonLd } from '@stackpicks/core/seo';
 
 export const metadata = buildMeta({
-  title: 'Skill tracks — 12 open-source toolkits for marketers, sales, AI, data & devs',
+  title: '12 Skill Tracks — open-source toolkits by discipline',
   description: 'Curated open-source tools by discipline: marketing, sales outreach, social media, LinkedIn personal brand, AI/ML, data analytics, DevOps, automation, design, mobile, backend APIs, founder OS. The exact OSS pros actually use.',
   path: '/skills',
 });

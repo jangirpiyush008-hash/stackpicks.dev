@@ -155,6 +155,8 @@ function PreviewCard({ repo }: { repo: FeaturedRepo }) {
                 ? `Live screenshot of ${repo.full_name} — ${repo.short}. Deployed at ${new URL(repo.demo_url).hostname.replace(/^www\./, '')}.`
                 : `GitHub repository card for ${repo.full_name} — ${repo.short}. Open-source on github.com.`
             }
+            width={1280}
+            height={720}
             className="absolute inset-0 w-full h-full object-cover object-top transition duration-500 group-hover:scale-[1.03]"
             loading="lazy"
             onError={() => {

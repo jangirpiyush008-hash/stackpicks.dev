@@ -82,6 +82,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
+        {/* Resource hints — every page pulls GitHub avatars + screenshots from
+            these origins. Preconnect saves the TCP+TLS handshake (~150-300ms
+            on mobile) on the very first paint. dns-prefetch is the safety net
+            for older browsers that ignore preconnect. */}
+        <link rel="preconnect" href="https://avatars.githubusercontent.com" crossOrigin="" />
+        <link rel="preconnect" href="https://opengraph.githubassets.com" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://github.com" />
+        <link rel="dns-prefetch" href="https://api.microlink.io" />
+        <link rel="dns-prefetch" href="https://us.i.posthog.com" />
+
         {/* Site-wide structured data — appears on every page, helps SERP sitelinks + brand */}
         <script
           type="application/ld+json"

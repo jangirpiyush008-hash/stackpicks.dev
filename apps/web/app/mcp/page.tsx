@@ -35,7 +35,7 @@ const MCP_FAQS = [
 export const revalidate = 3600;
 
 export const metadata: Metadata = buildMeta({
-  title: 'MCP Connectors Directory — 80+ Model Context Protocol servers for Claude, Cursor, Cline (May 2026)',
+  title: 'MCP Servers Directory — 89 connectors for Claude + Cursor',
   description:
     'Curated list of 80+ MCP (Model Context Protocol) servers — official Anthropic, vendor-built, and community connectors for Claude, Cursor, Cline, and Windsurf. Search by category, copy install commands, credit original maintainers.',
   path: '/mcp',

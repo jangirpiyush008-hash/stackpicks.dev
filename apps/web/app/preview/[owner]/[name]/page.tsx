@@ -68,9 +68,12 @@ export default async function RepoPreviewPage({ params }: Props) {
       <div className="mb-6 rounded-2xl border border-border overflow-hidden bg-surface/40">
         <img
           src={ogImage}
-          alt={`${repo.full_name} preview`}
+          alt={`${repo.full_name} on GitHub — ${repo.description ?? 'open-source project preview'}`}
+          width={1200}
+          height={600}
           className="w-full h-auto block"
-          loading="lazy"
+          loading="eager"
+          fetchPriority="high"
         />
       </div>
 

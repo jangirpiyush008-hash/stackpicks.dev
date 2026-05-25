@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Clock, Calendar, User, ArrowRight, Sparkles } from 'lucide-react';
 import { getBlogPostBySlug, BLOG_POSTS, getAllBlogSlugs } from '../../../lib/blog';
-import { BlogContent } from '../../../components/BlogContent';
+import { BlogContent, extractHeadings } from '../../../components/BlogContent';
+import { BlogTOC } from '../../../components/BlogTOC';
 import { AuthorByline, QuickAnswer } from '../../../components/AuthorByline';
 import { buildMeta, breadcrumbJsonLd, faqJsonLd, speakableJsonLd } from '@stackpicks/core/seo';
 import { SITE } from '@stackpicks/core/constants';
@@ -142,6 +143,12 @@ export default async function BlogPostPage({
 
         {post.quick_answer && (
           <QuickAnswer>{post.quick_answer}</QuickAnswer>
+        )}
+
+        {/* TOC for longer posts only — short posts read fine without one and
+            the TOC component returns null when there aren't enough headings. */}
+        {post.reading_time >= 6 && (
+          <BlogTOC headings={extractHeadings(post.content)} />
         )}
 
         <BlogContent content={post.content} />

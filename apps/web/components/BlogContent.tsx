@@ -1,8 +1,48 @@
 /**
  * Lightweight markdown-ish renderer for blog posts.
  * Avoids the bundle weight of full markdown parsers — we control the input.
+ *
+ * Also exposes `extractHeadings()` so the page can render a server-rendered
+ * Table of Contents above the article. Each H2/H3 in the rendered output
+ * carries a slug `id` attribute matching `slugify(text)` — anchor links from
+ * the TOC + Google's "jump to" SERP feature both depend on this.
  */
 import Link from 'next/link';
+
+/** Deterministic, URL-safe slug. Must match between TOC link + heading id. */
+export function slugifyHeading(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 60);
+}
+
+export interface BlogHeading {
+  level: 2 | 3;
+  text: string;
+  slug: string;
+}
+
+/** Walks the markdown and returns the heading outline. Pure — safe in RSC. */
+export function extractHeadings(content: string): BlogHeading[] {
+  const out: BlogHeading[] = [];
+  let inCodeBlock = false;
+  for (const raw of content.split('\n')) {
+    if (raw.startsWith('```')) { inCodeBlock = !inCodeBlock; continue; }
+    if (inCodeBlock) continue;
+    if (raw.startsWith('## ')) {
+      const text = raw.slice(3).trim();
+      out.push({ level: 2, text, slug: slugifyHeading(text) });
+    } else if (raw.startsWith('### ')) {
+      const text = raw.slice(4).trim();
+      out.push({ level: 3, text, slug: slugifyHeading(text) });
+    }
+  }
+  return out;
+}
 
 export function BlogContent({ content }: { content: string }) {
   const lines = content.split('\n');
@@ -102,9 +142,11 @@ export function BlogContent({ content }: { content: string }) {
 
     // H2
     if (line.startsWith('## ')) {
+      const text = line.slice(3);
+      const slug = slugifyHeading(text);
       elements.push(
-        <h2 key={key++} className="text-2xl md:text-3xl font-bold mt-12 mb-4 tracking-tight">
-          {line.slice(3)}
+        <h2 id={slug} key={key++} className="text-2xl md:text-3xl font-bold mt-12 mb-4 tracking-tight scroll-mt-20">
+          {text}
         </h2>
       );
       i++;
@@ -113,9 +155,11 @@ export function BlogContent({ content }: { content: string }) {
 
     // H3
     if (line.startsWith('### ')) {
+      const text = line.slice(4);
+      const slug = slugifyHeading(text);
       elements.push(
-        <h3 key={key++} className="text-xl font-bold mt-8 mb-3">
-          {line.slice(4)}
+        <h3 id={slug} key={key++} className="text-xl font-bold mt-8 mb-3 scroll-mt-20">
+          {text}
         </h3>
       );
       i++;

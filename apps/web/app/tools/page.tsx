@@ -11,7 +11,7 @@ import { TOOLS_BY_USE_CASE, type ToolLicense } from '../../lib/tools-by-use-case
 export const revalidate = 86400;
 
 export const metadata: Metadata = buildMeta({
-  title: 'Best AI Tools by Use Case (2026) — Realistic Pricing + What You Can Actually Ship at Each Tier',
+  title: 'Best AI Tools by Use Case (2026) — Real Pricing + Limits',
   description: 'Honest 2026 AI tool guide: Claude Code, Cursor, Sora, Veo, Midjourney, Flux, ElevenLabs, Suno + 30 more. Each tool shows real pricing tiers, message/credit limits, reset periods (Claude 5hr), and what you actually ship at $0/$20/$100/$200.',
   path: '/tools',
 });
