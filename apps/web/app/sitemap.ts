@@ -29,6 +29,7 @@ const STATIC_PATHS: MetadataRoute.Sitemap = [
   { url: `${SITE.url}/mcp`, changeFrequency: 'weekly', priority: 0.92 },
   { url: `${SITE.url}/pricing`, changeFrequency: 'monthly', priority: 0.85 },
   { url: `${SITE.url}/about`, changeFrequency: 'monthly', priority: 0.5 },
+  { url: `${SITE.url}/about/piyush-jangir`, changeFrequency: 'monthly', priority: 0.6 },
   { url: `${SITE.url}/contact`, changeFrequency: 'monthly', priority: 0.5 },
   { url: `${SITE.url}/privacy`, changeFrequency: 'yearly', priority: 0.2 },
   { url: `${SITE.url}/terms`, changeFrequency: 'yearly', priority: 0.2 },
