@@ -16,19 +16,13 @@ export function softwareJsonLd(repo: Repo): Record<string, unknown> {
     softwareVersion: 'See repository',
     url: `${SITE.url}/repo/${repo.slug}`,
     sameAs: [repo.github_url, repo.homepage].filter(Boolean),
-    aggregateRating: repo.stars > 0
-      ? {
-          '@type': 'AggregateRating',
-          ratingValue: '4.8',
-          ratingCount: repo.stars,
-          bestRating: '5',
-          worstRating: '1',
-        }
-      : undefined,
+    // NOTE: aggregateRating intentionally omitted until real user ratings exist.
+    // GitHub stars are NOT ratings (Google flags fabricated review counts as schema
+    // spam and may demote). Wire this back once IP-hashed upvotes ship (task #79).
     offers: {
       '@type': 'Offer',
       price: '0',
-      priceCurrency: 'USD',
+      priceCurrency: 'INR',
     },
   };
 }
@@ -63,6 +57,9 @@ export function organizationJsonLd(): Record<string, unknown> {
     logo: `${SITE.url}/icon`,
     sameAs: [
       SITE.twitter ? `https://twitter.com/${SITE.twitter.replace(/^@/, '')}` : null,
+      'https://github.com/jangirpiyush008-hash/awesome-stackpicks',
+      'https://www.linkedin.com/in/piyush-jangir-9a8895207/',
+      'https://github.com/jangirpiyush008-hash',
     ].filter(Boolean),
     description: SITE.description,
   };

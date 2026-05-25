@@ -59,7 +59,12 @@ export const metadata: Metadata = {
     url: SITE.url,
   },
   twitter: { card: 'summary_large_image', site: SITE.twitter },
-  alternates: { canonical: SITE.url },
+  alternates: {
+    canonical: SITE.url,
+    types: {
+      'application/atom+xml': [{ url: '/blog/rss.xml', title: `${SITE.name} — Blog` }],
+    },
+  },
   category: 'technology',
   formatDetection: { telephone: false, email: false, address: false },
 };

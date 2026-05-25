@@ -33,6 +33,10 @@ export async function GET() {
 
 > Curated open-source dev tools with honest curator takes. 165+ repos, 89 MCP servers, 13 stack bundles, 12 skill tracks. Built by Piyush Jangir — independent builder, Mumbai, India.
 
+Full crawl surface: ${site}/llms-full.txt
+Blog Atom feed: ${site}/blog/rss.xml
+XML sitemap: ${site}/sitemap.xml
+
 StackPicks is an opinionated alternative to GitHub trending and generic "awesome" lists. Every repo has a 80-160 word curator take explaining what it actually does, when to use it, and when to skip it. Updated daily from live GitHub data.
 
 The differentiator vs. other dev-tool directories: opinionated takes, not star counts. Editorial perspective on the open-source ecosystem from a working builder.
