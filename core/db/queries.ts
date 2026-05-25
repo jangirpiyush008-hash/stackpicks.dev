@@ -67,6 +67,54 @@ export async function listRepos(
   }));
 }
 
+/**
+ * Anonymous IP-hashed upvote count for a single repo. Used on the repo detail
+ * page to seed the UpvoteButton + power the real aggregateRating JSON-LD.
+ * Returns 0 on miss — never throws (analytics should never break a page).
+ */
+export async function getRepoUpvoteCount(
+  supabase: SupabaseClient,
+  repoId: string
+): Promise<number> {
+  const { count, error } = await supabase
+    .from('repo_upvotes')
+    .select('id', { count: 'exact', head: true })
+    .eq('repo_id', repoId);
+
+  if (error) {
+    // Don't crash the page — log and return 0.
+    // eslint-disable-next-line no-console
+    console.warn('getRepoUpvoteCount failed:', error.message);
+    return 0;
+  }
+  return count ?? 0;
+}
+
+/**
+ * Insert an upvote with idempotent semantics. `ip_hash` is computed
+ * server-side (caller responsibility) — never trust a client-supplied hash.
+ * Returns true on new insert, false on duplicate (same hash already voted).
+ */
+export async function insertRepoUpvote(
+  supabase: SupabaseClient,
+  repoId: string,
+  ipHash: string
+): Promise<{ inserted: boolean; count: number }> {
+  // The (repo_id, ip_hash) UNIQUE constraint makes duplicates safe.
+  const { error } = await supabase
+    .from('repo_upvotes')
+    .insert({ repo_id: repoId, ip_hash: ipHash });
+
+  // 23505 = unique_violation in Postgres. Treat as "already voted today".
+  const inserted = !error;
+  if (error && error.code !== '23505') {
+    throw new Error(`insertRepoUpvote failed: ${error.message}`);
+  }
+
+  const count = await getRepoUpvoteCount(supabase, repoId);
+  return { inserted, count };
+}
+
 export async function getRepoBySlug(
   supabase: SupabaseClient,
   slug: string

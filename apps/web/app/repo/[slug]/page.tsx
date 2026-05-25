@@ -1,4 +1,5 @@
 import { adminClient, getRepoBySlug } from '@stackpicks/core/db';
+import { getRepoUpvoteCount } from '@stackpicks/core/db/queries';
 import { buildMeta, softwareJsonLd, breadcrumbJsonLd } from '@stackpicks/core/seo';
 import { formatStars, timeAgo, formatIST } from '@stackpicks/core/utils';
 import { Star, GitFork, Eye, AlertCircle, ExternalLink, Check, X, Zap, Target, Tag } from 'lucide-react';
@@ -6,6 +7,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { EmbedBadge } from '../../../components/EmbedBadge';
 import { RepoOwnerLink } from '../../../components/RepoOwnerLink';
+import { UpvoteButton } from '../../../components/UpvoteButton';
 
 export const revalidate = 3600;
 
@@ -33,11 +35,15 @@ export default async function RepoPage({ params }: PageProps) {
   const repo = await getRepoBySlug(supabase, slug);
   if (!repo) notFound();
 
+  // Real IP-hashed upvote count — feeds the UpvoteButton initial state AND
+  // the aggregateRating JSON-LD when the count crosses the threshold.
+  const upvoteCount = await getRepoUpvoteCount(supabase, repo.id);
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareJsonLd(repo)) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareJsonLd(repo, upvoteCount)) }}
       />
       <script
         type="application/ld+json"
@@ -85,7 +91,7 @@ export default async function RepoPage({ params }: PageProps) {
             )}
           </div>
 
-          <div className="flex gap-3 mt-6">
+          <div className="flex flex-wrap items-center gap-3 mt-6">
             <a
               href={`/go/repo/${repo.id}`}
               className="px-5 py-2.5 rounded bg-accent text-bg font-semibold inline-flex items-center gap-2"
@@ -104,6 +110,7 @@ export default async function RepoPage({ params }: PageProps) {
                 Visit homepage
               </a>
             )}
+            <UpvoteButton repoId={repo.id} initialCount={upvoteCount} />
           </div>
         </div>
 
