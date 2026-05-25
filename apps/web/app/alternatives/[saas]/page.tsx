@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Github, Check, X as XIcon, Server, Sparkles, ExternalLink } from 'lucide-react';
 import { getAlternativePageBySlug, ALTERNATIVES, getAllAlternativeSlugs } from '../../../lib/saas-alternatives';
-import { buildMeta, breadcrumbJsonLd, faqJsonLd, itemListJsonLd } from '@stackpicks/core/seo';
+import { buildMeta, breadcrumbJsonLd, faqJsonLd, itemListJsonLd, speakableJsonLd } from '@stackpicks/core/seo';
+import { SITE } from '@stackpicks/core/constants';
 import type { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
@@ -70,6 +71,15 @@ export default async function AlternativePage({
             })),
             `Open-source alternatives to ${page.saas_name}`,
           )),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(speakableJsonLd({
+            url: `${SITE.url}/alternatives/${saas}`,
+            cssSelectors: ['h1', '.quick-answer', '.alt-take'],
+          })),
         }}
       />
 

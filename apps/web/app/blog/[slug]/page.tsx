@@ -4,7 +4,7 @@ import { ArrowLeft, Clock, Calendar, User, ArrowRight, Sparkles } from 'lucide-r
 import { getBlogPostBySlug, BLOG_POSTS, getAllBlogSlugs } from '../../../lib/blog';
 import { BlogContent } from '../../../components/BlogContent';
 import { AuthorByline, QuickAnswer } from '../../../components/AuthorByline';
-import { buildMeta, breadcrumbJsonLd, faqJsonLd } from '@stackpicks/core/seo';
+import { buildMeta, breadcrumbJsonLd, faqJsonLd, speakableJsonLd } from '@stackpicks/core/seo';
 import { SITE } from '@stackpicks/core/constants';
 import type { Metadata } from 'next';
 
@@ -86,6 +86,15 @@ export default async function BlogPostPage({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(post.faqs)) }}
         />
       )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(speakableJsonLd({
+            url: `${SITE.url}/blog/${slug}`,
+            cssSelectors: ['h1', '.quick-answer', '.faq-answer'],
+          })),
+        }}
+      />
 
       <div className="max-w-3xl mx-auto px-4 py-10">
         <Link
@@ -150,7 +159,7 @@ export default async function BlogPostPage({
                     <span>{faq.question}</span>
                     <span className="text-accent text-xl leading-none group-open:rotate-45 transition shrink-0">+</span>
                   </summary>
-                  <p className="mt-3 text-sm text-muted leading-relaxed">{faq.answer}</p>
+                  <p className="faq-answer mt-3 text-sm text-muted leading-relaxed">{faq.answer}</p>
                 </details>
               ))}
             </div>

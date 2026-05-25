@@ -10,6 +10,7 @@ import { NewsletterPopup } from '../components/NewsletterPopup';
 import { FooterNewsletter } from '../components/FooterNewsletter';
 import { Analytics } from '../components/Analytics';
 import { UtmOutboundHandler } from '../components/UtmOutboundHandler';
+import { WebVitalsReporter } from '../components/WebVitalsReporter';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -61,6 +62,14 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image', site: SITE.twitter },
   alternates: {
     canonical: SITE.url,
+    // hreflang — we serve INR pricing to IN, USD elsewhere. Help Google route
+    // the right regional experience. 'x-default' is the fallback for unmatched
+    // locales (per Google's hreflang spec).
+    languages: {
+      'en-IN': SITE.url,
+      'en':    SITE.url,
+      'x-default': SITE.url,
+    },
     types: {
       'application/atom+xml': [{ url: '/blog/rss.xml', title: `${SITE.name} — Blog` }],
     },
@@ -230,6 +239,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {/* Analytics — env-driven; supports Plausible, PostHog, GA4, Umami in parallel */}
         <Analytics />
+
+        {/* Real-user Core Web Vitals (LCP/CLS/INP) → PostHog. Catches perf
+            regressions before Search Console does (28-day lag). */}
+        <WebVitalsReporter />
 
         {/* Global outbound-UTM rewriter — stamps every external link click with
             ?utm_source=stackpicks.dev so the destination site sees us as referrer */}

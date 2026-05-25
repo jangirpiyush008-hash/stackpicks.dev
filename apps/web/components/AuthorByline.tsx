@@ -72,7 +72,7 @@ export function AuthorByline({ author, publishedAt, updatedAt, readingTime }: Pr
 
 export function QuickAnswer({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border-l-4 border-accent bg-accent/5 px-5 py-4 my-6">
+    <div className="quick-answer rounded-2xl border-l-4 border-accent bg-accent/5 px-5 py-4 my-6">
       <div className="text-[10px] font-mono uppercase tracking-wider text-accent mb-1.5">
         Quick answer
       </div>

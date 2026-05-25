@@ -114,6 +114,30 @@ export function faqJsonLd(
   };
 }
 
+/**
+ * Speakable JSON-LD — flags which parts of the page Google Assistant /
+ * voice-search engines should read aloud. Pair with the quick-answer block on
+ * FAQ-heavy pages. CSS selectors target the elements with the answer text.
+ *
+ * Per schema.org/SpeakableSpecification, this is currently in limited release —
+ * but it's the only structured-data hook for voice answers and AI Overviews
+ * audio synthesis (Gemini, Alexa, Apple Intelligence).
+ */
+export function speakableJsonLd(opts: {
+  url: string;
+  cssSelectors: string[];   // e.g. ['.quick-answer', '.faq-answer']
+}): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    url: opts.url,
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: opts.cssSelectors,
+    },
+  };
+}
+
 /** ItemList JSON-LD — for /preview, /skills, /build index pages. */
 export function itemListJsonLd(
   items: { name: string; path: string }[],
@@ -191,8 +215,25 @@ export function buildMeta(opts: {
   description: string;
   path: string;
   image?: string;
+  // Optional OG image overrides for the dynamic /api/og fallback. Ignored when
+  // a static `image` is provided. Encourages unique social cards per page.
+  ogKicker?: string;
+  ogBadge?: string;
 }) {
   const url = `${SITE.url}${opts.path}`;
+
+  // Dynamic OG via /api/og — unique branded card per page. Routes that ship a
+  // dedicated `opengraph-image.tsx` (repo, blog, build, compare, skills) override
+  // this via the App Router convention; everywhere else inherits this fallback
+  // instead of a static og-default.png that doesn't exist in /public.
+  const ogImage = opts.image
+    ?? `${SITE.url}/api/og?` + new URLSearchParams({
+      title: opts.title.slice(0, 90),
+      subtitle: opts.description.slice(0, 180),
+      ...(opts.ogKicker ? { kicker: opts.ogKicker } : {}),
+      ...(opts.ogBadge  ? { badge:  opts.ogBadge  } : {}),
+    }).toString();
+
   return {
     title: `${opts.title} — ${SITE.name}`,
     description: opts.description,
@@ -201,7 +242,7 @@ export function buildMeta(opts: {
       description: opts.description,
       url,
       siteName: SITE.name,
-      images: [{ url: opts.image || `${SITE.url}/og-default.png`, width: 1200, height: 630 }],
+      images: [{ url: ogImage, width: 1200, height: 630 }],
       locale: 'en_IN',
       type: 'website',
     },
@@ -209,7 +250,7 @@ export function buildMeta(opts: {
       card: 'summary_large_image' as const,
       title: opts.title,
       description: opts.description,
-      images: [opts.image || `${SITE.url}/og-default.png`],
+      images: [ogImage],
     },
     alternates: { canonical: url },
   };

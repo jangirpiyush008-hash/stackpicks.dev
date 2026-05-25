@@ -4,7 +4,8 @@ import {
   Code, Video, Image as ImageIcon, Mic, BookOpen, Box, Bot,
   ExternalLink, Sparkles, Timer, Zap, type LucideIcon,
 } from 'lucide-react';
-import { buildMeta, breadcrumbJsonLd, itemListJsonLd, faqJsonLd } from '@stackpicks/core/seo';
+import { buildMeta, breadcrumbJsonLd, itemListJsonLd, faqJsonLd, speakableJsonLd } from '@stackpicks/core/seo';
+import { SITE } from '@stackpicks/core/constants';
 import { TOOLS_BY_USE_CASE, type ToolLicense } from '../../lib/tools-by-use-case';
 
 export const revalidate = 86400;
@@ -79,6 +80,15 @@ export default function ToolsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(TOOLS_FAQS)) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(speakableJsonLd({
+            url: `${SITE.url}/tools`,
+            cssSelectors: ['h1', '.faq-answer'],
+          })),
+        }}
       />
       <script
         type="application/ld+json"
@@ -241,7 +251,7 @@ export default function ToolsPage() {
                   <span>{faq.question}</span>
                   <span className="text-accent text-xl leading-none group-open:rotate-45 transition shrink-0">+</span>
                 </summary>
-                <p className="mt-3 text-sm text-muted leading-relaxed">{faq.answer}</p>
+                <p className="faq-answer mt-3 text-sm text-muted leading-relaxed">{faq.answer}</p>
               </details>
             ))}
           </div>
