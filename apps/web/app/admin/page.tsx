@@ -166,10 +166,27 @@ export default async function AdminPage({
           </div>
         </div>
         <p className="text-sm text-muted mb-8">
-          Internal. Not indexed. Audit trail prints to server logs.
+          Internal. Not indexed.
         </p>
 
-        {/* Stats */}
+        {/* SEO CALENDAR — primary daily action, top of page */}
+        <section className="mb-8">
+          <Link
+            href="/admin/seo"
+            className="flex items-center justify-between gap-3 p-5 rounded-2xl border-2 border-accent/40 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent hover:border-accent/70 transition group"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <Flame className="w-5 h-5 text-accent shrink-0" />
+              <div className="min-w-0">
+                <div className="font-bold text-base">Today&apos;s SEO + GEO task</div>
+                <div className="text-xs text-muted">90-day ranking campaign · check off today&apos;s task</div>
+              </div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-muted group-hover:text-accent group-hover:translate-x-0.5 transition shrink-0" />
+          </Link>
+        </section>
+
+        {/* Stats — at-a-glance health */}
         <div className="grid sm:grid-cols-3 gap-4 mb-8">
           <Stat icon={<Users className="w-4 h-4" />} label="Total users" value={totalUsers.toString()} />
           <Stat
@@ -186,32 +203,18 @@ export default async function AdminPage({
           />
         </div>
 
-        {/* SEO CALENDAR — daily ranking tasks */}
-        <section className="mb-12">
-          <Link
-            href="/admin/seo"
-            className="flex items-center justify-between gap-3 p-5 rounded-2xl border-2 border-accent/40 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent hover:border-accent/70 transition group"
-          >
-            <div className="flex items-center gap-3 min-w-0">
-              <Flame className="w-5 h-5 text-accent shrink-0" />
-              <div className="min-w-0">
-                <div className="font-bold text-base">Today's SEO + GEO task</div>
-                <div className="text-xs text-muted">90-day ranking campaign · open the calendar to check off today's task</div>
-              </div>
-            </div>
-            <ArrowRight className="w-4 h-4 text-muted group-hover:text-accent group-hover:translate-x-0.5 transition shrink-0" />
-          </Link>
-        </section>
-
-        {/* LAUNCH METRICS — real-time pulse for launch day */}
-        <section className="mb-12">
-          <div className="flex items-baseline gap-3 mb-4">
+        {/* LAUNCH METRICS — collapsed by default. Useful for launch-day pushes
+            and share-template copy/paste; not daily-essential anymore. */}
+        <details className="mb-12 rounded-2xl border border-border bg-surface/30 overflow-hidden group">
+          <summary className="cursor-pointer flex items-center gap-3 px-5 py-4 hover:bg-surface/50 transition">
             <Rocket className="w-4 h-4 text-muted" />
-            <h2 className="text-lg font-bold">Launch metrics</h2>
-            <span className="text-xs text-muted">live · refresh page to update</span>
+            <span className="font-bold text-sm">Launch metrics + share templates</span>
+            <span className="text-xs text-muted ml-auto">click to expand</span>
+          </summary>
+          <div className="p-5 border-t border-border">
+            <AdminLaunchPanel data={launchMetrics} />
           </div>
-          <AdminLaunchPanel data={launchMetrics} />
-        </section>
+        </details>
 
         {/* USERS */}
         <section className="mb-12">
