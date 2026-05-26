@@ -18,24 +18,10 @@ interface LaunchData {
 
 const PH_KEY = 'sp_admin_ph_slug';
 const HN_KEY = 'sp_admin_hn_id';
-const CHECKLIST_KEY = 'sp_admin_launch_checklist';
-
-const LAUNCH_CHECKLIST = [
-  { id: 'ph', label: 'ProductHunt submitted', url: 'https://www.producthunt.com/posts/new' },
-  { id: 'ph_comment', label: 'Maker comment posted on PH', url: null },
-  { id: 'linkedin', label: 'LinkedIn post live', url: 'https://www.linkedin.com/feed/' },
-  { id: 'twitter', label: 'Twitter / X thread posted', url: 'https://x.com/compose/post' },
-  { id: 'hn', label: 'Hacker News Show HN posted', url: 'https://news.ycombinator.com/submit' },
-  { id: 'reddit_sp', label: 'Reddit r/SideProject post', url: 'https://www.reddit.com/r/SideProject/submit' },
-  { id: 'reddit_webdev', label: 'Reddit r/webdev post', url: 'https://www.reddit.com/r/webdev/submit' },
-  { id: 'reddit_oss', label: 'Reddit r/opensource post', url: 'https://www.reddit.com/r/opensource/submit' },
-  { id: 'ih', label: 'IndieHackers milestone post', url: 'https://www.indiehackers.com/post' },
-  { id: 'betalist', label: 'BetaList submitted', url: 'https://betalist.com/submit' },
-  { id: 'devhunt', label: 'DevHunt submitted', url: 'https://devhunt.org/submit' },
-  { id: 'alttto', label: 'AlternativeTo submitted', url: 'https://alternativeto.net/software/submit' },
-  { id: 'dms', label: '15 personal DMs sent', url: null },
-  { id: 'indexnow', label: 'IndexNow launch push run', url: null },
-];
+// NOTE: Launch checklist removed — replaced by the 90-day SEO calendar at
+// /admin/seo. ProductHunt / HN / Reddit / BetaList submissions all live there
+// now as scheduled tasks with proper guidance, instead of a free-floating
+// checkbox grid.
 
 const SHARE_TEMPLATES = {
   twitter: `Spent 4 hours picking a UI library last week.
@@ -159,31 +145,13 @@ export function AdminLaunchPanel({ data }: { data: LaunchData }) {
   const [pushing, setPushing] = useState(false);
   const [pushResult, setPushResult] = useState('');
   const [autoRefresh, setAutoRefresh] = useState(false);
-  const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [copyFeedback, setCopyFeedback] = useState('');
 
-  // Load saved PH slug + HN ID + checklist from localStorage
+  // Load saved PH slug + HN ID from localStorage
   useEffect(() => {
     setPhSlug(localStorage.getItem(PH_KEY) ?? '');
     setHnId(localStorage.getItem(HN_KEY) ?? '');
-    try {
-      setChecked(JSON.parse(localStorage.getItem(CHECKLIST_KEY) ?? '{}'));
-    } catch { /* ignore */ }
   }, []);
-
-  const toggleCheck = (id: string) => {
-    setChecked((prev) => {
-      const next = { ...prev, [id]: !prev[id] };
-      localStorage.setItem(CHECKLIST_KEY, JSON.stringify(next));
-      return next;
-    });
-  };
-
-  const resetChecklist = () => {
-    if (!confirm('Reset the entire launch checklist?')) return;
-    setChecked({});
-    localStorage.removeItem(CHECKLIST_KEY);
-  };
 
   const copyText = async (text: string, label: string) => {
     try {
@@ -195,8 +163,6 @@ export function AdminLaunchPanel({ data }: { data: LaunchData }) {
       setTimeout(() => setCopyFeedback(''), 2000);
     }
   };
-
-  const completedCount = Object.values(checked).filter(Boolean).length;
 
   // Fetch external rankings
   const refreshExternals = async () => {
@@ -304,14 +270,6 @@ export function AdminLaunchPanel({ data }: { data: LaunchData }) {
       });
       const j = await res.json();
       setPushResult(j.ok ? `✓ pushed ${j.pushed} URLs (HTTP ${j.status})` : `✗ ${j.error}`);
-      if (j.ok && mode === 'launch') {
-        // Auto-tick the indexnow checkbox
-        setChecked((prev) => {
-          const next = { ...prev, indexnow: true };
-          localStorage.setItem(CHECKLIST_KEY, JSON.stringify(next));
-          return next;
-        });
-      }
     } catch (e) {
       setPushResult(`✗ ${e instanceof Error ? e.message : 'failed'}`);
     } finally {
@@ -538,67 +496,6 @@ export function AdminLaunchPanel({ data }: { data: LaunchData }) {
               ))
             )}
           </div>
-        </div>
-      </div>
-
-      {/* ─── Launch checklist ──────────────────────────────────────── */}
-      <div className="rounded-2xl border border-border bg-surface/30 p-4">
-        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-          <div className="flex items-center gap-2">
-            <div className="text-[10px] font-mono uppercase tracking-wider text-muted">
-              Launch checklist
-            </div>
-            <span className="text-xs text-muted">
-              {completedCount} / {LAUNCH_CHECKLIST.length} done
-            </span>
-            <div className="w-32 h-1.5 bg-border rounded-full overflow-hidden">
-              <div
-                className="h-full bg-accent transition-all"
-                style={{ width: `${(completedCount / LAUNCH_CHECKLIST.length) * 100}%` }}
-              />
-            </div>
-          </div>
-          {completedCount > 0 && (
-            <button
-              type="button"
-              onClick={resetChecklist}
-              className="text-[10px] text-muted hover:text-red-300 transition"
-            >
-              Reset
-            </button>
-          )}
-        </div>
-        <div className="grid sm:grid-cols-2 gap-2">
-          {LAUNCH_CHECKLIST.map((item) => (
-            <label
-              key={item.id}
-              className={`flex items-center gap-2 px-3 py-2 rounded border text-xs cursor-pointer transition ${
-                checked[item.id]
-                  ? 'border-accent/40 bg-accent/5 text-text/60 line-through'
-                  : 'border-border hover:border-accent/50'
-              }`}
-            >
-              <input
-                type="checkbox"
-                checked={!!checked[item.id]}
-                onChange={() => toggleCheck(item.id)}
-                className="accent-accent"
-              />
-              <span className="flex-1">{item.label}</span>
-              {item.url && (
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="text-muted/60 hover:text-accent transition"
-                  title="Open"
-                >
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-              )}
-            </label>
-          ))}
         </div>
       </div>
 
