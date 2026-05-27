@@ -7,6 +7,9 @@ import { BlogTOC } from '../../../components/BlogTOC';
 import { AuthorByline, QuickAnswer } from '../../../components/AuthorByline';
 import { buildMeta, breadcrumbJsonLd, faqJsonLd, speakableJsonLd } from '@stackpicks/core/seo';
 import { SITE } from '@stackpicks/core/constants';
+import { getIsMember } from '../../../lib/membership';
+import { SubscriptionCta } from '../../../components/SubscriptionCta';
+import { StickyConversionBar } from '../../../components/StickyConversionBar';
 import type { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
@@ -36,6 +39,9 @@ export default async function BlogPostPage({
   const { slug } = await params;
   const post = getBlogPostBySlug(slug);
   if (!post) notFound();
+
+  // Hide conversion CTAs from paid members.
+  const isMember = await getIsMember();
 
   // Article JSON-LD — eligible for Google's Article rich result
   const articleSchema = {
@@ -173,22 +179,12 @@ export default async function BlogPostPage({
           </section>
         )}
 
-        <section className="mt-16 mb-8 p-6 md:p-8 rounded-2xl border border-accent/40 bg-accent/5 text-center">
-          <Sparkles className="w-5 h-5 text-accent mx-auto mb-3" />
-          <h3 className="text-xl md:text-2xl font-bold mb-2">
-            Want the full curated stack?
-          </h3>
-          <p className="text-sm text-muted mb-5 max-w-xl mx-auto">
-            StackPicks lifetime members get 100+ open-source tools with curator takes,
-            13 ready-to-ship stack bundles, and 12 skill tracks. ₹99 lifetime.
-          </p>
-          <Link
-            href="/pricing"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-accent text-bg font-semibold hover:opacity-90 transition"
-          >
-            See pricing
-          </Link>
-        </section>
+        <SubscriptionCta
+          variant="full"
+          isMember={isMember}
+          source={`blog-${slug}-bottom`}
+          headline={`Liked this post? Get the full StackPicks directory — 165+ picks, 13 bundles, lifetime.`}
+        />
 
         {related.length > 0 && (
           <section>
@@ -208,6 +204,8 @@ export default async function BlogPostPage({
           </section>
         )}
       </div>
+
+      <StickyConversionBar isMember={isMember} source={`blog-${slug}-sticky`} />
     </>
   );
 }

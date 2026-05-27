@@ -3,6 +3,9 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft, Github, Server, Sparkles, ExternalLink, Star } from 'lucide-react';
 import { getBestOfBySlug, BEST_OF, getAllBestOfSlugs } from '../../../lib/best-of';
 import { buildMeta, breadcrumbJsonLd, faqJsonLd, itemListJsonLd } from '@stackpicks/core/seo';
+import { getIsMember } from '../../../lib/membership';
+import { SubscriptionCta } from '../../../components/SubscriptionCta';
+import { StickyConversionBar } from '../../../components/StickyConversionBar';
 import type { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
@@ -33,6 +36,9 @@ export default async function BestOfPage({
   const { slug } = await params;
   const page = getBestOfBySlug(slug);
   if (!page) notFound();
+
+  // Hide conversion CTAs from members. Lifetime members shouldn't see "upgrade".
+  const isMember = await getIsMember();
 
   const related = BEST_OF.filter((b) => b.slug !== slug).slice(0, 4);
 
@@ -119,8 +125,17 @@ export default async function BestOfPage({
           <h2 className="text-2xl font-bold mb-5">All {page.picks.length} ranked</h2>
           <div className="space-y-4">
             {page.picks.map((pick, i) => (
+              <div key={pick.full_name}>
+              {/* Inline CTA after 3rd pick — catches readers mid-content */}
+              {i === 3 && (
+                <SubscriptionCta
+                  variant="compact"
+                  isMember={isMember}
+                  source={`best-${slug}-inline`}
+                  headline={`Like these ${page.display_name.toLowerCase()} picks? Get 165+ more.`}
+                />
+              )}
               <article
-                key={pick.full_name}
                 className="rounded-2xl border border-border bg-surface/30 p-5"
               >
                 <div className="flex items-baseline gap-3 mb-2 flex-wrap">
@@ -163,27 +178,18 @@ export default async function BestOfPage({
                   <ExternalLink className="w-3 h-3" />
                 </a>
               </article>
+              </div>
             ))}
           </div>
         </section>
 
-        {/* CTA */}
-        <section className="rounded-2xl border border-accent/40 bg-accent/5 p-6 md:p-8 mb-10 text-center">
-          <Sparkles className="w-5 h-5 text-accent mx-auto mb-3" />
-          <h3 className="text-xl md:text-2xl font-bold mb-2">
-            Want full curator takes + 13 stack bundles?
-          </h3>
-          <p className="text-sm text-muted mb-5 max-w-xl mx-auto">
-            StackPicks lifetime gives you 100+ curated open-source tools with deep curator takes,
-            ready-to-ship stack bundles, and 12 skill tracks. ₹99 one-time.
-          </p>
-          <Link
-            href="/pricing"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-accent text-bg font-semibold hover:opacity-90 transition"
-          >
-            See pricing
-          </Link>
-        </section>
+        {/* CTA — end-of-page conversion block */}
+        <SubscriptionCta
+          variant="full"
+          isMember={isMember}
+          source={`best-${slug}-bottom`}
+          headline={`Get all 165+ curated picks — not just these ${page.picks.length} ${page.display_name.toLowerCase()}`}
+        />
 
         {/* Related */}
         {related.length > 0 && (
@@ -204,6 +210,9 @@ export default async function BestOfPage({
           </section>
         )}
       </div>
+
+      {/* Sticky conversion bar — appears after 30% scroll, dismissable for 7 days */}
+      <StickyConversionBar isMember={isMember} source={`best-${slug}-sticky`} />
     </>
   );
 }

@@ -4,6 +4,9 @@ import { ArrowLeft, Github, Check, X as XIcon, Server, Sparkles, ExternalLink } 
 import { getAlternativePageBySlug, ALTERNATIVES, getAllAlternativeSlugs } from '../../../lib/saas-alternatives';
 import { buildMeta, breadcrumbJsonLd, faqJsonLd, itemListJsonLd, speakableJsonLd } from '@stackpicks/core/seo';
 import { SITE } from '@stackpicks/core/constants';
+import { getIsMember } from '../../../lib/membership';
+import { SubscriptionCta } from '../../../components/SubscriptionCta';
+import { StickyConversionBar } from '../../../components/StickyConversionBar';
 import type { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
@@ -34,6 +37,9 @@ export default async function AlternativePage({
   const { saas } = await params;
   const page = getAlternativePageBySlug(saas);
   if (!page) notFound();
+
+  // Hide conversion CTAs from members.
+  const isMember = await getIsMember();
 
   const related = ALTERNATIVES
     .filter((a) => a.category === page.category && a.slug !== page.slug)
@@ -128,8 +134,17 @@ export default async function AlternativePage({
           <h2 className="text-2xl font-bold mb-5">All {page.picks.length} alternatives ranked</h2>
           <div className="space-y-5">
             {page.picks.map((pick, i) => (
+              <div key={pick.full_name}>
+              {/* Inline CTA after 3rd pick — catches readers mid-content */}
+              {i === 3 && (
+                <SubscriptionCta
+                  variant="compact"
+                  isMember={isMember}
+                  source={`alt-${saas}-inline`}
+                  headline={`Replacing ${page.saas_name} is just the start. Get the full open-source playbook.`}
+                />
+              )}
               <article
-                key={pick.full_name}
                 className="rounded-2xl border border-border bg-surface/30 p-5 md:p-6"
               >
                 <div className="flex items-baseline gap-3 mb-2 flex-wrap">
@@ -187,27 +202,18 @@ export default async function AlternativePage({
                   </div>
                 </div>
               </article>
+              </div>
             ))}
           </div>
         </section>
 
-        {/* CTA */}
-        <section className="rounded-2xl border border-accent/40 bg-accent/5 p-6 md:p-8 mb-10 text-center">
-          <Sparkles className="w-5 h-5 text-accent mx-auto mb-3" />
-          <h3 className="text-xl md:text-2xl font-bold mb-2">
-            Want the full curated stack?
-          </h3>
-          <p className="text-sm text-muted mb-5 max-w-xl mx-auto">
-            StackPicks members get 100+ open-source tools across 22 categories with curator takes,
-            13 stack bundles, and 12 skill tracks. ₹99 lifetime.
-          </p>
-          <Link
-            href="/pricing"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-accent text-bg font-semibold hover:opacity-90 transition"
-          >
-            See pricing
-          </Link>
-        </section>
+        {/* CTA — end-of-page conversion block */}
+        <SubscriptionCta
+          variant="full"
+          isMember={isMember}
+          source={`alt-${saas}-bottom`}
+          headline={`Migrating off ${page.saas_name}? Get the full open-source playbook — 165+ picks, 13 bundles.`}
+        />
 
         {/* Related */}
         {related.length > 0 && (
@@ -228,6 +234,8 @@ export default async function AlternativePage({
           </section>
         )}
       </div>
+
+      <StickyConversionBar isMember={isMember} source={`alt-${saas}-sticky`} />
     </>
   );
 }
