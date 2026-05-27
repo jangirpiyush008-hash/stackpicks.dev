@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSupabaseServer } from '../../../../../lib/supabase-server';
 import { adminClient } from '@stackpicks/core/db';
 import { getAppBySlug } from '../../../../../lib/connect-apps';
+import { SITE } from '@stackpicks/core/constants';
 
 /**
  * GET /api/connect/[provider]/callback
@@ -32,7 +33,7 @@ export async function GET(
   const error = url.searchParams.get('error');
 
   if (error) {
-    return NextResponse.redirect(new URL(`/connect?error=${encodeURIComponent(error)}`, req.url));
+    return NextResponse.redirect(new URL(`/connect?error=${encodeURIComponent(error)}`, SITE.url));
   }
 
   const admin = adminClient();
@@ -52,8 +53,8 @@ export async function GET(
 
   if (dbErr) {
     console.error('[connect/callback] upsert failed', dbErr.message);
-    return NextResponse.redirect(new URL(`/connect?error=db`, req.url));
+    return NextResponse.redirect(new URL(`/connect?error=db`, SITE.url));
   }
 
-  return NextResponse.redirect(new URL(`/connect?connected=${provider}`, req.url));
+  return NextResponse.redirect(new URL(`/connect?connected=${provider}`, SITE.url));
 }

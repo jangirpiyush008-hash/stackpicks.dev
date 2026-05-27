@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseServer } from '../../../../../lib/supabase-server';
 import { getAppBySlug } from '../../../../../lib/connect-apps';
+import { SITE } from '@stackpicks/core/constants';
 
 /**
  * GET /api/connect/[provider]/start
@@ -29,15 +30,15 @@ export async function GET(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     const back = `/connect?after=${provider}`;
-    return NextResponse.redirect(new URL(`/login?redirect=${encodeURIComponent(back)}`, req.url));
+    return NextResponse.redirect(new URL(`/login?redirect=${encodeURIComponent(back)}`, SITE.url));
   }
 
   if (app.status !== 'live') {
-    return NextResponse.redirect(new URL(`/connect?soon=${provider}`, req.url));
+    return NextResponse.redirect(new URL(`/connect?soon=${provider}`, SITE.url));
   }
 
   // TODO(nango): replace with actual broker.
   // For MVP launch, we land on a holding page that explains we're wiring this
   // specific provider and offer to notify when it goes live.
-  return NextResponse.redirect(new URL(`/connect?pending=${provider}`, req.url));
+  return NextResponse.redirect(new URL(`/connect?pending=${provider}`, SITE.url));
 }
