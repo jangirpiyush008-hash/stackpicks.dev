@@ -14,7 +14,11 @@
     "./types": "./types/index.ts",
     "./validation": "./validation/index.ts",
     "./constants": "./constants/index.ts",
-    "./utils": "./utils/index.ts"
+    "./utils": "./utils/index.ts",
+    "./nango/client": "./nango/client.ts",
+    "./connect/auth": "./connect/auth.ts",
+    "./connect/tools": "./connect/tools.ts",
+    "./connect/executors": "./connect/executors/index.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

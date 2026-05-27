@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseServer } from '../../../../../lib/supabase-server';
 import { adminClient } from '@stackpicks/core/db';
+import { deleteConnection, nangoConfigured } from '@stackpicks/core/nango/client';
 
 /**
  * POST /api/connect/[provider]/disconnect
  *
- * Soft-revokes the user's connection for a provider. We also notify Nango
- * (once wired) so the upstream OAuth token is revoked too — leaving stale
- * tokens with the broker is a security smell.
+ * Revokes both the upstream OAuth (via Nango) and the local connection
+ * row. We never leave stale tokens with the broker.
  */
 export async function POST(
   _req: Request,
@@ -20,7 +20,29 @@ export async function POST(
 
   const admin = adminClient();
 
-  // TODO(nango): call nango.deleteConnection(provider, user.id) before this.
+  // Fetch the Nango connection IDs we need to revoke first.
+  const { data: conns } = await admin
+    .from('oauth_connections')
+    .select('id, nango_connection_id')
+    .eq('user_id', user.id)
+    .eq('provider', provider)
+    .eq('status', 'active');
+
+  // Revoke upstream — best-effort, log + continue on failure so we still
+  // mark the DB row revoked locally (user expects "disconnect" to feel final).
+  if (nangoConfigured()) {
+    for (const c of conns ?? []) {
+      if (!c.nango_connection_id) continue;
+      try {
+        await deleteConnection({
+          connectionId: c.nango_connection_id as string,
+          provider,
+        });
+      } catch (err) {
+        console.error('[connect/disconnect] nango revoke failed', err);
+      }
+    }
+  }
 
   const { error } = await admin
     .from('oauth_connections')

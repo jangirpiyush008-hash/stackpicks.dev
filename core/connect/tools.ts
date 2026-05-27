@@ -1,0 +1,184 @@
+// Connect tool registry — single source of truth for every MCP tool that
+// the unified gateway exposes. Each tool has a provider, a stable name
+// (snake_case, prefixed with provider slug), a description Claude sees, and
+// a JSON Schema for arguments.
+//
+// We expose ONLY tools whose provider the calling user has a live OAuth
+// connection for. That filtering happens in /api/mcp/v1/tools.
+
+export type Provider =
+  | 'github'
+  | 'gmail'
+  | 'slack'
+  | 'notion'
+  | 'discord'
+  | 'google-drive';
+
+export interface ConnectTool {
+  name: string;            // 'github_create_pr' — globally unique, machine-readable
+  provider: Provider;
+  description: string;     // Claude reads this to decide when to call
+  inputSchema: {
+    type: 'object';
+    properties: Record<string, unknown>;
+    required?: string[];
+    additionalProperties?: boolean;
+  };
+}
+
+const GITHUB_TOOLS: ConnectTool[] = [
+  {
+    name: 'github_list_repos',
+    provider: 'github',
+    description:
+      'List the authenticated user\'s GitHub repositories. Returns name, owner, private flag, default branch, and HTML URL.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        visibility: {
+          type: 'string',
+          enum: ['all', 'public', 'private'],
+          description: 'Filter by visibility. Default: all',
+        },
+        sort: {
+          type: 'string',
+          enum: ['created', 'updated', 'pushed', 'full_name'],
+          description: 'Sort field. Default: updated',
+        },
+        per_page: {
+          type: 'integer',
+          minimum: 1,
+          maximum: 100,
+          description: 'Results per page (max 100). Default: 30',
+        },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'github_search_issues',
+    provider: 'github',
+    description:
+      'Search GitHub issues + PRs. Use the GitHub search qualifier syntax: e.g. "repo:owner/name is:open label:bug".',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        q: {
+          type: 'string',
+          description: 'Search query — required. Use qualifiers like "repo:", "author:", "is:open", "label:".',
+        },
+        sort: {
+          type: 'string',
+          enum: ['comments', 'reactions', 'created', 'updated'],
+          description: 'Sort field.',
+        },
+        per_page: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      required: ['q'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'github_get_issue',
+    provider: 'github',
+    description: 'Get a single issue or PR by number.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        owner: { type: 'string' },
+        repo: { type: 'string' },
+        issue_number: { type: 'integer' },
+      },
+      required: ['owner', 'repo', 'issue_number'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'github_create_issue',
+    provider: 'github',
+    description:
+      'Create a new issue in a repo. Returns the URL and number of the new issue.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        owner: { type: 'string' },
+        repo: { type: 'string' },
+        title: { type: 'string' },
+        body: { type: 'string', description: 'Markdown body. Optional.' },
+        labels: { type: 'array', items: { type: 'string' } },
+        assignees: { type: 'array', items: { type: 'string' } },
+      },
+      required: ['owner', 'repo', 'title'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'github_list_prs',
+    provider: 'github',
+    description: 'List open or closed pull requests for a repository.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        owner: { type: 'string' },
+        repo: { type: 'string' },
+        state: {
+          type: 'string',
+          enum: ['open', 'closed', 'all'],
+          description: 'Default: open',
+        },
+        per_page: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      required: ['owner', 'repo'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'github_get_file',
+    provider: 'github',
+    description:
+      'Read a file from a repository at a given ref (branch / tag / commit). Returns decoded UTF-8 content + sha.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        owner: { type: 'string' },
+        repo: { type: 'string' },
+        path: { type: 'string' },
+        ref: { type: 'string', description: 'Default: default branch' },
+      },
+      required: ['owner', 'repo', 'path'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'github_search_code',
+    provider: 'github',
+    description:
+      'Code search across GitHub. Use qualifiers: "repo:", "language:", "extension:", "path:".',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        q: { type: 'string' },
+        per_page: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      required: ['q'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'github_me',
+    provider: 'github',
+    description: 'Return the authenticated user (login, name, email, plan).',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+];
+
+// Phase 1 MVP: GitHub only. Other providers will follow.
+export const CONNECT_TOOLS: ConnectTool[] = [...GITHUB_TOOLS];
+
+export function toolsForProviders(activeProviders: Set<Provider>): ConnectTool[] {
+  return CONNECT_TOOLS.filter((t) => activeProviders.has(t.provider));
+}
+
+export function getToolByName(name: string): ConnectTool | undefined {
+  return CONNECT_TOOLS.find((t) => t.name === name);
+}

@@ -1,0 +1,44 @@
+{
+  "name": "@stackpicks/mcp",
+  "version": "0.1.0",
+  "description": "Unified MCP gateway for StackPicks Connect — one install, all your apps in Claude / Cursor / OpenAI agents.",
+  "type": "module",
+  "bin": {
+    "stackpicks-mcp": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "pnpm build",
+    "dev": "tsx watch src/index.ts"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "cursor",
+    "ai-agent",
+    "stackpicks"
+  ],
+  "homepage": "https://stackpicks.dev/connect",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jangirpiyush008-hash/stackpicks.dev.git",
+    "directory": "packages/mcp"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.5.0"
+  }
+}
