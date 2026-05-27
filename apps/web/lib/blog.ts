@@ -718,6 +718,18 @@ If this was useful and you want to skip the research → [grab lifetime access f
         question: 'Which React UI library has the best accessibility?',
         answer: 'Radix Primitives (the foundation under shadcn/ui) ships the most rigorously accessible primitives — ARIA roles, keyboard navigation, focus trapping all handled. Mantine and Ant Design are also strong on a11y. MUI is improving but historically lagged on focus management.',
       },
+      {
+        question: 'Which UI library should I choose for my first app?',
+        answer: 'For your first app, pick shadcn/ui (if you are using Tailwind) or Mantine (if you want zero setup). Both forgive beginner mistakes — shadcn because you own every component file and can edit it freely, Mantine because everything works out of the box with sensible defaults. Skip MUI and Ant Design until you have shipped at least one production app — their theming systems are overkill for a first project.',
+      },
+      {
+        question: 'How do I pick a UI library without wasting months learning the wrong one?',
+        answer: 'Stop reading docs. Pick the library you are considering, then build a real login page + dashboard + settings page in one focused weekend. If you hit three or more "how do I customize X" Stack Overflow searches in that weekend, the library is fighting you — switch. The two-day cost of switching beats a two-month commit. Use stackpicks.dev/compare to read honest tradeoffs between the top 5 contenders before you start.',
+      },
+      {
+        question: 'What is the fastest way to build a professional-looking app in 2026?',
+        answer: 'shadcn/ui + Tailwind + a paid template (~$50 from Tailwind UI, Catalyst, or Shadcnblocks) cuts design time by 80%. You get production polish without doing UX research. For dashboards specifically, Tremor or Mantine ships pre-styled charts, tables, and KPI cards. The "professional" feel comes from typography and spacing — not custom UI work. Most builders over-engineer the design system and under-invest in those two things.',
+      },
     ],
     content: `Picking an open-source React UI library used to be simple in 2020. Now in 2026, you're choosing between **16+ serious contenders**, each with different opinions about styling, composition, and ownership.
 
