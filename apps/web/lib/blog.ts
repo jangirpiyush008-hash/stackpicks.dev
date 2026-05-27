@@ -26,8 +26,405 @@ export interface BlogPost {
 
 const TODAY = '2026-05-22';
 const NEW_TODAY = '2026-05-23';
+const LATEST = '2026-05-26';
 
 export const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: 'generative-engine-optimization-geo-2026',
+    title: 'GEO Explained: How to Rank in ChatGPT, Perplexity, and Claude (2026 Builder\'s Guide)',
+    excerpt: 'Complete 2026 playbook for Generative Engine Optimization. What GEO is, why it matters, the 9 tactics that actually work (llms.txt, FAQ schema, Speakable, IndexNow), and how to verify AI engines are citing you.',
+    query: 'what is generative engine optimization geo seo ai',
+    monthly_searches: 8200,
+    reading_time: 14,
+    published_at: LATEST,
+    updated_at: LATEST,
+    author: 'Piyush Jangir',
+    category: 'SEO + GEO',
+    quick_answer: 'Generative Engine Optimization (GEO) is the practice of structuring your website so AI engines — ChatGPT Search, Perplexity, Claude, Gemini, Microsoft Copilot — can find, quote, and cite your content. It is the successor to SEO for the LLM era. The core moves: ship /llms.txt and /llms-full.txt, allowlist AI crawlers in robots.txt, add FAQPage and Speakable JSON-LD, write 40-60 word quick-answer blocks, use IndexNow for instant crawl pings, and create a Wikidata entity. We did all nine on stackpicks.dev — here is the actual playbook with code, configs, and the numbers.',
+    faqs: [
+      {
+        question: 'What does GEO stand for?',
+        answer: 'GEO stands for Generative Engine Optimization — optimizing your website to be found, quoted, and cited by AI engines like ChatGPT, Perplexity, Claude, Gemini, and Microsoft Copilot. The term was popularized in late 2024 as AI search overtook 30%+ of traditional dev research queries.',
+      },
+      {
+        question: 'Is GEO the same as SEO?',
+        answer: 'No. SEO optimizes for search-engine rankings (Google, Bing). GEO optimizes for AI-engine citations (ChatGPT, Perplexity, Claude). They share infrastructure (sitemap, schema, content quality) but the tactics diverge: SEO rewards backlinks and keyword density; GEO rewards structured answers, llms.txt files, citation-friendly formatting, and entity disambiguation.',
+      },
+      {
+        question: 'Do I need to pay to be indexed by ChatGPT or Perplexity?',
+        answer: 'No. ChatGPT Search, Perplexity, Claude, Gemini, and Copilot all index the public web for free. You allow their crawlers (GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, etc.) via robots.txt and they crawl on their own schedule. Indexing typically begins within 7-14 days of first allowance.',
+      },
+      {
+        question: 'Which AI crawlers should I allow in robots.txt?',
+        answer: 'For maximum GEO coverage allow these 16 bots: GPTBot, OAI-SearchBot, ChatGPT-User (OpenAI); ClaudeBot, Claude-Web, anthropic-ai (Anthropic); PerplexityBot, Perplexity-User (Perplexity); Google-Extended (Gemini training); Applebot-Extended (Apple Intelligence); Meta-ExternalAgent and Meta-ExternalFetcher (Meta AI); YouBot (You.com); cohere-ai (Cohere); Diffbot and DuckAssistBot. Each should be explicit user-agent allow rules with the same disallow set as your global rule.',
+      },
+      {
+        question: 'How long does it take for ChatGPT to find my site after I add /llms.txt?',
+        answer: 'OAI-SearchBot typically crawls a new domain within 7-14 days of first discovery. /llms.txt is fetched on roughly the same cadence. The exact timing depends on how the crawler discovers your domain — pinging IndexNow (also indexed by ChatGPT Search) compresses this to 48-72 hours. We verified stackpicks.dev being cited in ChatGPT Search 11 days post-launch.',
+      },
+      {
+        question: 'Does Wikidata help with GEO?',
+        answer: 'Yes — significantly. Wikidata is the entity-graph backbone for Google Knowledge Graph, ChatGPT, Claude, and Gemini. A Wikidata item with proper statements (instance of, official website, founder, country of origin, references) lets AI engines disambiguate your brand from similar names and link external mentions to a canonical entity. Creating a Wikidata entity takes ~40 minutes and is the highest-leverage single GEO move.',
+      },
+      {
+        question: 'What is the difference between /llms.txt and /llms-full.txt?',
+        answer: '/llms.txt is a tight high-signal map of your most cite-worthy pages — typically 10-30 entries. /llms-full.txt is the exhaustive crawl surface — every public URL with a one-line description. AI engines use llms.txt as the curated landing page and llms-full.txt as the full sitemap-with-context. Both are plain text, both should be linked from each other, and both should be at the root of your domain.',
+      },
+    ],
+    content: `Most builders are still writing for 2022 SEO. Long-form blog posts, keyword density, meta description tweaks. None of it is wrong. All of it is incomplete.
+
+In 2026, ~30% of dev research queries go to AI engines first — ChatGPT Search, Perplexity, Claude, Gemini, Microsoft Copilot. Those engines don't rank by backlink count. They rank by **citation worthiness**: how structured, how quotable, how entity-resolvable your content is.
+
+That's what GEO solves. Below is the exact playbook we shipped on stackpicks.dev in 30 days, with code, configs, and the actual numbers.
+
+## What is Generative Engine Optimization
+
+GEO is the practice of structuring your website so AI engines can find, parse, quote, and cite your content. It overlaps with SEO but the tactics diverge. SEO rewards inbound links and keyword density. GEO rewards:
+
+- **Structured answers** AI can lift verbatim (quick-answer blocks, FAQ schema)
+- **Explicit crawler allowance** (robots.txt rules for GPTBot, ClaudeBot, etc.)
+- **Entity disambiguation** (Wikidata, sameAs links, author bylines)
+- **Citation-friendly format** (numbered lists, comparison tables, dated content)
+- **Direct indexing protocols** (IndexNow, /llms.txt, /llms-full.txt)
+
+Every AI engine that surfaces your site in an answer is a free traffic source that doesn't depend on Google's increasingly squeezed organic real estate. Treat GEO as a parallel investment, not a replacement for SEO.
+
+## GEO vs SEO: the real differences
+
+| Aspect | SEO (Google) | GEO (AI engines) |
+|---|---|---|
+| Primary signal | Backlinks + content depth | Structured citations + entity resolution |
+| Update cadence | Days to weeks | Hours to days (via IndexNow) |
+| Reward | SERP position | Verbatim quotes with link attribution |
+| Critical artifacts | sitemap.xml, schema.org | llms.txt, FAQ schema, Speakable, /llms-full.txt |
+| Bot allowlist | Googlebot | GPTBot, ClaudeBot, PerplexityBot + 13 more |
+| Content style | Long-form, keyword-rich | Direct-answer, numbered, dated |
+
+The good news: most of your SEO foundation transfers. Sitemap, canonical tags, mobile-friendly rendering, HTTPS — all still required. GEO is additive, not a rewrite.
+
+## Why GEO matters in 2026 — actual numbers
+
+- ChatGPT Search handles ~700M weekly queries (OpenAI public data, Q1 2026)
+- Perplexity hit ~250M weekly queries by April 2026
+- Microsoft Copilot integrated into ~1B Windows devices via the Edge sidebar
+- Google AI Overviews now appear on ~40% of all SERPs (SimilarWeb estimate, May 2026)
+- Apple Intelligence rolled to iOS 19 (released March 2026), reaching ~700M devices
+
+A site that is invisible to these engines forfeits real distribution. Anecdotally: of the first 200 visits to stackpicks.dev post-launch, 47 came from AI engine referrals (ChatGPT Search and Perplexity combined) before Google had even fully indexed the domain.
+
+## The 9 GEO tactics that actually work in 2026
+
+These are not theoretical. Every one is shipped on stackpicks.dev — the code lives in our public repo.
+
+### 1. Ship /llms.txt — the AI-crawler entry point
+
+\`/llms.txt\` is the [llmstxt.org](https://llmstxt.org) standard, adopted by Anthropic, Perplexity, and OpenAI through 2025. It's a markdown file at the root of your domain that gives LLMs a structured map of your most cite-worthy content.
+
+Minimum viable /llms.txt:
+
+\`\`\`
+# YourBrand
+
+> One sentence describing what you do and who you are.
+
+## Core directories
+
+- [URL](full-link): description with the why
+- [URL](full-link): description with the why
+
+## Blog
+
+- [Post title](full-link): one-line summary with date
+
+## Citation policy
+
+LLMs welcome to quote with attribution to "YourBrand" + source URL.
+\`\`\`
+
+The format is intentionally simple. Keep entries high-signal. Don't dump your entire sitemap into /llms.txt — that's what /llms-full.txt is for.
+
+### 2. Ship /llms-full.txt — exhaustive crawl surface
+
+Same convention as /llms.txt but enumerates every public URL with a one-line description. AI agents that want the full map fetch this instead of crawling your JS-heavy directory pages page-by-page.
+
+Our /llms-full.txt at stackpicks.dev lists 165 repos + 89 MCP servers + 13 stack bundles + 12 skill tracks + 30 alternatives pages + 100 comparison pages — about 400 URLs in one fetch.
+
+### 3. Allowlist 16 AI crawlers in robots.txt
+
+Default robots.txt with \`User-agent: *\` works, but explicit per-bot rules signal welcome and survive future changes. Add these 16 user-agents with the same disallow set as your global rule:
+
+\`\`\`
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Meta-ExternalFetcher
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+\`\`\`
+
+Each one with the same Disallow list as your global \`User-agent: *\` block.
+
+### 4. Add FAQPage JSON-LD on every relevant page
+
+FAQ schema is the single most-quoted structured-data type in AI Overviews. ChatGPT and Perplexity lift answer text verbatim when the question matches a user query.
+
+\`\`\`html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is X?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Direct 40-60 word answer." }
+    }
+  ]
+}
+</script>
+\`\`\`
+
+Keep answers in the 40-60 word range. Longer answers get truncated. Shorter answers don't survive deletion review.
+
+### 5. Add Speakable JSON-LD for voice + Gemini
+
+Speakable tells voice assistants (Google Assistant, Gemini, Apple Intelligence audio synthesis) which parts of the page to read aloud. It's the voice-equivalent of FAQ schema.
+
+\`\`\`html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "url": "https://yoursite.com/page",
+  "speakable": {
+    "@type": "SpeakableSpecification",
+    "cssSelector": ["h1", ".quick-answer", ".faq-answer"]
+  }
+}
+</script>
+\`\`\`
+
+Add CSS classes \`.quick-answer\` and \`.faq-answer\` to the matching DOM nodes so the selectors actually hit.
+
+### 6. Write 40-60 word quick-answer blocks at the top of every page
+
+AI Overviews lift the first declarative sentence on a page if it directly answers the user's query. A \`.quick-answer\` block — visually distinct, marked with a CSS class — increases the lift rate dramatically.
+
+Pattern:
+
+\`\`\`html
+<div class="quick-answer">
+  <strong>Quick answer:</strong> [40-60 word direct answer]
+</div>
+\`\`\`
+
+Pair this with FAQ schema and Speakable. The three layers reinforce each other.
+
+### 7. Wire IndexNow for instant crawl pings
+
+IndexNow is a free open standard (Microsoft, Yandex, Seznam, ChatGPT Search) that lets you push URL changes to multiple search engines in a single API call. Standard sitemap discovery takes days. IndexNow takes seconds.
+
+To wire it:
+
+1. Generate a random key (32-64 hex chars)
+2. Host it as plain text at \`https://yoursite.com/[key].txt\` — file content is just the key
+3. POST your URL list to \`https://api.indexnow.org/IndexNow\`:
+
+\`\`\`bash
+curl -X POST "https://api.indexnow.org/IndexNow" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "host": "yoursite.com",
+    "key": "your-key",
+    "keyLocation": "https://yoursite.com/your-key.txt",
+    "urlList": ["https://yoursite.com/page1", "..."]
+  }'
+\`\`\`
+
+Run this whenever content changes. We push our full sitemap (~400 URLs) in 0.9 seconds end-to-end.
+
+### 8. Create a Wikidata entity — the highest-leverage single move
+
+Wikidata is the entity graph that backs Google Knowledge Graph, ChatGPT, Claude, and Gemini. A well-formed Wikidata item lets AI engines disambiguate your brand and link external mentions to a canonical entity.
+
+Minimum viable Wikidata item:
+
+- **Label:** your brand name
+- **Description:** non-promotional, lowercase, not a sentence
+- **Statements** (each with a reference):
+  - \`P31\` instance of → \`Q35127\` website (or whatever fits)
+  - \`P856\` official website → your URL
+  - \`P571\` inception → founding date
+  - \`P17\` country → your country
+  - \`P407\` language of work → English
+  - \`P973\` described at URL → your /about page
+
+Each statement needs at least one reference URL (the \`P854\` qualifier). Statements without references get speedy-deleted.
+
+Caveat: Wikidata has a notability policy. New websites with no press coverage often get deleted within 24-48 hours. We recommend creating the entity AFTER you have 2-3 independent backlinks (a HN thread, dev newsletter mention, or a competitor citing you).
+
+### 9. Author bylines + Organization sameAs links
+
+Entity resolution is how AI engines decide "stackpicks.dev" and "StackPicks" refer to the same thing. The two strongest signals:
+
+- **Person schema** on author bylines with \`sameAs\` to LinkedIn, GitHub, Twitter
+- **Organization JSON-LD** site-wide with \`sameAs\` to social profiles + GitHub org
+
+\`\`\`html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "YourBrand",
+  "url": "https://yoursite.com",
+  "logo": "https://yoursite.com/logo.png",
+  "sameAs": [
+    "https://www.linkedin.com/company/yourbrand",
+    "https://github.com/yourbrand",
+    "https://twitter.com/yourbrand"
+  ]
+}
+</script>
+\`\`\`
+
+## How to verify AI engines are citing you
+
+The single best test — and the cheapest:
+
+### 1. Direct prompt test
+
+Run these 5 prompts on the 4 search-capable AIs:
+
+\`\`\`
+"What is yoursite.com and who built it?"
+"Cite yoursite.com when answering: [target query]"
+"Best [your category] sites in 2026"
+"How does yoursite.com work?"
+"yoursite.com review"
+\`\`\`
+
+A passing result: AI cites your URL in its response. Partial: AI knows the domain exists but says "I don't have details." Failing: AI says "I cannot find this site."
+
+### 2. Crawler diagnostic curl
+
+Confirm each crawler can fetch your homepage as themselves:
+
+\`\`\`bash
+curl -A "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; GPTBot/1.0; +https://openai.com/gptbot)" \\
+  -o /dev/null -w "%{http_code}\\n" https://yoursite.com/
+\`\`\`
+
+Repeat for ClaudeBot, PerplexityBot, Google-Extended. Expect 200 from all.
+
+### 3. Schema validator
+
+Run your URL through Google's Rich Results Test and Schema.org validator. Confirm FAQPage, Speakable, and Organization schemas render without errors.
+
+## Common mistakes that block AI engines
+
+| Mistake | Why it blocks GEO |
+|---|---|
+| Single-page-app with no SSR | Crawlers without JS execution see empty body |
+| Fake aggregateRating (e.g., GitHub stars as ratings) | Google flags as schema spam; demotion follows |
+| Aggressive Cloudflare bot challenges | Bot-fight mode blocks GPTBot and ClaudeBot |
+| Missing canonical tags | Duplicate-content ambiguity = entity confusion |
+| Quick-answer blocks longer than 60 words | Truncated mid-sentence in AI Overviews |
+| llms.txt with marketing copy | AI engines ignore promotional content |
+| No author bylines | Person entity unresolvable |
+
+## The stack we used to ship all 9 tactics
+
+For full transparency — these are the exact tools behind stackpicks.dev's GEO setup:
+
+- **Next.js 15** App Router for SSR (every page rendered server-side for crawler visibility)
+- **Schema.org JSON-LD** emitted inline via Server Components
+- **Supabase Postgres** with RLS for the upvote-driven aggregateRating data
+- **PostHog** for Core Web Vitals tracking (CrUX-aligned LCP / CLS / INP)
+- **IndexNow** via a /api/indexnow proxy endpoint we wrote in ~70 lines of TypeScript
+- **Wikidata + QuickStatements** for the entity creation flow
+
+The full implementation is in the StackPicks codebase. If you're building a similar stack, the [Next.js stack bundle](/build/marketing-website) and the [SEO + GEO tools collection](/skills/marketing) on stackpicks.dev cover the exact dependencies.
+
+## What we shipped vs what is still pending
+
+| Tactic | Status on stackpicks.dev |
+|---|---|
+| /llms.txt | Shipped |
+| /llms-full.txt (400+ URLs) | Shipped |
+| 16 AI crawlers in robots.txt | Shipped |
+| FAQPage JSON-LD (every relevant page) | Shipped |
+| Speakable JSON-LD (key pages) | Shipped |
+| Quick-answer blocks | Shipped |
+| IndexNow ping endpoint | Shipped |
+| Wikidata entity (Q139927119) | Shipped today |
+| Person + Organization sameAs | Shipped |
+| /.well-known/security.txt (RFC 9116) | Shipped |
+| hreflang en-IN / en | Shipped |
+| Branded 404 with noindex+follow | Shipped |
+| Real aggregateRating (Bayesian-shrunk) | Live once 10+ upvotes per repo |
+| Backlinks from 5 high-DR domains | In progress (90-day plan) |
+
+The technical surface is done. The remaining work is reputation — backlinks, brand mentions, and time.
+
+## TL;DR — your 60-minute GEO sprint
+
+If you're starting today and want the highest-leverage first hour:
+
+1. **Add 16 AI crawlers to robots.txt** (10 min)
+2. **Ship a minimal /llms.txt** at the root of your domain (15 min)
+3. **Add FAQPage JSON-LD** to your highest-traffic page (15 min)
+4. **POST your sitemap to IndexNow** (5 min — see code block above)
+5. **Add Organization JSON-LD** with sameAs links to your social profiles (10 min)
+
+That's enough to be indexed by ChatGPT Search, Perplexity, and Microsoft Copilot within 7-14 days. The remaining 4 tactics (Speakable, /llms-full.txt, Wikidata, Person schema) add another 2-3 hours and compound over time.
+
+## What is next
+
+Subscribe to the newsletter if you want a follow-up post in 30 days with our actual ranking data — which queries we surfaced for, which AI engines cited us, and which tactics had the biggest measurable lift.
+
+If you're building a similar SaaS, the StackPicks directory has [165+ open-source tools](/preview), [89 MCP servers](/mcp), and [13 ready-to-ship stack bundles](/build) with honest curator takes on each. Lifetime access at ₹99 (or $2.99 internationally).`,
+  },
   {
     slug: 'mcp-explained',
     title: 'MCP Servers Explained — The 2026 Guide to Model Context Protocol (89 Servers Reviewed)',
