@@ -597,7 +597,7 @@ const CATALOG: ConnectApp[] = [
     ['sage',            'Sage',             'Accounting + ERP'],
     ['netsuite',        'NetSuite',         'Oracle ERP'],
     ['zoho-books',      'Zoho Books',       'Accounting'],
-    ['tally',           'Tally Solutions',  'India accounting'],
+    ['tally-solutions', 'Tally Solutions',  'India accounting'],
     ['vyapar',          'Vyapar',           'India SMB billing'],
     ['cleartax',        'ClearTax',         'India tax'],
     ['recko',           'Recko',            'Recon'],
@@ -658,7 +658,7 @@ const CATALOG: ConnectApp[] = [
   ]),
   ...group('forms', [
     ['typeform',        'Typeform',         'Conversational forms',            { popular: true, toolCount: 8 }],
-    ['tally',           'Tally',            'Free forms',                      { popular: true }],
+    ['tally-forms',     'Tally',            'Free forms',                      { popular: true }],
     ['jotform',         'Jotform',          'Form builder'],
     ['google-forms',    'Google Forms',     'Free forms'],
     ['microsoft-forms', 'Microsoft Forms',  'MS forms'],

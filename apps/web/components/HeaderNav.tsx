@@ -5,12 +5,18 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { UserMenu } from './UserMenu';
+import { getSupabaseBrowser } from '../lib/supabase-browser';
 
-const LINKS = [
+interface NavLink { href: string; label: string; authOnly?: boolean }
+
+const LINKS: NavLink[] = [
   { href: '/build', label: 'Build' },
   { href: '/skills', label: 'Skills' },
   { href: '/tools', label: 'Tools' },
-  { href: '/mcp', label: 'MCP' },
+  // MCP nav is auth-gated — anonymous visitors don't see it. The Connect
+  // product is for signed-in members; we surface the homepage promo strip
+  // to attract them to log in first.
+  { href: '/mcp', label: 'MCP', authOnly: true },
   { href: '/preview', label: 'Browse' },
   { href: '/blog', label: 'Blog' },
   { href: '/pricing', label: 'Pricing' },
@@ -18,7 +24,23 @@ const LINKS = [
 
 export function HeaderNav() {
   const [open, setOpen] = useState(false);
+  const [isAuthed, setIsAuthed] = useState<boolean | null>(null);
   const pathname = usePathname();
+
+  // Auth subscription — gates the MCP nav item. We initialise to null so
+  // the first paint hides auth-only links; once Supabase resolves we
+  // flip in either direction. Avoids the brief flash where MCP shows for
+  // anonymous visitors during hydration.
+  useEffect(() => {
+    const supabase = getSupabaseBrowser();
+    supabase.auth.getUser().then(({ data }) => setIsAuthed(!!data.user));
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthed(!!session?.user);
+    });
+    return () => { sub.subscription.unsubscribe(); };
+  }, []);
+
+  const visibleLinks = LINKS.filter((l) => !l.authOnly || isAuthed);
 
   // Auto-close the mobile sheet whenever the route changes —
   // catches Sign-in clicks (in UserMenu) + any other future child links.
@@ -37,7 +59,7 @@ export function HeaderNav() {
     <>
       {/* Desktop */}
       <nav className="hidden md:flex items-center gap-5 text-sm text-muted shrink-0">
-        {LINKS.map((l) => (
+        {visibleLinks.map((l) => (
           <Link key={l.href} href={l.href} className="hover:text-text transition">
             {l.label}
           </Link>
@@ -59,7 +81,7 @@ export function HeaderNav() {
       {open && (
         <div className="md:hidden fixed inset-x-0 top-[57px] z-30 border-b border-border bg-bg/95 backdrop-blur">
           <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col gap-3">
-            {LINKS.map((l) => (
+            {visibleLinks.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}

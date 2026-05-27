@@ -1,31 +1,35 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Search, Plug, Check, Sparkles, Hourglass, ArrowRight } from 'lucide-react';
+import { Search, Check, X } from 'lucide-react';
 import {
   CONNECT_APPS,
   CONNECT_CATEGORIES,
   type ConnectApp,
   type ConnectCategory,
 } from '../lib/connect-apps';
+import { AppLogo } from './AppLogo';
 
 /**
- * The 500+ app grid on /connect.
+ * Composio-style App Directory.
  *
- * Client-side filter + search. Keeps full catalog in memory (~30KB gzip,
- * fine). Server fetches the user's existing connections once and passes
- * them in — we just decorate cards with the right status pill.
+ * Layout:
+ *   ┌──────────┬───────────────────────────────────┐
+ *   │ Sidebar  │  Search                           │
+ *   │ - All    │  ──────────────────────────────── │
+ *   │ - Live   │  Grid of logo cards (6 cols)      │
+ *   │ - Dev    │                                   │
+ *   │ ...      │                                   │
+ *   └──────────┴───────────────────────────────────┘
  *
- * Behaviour:
- *  - Click "Connect" on a 'live' app → opens /connect/<slug>/start (popup)
- *  - Click "Notify me" on a 'soon' app → POSTs /api/connect/waitlist
- *  - Already connected card flips: shows account label + Reconnect/Disconnect
+ * Defaults to "All apps" (672) so users see the full catalog immediately.
  */
 
 interface ConnectedMap {
-  // slug → { id, account_label, status }
   [slug: string]: { id: string; accountLabel: string; status: string };
 }
+
+type FilterKey = 'all' | 'live' | ConnectCategory;
 
 interface Props {
   connected: ConnectedMap;
@@ -34,13 +38,24 @@ interface Props {
 
 export function ConnectDirectory({ connected, isAuthed }: Props) {
   const [query, setQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<'all' | 'popular' | ConnectCategory>('popular');
+  const [filter, setFilter] = useState<FilterKey>('all');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Per-category counts (computed once)
+  const counts = useMemo(() => {
+    const out: Record<string, number> = { all: CONNECT_APPS.length, live: 0 };
+    for (const a of CONNECT_APPS) {
+      if (a.status === 'live') out.live++;
+      out[a.category] = (out[a.category] ?? 0) + 1;
+    }
+    return out;
+  }, []);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    let pool = CONNECT_APPS;
-    if (activeCategory === 'popular') pool = pool.filter((a) => a.popular);
-    else if (activeCategory !== 'all') pool = pool.filter((a) => a.category === activeCategory);
+    let pool: ConnectApp[] = CONNECT_APPS;
+    if (filter === 'live') pool = pool.filter((a) => a.status === 'live');
+    else if (filter !== 'all') pool = pool.filter((a) => a.category === filter);
     if (!q) return pool;
     return pool.filter(
       (a) =>
@@ -48,76 +63,124 @@ export function ConnectDirectory({ connected, isAuthed }: Props) {
         a.slug.includes(q) ||
         a.tagline.toLowerCase().includes(q),
     );
-  }, [query, activeCategory]);
+  }, [query, filter]);
+
+  const sidebarItems: { key: FilterKey; label: string; count: number }[] = [
+    { key: 'all',  label: 'All apps',   count: counts.all },
+    { key: 'live', label: 'Live now',   count: counts.live },
+    ...CONNECT_CATEGORIES.map((c) => ({ key: c.slug, label: c.name, count: counts[c.slug] ?? 0 })),
+  ];
 
   return (
-    <div className="space-y-6">
-      {/* Search + tabs */}
-      <div className="flex flex-col gap-4">
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search 500+ apps — GitHub, Slack, Stripe, Notion…"
-            className="w-full pl-11 pr-4 h-12 rounded-xl bg-surface/50 border border-border focus:border-accent/60 focus:outline-none text-sm"
-          />
-        </div>
+    <div className="grid md:grid-cols-[220px_1fr] gap-6 lg:gap-8">
+      {/* Mobile sidebar toggle */}
+      <button
+        type="button"
+        onClick={() => setSidebarOpen(true)}
+        className="md:hidden inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border text-xs"
+      >
+        Filter: {filter === 'all' ? 'All apps' : sidebarItems.find((s) => s.key === filter)?.label}
+      </button>
 
-        <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-          {([
-            { slug: 'popular' as const, name: 'Popular' },
-            { slug: 'all' as const, name: 'All apps' },
-            ...CONNECT_CATEGORIES,
-          ]).map((tab) => {
-            const isActive = activeCategory === tab.slug;
+      {/* Sidebar */}
+      <aside
+        className={`${
+          sidebarOpen
+            ? 'fixed inset-0 z-40 bg-bg p-6 overflow-y-auto'
+            : 'hidden md:block'
+        }`}
+      >
+        {sidebarOpen && (
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close filters"
+            className="md:hidden absolute top-4 right-4 w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+        <div className="md:sticky md:top-20 space-y-0.5">
+          <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted px-2 mb-2">
+            Categories
+          </div>
+          {sidebarItems.map((item) => {
+            const active = filter === item.key;
             return (
               <button
+                key={item.key}
                 type="button"
-                key={tab.slug}
-                onClick={() => setActiveCategory(tab.slug)}
-                className={`shrink-0 px-3 h-8 rounded-full text-xs font-medium transition border ${
-                  isActive
-                    ? 'bg-accent text-bg border-accent'
-                    : 'bg-surface/30 border-border hover:border-accent/50 text-muted hover:text-text'
+                onClick={() => {
+                  setFilter(item.key);
+                  setSidebarOpen(false);
+                }}
+                className={`w-full flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md text-sm transition ${
+                  active
+                    ? 'bg-accent/15 text-accent border border-accent/30'
+                    : 'text-muted hover:bg-surface/50 hover:text-text border border-transparent'
                 }`}
               >
-                {tab.name}
+                <span className="truncate">{item.label}</span>
+                <span className="text-[10px] font-mono shrink-0 tabular-nums">{item.count}</span>
               </button>
             );
           })}
         </div>
-      </div>
+      </aside>
 
-      {/* Result counter */}
-      <div className="text-xs font-mono text-muted">
-        {filtered.length} of {CONNECT_APPS.length} apps
-      </div>
-
-      {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-        {filtered.map((app) => (
-          <AppCard
-            key={app.slug}
-            app={app}
-            connection={connected[app.slug]}
-            isAuthed={isAuthed}
+      {/* Main column */}
+      <div className="min-w-0">
+        {/* Search */}
+        <div className="relative mb-5">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search 672 apps — GitHub, Slack, Stripe, Notion…"
+            className="w-full pl-11 pr-4 h-11 rounded-xl bg-surface/50 border border-border focus:border-accent/60 focus:outline-none text-sm"
           />
-        ))}
-      </div>
-
-      {filtered.length === 0 && (
-        <div className="text-center py-12 text-muted">
-          <p className="text-sm">No apps match "{query}".</p>
-          <p className="text-xs mt-2">
-            Missing an app?{' '}
-            <a href="mailto:hi@stackpicks.dev?subject=Add to Connect" className="text-accent hover:underline">
-              Tell us
-            </a>{' '}
-            and we&apos;ll prioritise it.
-          </p>
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery('')}
+              aria-label="Clear"
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full hover:bg-white/10 flex items-center justify-center text-muted"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          )}
         </div>
-      )}
+
+        <div className="text-[11px] font-mono text-muted mb-3">
+          {filtered.length} app{filtered.length === 1 ? '' : 's'}
+          {filter !== 'all' && filter !== 'live' && ` in ${sidebarItems.find((s) => s.key === filter)?.label}`}
+        </div>
+
+        {/* Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+          {filtered.map((app) => (
+            <AppCard
+              key={app.slug}
+              app={app}
+              connection={connected[app.slug]}
+              isAuthed={isAuthed}
+            />
+          ))}
+        </div>
+
+        {filtered.length === 0 && (
+          <div className="text-center py-20 text-muted">
+            <p className="text-sm">No apps match &quot;{query}&quot;.</p>
+            <p className="text-xs mt-2">
+              Missing one?{' '}
+              <a href="mailto:hi@stackpicks.dev?subject=Add to Connect" className="text-accent hover:underline">
+                Tell us
+              </a>{' '}
+              and we&apos;ll prioritise it.
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -134,13 +197,13 @@ function AppCard({
   const isConnected = !!connection && connection.status === 'active';
   const isLive = app.status === 'live';
 
-  async function onConnect() {
+  async function onConnect(e: React.MouseEvent) {
+    e.preventDefault();
     if (!isAuthed) {
       window.location.href = `/login?redirect=/connect`;
       return;
     }
     if (!isLive) {
-      // soon → waitlist
       await fetch('/api/connect/waitlist', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -153,92 +216,45 @@ function AppCard({
   }
 
   return (
-    <div
-      className={`group relative rounded-xl border p-3 transition flex flex-col gap-2 ${
+    <button
+      type="button"
+      onClick={onConnect}
+      className={`group relative text-left rounded-xl border bg-surface/30 hover:bg-surface/60 transition p-4 flex flex-col gap-3 ${
         isConnected
-          ? 'border-accent/50 bg-accent/[0.04]'
-          : 'border-border bg-surface/30 hover:border-accent/40'
+          ? 'border-accent/40 bg-accent/[0.04] hover:border-accent/60'
+          : 'border-border hover:border-accent/40'
       }`}
     >
-      {/* Top row: icon stripe + status pill */}
-      <div className="flex items-start justify-between gap-2">
-        <div
-          className={`w-9 h-9 rounded-lg bg-gradient-to-br ${
-            app.color ?? 'from-zinc-700/40 to-zinc-900/40'
-          } flex items-center justify-center font-bold text-sm text-text/90 border border-white/5`}
-        >
-          {app.name.slice(0, 1)}
-        </div>
-        <StatusPill app={app} isConnected={isConnected} />
+      {/* Status corner pill */}
+      <div className="absolute top-2.5 right-2.5">
+        {isConnected ? (
+          <span className="inline-flex items-center gap-1 text-[9px] font-mono uppercase tracking-wider text-accent bg-accent/15 border border-accent/30 px-1.5 py-0.5 rounded-full">
+            <Check className="w-2.5 h-2.5" />
+            Connected
+          </span>
+        ) : isLive ? (
+          <span className="text-[9px] font-mono uppercase tracking-wider text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-1.5 py-0.5 rounded-full">
+            Live
+          </span>
+        ) : (
+          <span className="text-[9px] font-mono uppercase tracking-wider text-muted bg-surface border border-border px-1.5 py-0.5 rounded-full">
+            Soon
+          </span>
+        )}
       </div>
 
-      <div>
-        <div className="text-sm font-semibold leading-tight">{app.name}</div>
-        <div className="text-[11px] text-muted leading-tight mt-0.5 line-clamp-2">
+      <AppLogo slug={app.slug} name={app.name} size={44} />
+
+      <div className="min-w-0">
+        <div className="text-sm font-semibold leading-tight truncate">{app.name}</div>
+        <div className="text-[11px] text-muted leading-snug mt-0.5 line-clamp-2">
           {isConnected ? connection!.accountLabel : app.tagline}
         </div>
       </div>
 
-      {/* CTA */}
-      <button
-        type="button"
-        onClick={onConnect}
-        className={`mt-auto inline-flex items-center justify-center gap-1.5 h-8 px-3 rounded-lg text-xs font-semibold transition ${
-          isConnected
-            ? 'bg-surface border border-border hover:border-accent/50 text-muted hover:text-text'
-            : isLive
-              ? 'bg-accent text-bg hover:opacity-90'
-              : 'bg-surface border border-border hover:border-accent/50 text-muted hover:text-text'
-        }`}
-      >
-        {isConnected ? (
-          <>
-            Manage
-            <ArrowRight className="w-3 h-3" />
-          </>
-        ) : isLive ? (
-          <>
-            <Plug className="w-3 h-3" />
-            Connect
-          </>
-        ) : (
-          <>
-            <Hourglass className="w-3 h-3" />
-            Notify me
-          </>
-        )}
-      </button>
-    </div>
-  );
-}
-
-function StatusPill({ app, isConnected }: { app: ConnectApp; isConnected: boolean }) {
-  if (isConnected) {
-    return (
-      <span className="inline-flex items-center gap-1 text-[9px] font-mono uppercase tracking-wider text-accent bg-accent/15 border border-accent/30 px-1.5 py-0.5 rounded-full">
-        <Check className="w-2.5 h-2.5" />
-        Connected
-      </span>
-    );
-  }
-  if (app.status === 'live') {
-    return (
-      <span className="inline-flex items-center gap-1 text-[9px] font-mono uppercase tracking-wider text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-1.5 py-0.5 rounded-full">
-        <Sparkles className="w-2.5 h-2.5" />
-        Live
-      </span>
-    );
-  }
-  if (app.status === 'beta') {
-    return (
-      <span className="text-[9px] font-mono uppercase tracking-wider text-amber-300 bg-amber-500/15 border border-amber-500/30 px-1.5 py-0.5 rounded-full">
-        Beta
-      </span>
-    );
-  }
-  return (
-    <span className="text-[9px] font-mono uppercase tracking-wider text-muted bg-surface border border-border px-1.5 py-0.5 rounded-full">
-      Soon
-    </span>
+      <div className="mt-auto pt-1 text-[11px] text-muted group-hover:text-accent transition flex items-center gap-1 font-medium">
+        {isConnected ? 'Manage →' : isLive ? 'Connect →' : 'Notify me →'}
+      </div>
+    </button>
   );
 }
