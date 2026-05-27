@@ -127,6 +127,55 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* StackPicks Connect promo strip — unified MCP gateway for AI agents */}
+      <section className="mb-16">
+        <div className="rounded-3xl border-2 border-accent/40 bg-gradient-to-br from-accent/[0.12] via-accent/[0.04] to-transparent p-6 md:p-10 relative overflow-hidden">
+          <div className="grid md:grid-cols-[1.4fr_1fr] gap-6 items-center relative z-10">
+            <div>
+              <div className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.2em] text-accent mb-3 px-3 py-1 rounded-full border border-accent/40 bg-accent/10">
+                <Sparkles className="w-3 h-3" />
+                StackPicks Connect · Beta
+              </div>
+              <h2 className="text-2xl md:text-4xl font-bold tracking-tight mb-3 leading-tight">
+                Turn Claude into a real assistant.
+              </h2>
+              <p className="text-sm md:text-base text-muted leading-relaxed mb-5">
+                Connect your apps once and give Claude, Cursor, and 50+ AI agents real-world capabilities —
+                read your Gmail, post to Slack, open GitHub PRs, search Notion. One MCP, 500+ apps,
+                bundled in lifetime access.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <a
+                  href="/connect"
+                  className="inline-flex items-center gap-2 h-11 px-5 rounded-full bg-accent text-bg font-bold text-sm hover:opacity-90 transition"
+                >
+                  Explore the MCP Hub
+                </a>
+                <a
+                  href="/connect"
+                  className="inline-flex items-center gap-1.5 h-11 px-4 rounded-full border border-white/15 hover:border-accent/50 text-sm transition"
+                >
+                  Connect apps →
+                </a>
+              </div>
+            </div>
+            <div className="hidden md:flex flex-wrap gap-2 justify-end">
+              {['GitHub','Gmail','Slack','Notion','Stripe','Linear','Drive','Discord','Figma','HubSpot','Supabase','Vercel'].map((n) => (
+                <div
+                  key={n}
+                  className="px-3 py-1.5 rounded-lg border border-border bg-surface/40 text-xs font-medium"
+                >
+                  {n}
+                </div>
+              ))}
+              <div className="px-3 py-1.5 rounded-lg border border-accent/40 bg-accent/10 text-xs font-bold text-accent">
+                + 488 more
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Trending */}
       <section id="trending" className="mb-16">
         <div className="flex items-baseline justify-between mb-6">

@@ -4,6 +4,7 @@ import { buildMeta, faqJsonLd, itemListJsonLd, breadcrumbJsonLd } from '@stackpi
 import { Plug, Sparkles, ArrowRight, BookOpen } from 'lucide-react';
 import { MCPDirectory } from '../../components/MCPDirectory';
 import { MCP_SERVERS, MCP_CATEGORIES } from '../../lib/mcp-connectors';
+import { CONNECT_STATS } from '../../lib/connect-apps';
 
 const MCP_FAQS = [
   {
@@ -74,14 +75,56 @@ export default function MCPPage() {
           )),
         }}
       />
+      {/* === StackPicks Connect HERO — the new primary CTA on /mcp === */}
+      <section className="mb-14 rounded-3xl border-2 border-accent/40 bg-gradient-to-br from-accent/[0.12] via-accent/[0.04] to-transparent p-6 md:p-10 relative overflow-hidden">
+        <div className="relative z-10">
+          <div className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.2em] text-accent mb-4 px-3 py-1 rounded-full border border-accent/40 bg-accent/10">
+            <Sparkles className="w-3 h-3" />
+            StackPicks Connect · One MCP, all your apps
+          </div>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 leading-[1.05]">
+            One MCP. <span className="text-accent">All your AI tools.</span>
+          </h2>
+          <p className="text-base md:text-lg text-muted leading-relaxed mb-6 max-w-3xl">
+            Connect GitHub, Gmail, Slack, Notion, and {CONNECT_STATS.totalApps - 4}+ more apps once.
+            Paste one config into Claude or Cursor. Every connected tool becomes available instantly
+            — no per-app MCP installs, no token juggling.
+          </p>
+          <div className="flex items-center gap-3 flex-wrap mb-6">
+            <Link
+              href="/connect"
+              className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-accent text-bg font-bold text-sm hover:opacity-90 transition shadow-[0_12px_32px_-8px_rgba(198,255,0,0.45)]"
+            >
+              <Plug className="w-4 h-4" />
+              Open App Directory
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/dashboard/connections"
+              className="inline-flex items-center gap-1.5 h-12 px-5 rounded-full border border-white/15 hover:border-accent/50 text-sm transition"
+            >
+              Manage connections
+            </Link>
+          </div>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono uppercase tracking-wider text-muted">
+            <span><strong className="text-accent">{CONNECT_STATS.totalApps}+</strong> Apps</span>
+            <span><strong className="text-accent">{CONNECT_STATS.totalApproxTools}+</strong> MCP tools</span>
+            <span><strong className="text-accent">{CONNECT_STATS.agentIntegrations}+</strong> AI agents</span>
+            <span><strong className="text-accent">1</strong> Unified MCP</span>
+            <span>OAuth + encrypted tokens</span>
+          </div>
+        </div>
+      </section>
+
+      {/* === Below: the classic MCP servers directory (for browsing 3rd-party servers) === */}
       {/* Hero */}
       <header className="mb-10">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-accent/40 bg-accent/5 text-[10px] font-mono uppercase tracking-wider text-accent mb-4">
           <Sparkles className="w-3 h-3" />
           Updated May 2026 · {total} servers
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-          MCP Connectors Directory
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+          Or browse 3rd-party MCP servers
         </h1>
         <p className="text-lg text-muted max-w-3xl leading-relaxed">
           Every Model Context Protocol server worth installing — categorized,
