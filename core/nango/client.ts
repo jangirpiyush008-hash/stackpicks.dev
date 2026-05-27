@@ -6,8 +6,10 @@
 // Next.js edge / serverless cold-starts stay tiny. Nango's HTTP surface
 // is small and stable.
 
-const NANGO_HOST = (process.env.NANGO_HOST ?? 'https://api.nango.dev').replace(/\/$/, '');
-const NANGO_SECRET = process.env.NANGO_SECRET_KEY;
+// Use `||` not `??` here — Railway returns an empty string when a var is
+// declared but unset, which `??` doesn't catch. `||` falls back on empty too.
+const NANGO_HOST = ((process.env.NANGO_HOST || 'https://api.nango.dev').trim()).replace(/\/$/, '');
+const NANGO_SECRET = process.env.NANGO_SECRET_KEY?.trim() || undefined;
 
 export function nangoConfigured(): boolean {
   return !!NANGO_SECRET;
