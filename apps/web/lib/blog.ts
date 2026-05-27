@@ -433,7 +433,7 @@ If you're building a similar SaaS, the StackPicks directory has [165+ open-sourc
     monthly_searches: 14500,
     reading_time: 11,
     published_at: NEW_TODAY,
-    updated_at: NEW_TODAY,
+    updated_at: LATEST,
     author: 'Piyush Jangir',
     category: 'AI Tooling',
     quick_answer: 'MCP (Model Context Protocol) is an open standard Anthropic released in November 2024 that lets any LLM client — Claude, Cursor, Cline, Windsurf — talk to any external tool through a single JSON-RPC interface. Install an MCP server (e.g. `npx @modelcontextprotocol/server-postgres`) and your AI agent gains real tool access: read your database, edit files, post to Slack, deploy to Vercel. As of May 2026, there are 89+ production MCP servers across 18 categories.',
@@ -457,6 +457,18 @@ If you're building a similar SaaS, the StackPicks directory has [165+ open-sourc
       {
         question: 'Which LLM clients support MCP in 2026?',
         answer: 'Claude Desktop, Claude Code (CLI), Cursor, Cline (VS Code), Windsurf (Codeium IDE), Continue, Zed, and several smaller agents. MCP has become the de facto agent-tool standard since Anthropic released it in Nov 2024.',
+      },
+      {
+        question: 'What is MCP and why should I care?',
+        answer: 'MCP (Model Context Protocol) is an open standard that lets any AI assistant — Claude, Cursor, Cline, Windsurf — connect to any external tool through a single interface. You should care because it turns your AI from a chat box into an actual agent: it can read your database, edit files in your repo, post to Slack, deploy to Vercel, search Notion. Without MCP your AI guesses. With MCP it acts.',
+      },
+      {
+        question: 'How do MCP servers actually work in plain English?',
+        answer: 'An MCP server is a tiny program running on your machine (or a remote URL) that exposes "tools" your AI can call. When you ask Claude "what is in my Postgres users table," the MCP Postgres server receives the query, runs it against your database, and returns the rows. Communication uses JSON-RPC, but you never write JSON — your AI client handles the protocol. You just configure which servers to expose.',
+      },
+      {
+        question: 'Can I use MCP servers for free?',
+        answer: 'Yes, completely. The MCP protocol is open source. Anthropic\'s reference servers (Filesystem, GitHub, Fetch, Memory, Sequential Thinking, Postgres, SQLite) are MIT-licensed and free. Most community servers are also free. You only pay if you connect to a paid SaaS (Linear, Stripe, Sentry) where the cost is the SaaS itself, not the MCP layer. Total recurring cost for a productive MCP setup: typically $0/month.',
       },
     ],
     content: `If you opened Claude Desktop, Cursor, or Cline in the last six months, you've seen the **"Add MCP server"** prompt. If you ignored it because the docs felt like reading an RFC — this is the guide you needed.
