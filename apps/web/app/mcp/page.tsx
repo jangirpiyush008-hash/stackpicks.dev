@@ -75,72 +75,111 @@ export default function MCPPage() {
           )),
         }}
       />
-      {/* === StackPicks Connect HERO — the new primary CTA on /mcp === */}
-      <section className="mb-14 rounded-3xl border-2 border-accent/40 bg-gradient-to-br from-accent/[0.12] via-accent/[0.04] to-transparent p-6 md:p-10 relative overflow-hidden">
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.2em] text-accent mb-4 px-3 py-1 rounded-full border border-accent/40 bg-accent/10">
-            <Sparkles className="w-3 h-3" />
-            StackPicks Connect · One MCP, all your apps
-          </div>
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 leading-[1.05]">
-            One MCP. <span className="text-accent">All your AI tools.</span>
-          </h2>
-          <p className="text-base md:text-lg text-muted leading-relaxed mb-6 max-w-3xl">
-            Connect GitHub, Gmail, Slack, Notion, and {CONNECT_STATS.totalApps - 4}+ more apps once.
-            Paste one config into Claude or Cursor. Every connected tool becomes available instantly
-            — no per-app MCP installs, no token juggling.
-          </p>
-          <div className="flex items-center gap-3 flex-wrap mb-6">
-            <Link
-              href="/connect"
-              className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-accent text-bg font-bold text-sm hover:opacity-90 transition shadow-[0_12px_32px_-8px_rgba(198,255,0,0.45)]"
-            >
-              <Plug className="w-4 h-4" />
-              Open App Directory
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link
-              href="/dashboard/connections"
-              className="inline-flex items-center gap-1.5 h-12 px-5 rounded-full border border-white/15 hover:border-accent/50 text-sm transition"
-            >
-              Manage connections
-            </Link>
-          </div>
-          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono uppercase tracking-wider text-muted">
-            <span><strong className="text-accent">{CONNECT_STATS.totalApps}+</strong> Apps</span>
-            <span><strong className="text-accent">{CONNECT_STATS.totalApproxTools}+</strong> MCP tools</span>
-            <span><strong className="text-accent">{CONNECT_STATS.agentIntegrations}+</strong> AI agents</span>
-            <span><strong className="text-accent">1</strong> Unified MCP</span>
-            <span>OAuth + encrypted tokens</span>
-          </div>
+      {/* === MASTER HERO — single intro, both products framed === */}
+      <header className="mb-10">
+        <div className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.2em] text-accent mb-4 px-2.5 py-1 rounded-full border border-accent/30 bg-accent/5">
+          <Sparkles className="w-3 h-3" />
+          MCP Hub · Two ways to connect Claude to your stack
         </div>
+        <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 leading-[1.05]">
+          Give Claude <span className="text-accent">real-world tools</span>.
+        </h1>
+        <p className="text-base md:text-lg text-muted max-w-3xl leading-relaxed">
+          Pick the approach that fits you. <strong className="text-text">Most users</strong> want one
+          install that talks to all their apps — that&apos;s StackPicks Connect.{' '}
+          <strong className="text-text">Developers and power users</strong> sometimes want to install
+          individual MCP servers themselves — the directory below lists every one worth using.
+        </p>
+      </header>
+
+      {/* === TWO-PRODUCT SPLITTER — let users pick their lane in 2 seconds === */}
+      <section className="mb-16 grid md:grid-cols-2 gap-4 md:gap-5">
+        {/* CONNECT — primary, accent-bordered */}
+        <Link
+          href="/connect"
+          className="group relative rounded-2xl border-2 border-accent/40 bg-gradient-to-br from-accent/[0.10] via-accent/[0.04] to-transparent p-6 md:p-7 hover:border-accent/70 transition flex flex-col"
+        >
+          <div className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.2em] text-accent mb-3 self-start px-2 py-0.5 rounded-full border border-accent/40 bg-accent/10">
+            Recommended
+          </div>
+          <h2 className="text-xl md:text-2xl font-bold mb-2 leading-tight">
+            StackPicks Connect
+            <span className="block text-sm font-normal text-muted mt-1">
+              One MCP. All your apps.
+            </span>
+          </h2>
+          <p className="text-sm text-muted leading-relaxed mb-4">
+            Connect GitHub, Gmail, Slack, Notion, and {CONNECT_STATS.totalApps - 4}+ more apps
+            through StackPicks. Paste one config into Claude. Every connected app becomes
+            available — no per-app install, no token juggling.
+          </p>
+          <ul className="text-xs text-muted space-y-1.5 mb-5">
+            <li className="flex items-start gap-2"><span className="text-accent mt-0.5">✓</span> One-click OAuth — no API keys to manage</li>
+            <li className="flex items-start gap-2"><span className="text-accent mt-0.5">✓</span> Add an app later → Claude sees it instantly</li>
+            <li className="flex items-start gap-2"><span className="text-accent mt-0.5">✓</span> Works in Claude, Cursor, OpenAI, every MCP agent</li>
+            <li className="flex items-start gap-2"><span className="text-accent mt-0.5">✓</span> Bundled in ₹99 / $2.99 lifetime — no subscription</li>
+          </ul>
+          <div className="mt-auto inline-flex items-center gap-1.5 text-sm font-bold text-accent group-hover:gap-2.5 transition-all">
+            Browse {CONNECT_STATS.totalApps}+ apps
+            <ArrowRight className="w-4 h-4" />
+          </div>
+          <div className="mt-3 text-[10px] font-mono uppercase tracking-wider text-muted">
+            Free to browse · Login to connect
+          </div>
+        </Link>
+
+        {/* DIRECTORY — secondary, neutral-bordered */}
+        <a
+          href="#mcp-directory"
+          className="group rounded-2xl border border-border bg-surface/30 p-6 md:p-7 hover:border-accent/40 transition flex flex-col"
+        >
+          <div className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.2em] text-muted mb-3 self-start px-2 py-0.5 rounded-full border border-border bg-bg/40">
+            For developers
+          </div>
+          <h2 className="text-xl md:text-2xl font-bold mb-2 leading-tight">
+            MCP Server Directory
+            <span className="block text-sm font-normal text-muted mt-1">
+              {total} servers · pick what you need.
+            </span>
+          </h2>
+          <p className="text-sm text-muted leading-relaxed mb-4">
+            The full catalog of Model Context Protocol servers — Anthropic official, vendor-built,
+            and community. Copy install commands, manage your own credentials, run locally or
+            connect remotely.
+          </p>
+          <ul className="text-xs text-muted space-y-1.5 mb-5">
+            <li className="flex items-start gap-2"><span className="text-accent mt-0.5">→</span> {officialCount} official · {vendorCount} vendor · {communityCount} community</li>
+            <li className="flex items-start gap-2"><span className="text-accent mt-0.5">→</span> Local servers (filesystem, postgres) that Connect can&apos;t do</li>
+            <li className="flex items-start gap-2"><span className="text-accent mt-0.5">→</span> One-click <em className="not-italic text-accent">Add to Cursor</em> · copy JSON for Claude</li>
+            <li className="flex items-start gap-2"><span className="text-accent mt-0.5">→</span> You own the API keys + tokens</li>
+          </ul>
+          <div className="mt-auto inline-flex items-center gap-1.5 text-sm font-bold text-text group-hover:gap-2.5 group-hover:text-accent transition-all">
+            Browse the directory
+            <ArrowRight className="w-4 h-4" />
+          </div>
+          <div className="mt-3 text-[10px] font-mono uppercase tracking-wider text-muted">
+            Free · No login required
+          </div>
+        </a>
       </section>
 
-      {/* === Below: the classic MCP servers directory (for browsing 3rd-party servers) === */}
-      {/* Hero */}
-      <header className="mb-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-accent/40 bg-accent/5 text-[10px] font-mono uppercase tracking-wider text-accent mb-4">
-          <Sparkles className="w-3 h-3" />
-          Updated May 2026 · {total} servers
+      {/* DIRECTORY anchor section — labelled clearly for the splitter link */}
+      <div id="mcp-directory" className="scroll-mt-20">
+        <div className="flex items-baseline justify-between gap-3 mb-3 flex-wrap">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+            MCP Server Directory
+          </h2>
+          <div className="text-xs font-mono uppercase tracking-wider text-muted">
+            {total} servers · updated May 2026
+          </div>
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-          Or browse 3rd-party MCP servers
-        </h1>
-        <p className="text-lg text-muted max-w-3xl leading-relaxed">
-          Every Model Context Protocol server worth installing — categorized,
-          searchable, with copy-paste install commands.
-          Plug them into Claude, Cursor, Cline, or Windsurf and your agent gets real
-          tools instead of guessing.
-        </p>
-
-        {/* Stat strip */}
-        <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono uppercase tracking-wider text-muted">
+        <div className="flex flex-wrap gap-x-5 gap-y-1 text-xs font-mono uppercase tracking-wider text-muted mb-5">
           <span><strong className="text-accent">{officialCount}</strong> Official</span>
-          <span><strong className="text-blue-300">{vendorCount}</strong> Vendor-built</span>
+          <span><strong className="text-blue-300">{vendorCount}</strong> Vendor</span>
           <span><strong className="text-fuchsia-300">{communityCount}</strong> Community</span>
           <span><strong className="text-text">{categoryCount}</strong> Categories</span>
         </div>
-      </header>
+      </div>
 
       {/* What is MCP — short intro */}
       <section className="mb-10 p-5 rounded-xl border border-border bg-surface/30">

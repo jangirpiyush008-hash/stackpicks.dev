@@ -13,10 +13,10 @@ const LINKS: NavLink[] = [
   { href: '/build', label: 'Build' },
   { href: '/skills', label: 'Skills' },
   { href: '/tools', label: 'Tools' },
-  // MCP nav is auth-gated — anonymous visitors don't see it. The Connect
-  // product is for signed-in members; we surface the homepage promo strip
-  // to attract them to log in first.
-  { href: '/mcp', label: 'MCP', authOnly: true },
+  // /mcp is the master landing page for the two-product story: StackPicks
+  // Connect (one unified MCP) AND the 89-server directory. Public — anyone
+  // can browse. Login only kicks in when they actually connect an app.
+  { href: '/mcp', label: 'MCP' },
   { href: '/preview', label: 'Browse' },
   { href: '/blog', label: 'Blog' },
   { href: '/pricing', label: 'Pricing' },
