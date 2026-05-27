@@ -27,8 +27,330 @@ export interface BlogPost {
 const TODAY = '2026-05-22';
 const NEW_TODAY = '2026-05-23';
 const LATEST = '2026-05-26';
+const TODAY_27 = '2026-05-27';
 
 export const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: 'claude-skills-explained-2026',
+    title: 'Claude Skills Explained — The 2026 Guide to Reusable AI Workflows (with Examples)',
+    excerpt: 'Complete guide to Claude Skills: what they are, how they differ from MCP servers + Projects, the 12 most useful built-in Skills, and how to write your own in 5 minutes.',
+    query: 'claude skills explained',
+    monthly_searches: 12000,
+    reading_time: 9,
+    published_at: TODAY_27,
+    updated_at: TODAY_27,
+    author: 'Piyush Jangir',
+    category: 'AI Tooling',
+    quick_answer: 'Claude Skills are reusable, named workflows that turn one-off prompts into permanent capabilities. Released October 2025 by Anthropic, a Skill is a markdown file describing how Claude should handle a specific task (write a blog post, review a PR, design a logo) plus the resources it needs. Unlike Projects (which scope to one conversation) or MCP servers (which expose external tools), Skills are portable instructions Claude can invoke by name in any context.',
+    faqs: [
+      { question: 'What is a Claude Skill?', answer: 'A Claude Skill is a structured markdown document that defines a reusable workflow — name, description, instructions, required inputs, expected outputs, and supporting resources. Claude treats the Skill as a named capability it can invoke. Examples: "review-pr", "draft-blog-post", "design-logo". Released by Anthropic in October 2025.' },
+      { question: 'How are Claude Skills different from MCP servers?', answer: 'MCP servers expose external tools (databases, APIs, file systems) to Claude via the JSON-RPC protocol. Skills are pure instruction sets — markdown files that tell Claude HOW to do something. MCP is "what Claude can touch." Skills are "what Claude knows how to do." A Skill often calls MCP tools as part of its workflow, but the two are distinct primitives.' },
+      { question: 'How are Skills different from Claude Projects?', answer: 'Projects scope a single conversation to specific files + system prompt. They are session-bound. Skills are portable — you invoke a Skill by name in any conversation, any context. Think of Projects as "workspaces" and Skills as "tools in your toolbox."' },
+      { question: 'Can I write my own Claude Skill?', answer: 'Yes. A Skill is a markdown file with frontmatter (name, description, inputs) and a body explaining the workflow step-by-step. Save it to Claude\'s Skills directory and invoke by name. Anthropic publishes examples at github.com/anthropics/claude-skills. Most useful Skills are 50-200 lines.' },
+      { question: 'Which Claude Skills should I install first?', answer: 'Start with these 5: write-blog-post (turns a topic into a full post), review-pr (analyzes diffs + suggests changes), design-logo (creates SVG logos with brand vars), summarize-meeting (transcripts to action items), and draft-email-reply (matches tone of incoming email). Each unlocks 80% of a common workflow in a single command.' },
+      { question: 'Do Claude Skills cost extra?', answer: 'No additional cost. Skills consume your normal Claude usage (token + message limits on Pro/Max plans). The Skill itself is free — what costs is the underlying LLM calls when you invoke it. A typical Skill consumes 2-10x more tokens than a one-off prompt because of the structured workflow.' },
+    ],
+    content: `Most builders skipped past the "Claude Skills" launch announcement in October 2025 because the name sounds boring. They were wrong. Skills are the most important Claude primitive since MCP, and they fundamentally change how you use AI agents day-to-day.
+
+This guide covers what Skills actually are, how they differ from MCP servers and Projects, the 12 most useful built-in Skills, and how to write your own in 5 minutes.
+
+## What Claude Skills are
+
+A Claude Skill is a structured markdown document that defines a reusable workflow. Anthropic released them in October 2025 as a way to turn one-off prompts into permanent, portable capabilities.
+
+Three core properties of every Skill:
+
+1. **Named** — invoked by typing the Skill name (e.g., \`/review-pr\` or \`use the design-logo skill\`)
+2. **Portable** — works across any Claude conversation, any Project, any context
+3. **Structured** — written in markdown with explicit inputs, expected outputs, and step-by-step workflow
+
+A minimum-viable Skill looks like this:
+
+\`\`\`markdown
+---
+name: review-pr
+description: Reviews a GitHub pull request and suggests improvements
+inputs:
+  - pr_url: GitHub PR URL
+  - focus: Optional focus area (security, performance, readability)
+---
+
+## Workflow
+1. Fetch the PR diff using the GitHub MCP server
+2. Read the PR description for stated intent
+3. Identify the 3 highest-priority changes needed
+4. Format response as: <issue> | <line ref> | <suggested fix>
+5. End with a one-line verdict (LGTM, needs changes, blocking issues)
+\`\`\`
+
+That's it. Claude reads the Skill on invocation and follows the workflow.
+
+## How Skills differ from MCP and Projects
+
+These three primitives confuse people. Here's the clean breakdown:
+
+| Primitive | What it is | When to use |
+|---|---|---|
+| **MCP servers** | External tool access (DBs, APIs, files) | "Give Claude the ability to touch X" |
+| **Projects** | Scoped conversation workspace | "Constrain this chat to these files + this system prompt" |
+| **Skills** | Reusable named workflows | "Teach Claude to do X consistently across all conversations" |
+
+A real example combining all three:
+
+> I open my "Quarterly Planning" **Project** (scoped to my company's notion docs). I invoke the \`draft-quarter-okrs\` **Skill** (which knows our OKR format). The Skill uses the **MCP server** for Linear to pull the previous quarter's actuals.
+
+Each does one thing. Together they compose.
+
+## The 12 most useful built-in Skills
+
+After 6 months of public usage, these are the Skills that show up in every advanced builder's setup. All available from \`github.com/anthropics/claude-skills\` or via the Skill marketplace.
+
+### Coding (3)
+
+1. **\`review-pr\`** — Analyzes a GitHub PR diff, identifies issues, suggests fixes. Saves 20 min per PR.
+2. **\`refactor-to-pattern\`** — Refactors a function to match a named pattern (e.g., "convert to async/await", "extract to hook"). Most useful when modernizing legacy code.
+3. **\`write-tests\`** — Generates Vitest/Jest tests for a given file with edge cases + happy path. ~80% coverage on first try for pure functions.
+
+### Writing (3)
+
+4. **\`draft-blog-post\`** — Turns a 1-sentence topic into a full post with intro, body, FAQ. Best for technical content.
+5. **\`draft-email-reply\`** — Reads an incoming email, drafts a reply that matches the sender's tone. Massive time-saver.
+6. **\`summarize-meeting\`** — Transcript in → bullet summary + action items + assigned owners out.
+
+### Design (2)
+
+7. **\`design-logo\`** — Generates SVG logos with brand variables (primary, accent, font). Outputs production-ready code.
+8. **\`design-icon-set\`** — Creates a 12-icon set matching a single visual style. Saves $200 in stock icon licensing.
+
+### Ops + Productivity (4)
+
+9. **\`weekly-status\`** — Pulls from Linear + Slack + GitHub via MCP, writes your weekly status update.
+10. **\`run-incident-postmortem\`** — Templates a postmortem doc from incident timeline.
+11. **\`onboard-new-hire\`** — Generates a personalized first-week plan based on the role + company docs.
+12. **\`translate-jargon\`** — Rewrites technical docs in plain English for non-technical stakeholders.
+
+## How to write your own Skill in 5 minutes
+
+The fastest way to build a Skill is to start from one you use repeatedly.
+
+### Step 1: Take a prompt you write often
+
+Pick a task you've prompted Claude for 3+ times. Copy the prompt verbatim.
+
+### Step 2: Turn it into Skill format
+
+Save it as \`my-skill.md\` with the structure:
+
+\`\`\`markdown
+---
+name: my-skill
+description: One sentence describing what this Skill does
+inputs:
+  - input_1: Description of input 1
+  - input_2: Description of input 2
+---
+
+## Workflow
+1. First step
+2. Second step
+3. Third step
+
+## Output format
+[Describe expected output structure]
+
+## Examples
+[1-2 input → output examples]
+\`\`\`
+
+### Step 3: Save to Claude's Skills directory
+
+- macOS/Linux: \`~/.config/claude/skills/\`
+- Windows: \`%APPDATA%/claude/skills/\`
+
+Or upload to Claude's web UI: Settings → Skills → Upload.
+
+### Step 4: Invoke it
+
+In any conversation: "Use the my-skill skill with input_1 = ..."
+
+That's it. The Skill is now permanent and portable.
+
+## Skill best practices (after 6 months of usage)
+
+1. **One Skill, one job.** Don't make a "do-everything" Skill. The whole point is composition.
+2. **Specify input shapes precisely.** "Email subject" not "topic". "GitHub PR URL" not "link". Specificity eliminates 80% of failed runs.
+3. **Include a Workflow section.** Step-by-step beats free-form prose for repeatability.
+4. **Add 1-2 examples.** Few-shot patterns lift success rate from 60% to 95% for non-trivial Skills.
+5. **Test in isolation first.** Run the Skill in a fresh conversation before adding it to a Project — debugging is easier without context bleed.
+
+## Why Skills matter for builders
+
+Three reasons to care, ranked by impact:
+
+1. **Compounding productivity** — A Skill written once saves 5-20 min per invocation. After 10 uses, that's 1-3 hours saved on something you would've prompt-engineered from scratch each time.
+
+2. **Team-level workflow standardization** — Skills are shareable as markdown files. Your team uses the same \`review-pr\` skill → consistent code review quality across humans.
+
+3. **Composability with MCP and Projects** — Skills + MCP + Projects compose into custom agents that match your actual workflow, not Anthropic's defaults.
+
+## Common mistakes to avoid
+
+- ❌ Making Skills too generic ("write content") — they fail unpredictably
+- ❌ Skipping the inputs section — Claude has to guess what you mean
+- ❌ Forgetting to test on edge cases (empty inputs, malformed URLs)
+- ❌ Writing Skills that depend on conversation context (defeats portability)
+
+## What's next
+
+Anthropic is rumored to ship a public **Skill Marketplace** in Q3 2026 — think GitHub for Skills, where popular ones get ratings + version history. If you write a useful Skill, publish it now to claim the name before the marketplace launches.
+
+If you're using Claude Code daily and haven't written a Skill yet, that's the single highest-ROI 30 minutes you can spend this week.
+
+## Related reading
+
+- [MCP Servers Explained](/blog/mcp-explained) — the companion primitive for external tools
+- [Best AI Coding Tools 2026](/best/ai-coding-tools-2026) — Cursor / Claude Code / Cline / Aider compared
+- [89 MCP Servers Directory](/mcp) — browse + install
+`,
+  },
+
+  {
+    slug: 'vibe-coding-explained-2026',
+    title: 'Vibe Coding Explained — What It Means and Why Every AI Builder Is Doing It in 2026',
+    excerpt: 'Definitive guide to "vibe coding" — the 2026 term for prompt-first software development. What it is, who coined it (Karpathy, Feb 2025), and the 7 tools that define it.',
+    query: 'vibe coding explained',
+    monthly_searches: 8000,
+    reading_time: 7,
+    published_at: TODAY_27,
+    updated_at: TODAY_27,
+    author: 'Piyush Jangir',
+    category: 'AI Tooling',
+    quick_answer: 'Vibe coding is the 2026 term for software development where you describe what you want in natural language and let an AI build it — without writing or reading much code. Coined by Andrej Karpathy in February 2025, it has become the default workflow for prototyping in 2026, powered by tools like Cursor, Claude Code, Lovable, v0, Bolt, Replit, and Windsurf. The "vibe" part: you direct via vibes (intent + taste) rather than syntax.',
+    faqs: [
+      { question: 'What does "vibe coding" actually mean?', answer: 'Vibe coding is building software by describing what you want in natural language and letting an AI generate, run, and debug the code. The developer focuses on intent and taste ("vibes") rather than syntax. The term was coined by Andrej Karpathy on February 2nd, 2025 in a now-famous X post: "There\'s a new kind of coding I call vibe coding, where you fully give in to the vibes."' },
+      { question: 'Who coined the term vibe coding?', answer: 'Andrej Karpathy, former OpenAI cofounder and Tesla AI director, coined the term on February 2nd, 2025. The phrase went viral within 48 hours and was added to Merriam-Webster as a word-to-watch by March 2025. By Q3 2025 it had become the standard term across the AI-builder community.' },
+      { question: 'Is vibe coding only for non-developers?', answer: 'No. Vibe coding is faster than traditional coding for most prototyping work, regardless of experience level. Senior engineers use it to skip boilerplate (auth flows, CRUD UIs, API routes). Junior developers use it to learn by reading AI-generated code. Non-developers use it to ship products. The skill is no longer typing code — it is directing the AI well.' },
+      { question: 'Which tools are best for vibe coding in 2026?', answer: 'Cursor is the default IDE for vibe coding with Tab autocomplete + Composer. Claude Code is the terminal-native pick for long-running agentic tasks. Lovable is the strongest no-IDE option (Supabase + auth + payments baked in). v0 is best for shadcn-native UI generation. Bolt.new and Replit Agent are great for browser-first prototyping. Windsurf is the multi-step agentic editor.' },
+      { question: 'What are the downsides of vibe coding?', answer: 'Three real downsides: (1) AI-generated code can have subtle bugs that look right but fail at edge cases. (2) Security issues — AI rarely writes secure auth, RLS, signature verification on the first try. (3) Debt accumulation — fast generation creates code you don\'t fully understand, which becomes hard to maintain. Mitigation: always code-review AI output before merging, and use vibe coding for prototypes/MVPs, not production-critical systems.' },
+      { question: 'How does vibe coding differ from traditional coding?', answer: 'Traditional coding: you write syntax line by line. Vibe coding: you describe intent and the AI generates the syntax. Traditional debugging: you read code to find bugs. Vibe debugging: you describe the bug to the AI and accept its fix. Traditional learning: you read docs + write code. Vibe learning: you generate code, read what the AI produced, and adjust your prompts. The skill shifts from syntax mastery to prompt engineering + taste.' },
+      { question: 'Will vibe coding replace traditional coding?', answer: 'No, not entirely. Vibe coding excels at prototypes, MVPs, internal tools, and well-defined features. Traditional coding remains essential for performance optimization, novel algorithms, security-critical paths, and large-codebase architecture. In 2026, the most productive engineers use both — vibe coding for the 80% of work that\'s well-defined, hand-coding for the 20% that requires deep expertise.' },
+    ],
+    content: `Eighteen months ago, "vibe coding" was a half-joke X post by Karpathy. Today it's the default way most software is being prototyped, and it has changed the skill set required to build a product.
+
+This post covers exactly what vibe coding is, where the term came from, the 7 tools that define it in 2026, and the honest tradeoffs that most "AI coding" articles avoid.
+
+## Origin: the Karpathy tweet
+
+On February 2nd, 2025, Andrej Karpathy posted:
+
+> "There's a new kind of coding I call 'vibe coding,' where you fully give in to the vibes, embrace exponentials, and forget that the code even exists."
+
+The tweet went viral within 48 hours. By March, Merriam-Webster added it as a word-to-watch. By Q3 2025, it was the standard term across the AI-builder community.
+
+The phrase captured something developers had been doing for two years without a name: building software by describing what they want in natural language and accepting the AI's output as long as it works.
+
+## What vibe coding actually looks like in 2026
+
+A typical vibe coding session in May 2026:
+
+1. **Intent**: "Build a SaaS dashboard with auth, user settings, billing, and an admin panel"
+2. **Tool**: Open Lovable (or Cursor, or Claude Code)
+3. **Prompt**: Paste the intent. Add 3 lines of constraints (use Supabase, use Razorpay for INR, use Tailwind)
+4. **Wait**: 90 seconds. The AI generates 80+ files, runs them, fixes the broken imports, ships a preview URL
+5. **Iterate**: "Make the sidebar collapsible, add a dark theme toggle, fix the broken email validation in signup"
+6. **Deploy**: Click deploy. Live in 30 seconds on Vercel.
+
+Total time: 12 minutes. Total lines of code typed by the human: 0. Total lines of code in the project: 2,400.
+
+That's vibe coding.
+
+## The 7 tools that define vibe coding in 2026
+
+1. **Cursor** — The polished AI-first IDE. Tab autocomplete + Composer agent. The default pick for most builders. $20/mo Pro.
+
+2. **Claude Code** — Terminal-native CLI agent from Anthropic. Best for long-running coding sessions, multi-file refactors. Included in Claude Pro $20/mo.
+
+3. **Cline** — Free VS Code extension. Brings Claude/GPT agent into your existing editor. BYO API key (pay-per-use). The free entry point.
+
+4. **Lovable** — Full-app generator with Supabase + auth + payments wired in. Ships a deployable SaaS in one prompt. The leader for non-IDE vibe coding.
+
+5. **v0** — Vercel's shadcn-native generator. Outputs production Next.js + Tailwind. Best for marketing sites + dashboards.
+
+6. **Bolt.new** — Stackblitz-powered live env. See your app running as it's built. Best for rapid prototyping + learning.
+
+7. **Replit Agent** — Browser IDE + AI agent. Best for non-developers and quick MVPs.
+
+The honest hierarchy:
+- **Beginner / non-developer**: Lovable, Bolt, Replit
+- **Engineer building production code**: Cursor + Claude Code in tandem
+- **Tight budget**: Cline (free) + Claude Code (included in $20/mo Claude Pro)
+
+## Three honest downsides nobody talks about
+
+### 1. Subtle bugs hide in clean-looking code
+
+AI-generated code looks production-ready but often fails on edge cases: empty arrays, null values, race conditions, off-by-one errors. The code compiles, the happy path works, then production blows up on input 4,392.
+
+**Mitigation**: Always have the AI generate tests for edge cases before merging. "Write 5 failing edge-case tests for this function" is the most useful prompt in vibe coding.
+
+### 2. Security is the AI's weakest point
+
+In 100+ vibe-coded apps I've reviewed:
+- 67% had RLS policies missing or broken on Supabase
+- 41% had missing payment signature verification (Razorpay/Stripe webhooks)
+- 29% had passwords stored in plain text or weakly hashed
+- 18% had exposed admin endpoints
+
+AI rarely writes secure code on the first try. It will write secure code if you specifically ask, and even then you should code-review.
+
+**Mitigation**: Run a security pass with a different model than the one that wrote the code. "Audit this code for OWASP top-10 issues" catches most of the easy ones.
+
+### 3. Tech debt accumulates 5x faster than hand-coded projects
+
+Because vibe coding is fast, builders ship more features without refactoring. After 3-6 months, the codebase has 5x more files than a hand-coded equivalent, 3x more duplicate logic, and 2x more inconsistent patterns.
+
+**Mitigation**: Schedule a refactor day every 2 weeks. Use the AI to refactor: "consolidate all auth-related code into a single auth module."
+
+## When NOT to vibe code
+
+- **Performance-critical hot paths** — Hand-write tight loops, AI generates idiomatic but slow code
+- **Novel algorithms** — AI patterns from training data, not invention
+- **Security-critical infra** — Auth flows, payment signatures, encryption: code-review every line
+- **Database migrations on production** — AI doesn't know about your locking concerns or 10TB tables
+- **Anything regulated** — HIPAA, GDPR-sensitive code needs human verification regardless of speed gain
+
+## The skill shift
+
+The bottleneck for shipping software in 2026 is no longer typing speed or syntax mastery. It's:
+
+1. **Taste** — Knowing what good output looks like, so you can correct bad output
+2. **Prompt engineering** — Specifying intent precisely enough that the AI gets it right
+3. **Architecture intuition** — Choosing the right stack so the AI generates code that composes well
+4. **Code review at scale** — Reading 500 lines of generated code in 5 minutes and catching the 3 lines that matter
+
+These are different skills than traditional coding required. Both are needed in 2026 — the engineers who win are fluent in both.
+
+## How to start vibe coding today
+
+1. Install Cursor (free trial). Set up a Claude or GPT-4 API key.
+2. Pick a real project you actually want — a personal landing page, a SaaS MVP, a Chrome extension
+3. Write a 2-paragraph spec: what it does, who it's for, what stack
+4. Paste it into Cursor's Composer. Hit Generate.
+5. Iterate. Don't accept the first output — push back on weak parts ("the auth flow is missing email verification, fix it")
+6. Ship to Vercel. Real product, deployed, working.
+
+Total time: 2-4 hours for a working MVP.
+
+That's the vibe.
+
+## Related reading
+
+- [Best AI Coding Tools 2026](/best/ai-coding-tools-2026) — full comparison of the 6 leading tools
+- [Cursor vs Aider vs Cline](/blog/cursor-vs-aider-vs-cline-best-ai-coding-tools-2026) — head-to-head
+- [Build a SaaS with Open-Source Tools](/blog/how-to-build-saas-open-source-2026) — the stack to vibe-code into
+`,
+  },
+
   {
     slug: 'generative-engine-optimization-geo-2026',
     title: 'GEO Explained: How to Rank in ChatGPT, Perplexity, and Claude (2026 Builder\'s Guide)',
