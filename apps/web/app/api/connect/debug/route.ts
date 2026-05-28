@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseServer } from '../../../../lib/supabase-server';
+import { createConnectSession } from '@stackpicks/core/nango/client';
+import { SITE } from '@stackpicks/core/constants';
 
 /**
  * GET /api/connect/debug
@@ -62,6 +64,20 @@ export async function GET() {
       }
     } catch (e) {
       diag.session_error = String(e);
+    }
+
+    // Now call the EXACT function the /connect/[provider]/start route uses,
+    // so we test the real deployed code path (not an inline copy).
+    try {
+      const real = await createConnectSession({
+        provider: 'github',
+        endUserId: user.id,
+        endUserEmail: user.email ?? undefined,
+        redirectUri: `${SITE.url}/api/connect/github/callback`,
+      });
+      diag.real_createConnectSession = { ok: true, url: real.url };
+    } catch (e) {
+      diag.real_createConnectSession = { ok: false, error: String(e) };
     }
   }
 
