@@ -48,7 +48,7 @@ export async function createConnectSession(opts: {
   endUserEmail?: string;
   redirectUri: string;
 }): Promise<{ url: string; sessionToken: string }> {
-  const data = await nango<{ data: { token: string } }>(
+  const data = await nango<{ data: { token: string; connect_link: string } }>(
     `/connect/sessions`,
     {
       method: 'POST',
@@ -58,9 +58,9 @@ export async function createConnectSession(opts: {
       }),
     },
   );
-  // Nango's hosted Connect UI URL — works for every provider.
-  const url = `${NANGO_HOST.replace('api.', '')}/connect?session_token=${data.data.token}`;
-  return { url, sessionToken: data.data.token };
+  // Use Nango's own connect_link — never construct it ourselves. The hosted
+  // Connect UI lives at connect.nango.dev, not nango.dev/connect.
+  return { url: data.data.connect_link, sessionToken: data.data.token };
 }
 
 /**
