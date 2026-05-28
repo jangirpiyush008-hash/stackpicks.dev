@@ -16,6 +16,30 @@ const nextConfig = {
   },
   // typedRoutes was experimental and caused inconsistent SWC behavior across
   // local vs Railway builds. Disable until Next 16 stabilises it.
+
+  // OAuth discovery — MCP clients (Claude) probe these well-known paths.
+  // Route them to our handlers. Some clients also append the resource path
+  // (…/oauth-authorization-server/api/mcp), so map that variant too.
+  async rewrites() {
+    return [
+      {
+        source: '/.well-known/oauth-authorization-server',
+        destination: '/api/oauth/metadata/authorization-server',
+      },
+      {
+        source: '/.well-known/oauth-authorization-server/:path*',
+        destination: '/api/oauth/metadata/authorization-server',
+      },
+      {
+        source: '/.well-known/oauth-protected-resource',
+        destination: '/api/oauth/metadata/protected-resource',
+      },
+      {
+        source: '/.well-known/oauth-protected-resource/:path*',
+        destination: '/api/oauth/metadata/protected-resource',
+      },
+    ];
+  },
 };
 
 export default nextConfig;

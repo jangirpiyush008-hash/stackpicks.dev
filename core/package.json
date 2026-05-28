@@ -19,7 +19,8 @@
     "./connect/auth": "./connect/auth.ts",
     "./connect/tools": "./connect/tools.ts",
     "./connect/executors": "./connect/executors/index.ts",
-    "./connect/gateway": "./connect/gateway.ts"
+    "./connect/gateway": "./connect/gateway.ts",
+    "./oauth/server": "./oauth/server.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

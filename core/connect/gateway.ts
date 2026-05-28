@@ -9,7 +9,10 @@ import { getAccessToken, nangoConfigured } from '../nango/client';
 
 export interface GatewayUser {
   userId: string;
-  apiKeyId: string;
+  // FK to stackpicks_api_keys. For OAuth-token callers (generic /api/mcp),
+  // pass null — those tokens live in mcp_oauth_tokens, not the api_keys table,
+  // so we can't reference them here without violating the FK.
+  apiKeyId: string | null;
 }
 
 /** Tools available to a user, based on their active OAuth connections. */

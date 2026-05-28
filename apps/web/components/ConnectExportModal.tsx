@@ -199,7 +199,7 @@ function labelFor(tab: Tab): string {
 
 function hintFor(tab: Tab): string {
   if (tab === 'url') {
-    return 'Easiest — works on Claude web, desktop & mobile. In Claude: Settings → Connectors → Add custom connector → paste this URL. No install needed.';
+    return 'Easiest — one URL, no API key. In Claude: Settings → Connectors → Add custom connector → paste this URL → it opens a browser to log into StackPicks → done. Works on web, desktop & mobile.';
   }
   if (tab === 'claude') {
     return 'Paste into ~/Library/Application Support/Claude/claude_desktop_config.json (macOS) or %APPDATA%/Claude/claude_desktop_config.json (Windows). Restart Claude.';
@@ -212,8 +212,9 @@ function hintFor(tab: Tab): string {
 
 function buildConfig(tab: Tab, key: string): string {
   if (tab === 'url') {
-    // Remote Streamable-HTTP MCP — key embedded in the path (Zapier pattern).
-    return `https://stackpicks.dev/api/mcp/s/${key}`;
+    // Generic OAuth MCP URL — same for everyone, no key. Claude runs the
+    // browser login flow itself. This is the cleanest path.
+    return `https://stackpicks.dev/api/mcp`;
   }
   if (tab === 'openai') {
     return JSON.stringify(
