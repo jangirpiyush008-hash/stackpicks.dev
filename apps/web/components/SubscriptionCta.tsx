@@ -117,8 +117,7 @@ export function SubscriptionCta({
       </div>
 
       <p className="text-[11px] text-muted mt-4">
-        Used by 847+ builders. 30-day money-back if you don't ship a single repo from the
-        directory.
+        30-day money-back if you don&apos;t ship a single repo from the directory.
       </p>
     </aside>
   );

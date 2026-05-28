@@ -179,7 +179,7 @@ export function NewsletterPopup() {
                 )}
 
                 <p className="text-[10px] text-muted/70 text-center">
-                  Free · No spam · Unsubscribe anytime · ~2,000 builders subscribed
+                  Free · No spam · Unsubscribe anytime · One email every Sunday
                 </p>
 
                 <div className="text-center pt-2">

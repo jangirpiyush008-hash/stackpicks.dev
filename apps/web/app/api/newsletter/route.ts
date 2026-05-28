@@ -44,6 +44,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Auto-sync to Resend Audience so the email flows straight into the
+    // sending list (no manual CSV export). Fire-and-forget — never block or
+    // fail the signup if Resend is down or not configured.
+    void syncToResend(parsed.data.email.toLowerCase().trim());
+
     // Plain-form fallback: redirect back with success param
     if (!contentType.includes('application/json')) {
       return NextResponse.redirect(new URL('/?subscribed=1', req.url));
@@ -55,5 +60,29 @@ export async function POST(req: NextRequest) {
       { ok: false, error: { code: 'server_error', message: 'Unexpected error' } },
       { status: 500 }
     );
+  }
+}
+
+/**
+ * Add a contact to the Resend Audience so signups become sendable without a
+ * manual export. No-op (logged) if RESEND_API_KEY / RESEND_AUDIENCE_ID aren't
+ * set yet. Idempotent — Resend dedupes by email.
+ */
+async function syncToResend(email: string): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const audienceId = process.env.RESEND_AUDIENCE_ID;
+  if (!apiKey || !audienceId) return; // not configured yet — DB still has it
+
+  try {
+    await fetch(`https://api.resend.com/audiences/${audienceId}/contacts`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, unsubscribed: false }),
+    });
+  } catch (e) {
+    console.error('[newsletter] Resend sync failed (non-fatal):', e);
   }
 }

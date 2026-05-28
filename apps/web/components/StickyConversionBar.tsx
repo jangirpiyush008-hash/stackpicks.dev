@@ -80,7 +80,7 @@ export function StickyConversionBar({ isMember = false, source = 'sticky' }: Pro
 
           <div className="relative flex-1 min-w-[200px]">
             <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-accent mb-0.5">
-              847+ builders chose StackPicks
+              Curated open-source · honest takes
             </div>
             <div className="text-sm md:text-base font-semibold text-text leading-tight">
               <GeoPrice prefix="Lifetime access for " suffix=". Pay once, use forever." />

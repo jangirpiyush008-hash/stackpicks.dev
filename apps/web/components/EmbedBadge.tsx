@@ -84,7 +84,7 @@ export function EmbedBadge({ slug, repoName }: { slug: string; repoName: string 
       </div>
 
       <p className="text-[10px] text-muted/60 mt-4">
-        Are you the maintainer of <span className="text-text font-mono">{repoName}</span>? Add the badge and we'll feature your project in the next weekly newsletter (~2,000 builders).
+        Are you the maintainer of <span className="text-text font-mono">{repoName}</span>? Add the badge and we&apos;ll feature your project in the weekly curator newsletter.
       </p>
     </section>
   );
