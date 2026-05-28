@@ -394,13 +394,45 @@ These are wired for a later phase but not built in v1. Don't add them without a 
 
 ---
 
+## DAILY RITUAL (Piyush's standing rule — follow exactly)
+
+The prime directive behind everything: **rank stackpicks.dev on Google (SEO)
+and AI agents (GEO) to sell as many lifetime subscriptions as possible.**
+Every task is judged by: does it drive traffic → visibility → subscription
+sales? If not, flag it as low-priority.
+
+**When Piyush says "Start the day"** (his first prompt most mornings):
+1. Read `docs/DAILY-LOG.md` — recap what we did yesterday (features shipped,
+   MCP apps wired, SEO tasks, blog posts, fixes). Be specific ("wired 5 apps:
+   Slack, Notion, Linear, Stripe, Firecrawl").
+2. List today's to-dos across both tracks:
+   - **SEO calendar** — today's task from `apps/web/lib/seo-calendar.ts`
+   - **Connect wiring** — today's 5 apps from `apps/web/lib/connect-roadmap.ts`
+   - Anything carried over / unfinished
+3. **Market research** — WebSearch for what's new/trending in MCP, AI agents,
+   dev tools, SEO/GEO. Surface anything relevant as "news of the day."
+4. **Mark ownership** per item: **[YOU]** (form submissions, OAuth app
+   registrations, payments) vs **[ME]** (code, content, executors).
+5. Frame all of it by the prime directive above.
+
+**When Piyush says "End today"**:
+- Summarize what got done.
+- Append a dated entry to `docs/DAILY-LOG.md` (newest at top), commit + push.
+  This is the memory the next "Start the day" reads.
+
+Connect launch state: gated behind `NEXT_PUBLIC_CONNECT_LAUNCHED` until 50
+apps are live. Wire 5/day. Track at `/admin/connect`. SEO calendar at
+`/admin/seo`. Never invent customers/metrics — honesty protects the brand.
+
+---
+
 ## What Claude Code Should Do First (in a fresh session)
 
 1. **Read this file (`CLAUDE.md`) completely.** Don't skim. The pitfalls section catches most footguns.
-2. **Read `/launch/QUICK-START.md`** to understand current deployment state.
+2. **Read `docs/DAILY-LOG.md`** — the running daily log (what we did, what's next).
 3. **Check `git log -10`** to see recent changes.
 4. **Run `pnpm typecheck`** to see if the project is in a known-good state.
-5. **Ask Piyush what specifically needs work** before proposing any new direction.
+5. **Follow the DAILY RITUAL above** if Piyush opens with "Start the day".
 
 When in doubt, follow the existing patterns in `/core/` and `/apps/web/`. The codebase is small enough to read end-to-end in 30 minutes.
 
