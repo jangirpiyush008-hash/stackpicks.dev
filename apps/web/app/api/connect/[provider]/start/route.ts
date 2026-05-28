@@ -3,6 +3,8 @@ import { getSupabaseServer } from '../../../../../lib/supabase-server';
 import { getAppBySlug } from '../../../../../lib/connect-apps';
 import { createConnectSession, nangoConfigured } from '@stackpicks/core/nango/client';
 import { SITE } from '@stackpicks/core/constants';
+import { isConnectLaunched } from '../../../../../lib/connect-roadmap';
+import { isAdmin } from '../../../../../lib/admin';
 
 /**
  * GET /api/connect/[provider]/start
@@ -30,6 +32,11 @@ export async function GET(
   if (!user) {
     const back = `/connect?after=${provider}`;
     return NextResponse.redirect(new URL(`/login?redirect=${encodeURIComponent(back)}`, SITE.url));
+  }
+
+  // Launch gate — non-admins can't connect until we publicly launch.
+  if (!isConnectLaunched() && !(await isAdmin()).ok) {
+    return NextResponse.redirect(new URL(`/connect?soon=${provider}`, SITE.url));
   }
 
   if (app.status !== 'live') {

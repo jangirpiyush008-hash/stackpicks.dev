@@ -955,6 +955,8 @@ const CATALOG: ConnectApp[] = [
     ['aadhaar-api',     'Aadhaar e-KYC',       'India identity API'],
   ]),
   ...group('marketing', [
+    // Advertising platforms — high value for marketers running AI on ad data.
+    ['google-ads',      'Google Ads',          'Campaigns, keywords, performance', { popular: true, toolCount: 12 }],
     ['patreon',         'Patreon',             'Creator memberships',            { popular: true }],
     ['ko-fi',           'Ko-fi',               'Creator donations'],
     ['buy-me-coffee',   'Buy Me a Coffee',     'Creator tips'],

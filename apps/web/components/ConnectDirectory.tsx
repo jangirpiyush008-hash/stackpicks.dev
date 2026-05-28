@@ -34,9 +34,12 @@ type FilterKey = 'all' | 'live' | ConnectCategory;
 interface Props {
   connected: ConnectedMap;
   isAuthed: boolean;
+  /** Launch gate — when true, every app shows "Coming soon" + waitlist,
+   *  regardless of its live status. Admins/post-launch pass false. */
+  gated?: boolean;
 }
 
-export function ConnectDirectory({ connected, isAuthed }: Props) {
+export function ConnectDirectory({ connected, isAuthed, gated = false }: Props) {
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<FilterKey>('all');
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -164,6 +167,7 @@ export function ConnectDirectory({ connected, isAuthed }: Props) {
               app={app}
               connection={connected[app.slug]}
               isAuthed={isAuthed}
+              gated={gated}
             />
           ))}
         </div>
@@ -189,13 +193,16 @@ function AppCard({
   app,
   connection,
   isAuthed,
+  gated,
 }: {
   app: ConnectApp;
   connection?: { id: string; accountLabel: string; status: string };
   isAuthed: boolean;
+  gated: boolean;
 }) {
-  const isConnected = !!connection && connection.status === 'active';
-  const isLive = app.status === 'live';
+  const isConnected = !gated && !!connection && connection.status === 'active';
+  // While gated, nothing is connectable — every app behaves as "coming soon".
+  const isLive = !gated && app.status === 'live';
 
   async function onConnect(e: React.MouseEvent) {
     e.preventDefault();

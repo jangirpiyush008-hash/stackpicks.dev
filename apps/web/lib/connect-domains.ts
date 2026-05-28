@@ -846,6 +846,7 @@ export const SLUG_TO_DOMAIN: Record<string, string> = {
   digilocker: 'digilocker.gov.in',
   'aadhaar-api': 'uidai.gov.in',
 
+  'google-ads': 'ads.google.com',
   patreon: 'patreon.com',
   'ko-fi': 'ko-fi.com',
   'buy-me-coffee': 'buymeacoffee.com',

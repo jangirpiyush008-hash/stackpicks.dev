@@ -5,6 +5,8 @@ import { buildMeta, faqJsonLd, breadcrumbJsonLd } from '@stackpicks/core/seo';
 import { ConnectDirectory } from '../../components/ConnectDirectory';
 import { ConnectExportButton } from '../../components/ConnectExportButton';
 import { CONNECT_APPS, CONNECT_STATS } from '../../lib/connect-apps';
+import { isConnectLaunched, CONNECT_LAUNCH_TARGET } from '../../lib/connect-roadmap';
+import { isAdmin } from '../../lib/admin';
 import {
   getCurrentUserId,
   listConnections,
@@ -63,8 +65,32 @@ export default async function ConnectPage() {
 
   const activeConnections = conns.filter((c) => c.status === 'active').length;
 
+  // Launch gate: public sees "Coming soon" until we hit the live-app target.
+  // Admins always get the real flow (so we can test + wire in the background).
+  const admin = (await isAdmin()).ok;
+  const gated = !isConnectLaunched() && !admin;
+
   return (
     <div className="max-w-[1400px] mx-auto px-4 md:px-6 py-10 md:py-12">
+      {gated && (
+        <div className="mb-8 rounded-2xl border-2 border-accent/40 bg-gradient-to-br from-accent/[0.10] via-accent/[0.03] to-transparent p-5 md:p-6 flex items-start gap-3">
+          <Sparkles className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+          <div>
+            <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-accent mb-1">
+              Launching soon
+            </div>
+            <h2 className="text-lg md:text-xl font-bold mb-1">
+              StackPicks Connect opens at {CONNECT_LAUNCH_TARGET}+ live apps.
+            </h2>
+            <p className="text-sm text-muted">
+              We&apos;re wiring 5 apps a day. Browse the directory below, tap{' '}
+              <strong className="text-text">Notify me</strong> on the apps you want, and we&apos;ll
+              email you the moment Connect goes live. Lifetime members get it first.
+            </p>
+          </div>
+        </div>
+      )}
+
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(CONNECT_FAQS)) }}
@@ -134,7 +160,7 @@ export default async function ConnectPage() {
 
       {/* DIRECTORY — front-loaded, no preamble */}
       <section className="mb-14">
-        <ConnectDirectory connected={connectedMap} isAuthed={isAuthed} />
+        <ConnectDirectory connected={connectedMap} isAuthed={isAuthed} gated={gated} />
       </section>
 
       {/* SECURITY */}

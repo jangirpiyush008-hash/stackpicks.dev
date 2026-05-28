@@ -186,6 +186,23 @@ export default async function AdminPage({
           </Link>
         </section>
 
+        {/* CONNECT WIRING — daily 5-app setup tracker */}
+        <section className="mb-8">
+          <Link
+            href="/admin/connect"
+            className="flex items-center justify-between gap-3 p-5 rounded-2xl border-2 border-accent/40 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent hover:border-accent/70 transition group"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <Rocket className="w-5 h-5 text-accent shrink-0" />
+              <div className="min-w-0">
+                <div className="font-bold text-base">Connect wiring roadmap</div>
+                <div className="text-xs text-muted">Wire 5 apps/day · opens to public at 50 live</div>
+              </div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-muted group-hover:text-accent group-hover:translate-x-0.5 transition shrink-0" />
+          </Link>
+        </section>
+
         {/* Stats — at-a-glance health */}
         <div className="grid sm:grid-cols-3 gap-4 mb-8">
           <Stat icon={<Users className="w-4 h-4" />} label="Total users" value={totalUsers.toString()} />
