@@ -5,6 +5,7 @@ import { Plug, Sparkles, ArrowRight, BookOpen } from 'lucide-react';
 import { MCPDirectory } from '../../components/MCPDirectory';
 import { MCP_SERVERS, MCP_CATEGORIES } from '../../lib/mcp-connectors';
 import { CONNECT_STATS } from '../../lib/connect-apps';
+import { isConnectLaunched } from '../../lib/connect-roadmap';
 
 const MCP_FAQS = [
   {
@@ -100,7 +101,7 @@ export default function MCPPage() {
           className="group relative rounded-2xl border-2 border-accent/40 bg-gradient-to-br from-accent/[0.10] via-accent/[0.04] to-transparent p-6 md:p-7 hover:border-accent/70 transition flex flex-col"
         >
           <div className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.2em] text-accent mb-3 self-start px-2 py-0.5 rounded-full border border-accent/40 bg-accent/10">
-            Recommended
+            {isConnectLaunched() ? 'Recommended' : 'Coming soon'}
           </div>
           <h2 className="text-xl md:text-2xl font-bold mb-2 leading-tight">
             StackPicks Connect
@@ -120,11 +121,11 @@ export default function MCPPage() {
             <li className="flex items-start gap-2"><span className="text-accent mt-0.5">✓</span> Bundled in ₹99 / $2.99 lifetime — no subscription</li>
           </ul>
           <div className="mt-auto inline-flex items-center gap-1.5 text-sm font-bold text-accent group-hover:gap-2.5 transition-all">
-            Browse {CONNECT_STATS.totalApps}+ apps
+            {isConnectLaunched() ? `Browse ${CONNECT_STATS.totalApps}+ apps` : `Preview ${CONNECT_STATS.totalApps}+ apps`}
             <ArrowRight className="w-4 h-4" />
           </div>
           <div className="mt-3 text-[10px] font-mono uppercase tracking-wider text-muted">
-            Free to browse · Login to connect
+            {isConnectLaunched() ? 'Free to browse · Login to connect' : 'Launching at 50+ live apps · join the waitlist'}
           </div>
         </Link>
 

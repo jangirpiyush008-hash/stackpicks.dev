@@ -15,6 +15,7 @@ import { Testimonials } from '../components/Testimonials';
 import { VisualPreviews } from '../components/VisualPreviews';
 import { HeroSearchBar } from '../components/HeroSearchBar';
 import { RepoOwnerLink } from '../components/RepoOwnerLink';
+import { isConnectLaunched } from '../lib/connect-roadmap';
 
 const BUNDLE_ICONS: Record<string, LucideIcon> = {
   rocket: Rocket, smartphone: Smartphone, brain: Brain, globe: Globe,
@@ -134,7 +135,7 @@ export default async function HomePage() {
             <div>
               <div className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.2em] text-accent mb-3 px-3 py-1 rounded-full border border-accent/40 bg-accent/10">
                 <Sparkles className="w-3 h-3" />
-                StackPicks Connect · Beta
+                StackPicks Connect · {isConnectLaunched() ? 'Beta' : 'Coming soon'}
               </div>
               <h2 className="text-2xl md:text-4xl font-bold tracking-tight mb-3 leading-tight">
                 Turn Claude into a real assistant.
@@ -149,13 +150,13 @@ export default async function HomePage() {
                   href="/connect"
                   className="inline-flex items-center gap-2 h-11 px-5 rounded-full bg-accent text-bg font-bold text-sm hover:opacity-90 transition"
                 >
-                  Explore the MCP Hub
+                  {isConnectLaunched() ? 'Explore the MCP Hub' : 'Preview + join waitlist'}
                 </a>
                 <a
-                  href="/connect"
+                  href="/mcp"
                   className="inline-flex items-center gap-1.5 h-11 px-4 rounded-full border border-white/15 hover:border-accent/50 text-sm transition"
                 >
-                  Connect apps →
+                  Browse MCP servers →
                 </a>
               </div>
             </div>
