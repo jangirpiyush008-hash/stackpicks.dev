@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Sparkles, ArrowRight, Check } from 'lucide-react';
+import { Sparkles, ArrowRight, Check, Copy, Plug } from 'lucide-react';
 import { AppLogo } from './AppLogo';
 import { popularApps, CONNECT_STATS } from '../lib/connect-apps';
+
+const MCP_URL = 'https://stackpicks.dev/api/mcp';
 
 /**
  * Full-page "Coming Soon" takeover for /connect, shown to everyone until
@@ -17,7 +19,15 @@ import { popularApps, CONNECT_STATS } from '../lib/connect-apps';
 export function ConnectComingSoon({ target }: { target: number }) {
   const [email, setEmail] = useState('');
   const [state, setState] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
+  const [copied, setCopied] = useState(false);
   const teaser = popularApps(40);
+
+  function copyUrl() {
+    navigator.clipboard.writeText(MCP_URL).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -84,6 +94,39 @@ export function ConnectComingSoon({ target }: { target: number }) {
       {state === 'error' && (
         <p className="text-xs text-red-400 -mt-6 mb-10">Something went wrong — try again.</p>
       )}
+
+      {/* Meanwhile — the MCP itself is already live */}
+      <div className="max-w-xl mx-auto mb-14 rounded-2xl border border-accent/30 bg-accent/[0.04] p-5 md:p-6 text-left">
+        <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.2em] text-accent mb-2">
+          <Plug className="w-3 h-3" />
+          The MCP is already live
+        </div>
+        <h3 className="text-base md:text-lg font-bold mb-1.5">
+          Meanwhile — connect the StackPicks MCP now.
+        </h3>
+        <p className="text-sm text-muted mb-4">
+          The gateway works today. Add it to Claude once and every app shows up the moment we
+          wire it — no reinstall. GitHub is live now; 5 more a day. Paste this into
+          Claude → <span className="text-text">Settings → Connectors → Add custom connector</span>:
+        </p>
+        <div className="flex items-center gap-2 rounded-lg border border-border bg-bg/60 px-3 py-2.5">
+          <code className="flex-1 text-xs md:text-sm font-mono text-text break-all">{MCP_URL}</code>
+          <button
+            type="button"
+            onClick={copyUrl}
+            className="shrink-0 inline-flex items-center gap-1 h-8 px-2.5 rounded-md bg-accent text-bg text-[11px] font-bold hover:opacity-90"
+          >
+            {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+            {copied ? 'Copied' : 'Copy'}
+          </button>
+        </div>
+        <p className="text-[11px] text-muted mt-3">
+          You&apos;ll log into StackPicks in your browser — no API key to manage.{' '}
+          <Link href="/login?redirect=/connect" className="text-accent hover:underline">
+            Sign in to get started →
+          </Link>
+        </p>
+      </div>
 
       {/* Stats */}
       <div className="flex items-center justify-center gap-x-8 gap-y-3 flex-wrap text-xs font-mono uppercase tracking-wider text-muted mb-12">
