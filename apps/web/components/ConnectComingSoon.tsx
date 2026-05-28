@@ -105,8 +105,8 @@ export function ConnectComingSoon({ target }: { target: number }) {
           Meanwhile — connect the StackPicks MCP now.
         </h3>
         <p className="text-sm text-muted mb-4">
-          The gateway works today. Add it to Claude once and every app shows up the moment we
-          wire it — no reinstall. GitHub is live now; 5 more a day. Paste this into
+          The gateway is live — add it to Claude once and new apps light up the moment we open
+          the doors. No reinstall, ever. Get in early. Paste this into
           Claude → <span className="text-text">Settings → Connectors → Add custom connector</span>:
         </p>
         <div className="flex items-center gap-2 rounded-lg border border-border bg-bg/60 px-3 py-2.5">
