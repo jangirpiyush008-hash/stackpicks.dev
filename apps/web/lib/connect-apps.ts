@@ -99,14 +99,19 @@ function group(category: ConnectCategory, items: T[]): ConnectApp[] {
   }));
 }
 
-// ---- Live MVP providers (OAuth wired in next pass) ------------------------
+// ---- Providers. Only flip to 'live' once BOTH are true:
+//        1. A Nango integration exists for the slug (in the prod env)
+//        2. core/connect/executors has a handler for it
+//      GitHub is fully wired. The rest stay 'soon' until each is added to
+//      Nango + given an executor — flipping prematurely shows users a real
+//      "Integration does not exist" error from Nango.
 const LIVE: ConnectApp[] = [
   { slug: 'github',        name: 'GitHub',        category: 'dev-code',    status: 'live', popular: true, toolCount: 18, scopes: 'Repos, PRs, issues, actions', tagline: 'Code hosting + PRs + issues',         color: 'from-zinc-500/40 to-zinc-700/40' },
-  { slug: 'gmail',         name: 'Gmail',         category: 'email',       status: 'live', popular: true, toolCount: 9,  scopes: 'Read, search, send drafts',  tagline: 'Send, search, draft emails',          color: 'from-red-500/40 to-orange-500/40' },
-  { slug: 'slack',         name: 'Slack',         category: 'messaging',   status: 'live', popular: true, toolCount: 14, scopes: 'Channels, DMs, files, users',tagline: 'Post, search, summarize channels',    color: 'from-purple-500/40 to-pink-500/40' },
-  { slug: 'notion',        name: 'Notion',        category: 'productivity',status: 'live', popular: true, toolCount: 11, scopes: 'Read + write pages, DBs',    tagline: 'Read + write pages and databases',    color: 'from-zinc-300/40 to-zinc-500/40' },
-  { slug: 'discord',       name: 'Discord',       category: 'messaging',   status: 'live', popular: true, toolCount: 10, scopes: 'Guilds, channels, messages', tagline: 'Bot messages + role mgmt',            color: 'from-indigo-500/40 to-violet-500/40' },
-  { slug: 'google-drive',  name: 'Google Drive',  category: 'storage-cloud',status: 'live',popular: true, toolCount: 12, scopes: 'Files, folders, comments',   tagline: 'Files, folders, upload, search',      color: 'from-yellow-400/40 to-green-500/40' },
+  { slug: 'gmail',         name: 'Gmail',         category: 'email',       status: 'soon', popular: true, toolCount: 9,  scopes: 'Read, search, send drafts',  tagline: 'Send, search, draft emails',          color: 'from-red-500/40 to-orange-500/40' },
+  { slug: 'slack',         name: 'Slack',         category: 'messaging',   status: 'soon', popular: true, toolCount: 14, scopes: 'Channels, DMs, files, users',tagline: 'Post, search, summarize channels',    color: 'from-purple-500/40 to-pink-500/40' },
+  { slug: 'notion',        name: 'Notion',        category: 'productivity',status: 'soon', popular: true, toolCount: 11, scopes: 'Read + write pages, DBs',    tagline: 'Read + write pages and databases',    color: 'from-zinc-300/40 to-zinc-500/40' },
+  { slug: 'discord',       name: 'Discord',       category: 'messaging',   status: 'soon', popular: true, toolCount: 10, scopes: 'Guilds, channels, messages', tagline: 'Bot messages + role mgmt',            color: 'from-indigo-500/40 to-violet-500/40' },
+  { slug: 'google-drive',  name: 'Google Drive',  category: 'storage-cloud',status: 'soon',popular: true, toolCount: 12, scopes: 'Files, folders, comments',   tagline: 'Files, folders, upload, search',      color: 'from-yellow-400/40 to-green-500/40' },
 ];
 
 // ---- Catalog (status: soon — flips to live as we wire each provider) ------
