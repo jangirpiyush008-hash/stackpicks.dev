@@ -24,10 +24,10 @@ interface Props {
   onClose: () => void;
 }
 
-type Tab = 'claude' | 'cursor' | 'openai';
+type Tab = 'url' | 'claude' | 'cursor' | 'openai';
 
 export function ConnectExportModal({ connected, existingKeyPrefixes, onClose }: Props) {
-  const [tab, setTab] = useState<Tab>('claude');
+  const [tab, setTab] = useState<Tab>('url');
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [issuing, setIssuing] = useState(false);
   const [copiedKey, setCopiedKey] = useState(false);
@@ -152,7 +152,7 @@ export function ConnectExportModal({ connected, existingKeyPrefixes, onClose }: 
           {/* Tab switcher */}
           <div>
             <div className="flex gap-2 mb-3 border-b border-border">
-              {(['claude', 'cursor', 'openai'] as Tab[]).map((t) => (
+              {(['url', 'claude', 'cursor', 'openai'] as Tab[]).map((t) => (
                 <button
                   key={t}
                   type="button"
@@ -191,12 +191,16 @@ export function ConnectExportModal({ connected, existingKeyPrefixes, onClose }: 
 }
 
 function labelFor(tab: Tab): string {
+  if (tab === 'url') return 'Connector URL';
   if (tab === 'claude') return 'Claude Desktop';
   if (tab === 'cursor') return 'Cursor';
   return 'OpenAI Agents';
 }
 
 function hintFor(tab: Tab): string {
+  if (tab === 'url') {
+    return 'Easiest — works on Claude web, desktop & mobile. In Claude: Settings → Connectors → Add custom connector → paste this URL. No install needed.';
+  }
   if (tab === 'claude') {
     return 'Paste into ~/Library/Application Support/Claude/claude_desktop_config.json (macOS) or %APPDATA%/Claude/claude_desktop_config.json (Windows). Restart Claude.';
   }
@@ -207,6 +211,10 @@ function hintFor(tab: Tab): string {
 }
 
 function buildConfig(tab: Tab, key: string): string {
+  if (tab === 'url') {
+    // Remote Streamable-HTTP MCP — key embedded in the path (Zapier pattern).
+    return `https://stackpicks.dev/api/mcp/s/${key}`;
+  }
   if (tab === 'openai') {
     return JSON.stringify(
       {

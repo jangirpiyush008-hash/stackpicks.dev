@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import { adminClient } from '@stackpicks/core/db';
 import { verifyApiKey, bearerFromRequest } from '@stackpicks/core/connect/auth';
-import { toolsForProviders, type Provider } from '@stackpicks/core/connect/tools';
+import { resolveTools } from '@stackpicks/core/connect/gateway';
 
 /**
  * GET /api/mcp/v1/tools
@@ -19,24 +18,12 @@ export async function GET(req: Request) {
   const ctx = await verifyApiKey(raw);
   if (!ctx) return new NextResponse('invalid or revoked API key', { status: 401 });
 
-  const admin = adminClient();
-  const { data: conns } = await admin
-    .from('oauth_connections')
-    .select('provider')
-    .eq('user_id', ctx.userId)
-    .eq('status', 'active');
-
-  const activeProviders = new Set<Provider>(
-    (conns ?? []).map((c) => c.provider as Provider).filter(Boolean),
-  );
-
-  const tools = toolsForProviders(activeProviders);
+  const tools = await resolveTools(ctx.userId);
 
   return NextResponse.json(
     {
       tools,
       user: { id: ctx.userId },
-      active_providers: Array.from(activeProviders),
     },
     {
       // Allow MCP clients to cache for a few seconds — newly connected apps
