@@ -215,20 +215,6 @@ const SLACK_TOOLS: ConnectTool[] = [
     },
   },
   {
-    name: 'slack_search_messages',
-    provider: 'slack',
-    description: 'Search Slack messages with Slack search syntax (e.g. "from:@piyush in:#general deploy").',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        query: { type: 'string' },
-        count: { type: 'integer', minimum: 1, maximum: 100 },
-      },
-      required: ['query'],
-      additionalProperties: false,
-    },
-  },
-  {
     name: 'slack_list_users',
     provider: 'slack',
     description: 'List active (non-bot) Slack workspace members with name + email.',

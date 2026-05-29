@@ -71,19 +71,6 @@ export async function executeSlackTool(toolName: string, args: ToolArgs, token: 
         return { ok: true, content: asText(msgs) };
       }
 
-      case 'slack_search_messages': {
-        const data = await slackGet(token, 'search.messages', {
-          query: String(args.query ?? ''),
-          count: String(args.count ?? 20),
-        });
-        const matches = ((data.messages as Record<string, unknown>)?.matches as Array<Record<string, unknown>>) ?? [];
-        const slim = matches.map((m) => ({
-          channel: (m.channel as { name?: string } | undefined)?.name,
-          user: m.username, text: m.text, ts: m.ts, permalink: m.permalink,
-        }));
-        return { ok: true, content: asText(slim) };
-      }
-
       case 'slack_list_users': {
         const data = await slackGet(token, 'users.list', { limit: String(args.limit ?? 100) });
         const users = (data.members as Array<Record<string, unknown>>)
