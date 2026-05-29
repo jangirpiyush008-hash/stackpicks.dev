@@ -4,6 +4,10 @@ import { executeNotionTool } from './notion';
 import { executeLinearTool } from './linear';
 import { executeStripeTool } from './stripe';
 import { executeFirecrawlTool } from './firecrawl';
+import { executeGitlabTool } from './gitlab';
+import { executeAirtableTool } from './airtable';
+import { executeCalendlyTool } from './calendly';
+import { executeAsanaTool } from './asana';
 import type { Provider } from '../tools';
 
 interface MCPContent {
@@ -46,6 +50,14 @@ export async function executeTool(
       return executeStripeTool(toolName, args, accessToken);
     case 'firecrawl':
       return executeFirecrawlTool(toolName, args, accessToken);
+    case 'gitlab':
+      return executeGitlabTool(toolName, args, accessToken);
+    case 'airtable':
+      return executeAirtableTool(toolName, args, accessToken);
+    case 'calendly':
+      return executeCalendlyTool(toolName, args, accessToken);
+    case 'asana':
+      return executeAsanaTool(toolName, args, accessToken);
     default:
       return {
         ok: false,

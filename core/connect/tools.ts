@@ -15,7 +15,11 @@ export type Provider =
   | 'google-drive'
   | 'linear'
   | 'stripe'
-  | 'firecrawl';
+  | 'firecrawl'
+  | 'gitlab'
+  | 'airtable'
+  | 'calendly'
+  | 'asana';
 
 export interface ConnectTool {
   name: string;            // 'github_create_pr' — globally unique, machine-readable
@@ -459,6 +463,269 @@ const FIRECRAWL_TOOLS: ConnectTool[] = [
   },
 ];
 
+const GITLAB_TOOLS: ConnectTool[] = [
+  {
+    name: 'gitlab_list_projects',
+    provider: 'gitlab',
+    description: 'List GitLab projects the user is a member of, most recently active first.',
+    inputSchema: {
+      type: 'object',
+      properties: { per_page: { type: 'integer', minimum: 1, maximum: 100 } },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'gitlab_list_issues',
+    provider: 'gitlab',
+    description: 'List GitLab issues. Pass project_id (numeric or "group/path") to scope to one project, else returns issues across all the user\'s projects.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: { type: 'string', description: 'Optional. Numeric ID or URL-encoded "group/project" path.' },
+        state: { type: 'string', enum: ['opened', 'closed', 'all'] },
+        per_page: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'gitlab_create_issue',
+    provider: 'gitlab',
+    description: 'Create a GitLab issue in a project. Requires project_id + title.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: { type: 'string' },
+        title: { type: 'string' },
+        description: { type: 'string' },
+        labels: { type: 'array', items: { type: 'string' } },
+      },
+      required: ['project_id', 'title'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'gitlab_list_merge_requests',
+    provider: 'gitlab',
+    description: 'List GitLab merge requests, optionally scoped to a project_id.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: { type: 'string' },
+        state: { type: 'string', enum: ['opened', 'closed', 'merged', 'all'] },
+        per_page: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'gitlab_get_file',
+    provider: 'gitlab',
+    description: 'Read a file from a GitLab project repo at a ref. Returns decoded UTF-8 content.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: { type: 'string' },
+        file_path: { type: 'string', description: 'Path within the repo, e.g. "src/index.ts".' },
+        ref: { type: 'string', description: 'Branch/tag/commit. Default HEAD.' },
+      },
+      required: ['project_id', 'file_path'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'gitlab_me',
+    provider: 'gitlab',
+    description: 'Return the authenticated GitLab user (id, username, name, email).',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+];
+
+const AIRTABLE_TOOLS: ConnectTool[] = [
+  {
+    name: 'airtable_list_bases',
+    provider: 'airtable',
+    description: 'List Airtable bases the connection can access (id, name, permission level).',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'airtable_list_tables',
+    provider: 'airtable',
+    description: 'List tables + field schema for a base. Requires base_id (from airtable_list_bases).',
+    inputSchema: {
+      type: 'object',
+      properties: { base_id: { type: 'string' } },
+      required: ['base_id'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'airtable_list_records',
+    provider: 'airtable',
+    description: 'List records from a table. Requires base_id + table (name or id).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        base_id: { type: 'string' },
+        table: { type: 'string' },
+        view: { type: 'string', description: 'Optional view name to filter/sort by.' },
+        page_size: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      required: ['base_id', 'table'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'airtable_create_record',
+    provider: 'airtable',
+    description: 'Create a record in a table. fields is an object of {fieldName: value}.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        base_id: { type: 'string' },
+        table: { type: 'string' },
+        fields: { type: 'object', description: 'Field name → value map.' },
+      },
+      required: ['base_id', 'table', 'fields'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'airtable_update_record',
+    provider: 'airtable',
+    description: 'Update fields on an existing record by record_id.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        base_id: { type: 'string' },
+        table: { type: 'string' },
+        record_id: { type: 'string' },
+        fields: { type: 'object' },
+      },
+      required: ['base_id', 'table', 'record_id', 'fields'],
+      additionalProperties: false,
+    },
+  },
+];
+
+const CALENDLY_TOOLS: ConnectTool[] = [
+  {
+    name: 'calendly_me',
+    provider: 'calendly',
+    description: 'Return the authenticated Calendly user (name, email, scheduling URL).',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'calendly_list_event_types',
+    provider: 'calendly',
+    description: 'List the user\'s Calendly event types (meeting templates) with durations + booking links.',
+    inputSchema: {
+      type: 'object',
+      properties: { count: { type: 'integer', minimum: 1, maximum: 100 } },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'calendly_list_scheduled_events',
+    provider: 'calendly',
+    description: 'List the user\'s scheduled Calendly events (bookings), newest first.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', enum: ['active', 'canceled'] },
+        min_start_time: { type: 'string', description: 'ISO 8601 lower bound, e.g. "2026-05-29T00:00:00Z".' },
+        count: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'calendly_list_invitees',
+    provider: 'calendly',
+    description: 'List invitees (attendees) for a scheduled event. Requires event_uri (from calendly_list_scheduled_events).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        event_uri: { type: 'string' },
+        count: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      required: ['event_uri'],
+      additionalProperties: false,
+    },
+  },
+];
+
+const ASANA_TOOLS: ConnectTool[] = [
+  {
+    name: 'asana_me',
+    provider: 'asana',
+    description: 'Return the authenticated Asana user with their workspaces (gid + name needed for other calls).',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'asana_list_projects',
+    provider: 'asana',
+    description: 'List Asana projects, optionally scoped to a workspace_gid.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        workspace_gid: { type: 'string' },
+        limit: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'asana_list_tasks',
+    provider: 'asana',
+    description: 'List Asana tasks. Pass project_gid, OR assignee + workspace_gid together.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_gid: { type: 'string' },
+        assignee: { type: 'string', description: 'User gid or "me".' },
+        workspace_gid: { type: 'string' },
+        limit: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'asana_create_task',
+    provider: 'asana',
+    description: 'Create an Asana task. Provide name + either project_gid or workspace_gid.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        notes: { type: 'string' },
+        project_gid: { type: 'string' },
+        workspace_gid: { type: 'string' },
+        due_on: { type: 'string', description: 'YYYY-MM-DD.' },
+      },
+      required: ['name'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'asana_update_task',
+    provider: 'asana',
+    description: 'Update an Asana task by task_gid (name, notes, completed, due_on).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        task_gid: { type: 'string' },
+        name: { type: 'string' },
+        notes: { type: 'string' },
+        completed: { type: 'boolean' },
+        due_on: { type: 'string', description: 'YYYY-MM-DD.' },
+      },
+      required: ['task_gid'],
+      additionalProperties: false,
+    },
+  },
+];
+
 // Tools grow as each provider is wired (code + Nango integration).
 export const CONNECT_TOOLS: ConnectTool[] = [
   ...GITHUB_TOOLS,
@@ -467,6 +734,10 @@ export const CONNECT_TOOLS: ConnectTool[] = [
   ...LINEAR_TOOLS,
   ...STRIPE_TOOLS,
   ...FIRECRAWL_TOOLS,
+  ...GITLAB_TOOLS,
+  ...AIRTABLE_TOOLS,
+  ...CALENDLY_TOOLS,
+  ...ASANA_TOOLS,
 ];
 
 export function toolsForProviders(activeProviders: Set<Provider>): ConnectTool[] {
