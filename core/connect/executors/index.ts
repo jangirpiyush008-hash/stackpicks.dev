@@ -1,4 +1,5 @@
 import { executeGithubTool } from './github';
+import { executeSlackTool } from './slack';
 import type { Provider } from '../tools';
 
 interface MCPContent {
@@ -31,7 +32,9 @@ export async function executeTool(
   switch (provider) {
     case 'github':
       return executeGithubTool(toolName, args, accessToken);
-    // gmail, slack, notion, discord, google-drive land here next pass.
+    case 'slack':
+      return executeSlackTool(toolName, args, accessToken);
+    // notion, linear, stripe, firecrawl land here as each is wired.
     default:
       return {
         ok: false,

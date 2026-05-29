@@ -172,8 +172,76 @@ const GITHUB_TOOLS: ConnectTool[] = [
   },
 ];
 
-// Phase 1 MVP: GitHub only. Other providers will follow.
-export const CONNECT_TOOLS: ConnectTool[] = [...GITHUB_TOOLS];
+const SLACK_TOOLS: ConnectTool[] = [
+  {
+    name: 'slack_list_channels',
+    provider: 'slack',
+    description: 'List Slack channels (id + name) the user/bot can see.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        types: { type: 'string', description: 'public_channel, private_channel, im, mpim (comma-sep). Default public_channel' },
+        limit: { type: 'integer', minimum: 1, maximum: 1000 },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'slack_send_message',
+    provider: 'slack',
+    description: 'Post a message to a Slack channel or user. channel = channel ID (from slack_list_channels) or user ID.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        channel: { type: 'string' },
+        text: { type: 'string' },
+      },
+      required: ['channel', 'text'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'slack_channel_history',
+    provider: 'slack',
+    description: 'Read recent messages from a Slack channel.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        channel: { type: 'string' },
+        limit: { type: 'integer', minimum: 1, maximum: 200 },
+      },
+      required: ['channel'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'slack_search_messages',
+    provider: 'slack',
+    description: 'Search Slack messages with Slack search syntax (e.g. "from:@piyush in:#general deploy").',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        count: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      required: ['query'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'slack_list_users',
+    provider: 'slack',
+    description: 'List active (non-bot) Slack workspace members with name + email.',
+    inputSchema: {
+      type: 'object',
+      properties: { limit: { type: 'integer', minimum: 1, maximum: 1000 } },
+      additionalProperties: false,
+    },
+  },
+];
+
+// Tools grow as each provider is wired (code + Nango integration).
+export const CONNECT_TOOLS: ConnectTool[] = [...GITHUB_TOOLS, ...SLACK_TOOLS];
 
 export function toolsForProviders(activeProviders: Set<Provider>): ConnectTool[] {
   return CONNECT_TOOLS.filter((t) => activeProviders.has(t.provider));
