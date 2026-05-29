@@ -27,6 +27,13 @@ export async function GET() {
     .sort((a, b) => b.monthly_searches - a.monthly_searches)
     .slice(0, 10);
 
+  // Newest 2 posts, pinned above the search-volume list so AI engines surface
+  // our most timely content first (fresh news posts rank fastest).
+  const latestBlogs = BLOG_POSTS
+    .slice()
+    .sort((a, b) => b.published_at.localeCompare(a.published_at))
+    .slice(0, 2);
+
   const topMcpServers = MCP_SERVERS.slice(0, 30);
 
   const body = `# StackPicks
@@ -50,6 +57,10 @@ The differentiator vs. other dev-tool directories: opinionated takes, not star c
 - [12 skill tracks](${site}/skills): Curated learning paths (AI/ML, frontend, backend, DevOps, mobile, design, etc.)
 - [Compare any two repos](${site}/compare): Side-by-side curator-take comparisons
 - [Pricing](${site}/pricing): ₹99 (or \$2.99) lifetime — single payment, full directory access
+
+## Latest posts (most recent — timely)
+
+${latestBlogs.map((p) => `- [${p.title}](${site}/blog/${p.slug}): ${p.excerpt} (published ${p.published_at})`).join('\n')}
 
 ## Blog — long-form curator takes
 
