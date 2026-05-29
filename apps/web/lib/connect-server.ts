@@ -42,16 +42,34 @@ export async function listConnections(): Promise<ConnectionRow[]> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
 
-  // RLS limits this to own rows already, but be explicit.
-  const { data, error } = await supabase
-    .from('oauth_connections')
-    .select('id, provider, account_label, status, scopes, connected_at, last_used_at')
-    .eq('user_id', user.id)
-    .neq('status', 'revoked')
-    .order('connected_at', { ascending: false });
+  // OAuth connections + API-key connections, unioned into one list so the
+  // directory + dashboard show both kinds as "connected".
+  const [oauth, apikey] = await Promise.all([
+    supabase
+      .from('oauth_connections')
+      .select('id, provider, account_label, status, scopes, connected_at, last_used_at')
+      .eq('user_id', user.id)
+      .neq('status', 'revoked')
+      .order('connected_at', { ascending: false }),
+    supabase
+      .from('api_key_connections')
+      .select('id, provider, key_last4, status, created_at, last_used_at')
+      .eq('user_id', user.id)
+      .neq('status', 'revoked'),
+  ]);
 
-  if (error) return [];
-  return (data ?? []) as ConnectionRow[];
+  const oauthRows = (oauth.data ?? []) as ConnectionRow[];
+  const apiKeyRows: ConnectionRow[] = (apikey.data ?? []).map((r) => ({
+    id: r.id as string,
+    provider: r.provider as string,
+    account_label: r.key_last4 ? `API key …${r.key_last4}` : 'API key',
+    status: r.status as string,
+    scopes: [],
+    connected_at: r.created_at as string,
+    last_used_at: (r.last_used_at as string | null) ?? null,
+  }));
+
+  return [...oauthRows, ...apiKeyRows];
 }
 
 /** Map slug → connection summary, for the directory grid. */

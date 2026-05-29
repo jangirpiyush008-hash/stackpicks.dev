@@ -50,6 +50,14 @@ export async function POST(
     .eq('user_id', user.id)
     .eq('provider', provider);
 
+  // Also revoke any API-key connection for this provider (Firecrawl, etc.).
+  await admin
+    .from('api_key_connections')
+    .update({ status: 'revoked' })
+    .eq('user_id', user.id)
+    .eq('provider', provider)
+    .then(() => undefined, () => undefined);
+
   if (error) return new NextResponse('disconnect failed', { status: 500 });
   return NextResponse.json({ ok: true });
 }

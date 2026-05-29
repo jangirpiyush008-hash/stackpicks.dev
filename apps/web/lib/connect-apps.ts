@@ -491,7 +491,7 @@ const CATALOG: ConnectApp[] = [
     ['exa',             'Exa',              'Embeddings search API'],
     ['serper',          'Serper',           'Google search API'],
     ['serpapi',         'SerpApi',          'Search engine API'],
-    ['firecrawl',       'Firecrawl',        'Crawl + scrape for LLMs'],
+    ['firecrawl',       'Firecrawl',        'Scrape + search the web for LLMs', { status: 'live', toolCount: 3 }],
     ['apify',           'Apify',            'Web scraping platform'],
     ['browserless',     'Browserless',      'Headless browser as a service'],
     ['scrapingbee',     'ScrapingBee',      'Scrape via API'],

@@ -20,6 +20,8 @@
     "./connect/tools": "./connect/tools.ts",
     "./connect/executors": "./connect/executors/index.ts",
     "./connect/gateway": "./connect/gateway.ts",
+    "./connect/providers": "./connect/providers.ts",
+    "./connect/crypto": "./connect/crypto.ts",
     "./oauth/server": "./oauth/server.ts"
   },
   "dependencies": {

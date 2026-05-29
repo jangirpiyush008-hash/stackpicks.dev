@@ -6,6 +6,8 @@ import { adminClient } from '../db';
 import { toolsForProviders, getToolByName, type ConnectTool, type Provider } from './tools';
 import { executeTool, type ExecResult } from './executors';
 import { getAccessToken, nangoConfigured } from '../nango/client';
+import { isApiKeyProvider } from './providers';
+import { decryptSecret } from './crypto';
 
 export interface GatewayUser {
   userId: string;
@@ -15,17 +17,18 @@ export interface GatewayUser {
   apiKeyId: string | null;
 }
 
-/** Tools available to a user, based on their active OAuth connections. */
+/** Tools available to a user — union of active OAuth + API-key connections. */
 export async function resolveTools(userId: string): Promise<ConnectTool[]> {
   const admin = adminClient();
-  const { data: conns } = await admin
-    .from('oauth_connections')
-    .select('provider')
-    .eq('user_id', userId)
-    .eq('status', 'active');
+  const [oauth, apikey] = await Promise.all([
+    admin.from('oauth_connections').select('provider').eq('user_id', userId).eq('status', 'active'),
+    admin.from('api_key_connections').select('provider').eq('user_id', userId).eq('status', 'active'),
+  ]);
 
   const activeProviders = new Set<Provider>(
-    (conns ?? []).map((c) => c.provider as Provider).filter(Boolean),
+    [...(oauth.data ?? []), ...(apikey.data ?? [])]
+      .map((c) => c.provider as Provider)
+      .filter(Boolean),
   );
   return toolsForProviders(activeProviders);
 }
@@ -44,37 +47,69 @@ export async function runToolCall(
   }
 
   const admin = adminClient();
-  const { data: conn } = await admin
-    .from('oauth_connections')
-    .select('id, nango_connection_id, status')
-    .eq('user_id', user.userId)
-    .eq('provider', tool.provider)
-    .eq('status', 'active')
-    .order('connected_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (!conn) {
-    await logAudit(user, tool.provider, toolName, 'unauthorized', null, 'no_active_connection', requestId);
-    return {
-      ok: false,
-      is_error: true,
-      error: `No active ${tool.provider} connection. Connect at https://stackpicks.dev/connect.`,
-    };
-  }
-
   let accessToken: string;
-  try {
-    if (!nangoConfigured()) throw new Error('OAuth broker not configured on the server.');
-    if (!conn.nango_connection_id) throw new Error('Connection missing — please reconnect.');
-    accessToken = await getAccessToken({
-      connectionId: conn.nango_connection_id as string,
-      provider: tool.provider,
-    });
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    await logAudit(user, tool.provider, toolName, 'unauthorized', Date.now() - startedAt, msg, requestId);
-    return { ok: false, is_error: true, error: msg };
+
+  if (isApiKeyProvider(tool.provider)) {
+    // API-key provider — fetch the user's encrypted key, decrypt, use directly.
+    const { data: conn } = await admin
+      .from('api_key_connections')
+      .select('id, key_cipher')
+      .eq('user_id', user.userId)
+      .eq('provider', tool.provider)
+      .eq('status', 'active')
+      .maybeSingle();
+
+    if (!conn) {
+      await logAudit(user, tool.provider, toolName, 'unauthorized', null, 'no_active_connection', requestId);
+      return {
+        ok: false,
+        is_error: true,
+        error: `No active ${tool.provider} connection. Add your API key at https://stackpicks.dev/connect.`,
+      };
+    }
+    try {
+      accessToken = decryptSecret(conn.key_cipher as string);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      await logAudit(user, tool.provider, toolName, 'unauthorized', Date.now() - startedAt, msg, requestId);
+      return { ok: false, is_error: true, error: `Could not read stored key: ${msg}` };
+    }
+    admin.from('api_key_connections').update({ last_used_at: new Date().toISOString() }).eq('id', conn.id)
+      .then(() => undefined, () => undefined);
+  } else {
+    // OAuth provider — resolve a fresh token via Nango.
+    const { data: conn } = await admin
+      .from('oauth_connections')
+      .select('id, nango_connection_id, status')
+      .eq('user_id', user.userId)
+      .eq('provider', tool.provider)
+      .eq('status', 'active')
+      .order('connected_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (!conn) {
+      await logAudit(user, tool.provider, toolName, 'unauthorized', null, 'no_active_connection', requestId);
+      return {
+        ok: false,
+        is_error: true,
+        error: `No active ${tool.provider} connection. Connect at https://stackpicks.dev/connect.`,
+      };
+    }
+    try {
+      if (!nangoConfigured()) throw new Error('OAuth broker not configured on the server.');
+      if (!conn.nango_connection_id) throw new Error('Connection missing — please reconnect.');
+      accessToken = await getAccessToken({
+        connectionId: conn.nango_connection_id as string,
+        provider: tool.provider,
+      });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      await logAudit(user, tool.provider, toolName, 'unauthorized', Date.now() - startedAt, msg, requestId);
+      return { ok: false, is_error: true, error: msg };
+    }
+    admin.from('oauth_connections').update({ last_used_at: new Date().toISOString() }).eq('id', conn.id)
+      .then(() => undefined, () => undefined);
   }
 
   const result = await executeTool(tool.provider, toolName, args, accessToken);
@@ -88,12 +123,6 @@ export async function runToolCall(
     result.error ?? null,
     requestId,
   );
-
-  admin
-    .from('oauth_connections')
-    .update({ last_used_at: new Date().toISOString() })
-    .eq('id', conn.id)
-    .then(() => undefined, () => undefined);
 
   return result;
 }

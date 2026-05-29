@@ -9,6 +9,7 @@ import {
   type ConnectCategory,
 } from '../lib/connect-apps';
 import { AppLogo } from './AppLogo';
+import { isApiKeyProvider, API_KEY_HINTS } from '@stackpicks/core/connect/providers';
 
 /**
  * Composio-style App Directory.
@@ -217,6 +218,27 @@ function AppCard({
         body: JSON.stringify({ provider: app.slug }),
       }).catch(() => {});
       alert(`Got it — we'll email you when ${app.name} is live.`);
+      return;
+    }
+    // API-key providers (Firecrawl, etc.): paste the key instead of OAuth.
+    if (isApiKeyProvider(app.slug)) {
+      const hint = API_KEY_HINTS[app.slug];
+      const key = window.prompt(
+        `Paste your ${hint?.label ?? app.name + ' API key'}${hint?.prefix ? ` (starts with "${hint.prefix}")` : ''}.\nGet it at ${hint?.getUrl ?? app.name}.`,
+      );
+      if (!key) return;
+      const res = await fetch(`/api/connect/${app.slug}/apikey`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ key: key.trim() }),
+      });
+      if (res.ok) {
+        alert(`${app.name} connected. Its tools are now available in Claude.`);
+        window.location.reload();
+      } else {
+        const msg = await res.json().catch(() => ({}));
+        alert(`Couldn't connect ${app.name}: ${msg.error ?? res.statusText}`);
+      }
       return;
     }
     window.location.href = `/api/connect/${app.slug}/start`;
