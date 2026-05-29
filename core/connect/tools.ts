@@ -12,7 +12,10 @@ export type Provider =
   | 'slack'
   | 'notion'
   | 'discord'
-  | 'google-drive';
+  | 'google-drive'
+  | 'linear'
+  | 'stripe'
+  | 'firecrawl';
 
 export interface ConnectTool {
   name: string;            // 'github_create_pr' — globally unique, machine-readable
@@ -295,8 +298,77 @@ const NOTION_TOOLS: ConnectTool[] = [
   },
 ];
 
+const LINEAR_TOOLS: ConnectTool[] = [
+  {
+    name: 'linear_list_teams',
+    provider: 'linear',
+    description: 'List Linear teams (id, key, name). Needed to get a team_id for creating issues.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'linear_list_issues',
+    provider: 'linear',
+    description: 'List recent Linear issues (optionally filtered by team_id), newest first.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        team_id: { type: 'string', description: 'Optional — from linear_list_teams.' },
+        limit: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'linear_search_issues',
+    provider: 'linear',
+    description: 'Full-text search Linear issues by query string.',
+    inputSchema: {
+      type: 'object',
+      properties: { query: { type: 'string' } },
+      required: ['query'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'linear_create_issue',
+    provider: 'linear',
+    description: 'Create a Linear issue. Requires team_id (from linear_list_teams) + title.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        team_id: { type: 'string' },
+        title: { type: 'string' },
+        description: { type: 'string', description: 'Markdown body. Optional.' },
+      },
+      required: ['team_id', 'title'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'linear_update_issue',
+    provider: 'linear',
+    description: 'Update a Linear issue by issue_id (title, description, or state_id).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        issue_id: { type: 'string' },
+        title: { type: 'string' },
+        description: { type: 'string' },
+        state_id: { type: 'string' },
+      },
+      required: ['issue_id'],
+      additionalProperties: false,
+    },
+  },
+];
+
 // Tools grow as each provider is wired (code + Nango integration).
-export const CONNECT_TOOLS: ConnectTool[] = [...GITHUB_TOOLS, ...SLACK_TOOLS, ...NOTION_TOOLS];
+export const CONNECT_TOOLS: ConnectTool[] = [
+  ...GITHUB_TOOLS,
+  ...SLACK_TOOLS,
+  ...NOTION_TOOLS,
+  ...LINEAR_TOOLS,
+];
 
 export function toolsForProviders(activeProviders: Set<Provider>): ConnectTool[] {
   return CONNECT_TOOLS.filter((t) => activeProviders.has(t.provider));
