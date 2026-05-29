@@ -646,7 +646,7 @@ const CATALOG: ConnectApp[] = [
     ['pixabay',         'Pixabay',          'Free media'],
   ]),
   ...group('scheduling', [
-    ['calendly',        'Calendly',         'Scheduling links',                { popular: true, toolCount: 8 }],
+    ['calendly',        'Calendly',         'Scheduling links',                { status: 'live', popular: true, toolCount: 4 }],
     ['cal-com',         'Cal.com',          'OSS scheduling',                  { popular: true }],
     ['savvycal',        'SavvyCal',         'Modern scheduling'],
     ['tidycal',         'TidyCal',          'Affordable scheduling'],
