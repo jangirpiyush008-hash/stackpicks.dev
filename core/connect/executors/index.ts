@@ -1,5 +1,6 @@
 import { executeGithubTool } from './github';
 import { executeSlackTool } from './slack';
+import { executeNotionTool } from './notion';
 import type { Provider } from '../tools';
 
 interface MCPContent {
@@ -34,7 +35,9 @@ export async function executeTool(
       return executeGithubTool(toolName, args, accessToken);
     case 'slack':
       return executeSlackTool(toolName, args, accessToken);
-    // notion, linear, stripe, firecrawl land here as each is wired.
+    case 'notion':
+      return executeNotionTool(toolName, args, accessToken);
+    // linear, stripe, firecrawl land here as each is wired.
     default:
       return {
         ok: false,

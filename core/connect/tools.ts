@@ -226,8 +226,77 @@ const SLACK_TOOLS: ConnectTool[] = [
   },
 ];
 
+const NOTION_TOOLS: ConnectTool[] = [
+  {
+    name: 'notion_search',
+    provider: 'notion',
+    description: 'Search Notion pages + databases the integration can access. Returns id, title, url.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'Search text. Empty = recent items.' },
+        filter_type: { type: 'string', enum: ['page', 'database'], description: 'Limit to pages or databases.' },
+        page_size: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'notion_get_page',
+    provider: 'notion',
+    description: 'Get a Notion page object (properties + metadata) by page_id.',
+    inputSchema: {
+      type: 'object',
+      properties: { page_id: { type: 'string' } },
+      required: ['page_id'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'notion_get_page_content',
+    provider: 'notion',
+    description: 'Read the text content (blocks) of a Notion page as readable lines.',
+    inputSchema: {
+      type: 'object',
+      properties: { page_id: { type: 'string' } },
+      required: ['page_id'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'notion_create_page',
+    provider: 'notion',
+    description: 'Create a Notion page. Provide EITHER database_id (adds a row) OR parent_page_id (subpage). Optional content paragraph.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string' },
+        database_id: { type: 'string' },
+        parent_page_id: { type: 'string' },
+        content: { type: 'string' },
+      },
+      required: ['title'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'notion_query_database',
+    provider: 'notion',
+    description: 'List rows in a Notion database by database_id. Returns id, title, url per row.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        database_id: { type: 'string' },
+        page_size: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      required: ['database_id'],
+      additionalProperties: false,
+    },
+  },
+];
+
 // Tools grow as each provider is wired (code + Nango integration).
-export const CONNECT_TOOLS: ConnectTool[] = [...GITHUB_TOOLS, ...SLACK_TOOLS];
+export const CONNECT_TOOLS: ConnectTool[] = [...GITHUB_TOOLS, ...SLACK_TOOLS, ...NOTION_TOOLS];
 
 export function toolsForProviders(activeProviders: Set<Provider>): ConnectTool[] {
   return CONNECT_TOOLS.filter((t) => activeProviders.has(t.provider));
