@@ -29,7 +29,7 @@ export interface RoadmapDay {
 // ads on day 3, Google workspace (review-gated) on day 9.
 export const CONNECT_ROADMAP: RoadmapDay[] = [
   { day: 1,  label: 'Done',  slugs: ['github'], note: 'Live end-to-end (OAuth + npm + remote URL).' },
-  { day: 2,  label: 'Day 2', slugs: ['slack', 'notion', 'linear', 'stripe', 'firecrawl'], note: 'Submit Google OAuth verification today (for days 3 + 9).' },
+  { day: 2,  label: 'Day 2', slugs: ['slack', 'notion', 'linear', 'stripe', 'firecrawl'], note: 'LIVE: slack, notion, linear. DEFERRED: stripe (needs Stripe account activation), firecrawl (not in Nango catalog — would need a custom provider). Submit Google OAuth verification for days 3+9.' },
   { day: 3,  label: 'Day 3', slugs: ['facebook-ads', 'google-ads', 'google-analytics', 'search-console', 'tiktok-ads'], note: 'Ads day — needs the Google + Meta apps registered.' },
   { day: 4,  label: 'Day 4', slugs: ['sentry', 'figma', 'supabase', 'vercel', 'cloudflare'] },
   { day: 5,  label: 'Day 5', slugs: ['brave-search', 'tavily', 'exa', 'airtable', 'canva'] },
