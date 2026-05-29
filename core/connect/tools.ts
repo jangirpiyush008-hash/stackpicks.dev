@@ -362,12 +362,65 @@ const LINEAR_TOOLS: ConnectTool[] = [
   },
 ];
 
+const STRIPE_TOOLS: ConnectTool[] = [
+  {
+    name: 'stripe_get_balance',
+    provider: 'stripe',
+    description: 'Get the Stripe account available + pending balance by currency.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'stripe_list_customers',
+    provider: 'stripe',
+    description: 'List recent Stripe customers (id, email, name).',
+    inputSchema: {
+      type: 'object',
+      properties: { limit: { type: 'integer', minimum: 1, maximum: 100 } },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'stripe_list_charges',
+    provider: 'stripe',
+    description: 'List recent Stripe charges with amount, status, customer.',
+    inputSchema: {
+      type: 'object',
+      properties: { limit: { type: 'integer', minimum: 1, maximum: 100 } },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'stripe_list_subscriptions',
+    provider: 'stripe',
+    description: 'List Stripe subscriptions, optionally filtered by status (active, canceled, past_due, all).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', enum: ['active', 'canceled', 'past_due', 'trialing', 'all'] },
+        limit: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'stripe_list_payment_intents',
+    provider: 'stripe',
+    description: 'List recent Stripe payment intents with amount + status.',
+    inputSchema: {
+      type: 'object',
+      properties: { limit: { type: 'integer', minimum: 1, maximum: 100 } },
+      additionalProperties: false,
+    },
+  },
+];
+
 // Tools grow as each provider is wired (code + Nango integration).
 export const CONNECT_TOOLS: ConnectTool[] = [
   ...GITHUB_TOOLS,
   ...SLACK_TOOLS,
   ...NOTION_TOOLS,
   ...LINEAR_TOOLS,
+  ...STRIPE_TOOLS,
 ];
 
 export function toolsForProviders(activeProviders: Set<Provider>): ConnectTool[] {

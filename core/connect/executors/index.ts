@@ -2,6 +2,7 @@ import { executeGithubTool } from './github';
 import { executeSlackTool } from './slack';
 import { executeNotionTool } from './notion';
 import { executeLinearTool } from './linear';
+import { executeStripeTool } from './stripe';
 import type { Provider } from '../tools';
 
 interface MCPContent {
@@ -40,7 +41,9 @@ export async function executeTool(
       return executeNotionTool(toolName, args, accessToken);
     case 'linear':
       return executeLinearTool(toolName, args, accessToken);
-    // stripe, firecrawl land here as each is wired.
+    case 'stripe':
+      return executeStripeTool(toolName, args, accessToken);
+    // firecrawl lands here next.
     default:
       return {
         ok: false,

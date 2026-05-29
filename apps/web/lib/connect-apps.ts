@@ -252,7 +252,7 @@ const CATALOG: ConnectApp[] = [
     ['dynalist',        'Dynalist',         'Outliner alt'],
   ]),
   ...group('project-mgmt', [
-    ['linear',          'Linear',           'Issue tracker + cycles',          { popular: true, toolCount: 13 }],
+    ['linear',          'Linear',           'Issue tracker + cycles',          { popular: true, toolCount: 5, status: 'live' }],
     ['jira',            'Jira',             'Atlassian issues + sprints',      { popular: true, toolCount: 16 }],
     ['asana',           'Asana',            'Tasks + projects',                { popular: true }],
     ['trello',          'Trello',           'Kanban boards'],
