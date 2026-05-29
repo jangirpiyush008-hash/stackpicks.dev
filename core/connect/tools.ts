@@ -414,6 +414,51 @@ const STRIPE_TOOLS: ConnectTool[] = [
   },
 ];
 
+const FIRECRAWL_TOOLS: ConnectTool[] = [
+  {
+    name: 'firecrawl_scrape',
+    provider: 'firecrawl',
+    description: 'Scrape a single URL and return its main content as clean markdown. Great for reading a docs page or article.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string' },
+        only_main_content: { type: 'boolean', description: 'Strip nav/footer. Default true.' },
+      },
+      required: ['url'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'firecrawl_search',
+    provider: 'firecrawl',
+    description: 'Web search via Firecrawl — returns title, url, description for top results.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        limit: { type: 'integer', minimum: 1, maximum: 20 },
+      },
+      required: ['query'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'firecrawl_map',
+    provider: 'firecrawl',
+    description: 'Get all the URLs on a website (sitemap-style) for a given root URL.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string' },
+        limit: { type: 'integer', minimum: 1, maximum: 5000 },
+      },
+      required: ['url'],
+      additionalProperties: false,
+    },
+  },
+];
+
 // Tools grow as each provider is wired (code + Nango integration).
 export const CONNECT_TOOLS: ConnectTool[] = [
   ...GITHUB_TOOLS,
@@ -421,6 +466,7 @@ export const CONNECT_TOOLS: ConnectTool[] = [
   ...NOTION_TOOLS,
   ...LINEAR_TOOLS,
   ...STRIPE_TOOLS,
+  ...FIRECRAWL_TOOLS,
 ];
 
 export function toolsForProviders(activeProviders: Set<Provider>): ConnectTool[] {

@@ -72,10 +72,17 @@ export async function getAccessToken(opts: {
   connectionId: string;
   provider: string;
 }): Promise<string> {
-  const data = await nango<{ credentials: { access_token: string } }>(
+  const data = await nango<{
+    credentials: { access_token?: string; apiKey?: string; api_key?: string };
+  }>(
     `/connection/${encodeURIComponent(opts.connectionId)}?provider_config_key=${encodeURIComponent(opts.provider)}`,
   );
-  return data.credentials.access_token;
+  // OAuth providers return access_token; API-key providers (e.g. Firecrawl)
+  // return apiKey. Support both so the same gateway works for either.
+  const c = data.credentials;
+  const token = c.access_token ?? c.apiKey ?? c.api_key;
+  if (!token) throw new Error('No usable credential returned by Nango for this connection.');
+  return token;
 }
 
 /** Revokes a connection (and its upstream OAuth token). */

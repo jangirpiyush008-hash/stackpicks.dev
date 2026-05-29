@@ -3,6 +3,7 @@ import { executeSlackTool } from './slack';
 import { executeNotionTool } from './notion';
 import { executeLinearTool } from './linear';
 import { executeStripeTool } from './stripe';
+import { executeFirecrawlTool } from './firecrawl';
 import type { Provider } from '../tools';
 
 interface MCPContent {
@@ -43,7 +44,8 @@ export async function executeTool(
       return executeLinearTool(toolName, args, accessToken);
     case 'stripe':
       return executeStripeTool(toolName, args, accessToken);
-    // firecrawl lands here next.
+    case 'firecrawl':
+      return executeFirecrawlTool(toolName, args, accessToken);
     default:
       return {
         ok: false,
