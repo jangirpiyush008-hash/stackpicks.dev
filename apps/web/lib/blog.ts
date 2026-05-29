@@ -29,8 +29,113 @@ const NEW_TODAY = '2026-05-23';
 const LATEST = '2026-05-26';
 const TODAY_27 = '2026-05-27';
 const TODAY_28 = '2026-05-28';
+const TODAY_29 = '2026-05-29';
 
 export const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: 'mcp-2-0-explained-2026',
+    title: 'MCP 2.0 Explained — Stateless Core, OAuth Login & MCP Apps (2026-07-28 Spec)',
+    excerpt: 'Anthropic shipped the biggest Model Context Protocol revision since launch. What the 2026-07-28 release candidate changes — stateless core, OAuth 2.1 login, MCP Apps, Tasks, Server Cards — and what it means for connecting apps to Claude.',
+    query: 'mcp 2.0 explained stateless oauth spec',
+    monthly_searches: 6000,
+    reading_time: 9,
+    published_at: TODAY_29,
+    updated_at: TODAY_29,
+    author: 'Piyush Jangir',
+    category: 'AI Tooling',
+    quick_answer: 'MCP 2.0 is the 2026-07-28 Model Context Protocol release candidate (published May 21, 2026) — the largest revision since the protocol launched in November 2024. The headline changes: a stateless protocol core (servers run behind a plain load balancer, no sticky sessions), hardened OAuth 2.1 authorization so connecting a server can be a single Google or GitHub login with no JSON config, plus three new building blocks — MCP Apps (server-rendered UIs), Tasks (long-running work), and Server Cards (capability discovery via a .well-known URL). The final spec lands July 28, 2026.',
+    faqs: [
+      { question: 'What is MCP 2.0?', answer: 'MCP 2.0 is shorthand for the 2026-07-28 Model Context Protocol release candidate, published May 21, 2026 by Anthropic and the MCP working group. It is the largest revision since MCP launched in November 2024. Its core changes are a stateless protocol core, hardened OAuth 2.1 authorization, and three new extensions: MCP Apps, Tasks, and Server Cards. The final specification is scheduled for July 28, 2026.' },
+      { question: 'What does "stateless MCP" mean?', answer: 'In the original MCP, a remote server held a session per client — requiring sticky sessions, a shared session store, and gateway-level packet inspection to route requests. MCP 2.0 makes the protocol core stateless: each request carries everything the server needs, so a remote MCP server can sit behind a plain round-robin load balancer and scale horizontally like any normal web API. This is the single biggest operability win in the spec.' },
+      { question: 'How does OAuth work in MCP 2.0?', answer: 'MCP 2.0 hardens authorization to mirror how OAuth 2.0 and OpenID Connect are actually deployed: proper refresh-token handling, scope accumulation, and client registration (Dynamic Client Registration / Client ID Metadata Documents). The practical effect is that connecting an MCP server can be a single Google or GitHub login in your AI client — no JSON config files, no API keys to copy or rotate. MCP requires OAuth 2.1 with PKCE, not plain OAuth 2.0.' },
+      { question: 'What are MCP Apps, Tasks, and Server Cards?', answer: 'They are the three new building blocks in MCP 2.0. MCP Apps lets a server return server-rendered UI (not just text/JSON) so a tool can show a real interface inside the client. Tasks adds first-class support for long-running work — kick off a job, poll or get notified on completion, instead of blocking a single request. Server Cards expose structured server metadata at a .well-known URL so registries, browsers, and crawlers can discover a server\'s capabilities without connecting to it.' },
+      { question: 'How many MCP servers exist in 2026?', answer: 'As of May 24, 2026, the official MCP Registry counted 9,652 latest server records and 28,959 total server/version records. Adoption has been steep since the November 2024 launch — Claude, Cursor, Cline, Windsurf, GitHub Copilot, plus first-party servers from Atlassian, Stripe, Supabase, Sentry, and others. MCP is now the de facto standard for connecting AI agents to external tools.' },
+      { question: 'Do I need to rebuild my MCP setup for 2.0?', answer: 'Not immediately. The release candidate ships with a ten-week validation window before the final spec on July 28, 2026, and a formal deprecation policy so existing servers keep working. If you connect apps through a managed OAuth gateway like StackPicks Connect, you do not have to track the spec at all — the gateway handles transport, auth, and version changes for you, and your one connection URL stays the same.' },
+    ],
+    content: `On May 21, 2026, Anthropic and the MCP working group published the **2026-07-28 release candidate** — the biggest revision of the Model Context Protocol since it launched in November 2024. Most coverage called it "MCP 2.0," and the name fits: this is not a point release.
+
+If you connect tools to Claude, Cursor, or any agent, here's what actually changed, why it matters, and what you do (and don't) need to do about it.
+
+## The four headline changes
+
+### 1. A stateless protocol core
+
+The original MCP kept a **session** per client. A remote server needed sticky sessions, a shared session store, and deep packet inspection at the gateway just to route a request to the right place. That made remote MCP servers annoying to scale.
+
+MCP 2.0 makes the core **stateless**. Each request carries what the server needs, so a remote MCP server can now sit behind a plain round-robin load balancer and scale horizontally like any normal web API. This is the single biggest operability win in the spec — it's what turns "host an MCP server" from a special-case deployment into a boring one.
+
+### 2. OAuth 2.1 login, no JSON config
+
+Six proposals in the RC harden authorization to match how OAuth 2.0 and OpenID Connect are *actually* deployed: proper refresh-token handling, scope accumulation, and standard client registration (Dynamic Client Registration and Client ID Metadata Documents).
+
+The practical effect is the part builders will feel: **connecting an MCP server can be a single Google or GitHub login** — no \`claude_desktop_config.json\` to edit, no API key to copy and rotate. MCP mandates OAuth 2.1 with PKCE (not plain OAuth 2.0).
+
+This is exactly the model we bet on with [StackPicks Connect](/connect): you log in once in the browser, and the gateway holds the tokens. MCP 2.0 makes that the default direction for the whole ecosystem.
+
+### 3. MCP Apps, Tasks, and Server Cards
+
+Three new building blocks ship as first-class extensions:
+
+| Extension | What it adds |
+|---|---|
+| **MCP Apps** | Server-rendered UIs — a tool can return a real interface, not just text/JSON, inside the client |
+| **Tasks** | First-class long-running work — start a job, get notified on completion, instead of blocking one request |
+| **Server Cards** | Structured server metadata at a \`.well-known\` URL so registries and crawlers discover capabilities without connecting |
+
+Server Cards in particular matter for discovery — they're the MCP-native equivalent of the \`/llms.txt\` idea: a machine-readable description of what a server can do, fetchable before you ever open a connection.
+
+### 4. A formal deprecation policy
+
+For the first time, MCP has a stated deprecation policy and a **ten-week validation window** before the final spec publishes on **July 28, 2026**. Existing servers keep working. This is the boring-but-important part that signals MCP is now infrastructure, not an experiment.
+
+## The ecosystem is moving the same direction
+
+Two launches in the same week prove the OAuth-gateway pattern is winning:
+
+- **Atlassian's MCP server hit GA** — Claude reads and writes Jira, Confluence, and Compass through OAuth, no token juggling.
+- **Base shipped an MCP gateway** letting Claude and ChatGPT execute onchain DeFi actions across six protocols (Uniswap, Morpho, Avantis) via OAuth 2.1 — without ever exposing private keys.
+
+And the [official MCP Registry](https://github.com/modelcontextprotocol) crossed **9,652 servers** (28,959 total version records) as of May 24, 2026. The standard isn't coming — it's here.
+
+## What this means for you
+
+**If you build MCP servers:** the stateless core is your upgrade path to painless scaling, and Server Cards are worth adopting early for discovery. You have until July 28 plus the deprecation policy's grace period — no fire drill.
+
+**If you just want Claude to use your apps:** you don't need to track any of this. The whole point of a managed gateway is that it absorbs spec churn. With [StackPicks Connect](/connect) you connect apps once via browser OAuth and paste one URL — \`https://stackpicks.dev/api/mcp\` — into Claude. When the transport, auth, or spec version changes, the gateway handles it. Your connection URL never changes.
+
+## What we shipped this week
+
+MCP 2.0's OAuth-first direction is the model StackPicks Connect already runs on. This week we added four more one-click OAuth providers to the gateway:
+
+- **Calendly** — read event types, scheduled events, and invitees (live now)
+- **GitLab** — projects, issues, merge requests, file reads
+- **Airtable** — bases, tables, records (read + write)
+- **Asana** — projects, tasks (create + update)
+
+Each is a single browser login on the [Connect dashboard](/connect) — exactly the experience MCP 2.0 is standardizing across the ecosystem.
+
+## How to connect Claude in under two minutes
+
+1. Sign up at [stackpicks.dev](/connect) and connect an app via OAuth (start with GitHub or Calendly)
+2. In Claude → **Settings → Connectors → Add custom connector**
+3. Paste: \`https://stackpicks.dev/api/mcp\`
+4. Claude opens a browser → log into StackPicks → approve
+5. Ask: *"List my upcoming Calendly events"* — it works
+
+No JSON, no API key — the same single-login flow MCP 2.0 makes the standard.
+
+## Bottom line
+
+MCP 2.0 (the 2026-07-28 RC) does three things that matter: makes servers **stateless** so they scale, makes auth a **single OAuth login** instead of config files, and adds **Apps, Tasks, and Server Cards** as real building blocks. The ecosystem — Atlassian, Base, a 9,600-server registry — is already moving with it.
+
+The takeaway for builders who just want results: the OAuth-gateway model won. [StackPicks Connect](/connect) gives you that today — one URL, browser login, a growing catalog of apps, bundled into the ₹99 / $2.99 lifetime plan.
+
+## Related reading
+
+- [MCP Servers Explained](/blog/mcp-explained) — the full 2026 guide + 89-server directory
+- [One MCP for All Your Apps](/blog/one-mcp-for-all-apps-composio-alternative-2026) — the unified-gateway model
+- [89 MCP Servers Directory](/mcp) — browse + install the local ones a gateway can't reach`,
+  },
   {
     slug: 'one-mcp-for-all-apps-composio-alternative-2026',
     title: 'One MCP for All Your Apps — How to Connect 800+ Tools to Claude (2026)',
