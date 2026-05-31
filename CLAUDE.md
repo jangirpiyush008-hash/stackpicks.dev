@@ -415,6 +415,27 @@ sales? If not, flag it as low-priority.
    registrations, payments) vs **[ME]** (code, content, executors).
 5. Frame all of it by the prime directive above.
 
+**Standing rule — "search latest news" → ship a blog post (SEO + GEO):**
+When Piyush asks me to search/research the latest news (MCP, AI agents, dev
+tools, SEO/GEO), I do NOT just summarize in chat. I also **write or update a
+blog post** in `apps/web/lib/blog.ts` targeting the freshest, lowest-competition
+keyword from that news, optimized for BOTH:
+- **SEO** (Google/Bing): keyword in title/slug/H1, internal links in + out,
+  auto-wired into sitemap/RSS, IndexNow ping after deploy.
+- **GEO** (AI engines): `quick_answer` + 4-6 `faqs` (FAQPage JSON-LD), pinned in
+  `/llms.txt` "Latest posts", citation-friendly tables/lists, dated, cite sources.
+Freshness is the edge — publish while the keyword is days old and uncontested.
+Then tie it back to StackPicks Connect / the directory with internal CTAs.
+
+**Distribution = OWNED channels only (Piyush has NO Reddit/HN/dev.to/social):**
+1. **Newsletter** (Resend) — send/queue the post to the owned list.
+2. **On-site internal linking** — link new post from related posts + /mcp +
+   /connect + blog index (equity from established pages).
+3. **Google Search Console + Bing Webmaster** — Request indexing / Submit URL.
+4. **IndexNow** — automated ping (ChatGPT Search + Bing crawl within hours).
+5. **Network share** (Piyush's own WhatsApp/contacts).
+Never assume a social account; default to these five.
+
 **When Piyush says "End today"**:
 - Summarize what got done.
 - Append a dated entry to `docs/DAILY-LOG.md` (newest at top), commit + push.

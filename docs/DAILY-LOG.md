@@ -10,6 +10,46 @@ Two daily tracks:
 
 ---
 
+## 2026-05-31 (Day 3 of the ritual — 2-day catch-up for 5-30 + 5-31)
+
+### Shipped today
+- **Connect Day 4 — 5 platforms LIVE via API-key path (+26 tools, zero Nango):**
+  - New executors: `core/connect/executors/{vercel,cloudflare,sentry,supabase-mgmt,figma}.ts`
+  - All token-based, so wired through the encrypted API-key path (Option B) — no OAuth app registration needed. User pastes a token on /connect and it works.
+  - Added to `API_KEY_PROVIDERS` + `API_KEY_HINTS` (with get-token URLs + prefixes; Sentry prefix omitted — multiple valid formats), Provider union, dispatcher, tool registry.
+  - Catalog flipped live: vercel, cloudflare, sentry, supabase, figma (5 tools each).
+  - **Live providers now: 11** — github, slack, notion, linear, firecrawl, calendly, + vercel, cloudflare, sentry, supabase, figma.
+  - Figma note: uses `X-Figma-Token` header (not Bearer) — handled in its executor.
+- **SEO — 2 timely blog posts (Day 6 + Day 7 catch-up, the real wins):**
+  - `/blog/claude-opus-4-8-explained-2026` — "Claude Opus 4.8 Explained" (target ~18k/mo, model launched May 28, 3 days old, low competition)
+  - `/blog/aws-mcp-server-ga-2026` — "AWS MCP Server Hits GA" (target ~5.5k/mo, enterprise MCP angle, ties to /mcp + /connect)
+  - Both: quick_answer + 6 FAQs (FAQPage JSON-LD), internal links, auto-wired into sitemap/llms.txt/RSS. Both pinned via /llms.txt "Latest posts" (newest-first).
+- **Process:** confirmed standing rule in CLAUDE.md — "search latest news" → ship SEO+GEO blog post; distribution via OWNED channels only (newsletter, internal links, GSC/Bing, IndexNow, network).
+
+### Files touched (for memory)
+- `core/connect/executors/{vercel,cloudflare,sentry,supabase-mgmt,figma}.ts` (new)
+- `core/connect/executors/index.ts` (5 dispatcher cases)
+- `core/connect/tools.ts` (Provider union + 26 tool defs)
+- `core/connect/providers.ts` (5 API-key providers + hints)
+- `apps/web/lib/connect-apps.ts` (5 → live)
+- `apps/web/lib/blog.ts` (2 new posts + TODAY_30/TODAY_31 consts)
+- `CLAUDE.md` (standing news→blog rule + owned-channel distribution)
+- `apps/web/app/llms.txt/route.ts` (pinned latest posts — done 5-29)
+
+### State
+- Connect: 11 live (toward 50 for public launch). GitLab/Airtable/Asana still code-ready, awaiting Piyush Nango registration.
+- SEO: blog posts #11, #12, #13 shipped (MCP 2.0, Opus 4.8, AWS MCP GA). Calendar Days 6-7 are [YOU] tasks (directories + indexing review).
+- News of the day logged: Opus 4.8 (May 28), AWS MCP GA, Atlassian MCP token updates, MS Agent 365 GA, OpenCode 150k stars.
+
+### Tomorrow / next
+- **[YOU]** Test a Day-4 connection: paste a Vercel/Figma token on /connect (admin bypass), confirm tools appear in Claude.
+- **[YOU]** SEO Day 6: submit LaunchingNext + StartupBase. Day 7: GSC/Bing indexing review.
+- **[YOU]** Register GitLab/Airtable/Asana in Nango (prod). Set RESEND_AUDIENCE_ID in Railway. Start Google OAuth verification.
+- **[YOU]** Newsletter: send the 3 new posts as a Resend broadcast to the imported list.
+- **[ME]** Connect Day 5 (brave-search, tavily, exa, airtable, canva) next session — tavily/exa/brave are API-key (fast).
+
+---
+
 ## 2026-05-29 (Day 2 of the daily ritual)
 
 ### Shipped today
