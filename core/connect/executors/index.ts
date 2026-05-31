@@ -8,6 +8,11 @@ import { executeGitlabTool } from './gitlab';
 import { executeAirtableTool } from './airtable';
 import { executeCalendlyTool } from './calendly';
 import { executeAsanaTool } from './asana';
+import { executeVercelTool } from './vercel';
+import { executeCloudflareTool } from './cloudflare';
+import { executeSentryTool } from './sentry';
+import { executeSupabaseTool } from './supabase-mgmt';
+import { executeFigmaTool } from './figma';
 import type { Provider } from '../tools';
 
 interface MCPContent {
@@ -58,6 +63,16 @@ export async function executeTool(
       return executeCalendlyTool(toolName, args, accessToken);
     case 'asana':
       return executeAsanaTool(toolName, args, accessToken);
+    case 'vercel':
+      return executeVercelTool(toolName, args, accessToken);
+    case 'cloudflare':
+      return executeCloudflareTool(toolName, args, accessToken);
+    case 'sentry':
+      return executeSentryTool(toolName, args, accessToken);
+    case 'supabase':
+      return executeSupabaseTool(toolName, args, accessToken);
+    case 'figma':
+      return executeFigmaTool(toolName, args, accessToken);
     default:
       return {
         ok: false,

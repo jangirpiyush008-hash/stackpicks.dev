@@ -19,7 +19,12 @@ export type Provider =
   | 'gitlab'
   | 'airtable'
   | 'calendly'
-  | 'asana';
+  | 'asana'
+  | 'vercel'
+  | 'cloudflare'
+  | 'sentry'
+  | 'supabase'
+  | 'figma';
 
 export interface ConnectTool {
   name: string;            // 'github_create_pr' — globally unique, machine-readable
@@ -726,6 +731,274 @@ const ASANA_TOOLS: ConnectTool[] = [
   },
 ];
 
+const VERCEL_TOOLS: ConnectTool[] = [
+  {
+    name: 'vercel_me',
+    provider: 'vercel',
+    description: 'Return the authenticated Vercel user (id, username, email).',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'vercel_list_projects',
+    provider: 'vercel',
+    description: 'List Vercel projects with framework + latest deployment count.',
+    inputSchema: {
+      type: 'object',
+      properties: { limit: { type: 'integer', minimum: 1, maximum: 100 } },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'vercel_list_deployments',
+    provider: 'vercel',
+    description: 'List recent Vercel deployments, optionally filtered by project_id.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_id: { type: 'string' },
+        limit: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'vercel_get_deployment',
+    provider: 'vercel',
+    description: 'Get a single Vercel deployment by id (state, url, target).',
+    inputSchema: {
+      type: 'object',
+      properties: { deployment_id: { type: 'string' } },
+      required: ['deployment_id'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'vercel_list_domains',
+    provider: 'vercel',
+    description: 'List domains on the Vercel account with verification status.',
+    inputSchema: {
+      type: 'object',
+      properties: { limit: { type: 'integer', minimum: 1, maximum: 100 } },
+      additionalProperties: false,
+    },
+  },
+];
+
+const CLOUDFLARE_TOOLS: ConnectTool[] = [
+  {
+    name: 'cloudflare_verify_token',
+    provider: 'cloudflare',
+    description: 'Verify the Cloudflare API token and return its status + permissions.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'cloudflare_list_zones',
+    provider: 'cloudflare',
+    description: 'List Cloudflare zones (domains) with status + plan. Get zone_id from here.',
+    inputSchema: {
+      type: 'object',
+      properties: { per_page: { type: 'integer', minimum: 1, maximum: 100 } },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'cloudflare_list_dns_records',
+    provider: 'cloudflare',
+    description: 'List DNS records for a zone. Requires zone_id (from cloudflare_list_zones).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        zone_id: { type: 'string' },
+        type: { type: 'string', description: 'Filter by record type (A, CNAME, TXT, MX…).' },
+        per_page: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      required: ['zone_id'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'cloudflare_get_zone',
+    provider: 'cloudflare',
+    description: 'Get a single Cloudflare zone by zone_id (nameservers, status).',
+    inputSchema: {
+      type: 'object',
+      properties: { zone_id: { type: 'string' } },
+      required: ['zone_id'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'cloudflare_list_workers',
+    provider: 'cloudflare',
+    description: 'List Cloudflare Workers scripts for an account (auto-detects account_id if omitted).',
+    inputSchema: {
+      type: 'object',
+      properties: { account_id: { type: 'string', description: 'Optional — auto-detected from token.' } },
+      additionalProperties: false,
+    },
+  },
+];
+
+const SENTRY_TOOLS: ConnectTool[] = [
+  {
+    name: 'sentry_list_organizations',
+    provider: 'sentry',
+    description: 'List Sentry organizations the token can access (slug needed for issues).',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'sentry_list_projects',
+    provider: 'sentry',
+    description: 'List Sentry projects with platform + organization slug.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'sentry_list_issues',
+    provider: 'sentry',
+    description: 'List issues for a project. Requires organization_slug + project_slug. Optional query (default "is:unresolved").',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        organization_slug: { type: 'string' },
+        project_slug: { type: 'string' },
+        query: { type: 'string', description: 'Sentry search, e.g. "is:unresolved level:error".' },
+        limit: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      required: ['organization_slug', 'project_slug'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'sentry_get_issue',
+    provider: 'sentry',
+    description: 'Get a single Sentry issue by issue_id (counts, first/last seen, permalink).',
+    inputSchema: {
+      type: 'object',
+      properties: { issue_id: { type: 'string' } },
+      required: ['issue_id'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'sentry_list_events',
+    provider: 'sentry',
+    description: 'List recent events for a Sentry issue by issue_id.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        issue_id: { type: 'string' },
+        limit: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      required: ['issue_id'],
+      additionalProperties: false,
+    },
+  },
+];
+
+const SUPABASE_TOOLS: ConnectTool[] = [
+  {
+    name: 'supabase_list_projects',
+    provider: 'supabase',
+    description: 'List Supabase projects (id/ref, name, region, status) via the Management API.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'supabase_list_organizations',
+    provider: 'supabase',
+    description: 'List Supabase organizations the token can access.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'supabase_get_project',
+    provider: 'supabase',
+    description: 'Get a single Supabase project by project_ref.',
+    inputSchema: {
+      type: 'object',
+      properties: { project_ref: { type: 'string' } },
+      required: ['project_ref'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'supabase_list_functions',
+    provider: 'supabase',
+    description: 'List Edge Functions for a Supabase project by project_ref.',
+    inputSchema: {
+      type: 'object',
+      properties: { project_ref: { type: 'string' } },
+      required: ['project_ref'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'supabase_get_project_api_keys',
+    provider: 'supabase',
+    description: 'List the API key names/tags for a Supabase project by project_ref.',
+    inputSchema: {
+      type: 'object',
+      properties: { project_ref: { type: 'string' } },
+      required: ['project_ref'],
+      additionalProperties: false,
+    },
+  },
+];
+
+const FIGMA_TOOLS: ConnectTool[] = [
+  {
+    name: 'figma_me',
+    provider: 'figma',
+    description: 'Return the authenticated Figma user (id, email, handle).',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'figma_get_file',
+    provider: 'figma',
+    description: 'Get a Figma file\'s metadata + page list by file_key (the part after /file/ in a Figma URL).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        file_key: { type: 'string' },
+        depth: { type: 'integer', minimum: 1, maximum: 4, description: 'Node-tree depth. Default 2.' },
+      },
+      required: ['file_key'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'figma_get_comments',
+    provider: 'figma',
+    description: 'List comments on a Figma file by file_key.',
+    inputSchema: {
+      type: 'object',
+      properties: { file_key: { type: 'string' } },
+      required: ['file_key'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'figma_list_project_files',
+    provider: 'figma',
+    description: 'List files in a Figma project by project_id.',
+    inputSchema: {
+      type: 'object',
+      properties: { project_id: { type: 'string' } },
+      required: ['project_id'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'figma_list_team_projects',
+    provider: 'figma',
+    description: 'List projects for a Figma team by team_id (from the team URL).',
+    inputSchema: {
+      type: 'object',
+      properties: { team_id: { type: 'string' } },
+      required: ['team_id'],
+      additionalProperties: false,
+    },
+  },
+];
+
 // Tools grow as each provider is wired (code + Nango integration).
 export const CONNECT_TOOLS: ConnectTool[] = [
   ...GITHUB_TOOLS,
@@ -738,6 +1011,11 @@ export const CONNECT_TOOLS: ConnectTool[] = [
   ...AIRTABLE_TOOLS,
   ...CALENDLY_TOOLS,
   ...ASANA_TOOLS,
+  ...VERCEL_TOOLS,
+  ...CLOUDFLARE_TOOLS,
+  ...SENTRY_TOOLS,
+  ...SUPABASE_TOOLS,
+  ...FIGMA_TOOLS,
 ];
 
 export function toolsForProviders(activeProviders: Set<Provider>): ConnectTool[] {

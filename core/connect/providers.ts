@@ -8,6 +8,12 @@
 
 export const API_KEY_PROVIDERS: ReadonlySet<string> = new Set([
   'firecrawl',
+  // Day 4 — token-based platforms (no Nango OAuth app needed; paste a token):
+  'vercel',
+  'cloudflare',
+  'sentry',
+  'supabase',
+  'figma',
   // Coming as executors are added: 'tavily', 'exa', 'openai', 'perplexity', …
 ]);
 
@@ -21,5 +27,28 @@ export const API_KEY_HINTS: Record<string, { label: string; getUrl: string; pref
     label: 'Firecrawl API key',
     getUrl: 'https://www.firecrawl.dev/app/api-keys',
     prefix: 'fc-',
+  },
+  vercel: {
+    label: 'Vercel access token',
+    getUrl: 'https://vercel.com/account/tokens',
+  },
+  cloudflare: {
+    label: 'Cloudflare API token',
+    getUrl: 'https://dash.cloudflare.com/profile/api-tokens',
+  },
+  sentry: {
+    label: 'Sentry auth token',
+    getUrl: 'https://sentry.io/settings/account/api/auth-tokens/',
+    // No prefix check — Sentry has multiple valid token formats (sntrys_, legacy hex).
+  },
+  supabase: {
+    label: 'Supabase personal access token',
+    getUrl: 'https://supabase.com/dashboard/account/tokens',
+    prefix: 'sbp_',
+  },
+  figma: {
+    label: 'Figma personal access token',
+    getUrl: 'https://www.figma.com/developers/api#access-tokens',
+    prefix: 'figd_',
   },
 };
