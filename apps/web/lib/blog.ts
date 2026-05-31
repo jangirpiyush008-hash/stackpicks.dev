@@ -30,8 +30,86 @@ const LATEST = '2026-05-26';
 const TODAY_27 = '2026-05-27';
 const TODAY_28 = '2026-05-28';
 const TODAY_29 = '2026-05-29';
+const TODAY_30 = '2026-05-30';
+const TODAY_31 = '2026-05-31';
 
 export const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: 'claude-opus-4-8-explained-2026',
+    title: 'Claude Opus 4.8 Explained — What\'s New, Pricing, and Should You Upgrade (2026)',
+    excerpt: 'Anthropic shipped Claude Opus 4.8 on May 28, 2026 — stronger benchmarks, effort control, dynamic Claude Code workflows, and a cheaper fast mode. What actually changed, what it costs, and whether to switch.',
+    query: 'claude opus 4.8 explained whats new pricing',
+    monthly_searches: 18000,
+    reading_time: 8,
+    published_at: TODAY_30,
+    updated_at: TODAY_30,
+    author: 'Piyush Jangir',
+    category: 'AI Tooling',
+    quick_answer: 'Claude Opus 4.8 is Anthropic\'s frontier model, released May 28, 2026. It improves on Opus 4.7 with stronger benchmark scores, better multi-step collaboration, and improved honesty (fewer confident-but-wrong answers). The launch adds three practical features: effort control in claude.ai (trade speed for depth per task), dynamic workflows in Claude Code, and a more affordable fast mode. API access is available immediately. For most builders the upgrade is a drop-in win — same API shape, better output — but the fast mode is the bigger deal for cost-sensitive, high-volume agent work.',
+    faqs: [
+      { question: 'What is Claude Opus 4.8?', answer: 'Claude Opus 4.8 is Anthropic\'s frontier large language model, announced May 28, 2026. It is the most capable model in the Claude family, improving on Opus 4.7 with stronger benchmark performance, better collaboration on multi-step tasks, and improved honesty. It powers claude.ai, the Claude API, and Claude Code.' },
+      { question: 'What is new in Claude Opus 4.8 vs Opus 4.7?', answer: 'Three practical additions beyond raw quality: (1) effort control in claude.ai — you can dial how much reasoning the model spends per task, trading speed for depth; (2) dynamic workflows in Claude Code, letting the CLI agent adapt its plan mid-task; (3) a more affordable fast mode for high-volume, latency-sensitive work. The model also scores higher on honesty, meaning fewer confident-but-wrong answers.' },
+      { question: 'How much does Claude Opus 4.8 cost?', answer: 'Opus 4.8 is available on the Claude API at launch and is included in Claude Pro and Max consumer plans (Pro is roughly the equivalent of $20/month, or about ₹1,700/month with Indian pricing and taxes). The new fast mode is priced lower per token than standard Opus, aimed at high-volume agent workloads. Check Anthropic\'s pricing page for exact per-million-token rates, which vary by input/output and mode.' },
+      { question: 'Should I upgrade to Claude Opus 4.8?', answer: 'For most builders, yes — it is a drop-in upgrade with the same API shape and better output, so there is little downside. If you run high-volume agent loops where cost matters more than peak reasoning, the new fast mode is the bigger win than the frontier quality bump. If you pin a specific model version in production, test 4.8 against your eval set before switching, as output style shifts slightly between versions.' },
+      { question: 'Does Claude Opus 4.8 work with MCP and Claude Code?', answer: 'Yes. Opus 4.8 fully supports the Model Context Protocol (MCP), so any MCP server or gateway you already use keeps working. Claude Code gains dynamic workflows in this release, letting the agent adjust its plan as a task unfolds. If you connect apps through a managed gateway like StackPicks Connect, nothing changes — the model upgrade is transparent to your tool connections.' },
+      { question: 'What is "effort control" in Claude Opus 4.8?', answer: 'Effort control is a new claude.ai setting that lets you choose how much reasoning the model spends on a given task. Higher effort means deeper, more thorough answers at the cost of speed; lower effort means faster responses for simple work. It puts the speed-versus-depth tradeoff in your hands instead of being fixed per model.' },
+    ],
+    content: `On May 28, 2026, Anthropic released **Claude Opus 4.8** — the new frontier model in the Claude family. If you build with Claude, use Claude Code daily, or run agents on the API, here's what actually changed and whether it's worth switching.
+
+## The short version
+
+Opus 4.8 is a **drop-in upgrade** over Opus 4.7: same API shape, better output. The headline gains are stronger benchmarks, better multi-step collaboration, and improved honesty — fewer answers that are confidently wrong. But the features that matter day-to-day are the three practical additions shipped alongside it.
+
+## What's new
+
+### 1. Effort control in claude.ai
+
+You can now dial **how much reasoning** the model spends per task. High effort = deeper, more thorough answers, slower. Low effort = fast responses for simple work. The speed-vs-depth tradeoff is now in your hands instead of fixed per model. For research and hard debugging, crank it up; for quick reformatting, drop it down and save time.
+
+### 2. Dynamic workflows in Claude Code
+
+Claude Code's CLI agent can now **adapt its plan mid-task** instead of committing to one upfront. In practice this means fewer dead-end runs on long multi-file changes — the agent re-plans when it hits something unexpected. Combined with the existing \`/goal\` command for cross-turn completion conditions, this makes long agentic sessions more reliable.
+
+### 3. A cheaper fast mode
+
+This is the underrated one. The new **fast mode** is priced lower per token than standard Opus, aimed at high-volume, latency-sensitive workloads. If you run agent loops that fire hundreds of model calls, fast mode can cut your bill meaningfully while keeping most of the quality.
+
+## Quality + honesty
+
+Anthropic emphasized **honesty** improvements: Opus 4.8 is less likely to produce confident-but-wrong output. For anyone using Claude in production — where a plausible hallucination is worse than an "I'm not sure" — this is a real reliability gain, not just a benchmark number.
+
+## Pricing
+
+| Plan | What you get |
+|---|---|
+| **Claude API** | Opus 4.8 available immediately; standard + fast-mode pricing |
+| **Claude Pro** | Included (~$20/mo, ~₹1,700/mo with Indian pricing + tax) |
+| **Claude Max** | Included, higher limits |
+
+The fast mode's lower per-token rate is the cost story worth modeling if you run volume.
+
+## Should you upgrade?
+
+- **Most builders:** Yes. Drop-in, same API, better output, little downside.
+- **High-volume agent loops:** The fast mode matters more than the frontier bump — model the cost savings.
+- **Pinned production version:** Test 4.8 against your eval set first. Output style shifts slightly between versions, so don't blind-swap a prompt-tuned pipeline.
+
+## Does it affect your MCP / tool setup?
+
+No. Opus 4.8 fully supports the [Model Context Protocol](/blog/mcp-explained), so every MCP server or gateway you use keeps working unchanged. If you connect your apps through a managed gateway like [StackPicks Connect](/connect), the model upgrade is completely transparent — your one connection URL and all your connected apps behave exactly as before, now driven by a smarter model.
+
+That's the quiet advantage of the gateway pattern: when the frontier model changes (and in 2026 it changes every few weeks), your tooling doesn't have to.
+
+## Bottom line
+
+Claude Opus 4.8 is an incremental-but-real upgrade: better quality, better honesty, and three features — effort control, dynamic Claude Code workflows, and a cheaper fast mode — that change how you actually work. Upgrade unless you have a pinned, eval-gated production pipeline, in which case test first.
+
+## Related reading
+
+- [MCP 2.0 Explained](/blog/mcp-2-0-explained-2026) — the protocol upgrade landing the same month
+- [MCP Servers Explained](/blog/mcp-explained) — the full 2026 guide + 89-server directory
+- [Connect 50+ apps to Claude with one MCP](/connect) — give Opus 4.8 real-world hands`,
+  },
   {
     slug: 'mcp-2-0-explained-2026',
     title: 'MCP 2.0 Explained — Stateless Core, OAuth Login & MCP Apps (2026-07-28 Spec)',
@@ -137,6 +215,87 @@ The takeaway for builders who just want results: the OAuth-gateway model won. [S
 - [89 MCP Servers Directory](/mcp) — browse + install the local ones a gateway can't reach`,
   },
   {
+    slug: 'aws-mcp-server-ga-2026',
+    title: 'AWS MCP Server Hits GA — What Managed MCP Means for AI Coding Agents (2026)',
+    excerpt: 'AWS made its managed Model Context Protocol server generally available in May 2026, with full API coverage and IAM-based governance. What it does, who it is for, and how it fits the wider MCP ecosystem.',
+    query: 'aws mcp server ga managed model context protocol',
+    monthly_searches: 5500,
+    reading_time: 8,
+    published_at: TODAY_31,
+    updated_at: TODAY_31,
+    author: 'Piyush Jangir',
+    category: 'AI Tooling',
+    quick_answer: 'The AWS MCP Server reached general availability in May 2026. It is a managed Model Context Protocol server that gives AI coding agents — Claude, Cursor, and others — controlled access to AWS APIs, documentation, and operational workflows through one standard interface, governed by AWS IAM. Instead of wiring each AWS service to your agent by hand, you connect the managed MCP server once and your agent can query and operate AWS resources within the permissions IAM grants. It signals that hyperscalers now treat MCP as the default way agents touch their platforms.',
+    faqs: [
+      { question: 'What is the AWS MCP Server?', answer: 'The AWS MCP Server is a managed Model Context Protocol server, generally available since May 2026, that exposes AWS APIs, documentation, and operational workflows to AI coding agents through the standard MCP interface. It lets agents like Claude or Cursor query and operate AWS resources without custom per-service integration, with access scoped by AWS IAM.' },
+      { question: 'How is the AWS MCP Server governed for security?', answer: 'Access is controlled through AWS IAM — the same identity and permission system that governs the rest of AWS. An agent connected via the MCP server can only do what the underlying IAM role or user permits. This means you scope agent access with familiar IAM policies (read-only, specific services, specific resources) rather than trusting the agent or a separate permission layer.' },
+      { question: 'Why does AWS shipping an MCP server matter?', answer: 'It signals that hyperscalers now treat MCP as the default interface for AI agents, not an experiment. With AWS joining Anthropic, GitHub, Atlassian, Stripe, Supabase, and others in shipping first-party MCP servers, MCP is effectively the standard substrate for connecting agents to platforms. For builders, it means less custom glue and more reuse across tools.' },
+      { question: 'How is the AWS MCP Server different from a unified gateway like StackPicks Connect?', answer: 'The AWS MCP Server is a single first-party server for AWS, governed by IAM — deep access to one platform. A unified gateway like StackPicks Connect aggregates many apps (GitHub, Slack, Notion, Calendly and more) behind one OAuth login and one connection URL. They are complementary: use the AWS server for deep AWS operations, use a gateway for breadth across the SaaS apps an agent touches day to day.' },
+      { question: 'Do I need an MCP gateway if AWS, GitHub, and Atlassian all ship their own servers?', answer: 'It depends on breadth. If you only touch one or two platforms, installing their first-party servers directly is fine. But once an agent needs five, ten, or more apps, managing that many individual server configs, logins, and tokens becomes the same N-integrations problem MCP was meant to solve. A gateway collapses them into one connection — that is its value, alongside (not instead of) deep first-party servers.' },
+      { question: 'How many MCP servers and installs exist in 2026?', answer: 'Anthropic\'s Model Context Protocol crossed 97 million installs by March 2026, and the official MCP Registry counted over 9,600 distinct servers by late May 2026. Every major AI provider now ships MCP-compatible tooling, and hyperscalers including AWS have added first-party managed servers — making MCP the de facto standard for connecting AI agents to external systems.' },
+    ],
+    content: `In May 2026, AWS made its **managed Model Context Protocol (MCP) server generally available** — with full API coverage and IAM-based governance. It's a quiet release with a loud signal: the biggest cloud provider now treats MCP as the default way AI agents touch its platform.
+
+Here's what it does, who should use it, and how it fits alongside the rest of the MCP ecosystem.
+
+## What the AWS MCP Server does
+
+It gives AI coding agents — Claude, Cursor, and others — **controlled access to AWS APIs, documentation, and operational workflows** through the standard MCP interface. Instead of writing custom glue to connect each AWS service to your agent, you connect the managed MCP server once, and your agent can query and operate AWS resources within the permissions you grant.
+
+Think: "Claude, what's my current EC2 spend this month and which instances are idle?" — answered by the agent calling AWS through the MCP server, no CSV exports, no console hopping.
+
+## The IAM angle is the real story
+
+The standout feature is **IAM-based governance**. Access through the MCP server is scoped by the same AWS IAM that governs everything else in your account. An agent can only do what its IAM role permits — nothing more.
+
+This matters because the scariest part of giving an agent cloud access is blast radius. With IAM in the loop, you scope it the way you already know how:
+
+- Read-only role for an agent that just reports on infrastructure
+- Specific-service role for an agent that only manages, say, S3 or CloudWatch
+- Resource-scoped policies so the agent can't wander outside its lane
+
+No new trust model. No separate permission layer to learn. The same IAM policies you write for humans and services now bound your agents.
+
+## Why hyperscaler MCP adoption matters
+
+AWS joins a fast-growing list of first-party MCP servers: Anthropic's reference servers, GitHub (Microsoft-built), Atlassian (GA, now with token-usage optimizations), Stripe, Supabase, Sentry, and more. The protocol crossed **97 million installs by March 2026**, and the registry holds [9,600+ servers](/blog/mcp-2-0-explained-2026).
+
+When the largest cloud provider ships a managed MCP server, MCP stops being "an Anthropic thing" and becomes **infrastructure** — the assumed interface between AI agents and platforms. For builders, that means less custom integration work and more reuse across every tool you touch.
+
+## First-party servers vs a unified gateway
+
+A reasonable question: if AWS, GitHub, and Atlassian all ship their own servers, do you still need a [unified gateway](/blog/one-mcp-for-all-apps-composio-alternative-2026)?
+
+They solve different problems:
+
+| | First-party server (e.g. AWS MCP) | Unified gateway (e.g. StackPicks Connect) |
+|---|---|---|
+| Scope | Deep access to **one** platform | Breadth across **many** apps |
+| Auth | Platform-native (IAM for AWS) | One OAuth login for all apps |
+| Best for | Heavy AWS / single-platform ops | Agents that touch 5-50+ SaaS apps |
+| Setup | Install + configure per platform | One connection URL, add apps in a dashboard |
+
+The honest answer: **use both.** The AWS MCP server for deep, IAM-governed AWS operations; a gateway for the breadth of everyday apps — GitHub, Slack, Notion, Calendly, Linear — that an agent needs without managing a dozen separate server configs.
+
+Once an agent needs many apps, wiring each first-party server individually recreates the exact N-integrations problem MCP was built to kill. A gateway collapses that back into one connection. That's what we built with [StackPicks Connect](/connect): connect your apps once via OAuth, paste one URL into Claude, done.
+
+## What to do about it
+
+- **Heavy AWS users:** Adopt the AWS MCP server, scope it with a tight IAM role, and let your agent report on / operate infrastructure. Start read-only.
+- **Multi-app agents:** Pair deep first-party servers with a [unified gateway](/connect) so you're not juggling ten configs.
+- **Everyone:** Treat MCP as a settled standard now. Building agent integrations any other way in 2026 is swimming upstream.
+
+## Bottom line
+
+The AWS MCP Server going GA with IAM governance confirms MCP is the default agent-to-platform interface. Use first-party servers for depth, a gateway for breadth, and IAM (or OAuth, for SaaS) to keep the blast radius small.
+
+## Related reading
+
+- [MCP 2.0 Explained](/blog/mcp-2-0-explained-2026) — the 2026-07-28 spec: stateless core + OAuth login
+- [One MCP for All Your Apps](/blog/one-mcp-for-all-apps-composio-alternative-2026) — the unified-gateway model
+- [89 MCP Servers Directory](/mcp) — browse + install`,
+  },
+  {
     slug: 'one-mcp-for-all-apps-composio-alternative-2026',
     title: 'One MCP for All Your Apps — How to Connect 800+ Tools to Claude (2026)',
     excerpt: 'Stop installing a separate MCP server for every app. Connect GitHub, Gmail, Slack, Notion, Meta Ads and 800+ more to Claude and Cursor through one OAuth link with StackPicks Connect.',
@@ -230,7 +389,12 @@ Claude calls the ad-platform tools, pulls the numbers, and gives you the analysi
 
 The "one MCP server per app" era is ending the same way "one API integration per service" ended. A unified gateway is simply less work. [StackPicks Connect](/connect) makes it consumer-grade — one URL, browser login, 800+ apps, ₹99/$2.99 lifetime — and pairs it with our [curated directory](/preview) of open-source tools and [MCP servers](/mcp) for the local stuff a gateway can't reach.
 
-Connect your first app and give Claude real-world hands. → [Open StackPicks Connect](/connect)`,
+Connect your first app and give Claude real-world hands. → [Open StackPicks Connect](/connect)
+
+## Related reading
+
+- [MCP 2.0 Explained](/blog/mcp-2-0-explained-2026) — the 2026-07-28 spec: stateless core, OAuth login, MCP Apps
+- [MCP Servers Explained](/blog/mcp-explained) — the full 2026 guide + 89-server directory`,
   },
   {
     slug: 'claude-skills-explained-2026',
