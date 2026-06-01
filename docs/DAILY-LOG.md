@@ -10,6 +10,48 @@ Two daily tracks:
 
 ---
 
+## 2026-06-02 (Day 4 — Connect push to 20 live)
+
+### Shipped today
+- **+2 apps LIVE end-to-end via Nango (Piyush registered, Nango "Test Connection" passed):**
+  - **Todoist** (4 tools) — fixed "Invalid redirect URI" by saving redirect chip + ensuring Service URL was changed off the callback value
+  - **Dropbox** (4 tools)
+- **Connect: 5 new OAuth executors code-ready (ClickUp, Dropbox, monday, Intercom, Todoist):**
+  - Files: `core/connect/executors/{clickup,dropbox,monday,intercom,todoist}.ts`
+  - All wired into dispatcher + Provider union + tool registry, +21 tools
+- **Connect: 2 more OAuth executors code-ready (Jira, HubSpot):**
+  - Atlassian Jira uses cloudId resolution via `accessible-resources` then v3 REST; HubSpot CRM v3
+  - +9 tools — stay 'soon' until Nango registration
+- **Daily ritual:** confirmed standing rule in CLAUDE.md works (news → blog post). Wrote 3 timely posts earlier in the session (MCP 2.0, Claude Opus 4.8, AWS MCP GA) — all live.
+- **DB honesty check:** queried `oauth_connections` + `api_key_connections` in prod — both empty. "Live" means code-complete; no end-user round-trip yet. Logged this gap.
+- **Catalog flips:** Calendly (earlier), GitLab, Airtable, Asana, Todoist, Dropbox → live.
+
+### Live providers now (20)
+github, slack, notion, linear, gitlab, airtable, asana, calendly, todoist, dropbox + vercel, cloudflare, sentry, supabase, figma, firecrawl, tavily, exa, brave-search, perplexity.
+
+### Files touched today
+- `core/connect/executors/{jira,hubspot,clickup,dropbox,monday,intercom,todoist}.ts` (new)
+- `core/connect/executors/index.ts` (7 dispatcher cases)
+- `core/connect/tools.ts` (Provider union + 30 tool defs)
+- `apps/web/lib/connect-apps.ts` (Todoist + Dropbox → live)
+- `docs/DAILY-LOG.md` (this entry)
+
+### State
+- Connect: 20 live, 30 to public launch.
+- Code-ready, awaiting Nango registration (5 OAuth): ClickUp, monday.com, Intercom, Jira, HubSpot.
+- **monday.com blocked** — requires paid Developer plan. Park until plan upgrade.
+- ClickUp blocked — settings page flaky during Piyush's session; retry later.
+
+### Tomorrow / next
+- **[YOU]** Continue Nango registration queue (4 remaining): Intercom → Jira → HubSpot → retry ClickUp. Monday parked.
+- **[YOU]** Start **Google OAuth verification** (still pending, weeks of lead time — unlocks Gmail, Drive, Sheets, Calendar, Docs, GA, GSC, Google Ads = 8 apps).
+- **[YOU]** Set `RESEND_AUDIENCE_ID` in Railway.
+- **[YOU]** SEO Day 6 (LaunchingNext + StartupBase) + Day 7 (GSC + Bing indexing review) — not done today.
+- **[YOU]** Verify end-to-end: connect 1 OAuth (Todoist) + 1 API-key (Tavily) on /connect, ask Claude to use them. If both work, we trust the rest.
+- **[ME]** Next OAuth batch when you're ready: Box, Trello, Zendesk, Discord — basic + useful.
+
+---
+
 ## 2026-05-31 (Day 3 of the ritual — 2-day catch-up for 5-30 + 5-31)
 
 ### Shipped today
