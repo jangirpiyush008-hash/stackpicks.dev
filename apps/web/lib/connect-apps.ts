@@ -264,7 +264,7 @@ const CATALOG: ConnectApp[] = [
     ['pivotal-tracker', 'Pivotal Tracker',  'Agile PM'],
     ['wrike',           'Wrike',            'Enterprise PM'],
     ['teamwork',        'Teamwork',         'Client work PM'],
-    ['todoist',         'Todoist',          'Task list',                       { popular: true }],
+    ['todoist',         'Todoist',          'Task list',                       { status: 'live', popular: true, toolCount: 4 }],
     ['ticktick',        'TickTick',         'Tasks + habits'],
     ['things-3',        'Things 3',         'Cultured Code tasks'],
     ['omnifocus',       'OmniFocus',        'GTD app'],
