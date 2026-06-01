@@ -28,7 +28,9 @@ export type Provider =
   | 'tavily'
   | 'exa'
   | 'brave-search'
-  | 'perplexity';
+  | 'perplexity'
+  | 'jira'
+  | 'hubspot';
 
 export interface ConnectTool {
   name: string;            // 'github_create_pr' — globally unique, machine-readable
@@ -1128,6 +1130,118 @@ const PERPLEXITY_TOOLS: ConnectTool[] = [
   },
 ];
 
+const JIRA_TOOLS: ConnectTool[] = [
+  {
+    name: 'jira_list_projects',
+    provider: 'jira',
+    description: 'List Jira projects (id, key, name) the user can access.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'jira_search_issues',
+    provider: 'jira',
+    description: 'Search Jira issues with JQL. Example jql: "project = ENG AND status = \'In Progress\' order by updated DESC".',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        jql: { type: 'string', description: 'Jira Query Language. Default: "order by updated DESC".' },
+        limit: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'jira_get_issue',
+    provider: 'jira',
+    description: 'Get a single Jira issue by key (e.g. "ENG-123").',
+    inputSchema: {
+      type: 'object',
+      properties: { issue_key: { type: 'string' } },
+      required: ['issue_key'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'jira_create_issue',
+    provider: 'jira',
+    description: 'Create a Jira issue. Requires project_key + summary. Optional issue_type (default Task) + description.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_key: { type: 'string' },
+        summary: { type: 'string' },
+        issue_type: { type: 'string', description: 'Task, Bug, Story… Default Task.' },
+        description: { type: 'string' },
+      },
+      required: ['project_key', 'summary'],
+      additionalProperties: false,
+    },
+  },
+];
+
+const HUBSPOT_TOOLS: ConnectTool[] = [
+  {
+    name: 'hubspot_list_contacts',
+    provider: 'hubspot',
+    description: 'List recent HubSpot CRM contacts (name, email, company, phone).',
+    inputSchema: {
+      type: 'object',
+      properties: { limit: { type: 'integer', minimum: 1, maximum: 100 } },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'hubspot_search_contacts',
+    provider: 'hubspot',
+    description: 'Search HubSpot contacts by a query string (matches name, email, etc.).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        limit: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      required: ['query'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'hubspot_create_contact',
+    provider: 'hubspot',
+    description: 'Create a HubSpot contact. email recommended; firstname/lastname/company/phone optional.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string' },
+        firstname: { type: 'string' },
+        lastname: { type: 'string' },
+        company: { type: 'string' },
+        phone: { type: 'string' },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'hubspot_list_deals',
+    provider: 'hubspot',
+    description: 'List recent HubSpot deals (name, amount, stage, close date, pipeline).',
+    inputSchema: {
+      type: 'object',
+      properties: { limit: { type: 'integer', minimum: 1, maximum: 100 } },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'hubspot_list_companies',
+    provider: 'hubspot',
+    description: 'List recent HubSpot companies (name, domain, industry, city).',
+    inputSchema: {
+      type: 'object',
+      properties: { limit: { type: 'integer', minimum: 1, maximum: 100 } },
+      additionalProperties: false,
+    },
+  },
+];
+
 // Tools grow as each provider is wired (code + Nango integration).
 export const CONNECT_TOOLS: ConnectTool[] = [
   ...GITHUB_TOOLS,
@@ -1149,6 +1263,8 @@ export const CONNECT_TOOLS: ConnectTool[] = [
   ...EXA_TOOLS,
   ...BRAVE_TOOLS,
   ...PERPLEXITY_TOOLS,
+  ...JIRA_TOOLS,
+  ...HUBSPOT_TOOLS,
 ];
 
 export function toolsForProviders(activeProviders: Set<Provider>): ConnectTool[] {

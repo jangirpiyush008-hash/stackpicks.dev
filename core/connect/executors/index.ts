@@ -17,6 +17,8 @@ import { executeTavilyTool } from './tavily';
 import { executeExaTool } from './exa';
 import { executeBraveSearchTool } from './brave-search';
 import { executePerplexityTool } from './perplexity';
+import { executeJiraTool } from './jira';
+import { executeHubspotTool } from './hubspot';
 import type { Provider } from '../tools';
 
 interface MCPContent {
@@ -85,6 +87,10 @@ export async function executeTool(
       return executeBraveSearchTool(toolName, args, accessToken);
     case 'perplexity':
       return executePerplexityTool(toolName, args, accessToken);
+    case 'jira':
+      return executeJiraTool(toolName, args, accessToken);
+    case 'hubspot':
+      return executeHubspotTool(toolName, args, accessToken);
     default:
       return {
         ok: false,
