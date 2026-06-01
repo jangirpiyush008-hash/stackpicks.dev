@@ -117,7 +117,7 @@ const LIVE: ConnectApp[] = [
 // ---- Catalog (status: soon — flips to live as we wire each provider) ------
 const CATALOG: ConnectApp[] = [
   ...group('dev-code', [
-    ['gitlab',          'GitLab',           'Self-hosted git + CI'],
+    ['gitlab',          'GitLab',           'Self-hosted git + CI',            { status: 'live', popular: true, toolCount: 6 }],
     ['bitbucket',       'Bitbucket',        'Atlassian git + Pipelines'],
     ['azure-devops',    'Azure DevOps',     'Microsoft repos + boards'],
     ['gitea',           'Gitea',            'Lightweight self-hosted git'],
@@ -229,7 +229,7 @@ const CATALOG: ConnectApp[] = [
     ['onenote',         'OneNote',          'MS notes'],
     ['outlook-calendar','Outlook Calendar', 'MS calendar'],
     ['coda',            'Coda',             'Docs + DB hybrid'],
-    ['airtable',        'Airtable',         'Spreadsheet-DB',                  { popular: true }],
+    ['airtable',        'Airtable',         'Spreadsheet-DB',                  { status: 'live', popular: true, toolCount: 5 }],
     ['baserow',         'Baserow',          'Open-source Airtable'],
     ['nocodb',          'NocoDB',           'OSS Airtable on Postgres'],
     ['smartsheet',      'Smartsheet',       'Work mgmt sheets'],
@@ -254,7 +254,7 @@ const CATALOG: ConnectApp[] = [
   ...group('project-mgmt', [
     ['linear',          'Linear',           'Issue tracker + cycles',          { popular: true, toolCount: 5, status: 'live' }],
     ['jira',            'Jira',             'Atlassian issues + sprints',      { popular: true, toolCount: 16 }],
-    ['asana',           'Asana',            'Tasks + projects',                { popular: true }],
+    ['asana',           'Asana',            'Tasks + projects',                { status: 'live', popular: true, toolCount: 5 }],
     ['trello',          'Trello',           'Kanban boards'],
     ['clickup',         'ClickUp',          'Everything-app for work'],
     ['monday',          'Monday.com',       'Work OS'],
