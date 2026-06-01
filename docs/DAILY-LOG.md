@@ -42,11 +42,17 @@ github, slack, notion, linear, gitlab, airtable, asana, calendly, todoist, dropb
 - **monday.com blocked** — requires paid Developer plan. Park until plan upgrade.
 - ClickUp blocked — settings page flaky during Piyush's session; retry later.
 
+### Late additions (after first end-of-day)
+- **Inbound internal links shipped:** flagship `/blog/mcp-explained` (14.5k/mo, highest authority) now links to all 3 new posts (MCP 2.0, Opus 4.8, AWS MCP GA) — link-equity pass for faster ranking.
+- **SEO Day 6 — LaunchingNext submission:** paste-ready copy provided (tagline, 600-char description, tags, "bootstrapped startup", "<$1k marketing", launch date 2026-05-21). Piyush submitting.
+- **Newsletter broadcast draft:** subject + body ready for Resend → 3-post roundup tying back to /connect.
+- **IndexNow note:** my local CRON_SECRET ≠ Railway's, so the 3 new posts didn't auto-ping. Bing Webmaster manual submit + GSC Request Indexing is the workaround for instant crawl.
+
 ### Tomorrow / next
 - **[YOU]** Continue Nango registration queue (4 remaining): Intercom → Jira → HubSpot → retry ClickUp. Monday parked.
 - **[YOU]** Start **Google OAuth verification** (still pending, weeks of lead time — unlocks Gmail, Drive, Sheets, Calendar, Docs, GA, GSC, Google Ads = 8 apps).
 - **[YOU]** Set `RESEND_AUDIENCE_ID` in Railway.
-- **[YOU]** SEO Day 6 (LaunchingNext + StartupBase) + Day 7 (GSC + Bing indexing review) — not done today.
+- **[YOU]** Confirm: LaunchingNext + StartupBase submissions, GSC + Bing Request Indexing × 3 URLs, Resend broadcast sent.
 - **[YOU]** Verify end-to-end: connect 1 OAuth (Todoist) + 1 API-key (Tavily) on /connect, ask Claude to use them. If both work, we trust the rest.
 - **[ME]** Next OAuth batch when you're ready: Box, Trello, Zendesk, Discord — basic + useful.
 
