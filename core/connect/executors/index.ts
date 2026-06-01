@@ -13,6 +13,10 @@ import { executeCloudflareTool } from './cloudflare';
 import { executeSentryTool } from './sentry';
 import { executeSupabaseTool } from './supabase-mgmt';
 import { executeFigmaTool } from './figma';
+import { executeTavilyTool } from './tavily';
+import { executeExaTool } from './exa';
+import { executeBraveSearchTool } from './brave-search';
+import { executePerplexityTool } from './perplexity';
 import type { Provider } from '../tools';
 
 interface MCPContent {
@@ -73,6 +77,14 @@ export async function executeTool(
       return executeSupabaseTool(toolName, args, accessToken);
     case 'figma':
       return executeFigmaTool(toolName, args, accessToken);
+    case 'tavily':
+      return executeTavilyTool(toolName, args, accessToken);
+    case 'exa':
+      return executeExaTool(toolName, args, accessToken);
+    case 'brave-search':
+      return executeBraveSearchTool(toolName, args, accessToken);
+    case 'perplexity':
+      return executePerplexityTool(toolName, args, accessToken);
     default:
       return {
         ok: false,

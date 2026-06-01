@@ -24,7 +24,11 @@ export type Provider =
   | 'cloudflare'
   | 'sentry'
   | 'supabase'
-  | 'figma';
+  | 'figma'
+  | 'tavily'
+  | 'exa'
+  | 'brave-search'
+  | 'perplexity';
 
 export interface ConnectTool {
   name: string;            // 'github_create_pr' — globally unique, machine-readable
@@ -999,6 +1003,131 @@ const FIGMA_TOOLS: ConnectTool[] = [
   },
 ];
 
+const TAVILY_TOOLS: ConnectTool[] = [
+  {
+    name: 'tavily_search',
+    provider: 'tavily',
+    description: 'AI-native web search via Tavily — returns a synthesized answer plus top source results. Best for current-events / research questions.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        deep: { type: 'boolean', description: 'Advanced (deeper) search. Default false = basic/fast.' },
+        max_results: { type: 'integer', minimum: 1, maximum: 20 },
+      },
+      required: ['query'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'tavily_extract',
+    provider: 'tavily',
+    description: 'Extract clean content from one or more URLs via Tavily.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string' },
+        urls: { type: 'array', items: { type: 'string' } },
+      },
+      additionalProperties: false,
+    },
+  },
+];
+
+const EXA_TOOLS: ConnectTool[] = [
+  {
+    name: 'exa_search',
+    provider: 'exa',
+    description: 'Neural/semantic web search via Exa. Great for finding pages by meaning, not just keywords. Set include_text to get page content.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        num_results: { type: 'integer', minimum: 1, maximum: 25 },
+        type: { type: 'string', enum: ['auto', 'neural', 'keyword'] },
+        include_text: { type: 'boolean' },
+      },
+      required: ['query'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'exa_find_similar',
+    provider: 'exa',
+    description: 'Find pages similar to a given URL via Exa.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string' },
+        num_results: { type: 'integer', minimum: 1, maximum: 25 },
+      },
+      required: ['url'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'exa_get_contents',
+    provider: 'exa',
+    description: 'Retrieve the full text content of one or more URLs via Exa.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string' },
+        urls: { type: 'array', items: { type: 'string' } },
+      },
+      additionalProperties: false,
+    },
+  },
+];
+
+const BRAVE_TOOLS: ConnectTool[] = [
+  {
+    name: 'brave_web_search',
+    provider: 'brave-search',
+    description: 'Web search via Brave\'s independent index — returns title, url, description per result.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        count: { type: 'integer', minimum: 1, maximum: 20 },
+      },
+      required: ['query'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'brave_news_search',
+    provider: 'brave-search',
+    description: 'News search via Brave — recent articles with source + age.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        count: { type: 'integer', minimum: 1, maximum: 20 },
+      },
+      required: ['query'],
+      additionalProperties: false,
+    },
+  },
+];
+
+const PERPLEXITY_TOOLS: ConnectTool[] = [
+  {
+    name: 'perplexity_ask',
+    provider: 'perplexity',
+    description: 'Ask Perplexity a question and get a search-grounded answer with citations. Best for "what is the latest…" research that needs sources.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        model: { type: 'string', description: 'Perplexity model. Default "sonar".' },
+      },
+      required: ['query'],
+      additionalProperties: false,
+    },
+  },
+];
+
 // Tools grow as each provider is wired (code + Nango integration).
 export const CONNECT_TOOLS: ConnectTool[] = [
   ...GITHUB_TOOLS,
@@ -1016,6 +1145,10 @@ export const CONNECT_TOOLS: ConnectTool[] = [
   ...SENTRY_TOOLS,
   ...SUPABASE_TOOLS,
   ...FIGMA_TOOLS,
+  ...TAVILY_TOOLS,
+  ...EXA_TOOLS,
+  ...BRAVE_TOOLS,
+  ...PERPLEXITY_TOOLS,
 ];
 
 export function toolsForProviders(activeProviders: Set<Provider>): ConnectTool[] {

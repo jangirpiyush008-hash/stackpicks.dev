@@ -14,7 +14,11 @@ export const API_KEY_PROVIDERS: ReadonlySet<string> = new Set([
   'sentry',
   'supabase',
   'figma',
-  // Coming as executors are added: 'tavily', 'exa', 'openai', 'perplexity', …
+  // Search / research tools for agents (all key-based):
+  'tavily',
+  'exa',
+  'brave-search',
+  'perplexity',
 ]);
 
 export function isApiKeyProvider(slug: string): boolean {
@@ -50,5 +54,23 @@ export const API_KEY_HINTS: Record<string, { label: string; getUrl: string; pref
     label: 'Figma personal access token',
     getUrl: 'https://www.figma.com/developers/api#access-tokens',
     prefix: 'figd_',
+  },
+  tavily: {
+    label: 'Tavily API key',
+    getUrl: 'https://app.tavily.com/home',
+    prefix: 'tvly-',
+  },
+  exa: {
+    label: 'Exa API key',
+    getUrl: 'https://dashboard.exa.ai/api-keys',
+  },
+  'brave-search': {
+    label: 'Brave Search API token',
+    getUrl: 'https://api-dashboard.search.brave.com/app/keys',
+  },
+  perplexity: {
+    label: 'Perplexity API key',
+    getUrl: 'https://www.perplexity.ai/settings/api',
+    prefix: 'pplx-',
   },
 };
