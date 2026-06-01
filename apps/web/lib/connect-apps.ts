@@ -697,7 +697,7 @@ const CATALOG: ConnectApp[] = [
     ['wasabi',          'Wasabi',           'S3 alt'],
     ['storj',           'Storj',            'Decentralized storage'],
     ['filebase',        'Filebase',         'IPFS object storage'],
-    ['dropbox',         'Dropbox',          'Cloud files',                     { popular: true }],
+    ['dropbox',         'Dropbox',          'Cloud files',                     { status: 'live', popular: true, toolCount: 4 }],
     ['onedrive',        'OneDrive',         'Microsoft files',                 { popular: true }],
     ['box',             'Box',              'Enterprise files'],
     ['mega',            'MEGA',             'Encrypted storage'],
