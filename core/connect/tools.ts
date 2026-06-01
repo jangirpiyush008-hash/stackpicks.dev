@@ -30,7 +30,12 @@ export type Provider =
   | 'brave-search'
   | 'perplexity'
   | 'jira'
-  | 'hubspot';
+  | 'hubspot'
+  | 'clickup'
+  | 'dropbox'
+  | 'monday'
+  | 'intercom'
+  | 'todoist';
 
 export interface ConnectTool {
   name: string;            // 'github_create_pr' — globally unique, machine-readable
@@ -1242,6 +1247,238 @@ const HUBSPOT_TOOLS: ConnectTool[] = [
   },
 ];
 
+const CLICKUP_TOOLS: ConnectTool[] = [
+  {
+    name: 'clickup_list_workspaces',
+    provider: 'clickup',
+    description: 'List ClickUp workspaces (teams) the user belongs to. Needed for workspace_id.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'clickup_list_spaces',
+    provider: 'clickup',
+    description: 'List spaces in a ClickUp workspace. Requires workspace_id (from clickup_list_workspaces).',
+    inputSchema: {
+      type: 'object',
+      properties: { workspace_id: { type: 'string' } },
+      required: ['workspace_id'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'clickup_list_tasks',
+    provider: 'clickup',
+    description: 'List tasks in a ClickUp list. Requires list_id.',
+    inputSchema: {
+      type: 'object',
+      properties: { list_id: { type: 'string' } },
+      required: ['list_id'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'clickup_create_task',
+    provider: 'clickup',
+    description: 'Create a ClickUp task in a list. Requires list_id + name.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        list_id: { type: 'string' },
+        name: { type: 'string' },
+        description: { type: 'string' },
+        due_date: { type: 'integer', description: 'Unix ms timestamp.' },
+      },
+      required: ['list_id', 'name'],
+      additionalProperties: false,
+    },
+  },
+];
+
+const DROPBOX_TOOLS: ConnectTool[] = [
+  {
+    name: 'dropbox_me',
+    provider: 'dropbox',
+    description: 'Return the authenticated Dropbox account (name, email).',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'dropbox_list_folder',
+    provider: 'dropbox',
+    description: 'List files + folders at a Dropbox path. Use "/" or empty for the root.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string', description: 'e.g. "/Documents". Root = "" or "/".' },
+        limit: { type: 'integer', minimum: 1, maximum: 2000 },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'dropbox_search',
+    provider: 'dropbox',
+    description: 'Search files + folders in Dropbox by name/content.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        limit: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      required: ['query'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'dropbox_get_temporary_link',
+    provider: 'dropbox',
+    description: 'Get a temporary direct download link for a Dropbox file by path.',
+    inputSchema: {
+      type: 'object',
+      properties: { path: { type: 'string' } },
+      required: ['path'],
+      additionalProperties: false,
+    },
+  },
+];
+
+const MONDAY_TOOLS: ConnectTool[] = [
+  {
+    name: 'monday_me',
+    provider: 'monday',
+    description: 'Return the authenticated monday.com user + account.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'monday_list_boards',
+    provider: 'monday',
+    description: 'List monday.com boards (id, name, state). Needed for board_id.',
+    inputSchema: {
+      type: 'object',
+      properties: { limit: { type: 'integer', minimum: 1, maximum: 100 } },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'monday_list_items',
+    provider: 'monday',
+    description: 'List items (rows) on a monday board with their column values. Requires board_id.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        board_id: { type: 'string' },
+        limit: { type: 'integer', minimum: 1, maximum: 100 },
+      },
+      required: ['board_id'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'monday_create_item',
+    provider: 'monday',
+    description: 'Create an item (row) on a monday board. Requires board_id + name.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        board_id: { type: 'string' },
+        name: { type: 'string' },
+      },
+      required: ['board_id', 'name'],
+      additionalProperties: false,
+    },
+  },
+];
+
+const INTERCOM_TOOLS: ConnectTool[] = [
+  {
+    name: 'intercom_list_contacts',
+    provider: 'intercom',
+    description: 'List recent Intercom contacts (name, email, role).',
+    inputSchema: {
+      type: 'object',
+      properties: { limit: { type: 'integer', minimum: 1, maximum: 150 } },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'intercom_search_contacts',
+    provider: 'intercom',
+    description: 'Search Intercom contacts by email (partial match).',
+    inputSchema: {
+      type: 'object',
+      properties: { query: { type: 'string' } },
+      required: ['query'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'intercom_list_conversations',
+    provider: 'intercom',
+    description: 'List recent Intercom conversations (state, open/read, created_at).',
+    inputSchema: {
+      type: 'object',
+      properties: { limit: { type: 'integer', minimum: 1, maximum: 150 } },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'intercom_get_conversation',
+    provider: 'intercom',
+    description: 'Get a single Intercom conversation by conversation_id.',
+    inputSchema: {
+      type: 'object',
+      properties: { conversation_id: { type: 'string' } },
+      required: ['conversation_id'],
+      additionalProperties: false,
+    },
+  },
+];
+
+const TODOIST_TOOLS: ConnectTool[] = [
+  {
+    name: 'todoist_list_projects',
+    provider: 'todoist',
+    description: 'List Todoist projects (id, name). Needed for project_id.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'todoist_list_tasks',
+    provider: 'todoist',
+    description: 'List active Todoist tasks, optionally filtered by project_id.',
+    inputSchema: {
+      type: 'object',
+      properties: { project_id: { type: 'string' } },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'todoist_create_task',
+    provider: 'todoist',
+    description: 'Create a Todoist task. Requires content. Optional project_id, due_string ("tomorrow 9am"), priority 1-4.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        content: { type: 'string' },
+        project_id: { type: 'string' },
+        due_string: { type: 'string' },
+        priority: { type: 'integer', minimum: 1, maximum: 4 },
+      },
+      required: ['content'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'todoist_close_task',
+    provider: 'todoist',
+    description: 'Mark a Todoist task complete by task_id.',
+    inputSchema: {
+      type: 'object',
+      properties: { task_id: { type: 'string' } },
+      required: ['task_id'],
+      additionalProperties: false,
+    },
+  },
+];
+
 // Tools grow as each provider is wired (code + Nango integration).
 export const CONNECT_TOOLS: ConnectTool[] = [
   ...GITHUB_TOOLS,
@@ -1265,6 +1502,11 @@ export const CONNECT_TOOLS: ConnectTool[] = [
   ...PERPLEXITY_TOOLS,
   ...JIRA_TOOLS,
   ...HUBSPOT_TOOLS,
+  ...CLICKUP_TOOLS,
+  ...DROPBOX_TOOLS,
+  ...MONDAY_TOOLS,
+  ...INTERCOM_TOOLS,
+  ...TODOIST_TOOLS,
 ];
 
 export function toolsForProviders(activeProviders: Set<Provider>): ConnectTool[] {

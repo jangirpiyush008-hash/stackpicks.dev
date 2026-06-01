@@ -19,6 +19,11 @@ import { executeBraveSearchTool } from './brave-search';
 import { executePerplexityTool } from './perplexity';
 import { executeJiraTool } from './jira';
 import { executeHubspotTool } from './hubspot';
+import { executeClickupTool } from './clickup';
+import { executeDropboxTool } from './dropbox';
+import { executeMondayTool } from './monday';
+import { executeIntercomTool } from './intercom';
+import { executeTodoistTool } from './todoist';
 import type { Provider } from '../tools';
 
 interface MCPContent {
@@ -91,6 +96,16 @@ export async function executeTool(
       return executeJiraTool(toolName, args, accessToken);
     case 'hubspot':
       return executeHubspotTool(toolName, args, accessToken);
+    case 'clickup':
+      return executeClickupTool(toolName, args, accessToken);
+    case 'dropbox':
+      return executeDropboxTool(toolName, args, accessToken);
+    case 'monday':
+      return executeMondayTool(toolName, args, accessToken);
+    case 'intercom':
+      return executeIntercomTool(toolName, args, accessToken);
+    case 'todoist':
+      return executeTodoistTool(toolName, args, accessToken);
     default:
       return {
         ok: false,
