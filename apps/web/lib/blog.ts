@@ -1379,6 +1379,10 @@ If you're building an [AI agent product](/build/ai-agent), [SaaS](/build/ship-a-
 
 ## Further reading
 
+- [MCP 2.0 Explained](/blog/mcp-2-0-explained-2026) — the 2026-07-28 spec: stateless core, OAuth login, MCP Apps
+- [Claude Opus 4.8 Explained](/blog/claude-opus-4-8-explained-2026) — what's new + should you upgrade
+- [AWS MCP Server Hits GA](/blog/aws-mcp-server-ga-2026) — what managed MCP means for AI agents
+- [One MCP for All Your Apps](/blog/one-mcp-for-all-apps-composio-alternative-2026) — the unified-gateway model
 - [Anthropic's official MCP announcement](https://www.anthropic.com/news/model-context-protocol) — the original release post
 - [modelcontextprotocol.io](https://modelcontextprotocol.io/) — the open spec + SDK docs
 - [GitHub: modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers) — reference server implementations
