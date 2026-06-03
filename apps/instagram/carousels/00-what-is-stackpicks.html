@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>StackPicks · What is StackPicks?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --brand-primary: #c6ff00;
+    --brand-light: #daff5e;
+    --brand-dark: #8ab300;
+    --light-bg: #F5F7F0;
+    --light-border: #E5E9DC;
+    --dark-bg: #0A0B07;
+    --card-bg: #14160E;
+    --brand-gradient: linear-gradient(165deg, #8ab300 0%, #c6ff00 50%, #daff5e 100%);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { font-family: 'Plus Jakarta Sans', sans-serif; background: #1a1a1a; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .sans, .serif { font-family: 'Plus Jakarta Sans', sans-serif; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* IG frame */
+  .ig-frame { width: 420px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+  .ig-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid #efefef; }
+  .ig-header .avatar { width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 2px solid var(--dark-bg); display: flex; align-items: center; justify-content: center; color: var(--dark-bg); font-weight: 800; font-size: 16px; position: relative; }
+  .ig-header .avatar::after { content: ''; position: absolute; right: 4px; bottom: 5px; width: 5px; height: 5px; background: var(--brand-primary); border-radius: 50%; }
+  .ig-header .handle { font-size: 13px; font-weight: 700; color: #262626; }
+  .ig-header .sub { font-size: 11px; color: #8e8e8e; }
+
+  .carousel-viewport { width: 420px; aspect-ratio: 4/5; overflow: hidden; position: relative; cursor: grab; }
+  .carousel-track { display: flex; height: 100%; transition: transform 0.3s ease; }
+  .slide { width: 420px; height: 100%; flex-shrink: 0; position: relative; overflow: hidden; }
+
+  .slide-light { background: var(--light-bg); color: var(--dark-bg); }
+  .slide-dark { background: var(--dark-bg); color: #fff; }
+  .slide-gradient { background: var(--brand-gradient); color: var(--dark-bg); }
+
+  .slide-content { padding: 0 32px 56px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
+  .slide-center { padding: 0 32px; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+
+  /* Typography */
+  .h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 42px; font-weight: 800; letter-spacing: -1.5px; line-height: 0.98; }
+  .h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 34px; font-weight: 800; letter-spacing: -1.2px; line-height: 1.02; }
+  .h3 { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; line-height: 1.15; }
+  .body { font-size: 14px; font-weight: 500; line-height: 1.55; }
+  .body-sm { font-size: 12px; font-weight: 500; line-height: 1.5; }
+  .label { font-size: 10px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; }
+
+  /* Underline accent */
+  .underline-lime { position: relative; display: inline-block; }
+  .underline-lime::after { content: ''; position: absolute; left: 0; right: 0; bottom: 2px; height: 6px; background: var(--brand-primary); z-index: -1; opacity: 0.95; }
+  .slide-gradient .underline-lime::after { background: var(--dark-bg); opacity: 0.18; }
+
+  /* Highlight box */
+  .hl-lime-dark { background: var(--brand-primary); color: var(--dark-bg); padding: 1px 8px 3px; border-radius: 4px; font-weight: 800; }
+  .hl-dark-on-lime { background: var(--dark-bg); color: var(--brand-primary); padding: 1px 8px 3px; border-radius: 4px; font-weight: 800; }
+
+  /* Callout pill */
+  .pill-callout { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(198,255,0,0.12); border: 1px solid rgba(198,255,0,0.35); border-radius: 24px; font-size: 11px; font-weight: 600; }
+  .pill-callout .bolt { width: 22px; height: 22px; background: var(--brand-primary); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--dark-bg); flex-shrink: 0; }
+  .pill-callout .bolt svg { width: 12px; height: 12px; }
+
+  /* Strikethrough pills */
+  .pill-strike { display: inline-block; font-size: 11px; padding: 5px 11px; border: 1px solid rgba(255,255,255,0.14); border-radius: 20px; color: rgba(255,255,255,0.45); text-decoration: line-through; margin: 0 5px 6px 0; font-weight: 500; }
+
+  /* Tag pills */
+  .pill-tag-dark { display: inline-block; font-size: 11px; padding: 5px 11px; background: rgba(198,255,0,0.08); border: 1px solid rgba(198,255,0,0.22); border-radius: 18px; color: var(--brand-light); margin: 0 5px 6px 0; font-weight: 600; }
+
+  /* Icon badge */
+  .icon-badge { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--brand-primary); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .icon-badge svg { width: 18px; height: 18px; stroke: var(--brand-primary); stroke-width: 1.8; fill: none; }
+  .slide-light .icon-badge { border-color: var(--dark-bg); }
+  .slide-light .icon-badge svg { stroke: var(--dark-bg); }
+
+  /* Feature row */
+  .feat-row { display: flex; align-items: center; gap: 14px; padding: 11px 0; }
+  .feat-row .feat-text { display: flex; flex-direction: column; gap: 1px; }
+  .feat-row .feat-title { font-size: 14px; font-weight: 700; }
+  .feat-row .feat-desc { font-size: 12px; opacity: 0.7; font-weight: 500; }
+
+  /* Big number block */
+  .big-stat-row { display: flex; gap: 18px; margin-top: 14px; flex-wrap: wrap; }
+  .big-stat { display: flex; flex-direction: column; gap: 2px; }
+  .big-stat .num { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 42px; font-weight: 800; line-height: 1; letter-spacing: -1.5px; color: var(--brand-dark); }
+  .big-stat .num-dark { color: var(--brand-primary); }
+  .big-stat .stat-label { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; opacity: 0.7; }
+
+  /* Two-column compare for use this if / skip if */
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .compare-card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 14px; }
+  .compare-card.light { background: #fff; border: 1px solid var(--light-border); }
+  .compare-card .compare-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+  .compare-card .compare-text { font-size: 12px; font-weight: 600; line-height: 1.4; }
+  .compare-card.use .compare-label { color: var(--brand-dark); }
+  .compare-card.use.dark .compare-label { color: var(--brand-primary); }
+  .compare-card.skip .compare-label { color: #c75555; }
+
+  /* CTA Button */
+  .cta-btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; background: var(--dark-bg); color: var(--brand-primary); font-weight: 700; font-size: 14px; border-radius: 32px; letter-spacing: 0.2px; font-family: 'Plus Jakarta Sans', sans-serif; }
+  .cta-btn .arrow { width: 28px; height: 28px; border-radius: 50%; background: var(--brand-primary); color: var(--dark-bg); display: inline-flex; align-items: center; justify-content: center; }
+  .cta-btn .arrow svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.5; fill: none; }
+
+  /* Progress bar */
+  .progress { position: absolute; bottom: 0; left: 0; right: 0; padding: 14px 28px 18px; display: flex; align-items: center; gap: 10px; z-index: 5; }
+  .progress-track { flex: 1; height: 3px; border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
+  .progress-light .progress-track { background: rgba(0,0,0,0.08); }
+  .progress-light .progress-fill { background: var(--brand-primary); }
+  .progress-light .progress-counter { color: rgba(0,0,0,0.35); }
+  .progress-dark .progress-track { background: rgba(255,255,255,0.12); }
+  .progress-dark .progress-fill { background: var(--brand-primary); }
+  .progress-dark .progress-counter { color: rgba(255,255,255,0.45); }
+  .progress-gradient .progress-track { background: rgba(15,17,8,0.14); }
+  .progress-gradient .progress-fill { background: var(--dark-bg); }
+  .progress-gradient .progress-counter { color: rgba(15,17,8,0.55); }
+  .progress-counter { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; }
+
+  /* Swipe arrow */
+  .swipe-arrow { position: absolute; right: 0; top: 0; bottom: 0; width: 44px; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 3; }
+  .swipe-arrow-light { background: linear-gradient(to right, transparent, rgba(0,0,0,0.04)); }
+  .swipe-arrow-dark { background: linear-gradient(to right, transparent, rgba(255,255,255,0.06)); }
+  .swipe-arrow-gradient { background: linear-gradient(to right, transparent, rgba(15,17,8,0.06)); }
+  .swipe-arrow svg { width: 22px; height: 22px; opacity: 0.6; }
+
+  /* Squiggle */
+  .squiggle { position: absolute; top: 80px; right: 18px; width: 56px; height: 56px; pointer-events: none; opacity: 0.5; }
+  .squiggle path { stroke-width: 2; fill: none; stroke-linecap: round; }
+  .slide-light .squiggle path { stroke: var(--brand-dark); }
+  .slide-dark .squiggle path { stroke: var(--brand-primary); }
+  .slide-gradient .squiggle path { stroke: var(--dark-bg); opacity: 0.45; }
+
+  /* Corner mark */
+  .corner-mark { position: absolute; top: 26px; left: 32px; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 1px; text-transform: lowercase; z-index: 4; }
+  .corner-mark-light { color: rgba(0,0,0,0.45); }
+  .corner-mark-dark { color: rgba(255,255,255,0.45); }
+  .corner-mark-gradient { color: rgba(15,17,8,0.6); }
+
+  /* Hero wordmark */
+  .hero-mark { position: absolute; top: 26px; left: 32px; display: flex; align-items: baseline; gap: 4px; z-index: 4; }
+  .hero-mark .s-letter { font-size: 22px; font-weight: 800; color: var(--dark-bg); letter-spacing: -1px; line-height: 1; }
+  .hero-mark .s-letter::after { content: '.'; color: var(--brand-primary); font-weight: 900; }
+  .hero-mark .name { font-size: 16px; font-weight: 800; color: var(--dark-bg); letter-spacing: -0.4px; line-height: 1; }
+  .slide-dark .hero-mark .s-letter, .slide-dark .hero-mark .name { color: #fff; }
+
+  /* IG footer */
+  .ig-dots { display: flex; gap: 4px; justify-content: center; padding: 8px 0 6px; }
+  .ig-dots span { width: 5px; height: 5px; border-radius: 50%; background: #d0d0d0; }
+  .ig-dots span.active { background: #0095f6; }
+  .ig-actions { display: flex; align-items: center; gap: 14px; padding: 6px 14px 4px; }
+  .ig-actions svg { width: 24px; height: 24px; stroke: #262626; fill: none; stroke-width: 2; }
+  .ig-actions .spacer { flex: 1; }
+  .ig-caption { padding: 4px 14px 16px; font-size: 13px; color: #262626; line-height: 1.4; }
+  .ig-caption .handle { font-weight: 700; margin-right: 4px; }
+  .ig-caption .time { font-size: 11px; color: #8e8e8e; display: block; margin-top: 6px; text-transform: uppercase; }
+</style>
+</head>
+<body>
+
+<div class="ig-frame">
+  <!-- IG header -->
+  <div class="ig-header">
+    <div class="avatar">S</div>
+    <div>
+      <div class="handle">stackpicks.dev</div>
+      <div class="sub">The open-source stack, curated by builders</div>
+    </div>
+  </div>
+
+  <!-- Carousel viewport -->
+  <div class="carousel-viewport">
+    <div class="carousel-track">
+
+      <!-- ============ SLIDE 1 — HERO ============ -->
+      <div class="slide slide-light">
+        <div class="hero-mark">
+          <span class="s-letter">S</span>
+          <span class="name">StackPicks</span>
+        </div>
+        <div style="position: absolute; top: 22px; right: 24px; z-index: 4;">
+          <div class="pill-callout">
+            <span class="bolt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor"/></svg></span>
+            <span style="color: var(--dark-bg);">Honest takes,<br>not star counts</span>
+          </div>
+        </div>
+        <svg class="squiggle" viewBox="0 0 56 56">
+          <path d="M5 28 Q14 10 23 28 T41 28 T55 28" />
+          <path d="M8 42 Q18 28 28 42 T48 42" />
+        </svg>
+
+        <div class="slide-center" style="padding-top: 80px;">
+          <span class="label" style="color: var(--brand-dark); margin-bottom: 14px;">// what is stackpicks?</span>
+          <h1 class="h1" style="margin-bottom: 8px;">Stop guessing<br>your <span class="underline-lime">stack.</span></h1>
+          <h1 class="h1" style="margin-bottom: 16px; color: #6a6a6a; font-weight: 700;">Start shipping.</h1>
+          <p class="body" style="color: #4a4a4a; max-width: 300px; margin-top: 4px;">A curated directory of open-source dev tools — every entry with an honest curator take.</p>
+        </div>
+        <div class="swipe-arrow swipe-arrow-light">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.3)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="progress progress-light">
+          <div class="progress-track"><div class="progress-fill" style="width: 14.28%"></div></div>
+          <span class="progress-counter">01/07</span>
+        </div>
+      </div>
+
+      <!-- ============ SLIDE 2 — PROBLEM ============ -->
+      <div class="slide slide-dark">
+        <div class="corner-mark corner-mark-dark">// the_problem.md</div>
+        <svg class="squiggle" viewBox="0 0 56 56">
+          <path d="M5 28 Q14 10 23 28 T41 28 T55 28" />
+          <path d="M8 42 Q18 28 28 42 T48 42" />
+        </svg>
+        <div class="slide-content">
+          <span class="label" style="color: rgba(255,255,255,0.5); margin-bottom: 14px;">Picking a stack in 2026 is hard</span>
+          <h2 class="h2" style="margin-bottom: 18px;">Star counts<br>lie.<br><span class="underline-lime">Awesome lists overwhelm.</span></h2>
+          <div style="margin-bottom: 14px;">
+            <span class="pill-strike">"500k stars"</span>
+            <span class="pill-strike">"Top 100 tools"</span>
+            <span class="pill-strike">"AI revolution"</span>
+            <span class="pill-strike">"Game changer"</span>
+            <span class="pill-strike">"Disruptor"</span>
+          </div>
+          <p class="body" style="color: rgba(255,255,255,0.65); max-width: 320px;">Reviews skip the tradeoffs. Lists never tell you when to <em>skip</em> a tool. Stars don't equal fit.</p>
+        </div>
+        <div class="swipe-arrow swipe-arrow-dark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="progress progress-dark">
+          <div class="progress-track"><div class="progress-fill" style="width: 28.57%"></div></div>
+          <span class="progress-counter">02/07</span>
+        </div>
+      </div>
+
+      <!-- ============ SLIDE 3 — THE ANSWER ============ -->
+      <div class="slide slide-gradient">
+        <div class="corner-mark corner-mark-gradient">// the_answer.md</div>
+        <div class="slide-content">
+          <span class="label" style="color: rgba(15,17,8,0.6); margin-bottom: 14px;">StackPicks</span>
+          <h2 class="h2" style="margin-bottom: 16px;">A take on every tool.<br><span class="hl-dark-on-lime">Use this if.</span><br><span class="hl-dark-on-lime">Skip if.</span></h2>
+          <p class="body" style="color: rgba(15,17,8,0.78); max-width: 320px; margin-bottom: 14px; font-weight: 600;">Every repo has a one-paragraph take written by a builder — what it's good at, the real tradeoff, when to skip it.</p>
+          <div class="compare-grid">
+            <div class="compare-card use light">
+              <div class="compare-label">// USE THIS IF</div>
+              <div class="compare-text">You're on Next.js + Tailwind and need fast components.</div>
+            </div>
+            <div class="compare-card skip light">
+              <div class="compare-label">// SKIP IF</div>
+              <div class="compare-text">You're deep in shadcn — migration cost is real.</div>
+            </div>
+          </div>
+        </div>
+        <div class="swipe-arrow swipe-arrow-gradient">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(15,17,8,0.5)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="progress progress-gradient">
+          <div class="progress-track"><div class="progress-fill" style="width: 42.85%"></div></div>
+          <span class="progress-counter">03/07</span>
+        </div>
+      </div>
+
+      <!-- ============ SLIDE 4 — WHAT'S INSIDE ============ -->
+      <div class="slide slide-light">
+        <div class="corner-mark corner-mark-light">// inside_the_directory.md</div>
+        <div class="slide-content">
+          <h2 class="h2" style="margin-bottom: 6px;">All the picks.</h2>
+          <h2 class="h2" style="margin-bottom: 18px;"><span class="underline-lime">In one place.</span></h2>
+          <div class="big-stat-row" style="margin-bottom: 18px;">
+            <div class="big-stat">
+              <span class="num">165<span style="font-size: 22px;">+</span></span>
+              <span class="stat-label">Curated repos</span>
+            </div>
+            <div class="big-stat">
+              <span class="num">89</span>
+              <span class="stat-label">MCP servers</span>
+            </div>
+            <div class="big-stat">
+              <span class="num">13</span>
+              <span class="stat-label">Stack bundles</span>
+            </div>
+            <div class="big-stat">
+              <span class="num">12</span>
+              <span class="stat-label">Skill tracks</span>
+            </div>
+          </div>
+          <div>
+            <div class="feat-row" style="padding: 7px 0;">
+              <div class="icon-badge"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+              <div class="feat-text">
+                <span class="feat-title">Live GitHub stats — daily-refreshed</span>
+              </div>
+            </div>
+            <div class="feat-row" style="padding: 7px 0;">
+              <div class="icon-badge"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              <div class="feat-text">
+                <span class="feat-title">Ready-to-ship stack bundles</span>
+              </div>
+            </div>
+            <div class="feat-row" style="padding: 7px 0;">
+              <div class="icon-badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg></div>
+              <div class="feat-text">
+                <span class="feat-title">Step-by-step AI agent guides</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="swipe-arrow swipe-arrow-light">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.3)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="progress progress-light">
+          <div class="progress-track"><div class="progress-fill" style="width: 57.14%"></div></div>
+          <span class="progress-counter">04/07</span>
+        </div>
+      </div>
+
+      <!-- ============ SLIDE 5 — + CONNECT (the MCP gateway) ============ -->
+      <div class="slide slide-dark">
+        <div class="corner-mark corner-mark-dark">// stackpicks_connect.md</div>
+        <svg class="squiggle" viewBox="0 0 56 56">
+          <path d="M5 28 Q14 10 23 28 T41 28 T55 28" />
+        </svg>
+        <div class="slide-content">
+          <span class="label" style="color: var(--brand-primary); margin-bottom: 14px;">+ StackPicks Connect</span>
+          <h2 class="h2" style="margin-bottom: 16px;">22 apps.<br>1 MCP for<br><span class="underline-lime">Claude.</span></h2>
+          <p class="body" style="color: rgba(255,255,255,0.65); max-width: 320px; margin-bottom: 14px;">One unified gateway. GitHub, Slack, Notion, Linear, Google Ads, Meta Ads — all through one URL.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+            <span class="pill-tag-dark">GitHub</span><span class="pill-tag-dark">Slack</span><span class="pill-tag-dark">Notion</span><span class="pill-tag-dark">Linear</span><span class="pill-tag-dark">Calendly</span><span class="pill-tag-dark">Figma</span><span class="pill-tag-dark">Vercel</span><span class="pill-tag-dark">Supabase</span><span class="pill-tag-dark">Google Ads</span><span class="pill-tag-dark">Meta Ads</span><span class="pill-tag-dark">+ 12 more</span>
+          </div>
+        </div>
+        <div class="swipe-arrow swipe-arrow-dark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="progress progress-dark">
+          <div class="progress-track"><div class="progress-fill" style="width: 71.42%"></div></div>
+          <span class="progress-counter">05/07</span>
+        </div>
+      </div>
+
+      <!-- ============ SLIDE 6 — PRICING ============ -->
+      <div class="slide slide-light">
+        <div class="corner-mark corner-mark-light">// pricing.md</div>
+        <div class="slide-content">
+          <span class="label" style="color: var(--brand-dark); margin-bottom: 14px;">// One-time payment</span>
+          <h2 class="h2" style="margin-bottom: 6px;">₹99.<br>Lifetime.</h2>
+          <h2 class="h2" style="margin-bottom: 16px; color: #6a6a6a; font-weight: 600;"><span class="underline-lime">No subscription.</span></h2>
+          <p class="body" style="color: #4a4a4a; max-width: 320px; margin-bottom: 14px;">Pay once, ₹99 (or $2.99 internationally). Get the full directory + every bundle + every skill track. Forever.</p>
+          <div>
+            <div class="feat-row" style="padding: 7px 0;">
+              <div class="icon-badge"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="feat-text">
+                <span class="feat-title">Full directory access — 165+ repos</span>
+              </div>
+            </div>
+            <div class="feat-row" style="padding: 7px 0;">
+              <div class="icon-badge"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="feat-text">
+                <span class="feat-title">Every stack bundle + skill track</span>
+              </div>
+            </div>
+            <div class="feat-row" style="padding: 7px 0;">
+              <div class="icon-badge"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="feat-text">
+                <span class="feat-title">StackPicks Connect — bundled in</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="swipe-arrow swipe-arrow-light">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.3)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="progress progress-light">
+          <div class="progress-track"><div class="progress-fill" style="width: 85.71%"></div></div>
+          <span class="progress-counter">06/07</span>
+        </div>
+      </div>
+
+      <!-- ============ SLIDE 7 — CTA ============ -->
+      <div class="slide slide-gradient">
+        <div class="hero-mark">
+          <span class="s-letter">S</span>
+          <span class="name">StackPicks</span>
+        </div>
+        <div class="slide-center" style="padding-top: 70px;">
+          <span class="label" style="color: rgba(15,17,8,0.6); margin-bottom: 16px;">// start_shipping.sh</span>
+          <h1 class="h1" style="margin-bottom: 8px;">The stack you</h1>
+          <h1 class="h1" style="margin-bottom: 18px;"><span class="hl-dark-on-lime">already need.</span></h1>
+          <p class="body" style="color: rgba(15,17,8,0.78); margin-bottom: 26px; max-width: 300px; font-weight: 600;">Curated by a builder. Honest about tradeoffs. Connected to your AI agent.</p>
+          <a class="cta-btn">
+            stackpicks.dev
+            <span class="arrow"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span>
+          </a>
+          <p class="mono" style="font-size: 11px; color: rgba(15,17,8,0.55); margin-top: 36px;">@stackpicks.dev · ship · iterate · scale</p>
+        </div>
+        <div class="progress progress-gradient">
+          <div class="progress-track"><div class="progress-fill" style="width: 100%"></div></div>
+          <span class="progress-counter">07/07</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- IG footer -->
+  <div class="ig-dots">
+    <span class="active"></span><span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <div class="ig-actions">
+    <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+    <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    <div class="spacer"></div>
+    <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+  </div>
+  <div class="ig-caption">
+    <span class="handle">stackpicks.dev</span>What is StackPicks? A curated directory of open-source dev tools — every repo with an honest "use this if / skip if" take. Plus Connect: 22 apps, 1 MCP for Claude. ₹99 / $2.99 lifetime. Link in bio.
+    <span class="time">Today</span>
+  </div>
+</div>
+
+<script>
+  const track = document.querySelector('.carousel-track');
+  const viewport = document.querySelector('.carousel-viewport');
+  const dots = document.querySelectorAll('.ig-dots span');
+  let current = 0;
+  const total = 7;
+  const slideWidth = 420;
+
+  function goTo(i) {
+    current = Math.max(0, Math.min(total - 1, i));
+    track.style.transform = `translateX(${-current * slideWidth}px)`;
+    dots.forEach((d, idx) => d.classList.toggle('active', idx === current));
+  }
+
+  viewport.addEventListener('click', (e) => {
+    const rect = viewport.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    if (x < slideWidth * 0.3) goTo(current - 1);
+    else goTo(current + 1);
+  });
+
+  let startX = 0, dragging = false;
+  viewport.addEventListener('mousedown', (e) => { startX = e.clientX; dragging = true; viewport.style.cursor = 'grabbing'; });
+  viewport.addEventListener('mouseup', (e) => {
+    if (!dragging) return;
+    dragging = false;
+    viewport.style.cursor = 'grab';
+    const dx = e.clientX - startX;
+    if (dx > 50) goTo(current - 1);
+    else if (dx < -50) goTo(current + 1);
+  });
+  viewport.addEventListener('mouseleave', () => { dragging = false; viewport.style.cursor = 'grab'; });
+</script>
+</body>
+</html>

@@ -37,11 +37,12 @@ PNGs land in `apps/instagram/carousels/01-22-apps-one-mcp-slides/` as `slide_01.
 
 ## Carousels
 
-| # | File | Topic |
-|---|------|-------|
-| 1 | `01-22-apps-one-mcp.html` | 22 apps. 1 MCP. Zero setup. (product pitch) |
-| 2 | (next) | ChatGPT Ads just launched — 7 things to know |
-| 3 | (next) | Connect Google Ads to Claude in 20 min |
+| # | File | Topic | Use as |
+|---|------|-------|--------|
+| 0 | `00-what-is-stackpicks.html` | **Intro:** What is StackPicks? | **Pinned post** — first thing visitors see |
+| 1 | `01-22-apps-one-mcp.html` | 22 apps. 1 MCP. Zero setup. | Product pitch (Connect) |
+| 2 | (next) | ChatGPT Ads just launched — 7 things to know | News hook |
+| 3 | (next) | Connect Google Ads to Claude in 20 min | How-to |
 
 ## How to add a new carousel
 
