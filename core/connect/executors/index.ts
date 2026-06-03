@@ -24,6 +24,8 @@ import { executeDropboxTool } from './dropbox';
 import { executeMondayTool } from './monday';
 import { executeIntercomTool } from './intercom';
 import { executeTodoistTool } from './todoist';
+import { executeGoogleAdsTool } from './google-ads';
+import { executeFacebookAdsTool } from './facebook-ads';
 import type { Provider } from '../tools';
 
 interface MCPContent {
@@ -106,6 +108,10 @@ export async function executeTool(
       return executeIntercomTool(toolName, args, accessToken);
     case 'todoist':
       return executeTodoistTool(toolName, args, accessToken);
+    case 'google-ads':
+      return executeGoogleAdsTool(toolName, args, accessToken);
+    case 'facebook-ads':
+      return executeFacebookAdsTool(toolName, args, accessToken);
     default:
       return {
         ok: false,

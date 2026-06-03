@@ -35,7 +35,9 @@ export type Provider =
   | 'dropbox'
   | 'monday'
   | 'intercom'
-  | 'todoist';
+  | 'todoist'
+  | 'google-ads'
+  | 'facebook-ads';
 
 export interface ConnectTool {
   name: string;            // 'github_create_pr' — globally unique, machine-readable
@@ -1479,6 +1481,112 @@ const TODOIST_TOOLS: ConnectTool[] = [
   },
 ];
 
+const GOOGLE_ADS_TOOLS: ConnectTool[] = [
+  {
+    name: 'google_ads_list_accounts',
+    provider: 'google-ads',
+    description: 'List Google Ads customer IDs the OAuth-ed user can access. Use one as customer_id in later calls.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'google_ads_list_campaigns',
+    provider: 'google-ads',
+    description: 'List Google Ads campaigns for a customer (id, name, status, channel type, budget).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        customer_id: { type: 'string', description: 'Optional — auto-resolves to first accessible.' },
+        limit: { type: 'integer', minimum: 1, maximum: 1000 },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'google_ads_campaign_performance',
+    provider: 'google-ads',
+    description: 'Campaign performance (spend, clicks, conversions, CTR, CPC) for a date range. date_range examples: LAST_7_DAYS, LAST_30_DAYS, THIS_MONTH.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        customer_id: { type: 'string' },
+        date_range: { type: 'string', description: 'Default LAST_7_DAYS.' },
+        limit: { type: 'integer', minimum: 1, maximum: 1000 },
+      },
+      additionalProperties: false,
+    },
+  },
+];
+
+const FACEBOOK_ADS_TOOLS: ConnectTool[] = [
+  {
+    name: 'meta_ads_list_accounts',
+    provider: 'facebook-ads',
+    description: 'List Meta (Facebook + Instagram) ad accounts the user can access. Get ad_account_id from here (format: act_XXXX).',
+    inputSchema: {
+      type: 'object',
+      properties: { limit: { type: 'integer', minimum: 1, maximum: 100 } },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'meta_ads_list_campaigns',
+    provider: 'facebook-ads',
+    description: 'List Meta Ads campaigns for an ad_account_id (id, name, objective, status, budget, dates).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        ad_account_id: { type: 'string' },
+        limit: { type: 'integer', minimum: 1, maximum: 200 },
+      },
+      required: ['ad_account_id'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'meta_ads_account_insights',
+    provider: 'facebook-ads',
+    description: 'Account-level Meta Ads insights (spend, impressions, clicks, CTR, CPC, CPM, actions) for a date preset.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        ad_account_id: { type: 'string' },
+        date_preset: { type: 'string', description: 'today, yesterday, last_7d, last_14d, last_30d, this_month, last_month, etc. Default last_7d.' },
+      },
+      required: ['ad_account_id'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'meta_ads_campaign_insights',
+    provider: 'facebook-ads',
+    description: 'Per-campaign Meta Ads insights (spend, impressions, clicks, CTR, CPC, actions) for a date preset.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        ad_account_id: { type: 'string' },
+        date_preset: { type: 'string' },
+        limit: { type: 'integer', minimum: 1, maximum: 200 },
+      },
+      required: ['ad_account_id'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'meta_ads_list_ads',
+    provider: 'facebook-ads',
+    description: 'List ads under an ad_account_id (id, name, status, adset_id, campaign_id, creative).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        ad_account_id: { type: 'string' },
+        limit: { type: 'integer', minimum: 1, maximum: 200 },
+      },
+      required: ['ad_account_id'],
+      additionalProperties: false,
+    },
+  },
+];
+
 // Tools grow as each provider is wired (code + Nango integration).
 export const CONNECT_TOOLS: ConnectTool[] = [
   ...GITHUB_TOOLS,
@@ -1507,6 +1615,8 @@ export const CONNECT_TOOLS: ConnectTool[] = [
   ...MONDAY_TOOLS,
   ...INTERCOM_TOOLS,
   ...TODOIST_TOOLS,
+  ...GOOGLE_ADS_TOOLS,
+  ...FACEBOOK_ADS_TOOLS,
 ];
 
 export function toolsForProviders(activeProviders: Set<Provider>): ConnectTool[] {
