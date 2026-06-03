@@ -32,6 +32,7 @@ const TODAY_28 = '2026-05-28';
 const TODAY_29 = '2026-05-29';
 const TODAY_30 = '2026-05-30';
 const TODAY_31 = '2026-05-31';
+const TODAY_JUN3 = '2026-06-03';
 
 export const BLOG_POSTS: BlogPost[] = [
   {
@@ -42,7 +43,7 @@ export const BLOG_POSTS: BlogPost[] = [
     monthly_searches: 18000,
     reading_time: 8,
     published_at: TODAY_30,
-    updated_at: TODAY_30,
+    updated_at: TODAY_JUN3,
     author: 'Piyush Jangir',
     category: 'AI Tooling',
     quick_answer: 'Claude Opus 4.8 is Anthropic\'s frontier model, released May 28, 2026. It improves on Opus 4.7 with stronger benchmark scores, better multi-step collaboration, and improved honesty (fewer confident-but-wrong answers). The launch adds three practical features: effort control in claude.ai (trade speed for depth per task), dynamic workflows in Claude Code, and a more affordable fast mode. API access is available immediately. For most builders the upgrade is a drop-in win — same API shape, better output — but the fast mode is the bigger deal for cost-sensitive, high-volume agent work.',
@@ -100,6 +101,14 @@ No. Opus 4.8 fully supports the [Model Context Protocol](/blog/mcp-explained), s
 
 That's the quiet advantage of the gateway pattern: when the frontier model changes (and in 2026 it changes every few weeks), your tooling doesn't have to.
 
+## Where Opus 4.8 + a unified gateway actually shines (June 3 update)
+
+The most underrated combo for Opus 4.8 right now is **ad ops + a connected gateway**. With StackPicks Connect's Google Ads + Meta Ads providers wired in Bring-Your-Own-Token mode, you can hand Opus 4.8 your real campaign data and use its effort-control + reasoning improvements to do work that used to take a spreadsheet:
+
+> *"Pull yesterday's Meta + Google Ads spend by campaign, flag any campaign where CPC jumped over 25%, and suggest which ones to pause."*
+
+Opus 4.8's honesty improvements matter here: when there isn't enough signal to recommend a pause, it says so instead of guessing — exactly what you want from an agent that has access to a budget.
+
 ## Bottom line
 
 Claude Opus 4.8 is an incremental-but-real upgrade: better quality, better honesty, and three features — effort control, dynamic Claude Code workflows, and a cheaper fast mode — that change how you actually work. Upgrade unless you have a pinned, eval-gated production pipeline, in which case test first.
@@ -118,7 +127,7 @@ Claude Opus 4.8 is an incremental-but-real upgrade: better quality, better hones
     monthly_searches: 6000,
     reading_time: 9,
     published_at: TODAY_29,
-    updated_at: TODAY_29,
+    updated_at: TODAY_JUN3,
     author: 'Piyush Jangir',
     category: 'AI Tooling',
     quick_answer: 'MCP 2.0 is the 2026-07-28 Model Context Protocol release candidate (published May 21, 2026) — the largest revision since the protocol launched in November 2024. The headline changes: a stateless protocol core (servers run behind a plain load balancer, no sticky sessions), hardened OAuth 2.1 authorization so connecting a server can be a single Google or GitHub login with no JSON config, plus three new building blocks — MCP Apps (server-rendered UIs), Tasks (long-running work), and Server Cards (capability discovery via a .well-known URL). The final spec lands July 28, 2026.',
@@ -181,16 +190,18 @@ And the [official MCP Registry](https://github.com/modelcontextprotocol) crossed
 
 **If you just want Claude to use your apps:** you don't need to track any of this. The whole point of a managed gateway is that it absorbs spec churn. With [StackPicks Connect](/connect) you connect apps once via browser OAuth and paste one URL — \`https://stackpicks.dev/api/mcp\` — into Claude. When the transport, auth, or spec version changes, the gateway handles it. Your connection URL never changes.
 
-## What we shipped this week
+## What we shipped since the spec dropped
 
-MCP 2.0's OAuth-first direction is the model StackPicks Connect already runs on. This week we added four more one-click OAuth providers to the gateway:
+MCP 2.0's OAuth-first direction is the model StackPicks Connect already runs on. In the two weeks since the release candidate, we've grown the gateway to **22 live providers** across OAuth + API-key paths:
 
-- **Calendly** — read event types, scheduled events, and invitees (live now)
-- **GitLab** — projects, issues, merge requests, file reads
-- **Airtable** — bases, tables, records (read + write)
-- **Asana** — projects, tasks (create + update)
+- **Productivity:** GitHub, GitLab, Slack, Notion, Linear, Calendly, Asana, Airtable, Todoist, Dropbox
+- **Dev infra:** Vercel, Cloudflare, Sentry, Supabase, Figma
+- **AI research stack:** Tavily, Exa, Brave Search, Perplexity, Firecrawl
+- **Ads (newest):** Google Ads + Meta Ads — wired through a **Bring-Your-Own-Token (BYO)** mode so they work *today* without waiting on Google verification or Meta App Review. Update June 3, 2026.
 
-Each is a single browser login on the [Connect dashboard](/connect) — exactly the experience MCP 2.0 is standardizing across the ecosystem.
+The BYO-token pattern is worth a callout because it's exactly the kind of pragmatic UX MCP 2.0 enables: instead of an end-user fighting through OAuth verification for every restrictive API (Google Ads, Meta Ads), the user supplies their own already-approved credentials and the gateway proxies the rest. Same shape, no review wait.
+
+Each provider above is a single browser login (or one paste) on the [Connect dashboard](/connect) — exactly the experience MCP 2.0 is standardizing across the ecosystem.
 
 ## How to connect Claude in under two minutes
 
@@ -222,7 +233,7 @@ The takeaway for builders who just want results: the OAuth-gateway model won. [S
     monthly_searches: 5500,
     reading_time: 8,
     published_at: TODAY_31,
-    updated_at: TODAY_31,
+    updated_at: TODAY_JUN3,
     author: 'Piyush Jangir',
     category: 'AI Tooling',
     quick_answer: 'The AWS MCP Server reached general availability in May 2026. It is a managed Model Context Protocol server that gives AI coding agents — Claude, Cursor, and others — controlled access to AWS APIs, documentation, and operational workflows through one standard interface, governed by AWS IAM. Instead of wiring each AWS service to your agent by hand, you connect the managed MCP server once and your agent can query and operate AWS resources within the permissions IAM grants. It signals that hyperscalers now treat MCP as the default way agents touch their platforms.',
@@ -298,12 +309,12 @@ The AWS MCP Server going GA with IAM governance confirms MCP is the default agen
   {
     slug: 'one-mcp-for-all-apps-composio-alternative-2026',
     title: 'One MCP for All Your Apps — How to Connect 800+ Tools to Claude (2026)',
-    excerpt: 'Stop installing a separate MCP server for every app. Connect GitHub, Gmail, Slack, Notion, Meta Ads and 800+ more to Claude and Cursor through one OAuth link with StackPicks Connect.',
+    excerpt: 'Stop installing a separate MCP server for every app. Connect GitHub, Slack, Notion, Linear, Google Ads, Meta Ads and 800+ more to Claude and Cursor through one OAuth link with StackPicks Connect.',
     query: 'one mcp for all apps composio alternative',
     monthly_searches: 9000,
     reading_time: 8,
     published_at: TODAY_28,
-    updated_at: TODAY_28,
+    updated_at: TODAY_JUN3,
     author: 'Piyush Jangir',
     category: 'AI Tooling',
     quick_answer: 'StackPicks Connect is a unified MCP gateway: instead of installing a separate MCP server for each app, you connect your apps once (GitHub, Gmail, Slack, Notion, Meta Ads + 800 more) through one OAuth login, then paste a single URL into Claude or Cursor. Every connected app becomes available as tools automatically — no per-app install, no API keys to juggle. It is bundled into the StackPicks ₹99 / $2.99 lifetime plan, making it the cheapest Composio alternative for solo builders.',
@@ -390,6 +401,19 @@ Claude calls the ad-platform tools, pulls the numbers, and gives you the analysi
 The "one MCP server per app" era is ending the same way "one API integration per service" ended. A unified gateway is simply less work. [StackPicks Connect](/connect) makes it consumer-grade — one URL, browser login, 800+ apps, ₹99/$2.99 lifetime — and pairs it with our [curated directory](/preview) of open-source tools and [MCP servers](/mcp) for the local stuff a gateway can't reach.
 
 Connect your first app and give Claude real-world hands. → [Open StackPicks Connect](/connect)
+
+## Update — June 3, 2026
+
+Since this post first ran, StackPicks Connect has crossed **22 live providers** end-to-end:
+
+- **Productivity:** GitHub, GitLab, Slack, Notion, Linear, Calendly, Asana, Airtable, Todoist, Dropbox
+- **Dev infra:** Vercel, Cloudflare, Sentry, Supabase, Figma
+- **AI research:** Tavily, Exa, Brave Search, Perplexity, Firecrawl
+- **Ads (new):** Google Ads + Meta Ads — wired via a **Bring-Your-Own-Token (BYO)** mode so users can connect their own accounts *today* without waiting on Google verification or Meta App Review
+
+The BYO pattern is worth highlighting because it's the practical answer to "why are ad-platform integrations always months away from working?" — the user supplies their own already-approved developer token and OAuth credentials, the gateway encrypts and proxies. Same MCP shape, no review wait.
+
+We're shipping ~5 more providers per week toward a 50-provider public launch.
 
 ## Related reading
 
@@ -1121,7 +1145,7 @@ If you're building a similar SaaS, the StackPicks directory has [165+ open-sourc
     monthly_searches: 14500,
     reading_time: 11,
     published_at: NEW_TODAY,
-    updated_at: LATEST,
+    updated_at: TODAY_JUN3,
     author: 'Piyush Jangir',
     category: 'AI Tooling',
     quick_answer: 'MCP (Model Context Protocol) is an open standard Anthropic released in November 2024 that lets any LLM client — Claude, Cursor, Cline, Windsurf — talk to any external tool through a single JSON-RPC interface. Install an MCP server (e.g. `npx @modelcontextprotocol/server-postgres`) and your AI agent gains real tool access: read your database, edit files, post to Slack, deploy to Vercel. As of May 2026, there are 89+ production MCP servers across 18 categories.',
