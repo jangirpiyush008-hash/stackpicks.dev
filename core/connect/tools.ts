@@ -1483,6 +1483,35 @@ const TODOIST_TOOLS: ConnectTool[] = [
 
 const GOOGLE_ADS_TOOLS: ConnectTool[] = [
   {
+    name: 'google_ads_search',
+    provider: 'google-ads',
+    description: 'Run any read-only GAQL (Google Ads Query Language) query against a customer. The flexible primary tool — use this for anything beyond the convenience wrappers. Example query: "SELECT campaign.id, campaign.name, metrics.cost_micros FROM campaign WHERE segments.date DURING LAST_7_DAYS". If customer_id is omitted the first accessible customer is used. login_customer_id is only needed when the user accesses the customer through a Manager (MCC).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'A valid GAQL query string.' },
+        customer_id: { type: 'string', description: 'Optional — auto-resolves to first accessible.' },
+        login_customer_id: { type: 'string', description: 'Optional MCC customer ID for delegated access.' },
+      },
+      required: ['query'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'google_ads_get_resource_metadata',
+    provider: 'google-ads',
+    description: 'Get the list of fields (with type + category + selectable/filterable/sortable) on a Google Ads resource so you can compose a GAQL query against it. Example resource: "campaign", "ad_group", "ad_group_ad", "metrics", "segments".',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        resource: { type: 'string', description: 'Resource name, e.g. "campaign" or "ad_group".' },
+        customer_id: { type: 'string', description: 'Optional — auto-resolves to first accessible.' },
+      },
+      required: ['resource'],
+      additionalProperties: false,
+    },
+  },
+  {
     name: 'google_ads_list_accounts',
     provider: 'google-ads',
     description: 'List Google Ads customer IDs the OAuth-ed user can access. Use one as customer_id in later calls.',

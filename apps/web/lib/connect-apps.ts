@@ -956,7 +956,7 @@ const CATALOG: ConnectApp[] = [
   ]),
   ...group('marketing', [
     // Advertising platforms — high value for marketers running AI on ad data.
-    ['google-ads',      'Google Ads',          'Campaigns, keywords, performance', { status: 'live', popular: true, toolCount: 3 }],
+    ['google-ads',      'Google Ads',          'Campaigns, keywords, performance', { status: 'live', popular: true, toolCount: 5 }],
     ['patreon',         'Patreon',             'Creator memberships',            { popular: true }],
     ['ko-fi',           'Ko-fi',               'Creator donations'],
     ['buy-me-coffee',   'Buy Me a Coffee',     'Creator tips'],
