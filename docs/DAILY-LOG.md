@@ -47,6 +47,8 @@ github, slack, notion, linear, gitlab, airtable, asana, calendly, todoist, dropb
 - **SEO Day 6 — LaunchingNext submission:** paste-ready copy provided (tagline, 600-char description, tags, "bootstrapped startup", "<$1k marketing", launch date 2026-05-21). Piyush submitting.
 - **Newsletter broadcast draft:** subject + body ready for Resend → 3-post roundup tying back to /connect.
 - **IndexNow note:** my local CRON_SECRET ≠ Railway's, so the 3 new posts didn't auto-ping. Bing Webmaster manual submit + GSC Request Indexing is the workaround for instant crawl.
+- **Google Ads + Meta Ads switched to BYO-token mode (LIVE in catalog):** rewrote google-ads executor to accept JSON config (developer_token, client_id, client_secret, refresh_token) — mints access tokens via refresh-token grant just-in-time. facebook-ads stays Bearer-token directly (System User token). Both added to `API_KEY_PROVIDERS` + `API_KEY_HINTS`. Catalog flipped → 22 apps live.
+- **Google Ads developer token:** Test Account tier issued instantly to new MCC `857-177-3115`. **Basic Access application submitted** (full design doc + form) — review SLA 3 business days. Once approved, Piyush can connect his real Google Ads account end-to-end (OAuth Playground → refresh token → paste JSON on /connect).
 
 ### Tomorrow / next
 - **[YOU]** Continue Nango registration queue (4 remaining): Intercom → Jira → HubSpot → retry ClickUp. Monday parked.
