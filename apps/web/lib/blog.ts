@@ -163,130 +163,100 @@ ChatGPT Ads is real, self-serve, and growing fast. The targeting model is contex
       { question: 'Is Bring-Your-Own-Token mode secure?', answer: 'Yes. Tokens are encrypted at rest using AES-256-GCM in StackPicks\' Postgres database, with Row-Level Security so only the row owner can read their own credentials. Access tokens are minted just-in-time from the refresh token and not persisted. Every API call is audit-logged. You can revoke at any time on /dashboard/connections, which deletes the stored token immediately.' },
       { question: 'What can Claude do with my Google Ads account?', answer: 'Currently read-only: list accessible customer IDs, list campaigns with status and budget, and pull campaign performance (spend, impressions, clicks, conversions, CTR, CPC) for a date range. No campaign creation, no bid edits, no destructive actions in the current release. Future write capabilities will require a separate user-level opt-in.' },
     ],
-    content: `Want Claude to answer *"what was my Google Ads spend last week and which campaign had the best CTR"* without you opening the dashboard? That's exactly what this setup does.
+    content: `Connect Google Ads to Claude in ~20 minutes. Unlike Meta Ads (which has a 60-second official connector), Google has no official MCP yet — so you bring your own developer token + OAuth credentials. StackPicks Connect stores them encrypted and proxies read-only queries.
 
-The connection uses **Bring-Your-Own-Token (BYO) mode**, which bypasses two long waits: Google's OAuth verification for the StackPicks app, and Google's Standard Access review of our developer token. You bring your own already-approved Google Ads access; we proxy the read-only API calls.
+## Before you start
 
-End-to-end setup: **~20 minutes**, mostly done in your browser.
+You need:
+- A Google account with access to a Google Ads account.
+- Free Google Cloud project (created in step 4).
+- A free [StackPicks account](/connect).
 
-## What you'll need
+## Step 1 — Create a Manager (MCC) account
 
-1. A Google account that owns (or has admin access to) a Google Ads account.
-2. A Google Cloud Console project — free, takes 2 minutes to create.
-3. A StackPicks account ([free signup](/connect)).
-4. Claude Desktop, Cursor, or any other MCP-compatible AI client.
+Developer tokens only come from Manager accounts.
 
-## Step 1 — Create a Google Ads Manager (MCC) account (free, 3 min)
+- Go to https://ads.google.com/intl/en/home/tools/manager-accounts/
+- Click **Create a manager account** → use the Google login that owns your Ads.
+- Pick a name, choose "Manage other people's accounts", set country/timezone/currency → Submit.
 
-Google issues developer tokens **only** through Manager accounts, not direct ad accounts. If you already have an MCC, skip this step.
+Skip if you already have an MCC.
 
-1. Go to **https://ads.google.com/intl/en/home/tools/manager-accounts/** → "Create a manager account."
-2. Use the same Google account that owns your existing Ads account.
-3. Manager account name: anything (e.g. "Yourname Manager").
-4. **What you'll use this account for:** "Manage other people's accounts."
-5. Country / time zone / currency.
-6. Submit.
+## Step 2 — Link your ad account to the MCC
 
-## Step 2 — Link your existing ad account to the MCC (2 min)
+- Inside the MCC: **Admin → Sub-account settings → +** → **Link existing account** → enter your Customer ID.
+- Switch to your direct Ads account: **Admin → Access and security → Managers** → Accept.
 
-1. Inside the new Manager account → **Admin → Sub-account settings → +** → **Link existing account**.
-2. Enter your direct Google Ads customer ID (the one you actually run campaigns from).
-3. Switch back to the direct account → **Admin → Access and security → Managers** → accept the link request.
+## Step 3 — Apply for a Developer Token
 
-## Step 3 — Apply for a Developer Token (5 min, instant test-tier)
+- Inside the MCC: **Tools (wrench) → Setup → API Center**.
+- Fill the form: company name, URL, "Independent Google Ads Developer", contact email.
+- Submit → **Test Access token** issued instantly.
+- For real campaigns, click **Apply for Basic Access** → answer the form, upload a 1-page design doc → ~3 business days.
+- Copy the token (22 chars).
 
-1. Inside the Manager account → **Tools (wrench) → Setup → API Center**.
-2. Fill the API contact form — company name, URL, "Independent Google Ads Developer," contact email.
-3. Submit. The Developer Token is issued **instantly** with **Test Account Access** (works on test accounts).
-4. (Optional, for real campaigns) Click **"Apply for Basic Access"** — fill the form, upload a design document. Approval typically lands within 3 business days.
-5. Click **View token** → copy the 22-char string. Save it.
+## Step 4 — OAuth credentials in Google Cloud
 
-## Step 4 — Enable the Google Ads API in Google Cloud (2 min)
+- https://console.cloud.google.com → create or pick a project.
+- **APIs & Services → Library** → search "Google Ads API" → **Enable**.
+- **Credentials → Create Credentials → OAuth client ID** → type **Web application**.
+- **Authorized redirect URIs:** \`https://developers.google.com/oauthplayground\`
+- **Create** → copy **Client ID** + **Client Secret**.
 
-1. https://console.cloud.google.com → create or pick a project.
-2. **APIs & Services → Library** → search "Google Ads API" → **Enable**.
-3. **Credentials → + Create Credentials → OAuth client ID**.
-4. Application type: **Web application**. Name: "Stackpicks Connect Google Ads."
-5. **Authorized redirect URIs** → add: \`https://developers.google.com/oauthplayground\`
-6. **Create** → copy **Client ID** + **Client Secret**.
+## Step 5 — Get a refresh token
 
-## Step 5 — Get a refresh token via OAuth Playground (3 min)
+- Open https://developers.google.com/oauthplayground
+- Gear icon (top right) → tick **Use your own OAuth credentials** → paste your Client ID + Secret → Close.
+- In the left panel input box, paste: \`https://www.googleapis.com/auth/adwords\` → **Authorize APIs** → log in with the Google account that owns your Ads → Allow.
+- Click **Exchange authorization code for tokens** → copy the **Refresh token** (starts with \`1//\`).
 
-1. Open **https://developers.google.com/oauthplayground**.
-2. Gear icon (top-right) → tick **"Use your own OAuth credentials"** → paste the Client ID + Client Secret from Step 4 → Close.
-3. Left panel, bottom input box → paste:
-   \`\`\`
-   https://www.googleapis.com/auth/adwords
-   \`\`\`
-   → **Authorize APIs** → log in with the Google account that owns your Ads account → Allow.
-4. You're now on Step 2 of the Playground → click **Exchange authorization code for tokens**.
-5. Copy the **Refresh token** (long string starting with \`1//\`).
+## Step 6 — Connect on StackPicks
 
-## Step 6 — Connect on StackPicks (1 min)
+- https://stackpicks.dev/connect → click **Google Ads**.
+- Paste this JSON (substituting your 4 values):
+  \`\`\`json
+  {"developer_token":"…","client_id":"…","client_secret":"…","refresh_token":"…"}
+  \`\`\`
+- Confirm.
 
-1. Open **https://stackpicks.dev/connect** → click the **Google Ads** card.
-2. When the prompt appears, paste this JSON (substitute your 4 values):
-   \`\`\`json
-   {
-     "developer_token": "YOUR_DEV_TOKEN",
-     "client_id": "YOUR_CLIENT_ID.apps.googleusercontent.com",
-     "client_secret": "GOCSPX-YOUR_SECRET",
-     "refresh_token": "1//YOUR_REFRESH_TOKEN"
-   }
-   \`\`\`
-3. Confirm. You should see "connected" in the dashboard.
+## Step 7 — Use it in Claude
 
-## Step 7 — Test in Claude
+- Claude → **Settings → Connectors → Add custom connector** → paste \`https://stackpicks.dev/api/mcp\` → sign in.
+- Ask: *"List my Google Ads accounts"*.
+- Then: *"Show last 7 days campaign performance."*
 
-1. In Claude → **Settings → Connectors → Add custom connector** → paste:
-   \`\`\`
-   https://stackpicks.dev/api/mcp
-   \`\`\`
-2. Claude opens a browser → log into StackPicks → approve.
-3. Ask Claude: *"List my Google Ads accounts."*
-4. Then: *"For customer XXX-XXX-XXXX, show campaign performance for the last 7 days."*
+Same MCP URL works in Cursor, Cline, and Windsurf.
 
-If both return data, you're done. Same setup also works in **Cursor**, **Cline**, and **Windsurf** — paste the same URL in their MCP settings.
+## What Claude can do
 
-## What Claude can actually do
+5 tools, all read-only:
+- \`google_ads_search\` — any GAQL query (the flexible primary tool)
+- \`google_ads_get_resource_metadata\` — list fields on a resource
+- \`google_ads_list_accounts\` — accessible customer IDs
+- \`google_ads_list_campaigns\` — campaigns with status + budget
+- \`google_ads_campaign_performance\` — spend, clicks, conversions, CTR, CPC for a date range
 
-| Tool | What it returns |
-|------|----------------|
-| \`google_ads_list_accounts\` | Customer IDs the OAuth user can access |
-| \`google_ads_list_campaigns\` | Campaigns for a customer (id, name, status, channel, budget) |
-| \`google_ads_campaign_performance\` | Spend, impressions, clicks, conversions, CTR, CPC for a date range |
+## Security
 
-The agent can chain these. Ask *"flag any campaign where CPC jumped over 25% week-over-week"* and Claude will pull two date ranges, compute the deltas, and answer.
+Tokens encrypted at rest (AES-256-GCM) with Row-Level Security. Access tokens minted just-in-time, never stored. Revoke any time on [/dashboard/connections](/dashboard/connections).
 
-## Security model
-
-- Your developer token + OAuth credentials are stored **encrypted at rest** (AES-256-GCM) in StackPicks' Postgres.
-- Row-Level Security ensures only your account can read your row.
-- Access tokens are minted just-in-time and never persisted.
-- Every call is audit-logged (user_id, tool, timestamp, latency — no payloads).
-- You can revoke at any time via **/dashboard/connections** → the encrypted blob is deleted immediately.
-
-## Common errors and fixes
+## Common errors
 
 | Error | Fix |
-|------|-----|
-| "User in the cookie is not a valid ads user" | The Google account you used in Playground (Step 5) doesn't have access to the Ads account. Re-do Step 5 with the right Google login. |
-| "Developer token is not approved" | You're on Test Access trying to read a real account. Wait for Basic Access approval or test with a test ad account. |
-| "AUTHENTICATION_ERROR" | Refresh token expired or revoked — re-run Step 5 to get a fresh one, paste new JSON in /connect. |
-| "Required field is missing" | The pasted JSON is malformed. Verify all 4 keys: developer_token, client_id, client_secret, refresh_token. |
+|---|---|
+| "User in the cookie is not a valid ads user" | The Google login in Step 5 doesn't own the Ads account. Re-do Step 5 with the right login. |
+| "Developer token is not approved" | You're on Test Access trying to read a real account. Wait for Basic Access or use a test account. |
+| "AUTHENTICATION_ERROR" | Refresh token revoked. Re-run Step 5, paste fresh JSON. |
+| Bad JSON | Verify all 4 keys: developer_token, client_id, client_secret, refresh_token. |
 
-## What's next
+## Next
 
-Pair Google Ads with [Meta Ads](/blog/connect-meta-ads-to-claude-mcp-2026) (same flow, different setup) for cross-channel ad ops in one Claude prompt. With both connected, ask:
-
-> *"Compare last 7 days CPC and ROAS across Google Ads and Meta Ads campaigns, flag any underperformers."*
-
-That's a 30-minute spreadsheet job done in 10 seconds.
+Pair with [Meta Ads](/blog/connect-meta-ads-to-claude-mcp-2026) — Meta has a 60-second official connector. Then ask Claude: *"Compare last 7 days CPC and ROAS across Google + Meta, flag underperformers."* Cross-platform ad ops in one prompt.
 
 ## Related reading
 
 - [Connect Meta Ads to Claude via MCP](/blog/connect-meta-ads-to-claude-mcp-2026)
-- [ChatGPT Ads Explained](/blog/chatgpt-ads-explained-2026) — the new third channel
+- [ChatGPT Ads Explained](/blog/chatgpt-ads-explained-2026)
 - [One MCP for All Your Apps](/blog/one-mcp-for-all-apps-composio-alternative-2026) — why unified gateways win`,
   },
   {
