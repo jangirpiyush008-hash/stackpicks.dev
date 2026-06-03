@@ -124,11 +124,12 @@ For B2B / dev tools / SaaS in particular, ChatGPT Ads is a real channel worth a 
 
 ChatGPT Ads is also a reminder of the new shape of advertising: **users are talking to an agent, not typing keywords.** The most measurable wins in 2026 won't come from optimizing keyword bids — they'll come from agents that *manage* ad spend across platforms.
 
-If you want to actually run your Google Ads + Meta Ads + (eventually) ChatGPT Ads through one AI agent, that's exactly what [StackPicks Connect](/connect) is built for. Today, our unified MCP gateway connects:
+Meta moved first on the official-MCP front: on **April 29, 2026** Meta launched its own [Meta Ads AI Connector](https://www.facebook.com/business/news/meta-ads-ai-connectors) at \`mcp.facebook.com/ads\` — 29 tools, sign-in-with-Meta, free, and supported in Claude, ChatGPT, and Perplexity at launch. That tells you something about the trajectory: ChatGPT Ads will almost certainly have its own MCP within the year.
 
-- **Google Ads** — list accounts, list campaigns, pull campaign performance (BYO-token mode, live now)
-- **Meta Ads** — list accounts, list campaigns, account + campaign insights, list ads (BYO-token mode, live now)
-- ChatGPT Ads API access is coming — we'll wire it once OpenAI ships a public Ads API.
+For now, if you want to actually run your Google Ads + Meta Ads + (eventually) ChatGPT Ads through one AI agent, [StackPicks Connect](/connect) is the unified gateway built for that. Our value isn't being the only way to reach Meta — it's being the **one URL that reaches every ad platform plus everything else** (GitHub, Slack, Notion, Linear and 18 more) in a single connection. Today the gateway is live with:
+
+- **Google Ads** — list accounts, list campaigns, GAQL search, resource metadata, campaign performance (BYO-token mode)
+- **Meta Ads** — list accounts, list campaigns, account + campaign insights, list ads (BYO-token mode — or use Meta's official MCP directly for deeper write access)
 
 A typical workflow once both are connected: ask Claude *"compare last 7 days CPC across Google + Meta for my SaaS campaigns, flag anything where ROAS dropped under 2x."* The agent calls both platforms in the same response and answers in seconds.
 
@@ -290,8 +291,8 @@ That's a 30-minute spreadsheet job done in 10 seconds.
   },
   {
     slug: 'connect-meta-ads-to-claude-mcp-2026',
-    title: 'Connect Meta Ads (Facebook + Instagram) to Claude via MCP — Setup Guide (2026)',
-    excerpt: 'Run your Meta Ads campaigns through Claude in 15 minutes using StackPicks Connect\'s Bring-Your-Own-Token MCP gateway — no Meta App Review, no Business Verification wait.',
+    title: 'Connect Meta Ads to Claude with MCP — Official Connector + Unified Gateway (2026)',
+    excerpt: 'Meta launched its official Ads AI Connector (mcp.facebook.com/ads) on April 29, 2026 — sign in once, no developer setup. Here\'s how it works, and when StackPicks Connect\'s unified gateway is the better path.',
     query: 'connect meta ads facebook ads claude mcp setup',
     monthly_searches: 3800,
     reading_time: 6,
@@ -299,140 +300,104 @@ That's a 30-minute spreadsheet job done in 10 seconds.
     updated_at: TODAY_JUN3,
     author: 'Piyush Jangir',
     category: 'AI Tooling',
-    quick_answer: 'You connect Meta Ads (Facebook + Instagram) to Claude through StackPicks Connect using a Bring-Your-Own-Token flow with Meta\'s System User Access Token. You create a System User inside your Business Manager, assign your ad account to it, generate a long-lived (never-expiring) token with ads_read permission, and paste it on StackPicks Connect. StackPicks stores the token encrypted and exposes Meta Ads tools (list accounts, list campaigns, account + campaign insights, list ads) to Claude through one MCP install. Setup takes ~15 minutes. No Meta App Review wait, no Business Verification gate.',
+    quick_answer: 'On April 29, 2026 Meta launched its official Meta Ads AI Connector — an MCP server at mcp.facebook.com/ads that any advertiser can paste into Claude, ChatGPT, or Perplexity as a custom connector, then sign in with their Meta account. No developer credentials, no System User tokens, no API setup. The connector exposes 29 tools across reporting, campaign management, catalog management, and signal diagnostics. If you only need Meta Ads, use this directly — it is the fastest path. If you want Meta Ads alongside Google Ads, GitHub, Slack, Notion and 20+ other apps through ONE MCP URL, StackPicks Connect is the unified gateway built for that.',
     faqs: [
-      { question: 'Can I connect Meta Ads to Claude?', answer: 'Yes. Use StackPicks Connect\'s Meta Ads provider with a Bring-Your-Own-Token flow. You generate a System User Access Token in your own Meta Business Manager (ads_read permission, never expires), paste it on /connect, and Claude can immediately query your Facebook + Instagram ad campaigns. Setup is ~15 minutes and requires no Meta App Review.' },
-      { question: 'Why use a System User Access Token instead of normal OAuth?', answer: 'Meta\'s normal OAuth flow for ad permissions (ads_read, ads_management) requires App Review approval — typically 2-4 weeks. A System User Access Token bypasses this: it\'s a long-lived token issued from your own Business Manager, scoped only to your ad accounts. You\'re the admin, you trust yourself, so Meta lets you generate the token instantly. Companies like Make.com and n8n use the same pattern.' },
-      { question: 'What permissions does Claude need on my Meta Ads account?', answer: 'Three permissions when you generate the System User token: ads_read (required, lets us read campaign + insights data), business_management (recommended, gives lifetime tokens that don\'t expire), and optionally read_insights (some accounts list this separately). No write permissions are needed in the current release — Claude can only read your ad data.' },
-      { question: 'Is my Meta Ads access token safe to paste into StackPicks?', answer: 'Tokens are encrypted at rest using AES-256-GCM in StackPicks\' Postgres database, behind Row-Level Security so only your row owner can read it. The token is used as a Bearer header to Meta\'s Graph API for read-only queries. You can revoke at any time from Meta Business Manager (which immediately invalidates the token everywhere) or from /dashboard/connections (which deletes the stored copy from StackPicks).' },
-      { question: 'What can Claude actually do with my Meta Ads?', answer: 'Read-only insights and structure: list your ad accounts, list campaigns under each account, pull account-level insights (spend, impressions, clicks, CTR, CPC, CPM, actions) for a date preset, pull per-campaign insights, and list ads. Date presets supported: today, yesterday, last_7d, last_14d, last_30d, this_month, last_month. No campaign creation, no bid edits, no audience changes in the current release.' },
-      { question: 'Do I need a Meta Business Manager?', answer: 'Yes. System Users only exist inside a Business Manager. If you currently run ads through a personal Facebook account, create a Business Manager (free, 2 minutes at business.facebook.com), then claim or transfer your ad account into it. After that, the System User token flow is the same.' },
+      { question: 'How do I connect Meta Ads to Claude in 2026?', answer: 'Use the official Meta Ads AI Connector launched April 29, 2026. In Claude → Settings → Connectors → Add custom connector → paste https://mcp.facebook.com/ads → sign in with your Meta account. That is the full setup. No developer credentials, no token generation, no Business Verification. It exposes 29 tools across reporting, campaign management, catalog management, and signal diagnostics. Supported in Claude, ChatGPT, and Perplexity.' },
+      { question: 'Is Meta Ads AI Connector free?', answer: 'Yes, the connector itself is free — you only pay for ads you run on Meta as you normally would. The connector is in open beta as of April 29, 2026, and Meta has stated more AI platforms will be added over time. Currently it works with any MCP-compatible AI client.' },
+      { question: 'When should I use StackPicks Connect instead of Meta\'s official MCP?', answer: 'Use StackPicks Connect when you want Meta Ads alongside other apps through one URL. Meta\'s official MCP only connects Meta Ads. StackPicks Connect unifies 22+ providers (Meta Ads, Google Ads, GitHub, Slack, Notion, Linear, Calendly, Figma, Vercel, etc.) behind one connection — so a single Claude prompt can compare Meta + Google ad spend, then create a Linear issue about the worst-performing campaign, then post the summary to Slack.' },
+      { question: 'Can I use both Meta\'s MCP and StackPicks at the same time?', answer: 'Yes — Claude supports multiple MCP connectors simultaneously. Add mcp.facebook.com/ads for deep Meta Ads access (all 29 tools, native Meta integration) and stackpicks.dev/api/mcp for the rest of your stack. There is no conflict; the agent picks the right tool per request.' },
+      { question: 'What is the difference between Meta\'s 29 tools and StackPicks\' Meta Ads tools?', answer: 'Meta\'s official connector exposes 29 tools across four categories: reporting (account/campaign/ad-level insights, custom date ranges, breakdowns), campaign management (create/pause/edit campaigns, change budgets, target audiences), catalog management (product feeds for Advantage+ catalog ads), and signal diagnostics (Pixel/Conversions API troubleshooting). StackPicks\' Meta Ads is read-only (5 tools: list accounts, list campaigns, account + campaign insights, list ads) because the unified gateway optimises for safety across many providers. For deep Meta Ads work, Meta\'s official connector is the better tool.' },
+      { question: 'Do I need a Meta Business Manager?', answer: 'For Meta\'s official AI Connector: you need a Meta account with access to an ad account, which usually means a Business Manager but can also be a personal account that runs ads. For StackPicks Connect (BYO-token path): yes — System Users only exist inside a Business Manager.' },
     ],
-    content: `Want Claude to answer *"how much did I spend on Meta Ads yesterday and what's my best-performing campaign this week"* — no dashboard hopping? Here's the setup, end to end.
+    content: `On **April 29, 2026**, Meta launched the **official Meta Ads AI Connector** — its own MCP server that any advertiser can paste into Claude, ChatGPT, or Perplexity. Sign in once with your Meta account; the connector handles everything else. No developer credentials, no token generation, no Business Verification waiting room.
 
-The connection uses Meta's **System User Access Token** — a long-lived token you generate inside your own Business Manager. Because you're the admin issuing it to yourself, no Meta App Review is required. This is the same pattern Make.com, n8n, and Pipedream use for ad-platform integrations.
+If your only ad platform is Meta, **use the official connector**. It's the fastest, deepest path, and it's free.
 
-Total time: **~15 minutes**. No waiting.
+This post covers (1) how to set up Meta's official connector, (2) what it does, and (3) when StackPicks Connect's unified gateway makes sense instead.
 
-## What you'll need
+## Option A — Meta's official Ads AI Connector (recommended for Meta-only)
 
-1. A Facebook account with admin access to a Meta Business Manager (or willingness to create one — free, 2 min).
-2. A claimed ad account inside that Business Manager.
-3. A StackPicks account ([free signup](/connect)).
+**Setup (60 seconds):**
 
-## Step 1 — Open Business Manager (1 min)
+1. In Claude → **Settings → Connectors → Add custom connector**.
+2. Paste:
+   \`\`\`
+   https://mcp.facebook.com/ads
+   \`\`\`
+3. Sign in with the Meta account that has access to your ad account.
+4. Done.
 
-1. Go to **https://business.facebook.com**.
-2. If you don't have a Business Manager: top-right → **Create Account** → name it (e.g. "Yourname Business") → use your personal Facebook account → enter business email → submit.
-3. Top-right gear icon → **Business settings**.
+Now ask Claude: *"List my Meta ad accounts and show last 7 days spend by campaign."*
 
-## Step 2 — Create a System User (2 min)
+**What you get — 29 tools across 4 categories:**
 
-System Users are Business Manager-level service accounts. They're how production apps authenticate to Meta APIs without depending on a human session.
+| Category | Capabilities |
+|---|---|
+| **Reporting** | Account / campaign / ad-set / ad-level insights, custom date ranges, breakdowns by device/placement/region, comparison reports |
+| **Campaign management** | Create / pause / edit campaigns, change budgets, modify targeting, schedule changes |
+| **Catalog management** | Product feeds for Advantage+ catalog ads, catalog diagnostics, feed health |
+| **Signal diagnostics** | Meta Pixel + Conversions API troubleshooting, event match quality, attribution debugging |
 
-1. Left sidebar → **Users → System Users**.
-2. **+ Add** (re-enter your password if prompted).
-3. **System user name:** something descriptive like "StackPicks Reader."
-4. **System user role:** **Admin** (required to generate tokens — you can scope per-asset in the next step).
-5. **Create System User**.
+That's a full Meta Ads workflow available conversationally inside Claude. As of June 2026 it supports Claude, ChatGPT, and Perplexity, with more clients to be added.
 
-## Step 3 — Assign your Ad Account to the System User (2 min)
+Official launch post: [Meta for Business — Introducing Meta Ads AI Connectors](https://www.facebook.com/business/news/meta-ads-ai-connectors).
 
-1. With "StackPicks Reader" selected → click **Add Assets**.
-2. Left tab → **Ad Accounts** → tick your ad account(s).
-3. Toggle on **Manage campaigns** (or "View performance" for stricter read-only).
-4. **Save changes**.
+## Option B — StackPicks Connect (recommended if Meta isn't your only platform)
 
-If your ad account isn't listed: **Business settings → Accounts → Ad Accounts → + Add → Add an Ad Account** → enter the account ID → claim it first, then come back to this step.
+Meta's official connector is great, but it only covers Meta. If you actually want a single AI prompt to do something like this:
 
-## Step 4 — Create a Meta App (3 min)
+> *"Compare last 7 days spend across Google Ads and Meta Ads, flag any campaign where CPC jumped over 25%, then post a summary to my #marketing Slack and create a Linear issue for the worst performer."*
 
-The token must be issued in the context of a Meta App. The app doesn't need to go through review for System User tokens — it just has to exist.
+…you need a **unified gateway** — one connection URL that exposes tools from many platforms at once. That's [StackPicks Connect](/connect).
 
-1. Open **https://developers.facebook.com/apps** → **Create App**.
-2. **Use case:** "Other" → **App type:** **Business**.
-3. **App name:** "StackPicks Reader."
-4. **Business Account:** pick the Business Manager from Step 1.
-5. **Create app**.
-6. Left sidebar → **App settings → Basic**:
-   - **Privacy Policy URL:** \`https://stackpicks.dev/privacy\` (or your own).
-   - **Terms of Service URL:** \`https://stackpicks.dev/terms\` (or your own).
-   - **Category:** "Business and Pages."
-   - **Save changes.**
+StackPicks Connect today wires **22 providers** behind a single MCP URL: Meta Ads + Google Ads + GitHub, Slack, Notion, Linear, Calendly, Figma, Vercel, Supabase, Cloudflare, Sentry, plus search providers (Tavily, Exa, Perplexity, Brave) and more. Add Meta's official MCP **alongside** StackPicks in Claude — they don't conflict. Claude picks the right tool per request:
 
-## Step 5 — Generate the System User Access Token (3 min)
+- Deep Meta Ads work (create campaign, edit budgets, debug Pixel) → routes to Meta's 29 tools
+- Cross-platform questions ("show me Meta + Google last week") → routes through StackPicks' read-only ad tools
+- Anything non-ads (GitHub PR, Slack post, Linear issue) → StackPicks
 
-1. Back to **Business settings → System Users → StackPicks Reader**.
-2. Top of the panel → **Generate New Token**.
-3. **Select App:** the "StackPicks Reader" app you created in Step 4.
-4. **Token Expiration:** **Never** — critical. Default tokens expire in 60 days; "Never" gives you a permanent token.
-5. **Available Permissions:** tick:
-   - ✅ \`ads_read\` (required)
-   - ✅ \`business_management\` (needed for Never-expiring tokens)
-   - ✅ \`read_insights\` (if listed)
-6. **Generate Token**.
-7. **Copy the token immediately.** Meta only shows the full token once. It's a long string starting with \`EAAB...\`. Save it in your password manager.
+**Setup StackPicks Connect for Meta Ads in 60 seconds** (uses the same simple flow):
 
-## Step 6 — Connect on StackPicks (1 min)
+1. Sign up at [stackpicks.dev](/connect).
+2. Click the **Meta Ads** card → follow the connect flow.
+3. In Claude, add \`https://stackpicks.dev/api/mcp\` as a custom connector → sign in with StackPicks → approve.
 
-1. **https://stackpicks.dev/connect** → click the **Meta Ads Manager** card.
-2. Paste the System User token into the prompt.
-3. Confirm.
+Once connected, every other StackPicks-connected app is available too. One URL, full stack.
 
-That's the full setup. The token is now encrypted and stored, ready to be used by Claude.
+## Which one to pick — the honest decision tree
 
-## Step 7 — Test in Claude
+| Your situation | Use |
+|---|---|
+| **You only run Meta Ads.** No Google Ads, no other tools you want Claude to touch. | **Meta's official connector.** Done in 60 seconds, 29 tools deep, no waiting. |
+| **You run Meta Ads + Google Ads but everything else stays in dashboards.** | **Both, side by side.** Add mcp.facebook.com/ads for Meta depth, add stackpicks.dev/api/mcp for Google Ads (BYO-token mode, also live). |
+| **You want Claude to do cross-platform workflows.** Ad ops + GitHub + Slack + Linear + Notion in one prompt. | **StackPicks Connect** as your primary, optionally with Meta's official for deeper Meta-specific work. |
 
-1. In Claude → **Settings → Connectors → Add custom connector** → paste \`https://stackpicks.dev/api/mcp\` (skip if already added).
-2. Ask Claude: *"List my Meta ad accounts."*
-3. Then: *"For ad account act_XXXXXXX, show last 7 days spend and CTR."*
+There's no wrong answer. We built StackPicks Connect because we kept hitting the "one URL for all my tools" problem ourselves — but if Meta's free official connector solves your case end-to-end, use it.
 
-Both should return data within seconds.
+## Security model — both paths
 
-## What Claude can do with your Meta Ads
+**Meta's official connector:**
+- Authentication via Meta sign-in (the same flow you use on facebook.com / business.facebook.com).
+- Tokens are managed by Meta — never leave Meta's infrastructure.
+- Revoke any time at Business Settings → Apps → Meta Ads AI Connector → Remove.
 
-| Tool | What it returns |
-|------|----------------|
-| \`meta_ads_list_accounts\` | Ad accounts the System User can read (id, name, currency, timezone, status) |
-| \`meta_ads_list_campaigns\` | Campaigns under an ad account (id, name, objective, status, budget, dates) |
-| \`meta_ads_account_insights\` | Account-level spend, impressions, clicks, CTR, CPC, CPM, actions for a date preset |
-| \`meta_ads_campaign_insights\` | Per-campaign insights for a date preset |
-| \`meta_ads_list_ads\` | Individual ads (id, name, status, adset, campaign, creative) |
+**StackPicks Connect (BYO-token path for Meta Ads):**
+- You supply a Meta System User Access Token from your own Business Manager.
+- Token stored encrypted (AES-256-GCM) in StackPicks' Postgres with Row-Level Security.
+- Audit log: every call recorded with user_id, tool, timestamp.
+- Revoke from Meta Business Manager (instant) OR /dashboard/connections (instant).
 
-Date presets: \`today\`, \`yesterday\`, \`last_7d\`, \`last_14d\`, \`last_30d\`, \`this_month\`, \`last_month\`.
+## Common pitfalls
 
-Claude can chain these naturally. Ask *"which campaign had the worst ROAS in last_7d and how does it compare to last_30d"* and the agent will pull both and answer.
-
-## Security model
-
-- Token encrypted at rest (AES-256-GCM) in StackPicks' Postgres.
-- Row-Level Security so only the row owner can read their own token.
-- Token used as a Bearer header to Meta's Graph API for read-only queries.
-- Audit log: every API call recorded with user_id, tool, timestamp, latency.
-- **Revoke at any time** in two places: Meta Business Manager (invalidates everywhere instantly) OR /dashboard/connections (deletes the stored copy from StackPicks).
-
-## Common errors and fixes
-
-| Error | Fix |
-|------|-----|
-| "(#200) Permissions error" | The System User wasn't assigned to the ad account in Step 3. Re-check Business settings → System Users → Add Assets. |
-| "Invalid OAuth access token" | Token was generated with expiration ≠ Never, and has now expired. Re-do Step 5 with **Never** expiration. |
-| "Application does not have permission for this action" | The token was generated against a different Meta App than the one you assigned permissions to. Confirm Step 5 → Select App matches. |
-| "Unsupported get request" / 404 on ad_account_id | The id needs the \`act_\` prefix — the meta_ads_list_accounts tool returns these in the right format. |
-
-## Pair with Google Ads for full ad ops
-
-[Connect Google Ads](/blog/connect-google-ads-to-claude-mcp-2026) the same way (also BYO-token, ~20 min). Once both are connected to the same StackPicks account, ask Claude:
-
-> *"Compare last 7 days spend and ROAS across all my Meta Ads and Google Ads campaigns. Surface anything where CPC jumped over 25% week-over-week."*
-
-The agent calls both platforms in the same response and answers in 10 seconds. That's the unified-gateway payoff — one MCP install, every ad platform in one place.
+- **"Where do I find mcp.facebook.com/ads in Claude?"** — Settings → **Connectors** → "Add custom connector" → paste the URL. Same place you'd add any other MCP server.
+- **Sign-in opens but never returns** — pop-up blocked. Allow pop-ups for claude.ai (or chatgpt.com / perplexity.ai) and retry.
+- **"This connector isn't supported by your client"** — your client doesn't support remote MCP servers yet. Update Claude/ChatGPT/Perplexity to the latest version.
 
 ## Related reading
 
-- [Connect Google Ads to Claude via MCP](/blog/connect-google-ads-to-claude-mcp-2026)
+- [Connect Google Ads to Claude via MCP](/blog/connect-google-ads-to-claude-mcp-2026) — the BYO-token setup (Google has no official MCP yet)
 - [ChatGPT Ads Explained](/blog/chatgpt-ads-explained-2026) — the new third ad channel
-- [One MCP for All Your Apps](/blog/one-mcp-for-all-apps-composio-alternative-2026)`,
+- [One MCP for All Your Apps](/blog/one-mcp-for-all-apps-composio-alternative-2026) — the unified-gateway model`,
   },
   {
     slug: 'claude-opus-4-8-explained-2026',
@@ -802,6 +767,8 @@ The "one MCP server per app" era is ending the same way "one API integration per
 Connect your first app and give Claude real-world hands. → [Open StackPicks Connect](/connect)
 
 ## Update — June 3, 2026
+
+The bigger ecosystem news: on **April 29, 2026 Meta launched its own official Ads AI Connector** at \`mcp.facebook.com/ads\` — one-click sign-in, 29 tools, native Meta auth. If Meta Ads is your only ad platform, just use Meta's official MCP directly; it's free and excellent. StackPicks Connect's value isn't being the *only* way to reach an app — it's being the **one URL that reaches every app at once**, so a single Claude prompt can pull Meta + Google ad data, log a Linear issue, and post the summary to Slack without your agent juggling four MCP installs.
 
 Since this post first ran, StackPicks Connect has crossed **22 live providers** end-to-end:
 
