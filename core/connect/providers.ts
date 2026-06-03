@@ -19,6 +19,9 @@ export const API_KEY_PROVIDERS: ReadonlySet<string> = new Set([
   'exa',
   'brave-search',
   'perplexity',
+  // BYO-token mode for ads platforms — bypasses Google/Meta verification gates:
+  'google-ads',
+  'facebook-ads',
 ]);
 
 export function isApiKeyProvider(slug: string): boolean {
@@ -72,5 +75,13 @@ export const API_KEY_HINTS: Record<string, { label: string; getUrl: string; pref
     label: 'Perplexity API key',
     getUrl: 'https://www.perplexity.ai/settings/api',
     prefix: 'pplx-',
+  },
+  'google-ads': {
+    label: 'Google Ads JSON config (developer_token, client_id, client_secret, refresh_token)',
+    getUrl: 'https://ads.google.com/aw/apicenter',
+  },
+  'facebook-ads': {
+    label: 'Meta System User Access Token (from Business Manager → System Users)',
+    getUrl: 'https://business.facebook.com/settings/system-users',
   },
 };

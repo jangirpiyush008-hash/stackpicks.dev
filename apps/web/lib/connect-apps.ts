@@ -836,7 +836,7 @@ const CATALOG: ConnectApp[] = [
   // ---- 2026 expansion: Meta family, vibe-coding, AI video/image, creator, India ----
   ...group('social', [
     ['meta-business',   'Meta Business Suite', 'Manage FB + IG pages',           { popular: true }],
-    ['facebook-ads',    'Meta Ads Manager',    'Run FB + IG + Threads ads',      { popular: true }],
+    ['facebook-ads',    'Meta Ads Manager',    'Run FB + IG + Threads ads',      { status: 'live', popular: true, toolCount: 5 }],
     ['instagram-ads',   'Instagram Ads',       'IG ad campaigns'],
     ['whatsapp-cloud',  'WhatsApp Cloud API',  'WA business messaging'],
     ['threads-business','Threads Business',    'Meta micro-blog ads'],
@@ -956,7 +956,7 @@ const CATALOG: ConnectApp[] = [
   ]),
   ...group('marketing', [
     // Advertising platforms — high value for marketers running AI on ad data.
-    ['google-ads',      'Google Ads',          'Campaigns, keywords, performance', { popular: true, toolCount: 12 }],
+    ['google-ads',      'Google Ads',          'Campaigns, keywords, performance', { status: 'live', popular: true, toolCount: 3 }],
     ['patreon',         'Patreon',             'Creator memberships',            { popular: true }],
     ['ko-fi',           'Ko-fi',               'Creator donations'],
     ['buy-me-coffee',   'Buy Me a Coffee',     'Creator tips'],
