@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>StackPicks · Intro Reel</title>
+<title>StackPicks · Why Open Source Reel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -13,13 +13,14 @@
     --brand-dark: #8ab300;
     --dark-bg: #0A0B07;
     --card-bg: #14160E;
+    --card-border: rgba(255,255,255,0.08);
     --text: #fff;
     --text-muted: rgba(255,255,255,0.6);
+    --red: #ff7575;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { font-family: 'Plus Jakarta Sans', sans-serif; background: #000; overflow: hidden; width: 100vw; height: 100vh; }
 
-  /* === Stage fills full 9:16 viewport (1080×1920 native) === */
   .stage {
     width: 100vw; height: 100vh;
     background: var(--dark-bg);
@@ -36,104 +37,209 @@
     pointer-events: none;
   }
 
-  /* Top mark */
-  .top-mark {
-    position: absolute; top: 70px; left: 60px;
-    display: flex; align-items: baseline; gap: 8px;
-    z-index: 30;
-    opacity: 0;
-    animation: fadeUp 0.5s 0.2s forwards;
-  }
-  .top-mark .s { font-size: 36px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
-  .top-mark .dot { width: 9px; height: 9px; background: var(--brand-primary); border-radius: 50%; align-self: flex-end; margin-bottom: 6px; }
-  .top-mark .name { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
-
-  /* Stage label top-right */
-  .stage-label {
-    position: absolute; top: 86px; right: 60px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 22px; color: var(--text-muted);
-    font-weight: 500; letter-spacing: 2px;
-    z-index: 30;
-    opacity: 0;
-    animation: fadeUp 0.5s 0.4s forwards;
-  }
-
-  /* Scene base */
+  /* === Scene base — each scene OWNS the full stage exclusively === */
   .scene {
     position: absolute; inset: 0;
-    display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
-    padding: 0 64px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 70px;
     opacity: 0;
+    text-align: center;
   }
 
   /* === Typography === */
   .kicker {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 22px;
+    font-size: 24px;
     letter-spacing: 3px;
     text-transform: uppercase;
     color: var(--brand-primary);
     font-weight: 600;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
   }
-  .h-mega { font-size: 124px; font-weight: 800; letter-spacing: -5px; line-height: 0.92; }
-  .h-big { font-size: 92px; font-weight: 800; letter-spacing: -3.5px; line-height: 0.95; }
-  .h-med { font-size: 64px; font-weight: 800; letter-spacing: -2px; line-height: 1.0; }
-  .sub-big { font-size: 36px; color: var(--text-muted); font-weight: 500; line-height: 1.3; max-width: 900px; }
+  .h-mega { font-size: 140px; font-weight: 800; letter-spacing: -5px; line-height: 0.92; }
+  .h-big { font-size: 96px; font-weight: 800; letter-spacing: -3.5px; line-height: 0.95; }
+  .h-med { font-size: 64px; font-weight: 800; letter-spacing: -2px; line-height: 1.05; }
+  .h-sm { font-size: 48px; font-weight: 800; letter-spacing: -1.4px; line-height: 1.08; }
+  .sub-big { font-size: 38px; color: var(--text-muted); font-weight: 500; line-height: 1.3; max-width: 920px; }
   .sub-med { font-size: 30px; color: var(--text-muted); font-weight: 500; line-height: 1.35; max-width: 900px; }
 
-  /* Lime underline */
   .underline-lime { position: relative; display: inline-block; }
   .underline-lime::after {
     content: ''; position: absolute; left: 0; right: 0; bottom: 8px;
-    height: 16px; background: var(--brand-primary); z-index: -1;
+    height: 18px; background: var(--brand-primary); z-index: -1;
     transform: scaleX(0); transform-origin: left;
     animation: drawLine 0.6s 0.8s cubic-bezier(0.65, 0, 0.35, 1) forwards;
   }
+  .hl-lime { background: var(--brand-primary); color: var(--dark-bg); padding: 4px 22px 12px; border-radius: 14px; }
 
-  /* Highlight box */
-  .hl-lime { background: var(--brand-primary); color: var(--dark-bg); padding: 4px 18px 10px; border-radius: 12px; }
-
-  /* === Big stat grid === */
-  .stat-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 28px 36px;
-    margin-top: 40px; width: 100%; max-width: 900px;
+  /* === Scene 2: 4 benefit cards === */
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 26px;
+    width: 100%; max-width: 880px;
+    margin-top: 36px;
   }
-  .stat-item .stat-num {
-    font-size: 96px; font-weight: 800; letter-spacing: -3px; line-height: 0.9;
+  .benefit-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 24px;
+    padding: 36px 28px;
+    text-align: left;
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  .benefit-card .ico {
+    width: 56px; height: 56px; border-radius: 50%;
+    border: 1.5px solid var(--brand-primary);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 18px;
+  }
+  .benefit-card .ico svg { width: 26px; height: 26px; stroke: var(--brand-primary); stroke-width: 2; fill: none; }
+  .benefit-card .title {
+    font-size: 30px; font-weight: 800; letter-spacing: -0.8px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .benefit-card .desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px; color: var(--text-muted);
+    letter-spacing: 1px; text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* === Scene 3: Browser frame with real stackpicks.dev screenshot === */
+  .browser-wrap {
+    width: 100%; max-width: 760px;
+    margin: 30px auto 0;
+    opacity: 0;
+    transform: translateY(60px) scale(0.92);
+  }
+  .browser-frame {
+    background: var(--card-bg);
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1.5px var(--card-border);
+  }
+  .browser-bar {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.04);
+    border-bottom: 1px solid var(--card-border);
+  }
+  .browser-dots { display: flex; gap: 9px; }
+  .browser-dots span { width: 14px; height: 14px; border-radius: 50%; }
+  .browser-dots span:nth-child(1) { background: #FF5F57; }
+  .browser-dots span:nth-child(2) { background: #FEBC2E; }
+  .browser-dots span:nth-child(3) { background: #28C840; }
+  .browser-url {
+    flex: 1;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 9px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 17px;
     color: var(--brand-primary);
+    display: flex; align-items: center; gap: 9px;
+    font-weight: 600;
+  }
+  .browser-url .lock { color: var(--text-muted); font-size: 14px; }
+  .site-shot {
+    width: 100%;
     display: block;
+    background: #F5F7F0;
+  }
+  .scene-3-cap {
+    margin-top: 40px;
     opacity: 0;
   }
-  .stat-item .stat-label {
+  .scene-3-cap .h-sm { color: var(--text); }
+
+  /* === Scene 4: Repo card with use/skip take === */
+  .repo-card {
+    width: 100%; max-width: 760px;
+    background: var(--card-bg);
+    border: 1.5px solid var(--brand-primary);
+    border-radius: 24px;
+    padding: 40px 36px;
+    box-shadow: 0 30px 80px rgba(198,255,0,0.08), 0 0 0 1.5px rgba(198,255,0,0.2);
+    text-align: left;
+    margin-top: 30px;
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  .repo-card .repo-head {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 22px;
+  }
+  .repo-card .repo-logo {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    background: var(--brand-primary);
+    color: var(--dark-bg);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 28px;
+  }
+  .repo-card .repo-name {
+    font-size: 32px; font-weight: 800; letter-spacing: -0.5px;
+  }
+  .repo-card .repo-meta {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 20px; color: var(--text-muted);
-    letter-spacing: 1.5px; text-transform: uppercase;
+    font-size: 16px; color: var(--text-muted);
+    margin-top: 4px;
+  }
+  .take-row {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 18px 0;
+    border-top: 1px solid var(--card-border);
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  .take-pill {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .take-pill.use { background: rgba(198,255,0,0.15); color: var(--brand-primary); border: 1px solid rgba(198,255,0,0.4); }
+  .take-pill.skip { background: rgba(255,117,117,0.12); color: var(--red); border: 1px solid rgba(255,117,117,0.35); }
+  .take-text {
+    font-size: 22px; line-height: 1.4; color: var(--text);
     font-weight: 500;
-    margin-top: 8px;
   }
 
-  /* === CTA button === */
+  /* === Scene 5: CTA === */
+  .cta-stack { text-align: center; }
+  .cta-lockup {
+    display: inline-flex; align-items: baseline; gap: 8px;
+    margin-bottom: 36px;
+    opacity: 0;
+  }
+  .cta-lockup .s { font-size: 56px; font-weight: 800; color: var(--text); letter-spacing: -1.5px; }
+  .cta-lockup .dot { width: 14px; height: 14px; background: var(--brand-primary); border-radius: 50%; align-self: flex-end; margin-bottom: 10px; }
+  .cta-lockup .name { font-size: 44px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
   .cta-btn {
     display: inline-flex; align-items: center; gap: 18px;
     padding: 26px 38px;
     background: var(--brand-primary); color: var(--dark-bg);
-    font-weight: 800; font-size: 32px;
+    font-weight: 800; font-size: 36px;
     border-radius: 60px;
-    margin-top: 56px;
-    letter-spacing: -0.3px;
+    margin-top: 36px;
+    opacity: 0; transform: scale(0.7);
+    letter-spacing: -0.4px;
   }
   .cta-btn .arrow {
-    width: 52px; height: 52px; border-radius: 50%; background: var(--dark-bg);
+    width: 56px; height: 56px; border-radius: 50%; background: var(--dark-bg);
     display: inline-flex; align-items: center; justify-content: center;
   }
-  .cta-btn .arrow svg { width: 24px; height: 24px; stroke: var(--brand-primary); stroke-width: 2.5; fill: none; }
-
-  /* === Bottom handle === */
+  .cta-btn .arrow svg { width: 26px; height: 26px; stroke: var(--brand-primary); stroke-width: 2.5; fill: none; }
   .handle-strip {
-    position: absolute; bottom: 96px; left: 64px; right: 64px;
+    position: absolute; bottom: 80px; left: 0; right: 0;
     font-family: 'JetBrains Mono', monospace;
     font-size: 22px;
     color: var(--text-muted);
@@ -143,103 +249,163 @@
     opacity: 0;
   }
 
-  /* === KEYFRAMES === */
+  /* === Keyframes === */
   @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
   @keyframes zoomIn { from { opacity: 0; transform: scale(0.65); } to { opacity: 1; transform: scale(1); } }
   @keyframes drawLine { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes browserUp { from { opacity: 0; transform: translateY(60px) scale(0.92); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes slideRight { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
   @keyframes ctaPop { 0% { opacity: 0; transform: scale(0.7); } 60% { transform: scale(1.08); } 100% { opacity: 1; transform: scale(1); } }
 
-  /* === Scene timing — total ~18 seconds === */
+  /* === SCENE TIMING ===
+     Total: 22 sec
+     Each scene gets EXCLUSIVE stage time. No overlap during transitions.
+     Scene N fades out 0-0.3s before Scene N+1 starts.
 
-  /* Scene 1 (0 - 4): Hook */
-  .scene-1 { animation: fadeIn 0.4s 0s forwards, fadeOut 0.4s 3.6s forwards; }
-  .scene-1 .kicker { opacity: 0; animation: fadeUp 0.5s 0.4s forwards; }
-  .scene-1 .h-mega { opacity: 0; animation: zoomIn 0.6s 0.6s cubic-bezier(0.34, 1.3, 0.64, 1) forwards; }
+     0.0 - 3.5   Scene 1 — "Why open source?"
+     3.5 - 9.0   Scene 2 — 4 benefit cards
+     9.0 - 14.0  Scene 3 — Browser opens stackpicks.dev (REAL site shot)
+    14.0 - 18.0  Scene 4 — Repo card with use/skip take
+    18.0 - 22.0  Scene 5 — CTA
+  */
+
+  /* Scene 1 (0 - 3.5) */
+  .scene-1 { animation: fadeIn 0.35s 0s forwards, fadeOut 0.35s 3.2s forwards; }
+  .scene-1 .kicker { opacity: 0; animation: fadeUp 0.5s 0.3s forwards; }
+  .scene-1 .h-mega { opacity: 0; animation: zoomIn 0.55s 0.55s cubic-bezier(0.34, 1.3, 0.64, 1) forwards; }
   .scene-1 .sub-big { opacity: 0; animation: fadeUp 0.5s 1.4s forwards; }
 
-  /* Scene 2 (4 - 9): What it is */
-  .scene-2 { animation: fadeIn 0.4s 4.0s forwards, fadeOut 0.4s 8.6s forwards; }
-  .scene-2 .kicker { opacity: 0; animation: fadeUp 0.5s 4.2s forwards; }
-  .scene-2 .h-big { opacity: 0; animation: fadeUp 0.5s 4.5s forwards; }
-  .scene-2 .sub-med { opacity: 0; animation: fadeUp 0.5s 5.5s forwards; }
+  /* Scene 2 (3.5 - 9.0) — benefits */
+  .scene-2 { animation: fadeIn 0.35s 3.5s forwards, fadeOut 0.35s 8.7s forwards; }
+  .scene-2 .kicker { opacity: 0; animation: fadeUp 0.5s 3.7s forwards; }
+  .scene-2 .h-med { opacity: 0; animation: fadeUp 0.5s 4.0s forwards; }
+  .scene-2 .benefit-card:nth-child(1) { animation: fadeUp 0.4s 4.7s forwards; }
+  .scene-2 .benefit-card:nth-child(2) { animation: fadeUp 0.4s 5.1s forwards; }
+  .scene-2 .benefit-card:nth-child(3) { animation: fadeUp 0.4s 5.5s forwards; }
+  .scene-2 .benefit-card:nth-child(4) { animation: fadeUp 0.4s 5.9s forwards; }
 
-  /* Scene 3 (9 - 14): The numbers */
-  .scene-3 { animation: fadeIn 0.4s 9.0s forwards, fadeOut 0.4s 13.6s forwards; }
+  /* Scene 3 (9 - 14) — show the real site */
+  .scene-3 { animation: fadeIn 0.35s 9.0s forwards, fadeOut 0.35s 13.7s forwards; }
   .scene-3 .kicker { opacity: 0; animation: fadeUp 0.5s 9.2s forwards; }
-  .scene-3 .h-med { opacity: 0; animation: fadeUp 0.5s 9.5s forwards; }
-  .scene-3 .stat-item:nth-child(1) .stat-num { animation: fadeUp 0.4s 10.2s forwards; }
-  .scene-3 .stat-item:nth-child(2) .stat-num { animation: fadeUp 0.4s 10.6s forwards; }
-  .scene-3 .stat-item:nth-child(3) .stat-num { animation: fadeUp 0.4s 11.0s forwards; }
-  .scene-3 .stat-item:nth-child(4) .stat-num { animation: fadeUp 0.4s 11.4s forwards; }
+  .scene-3 .h-sm { opacity: 0; animation: fadeUp 0.5s 9.5s forwards; }
+  .scene-3 .browser-wrap { animation: browserUp 0.6s 10.1s cubic-bezier(0.34, 1.2, 0.64, 1) forwards; }
+  .scene-3 .scene-3-cap { animation: fadeUp 0.5s 12.5s forwards; }
 
-  /* Scene 4 (14 - 18): CTA */
-  .scene-4 { animation: fadeIn 0.4s 14.0s forwards; }
+  /* Scene 4 (14 - 18) — repo card with take */
+  .scene-4 { animation: fadeIn 0.35s 14.0s forwards, fadeOut 0.35s 17.7s forwards; }
   .scene-4 .kicker { opacity: 0; animation: fadeUp 0.5s 14.2s forwards; }
-  .scene-4 .h-big { opacity: 0; animation: fadeUp 0.5s 14.5s forwards; }
-  .scene-4 .sub-med { opacity: 0; animation: fadeUp 0.5s 15.3s forwards; }
-  .scene-4 .cta-btn { animation: ctaPop 0.6s 15.9s cubic-bezier(0.34, 1.3, 0.64, 1) forwards; }
-  .scene-4 .handle-strip { animation: fadeIn 0.4s 16.6s forwards; }
+  .scene-4 .h-sm { opacity: 0; animation: fadeUp 0.5s 14.5s forwards; }
+  .scene-4 .repo-card { animation: fadeUp 0.6s 15.0s cubic-bezier(0.34, 1.2, 0.64, 1) forwards; }
+  .scene-4 .take-row:nth-child(2) { animation: slideRight 0.4s 15.8s forwards; }
+  .scene-4 .take-row:nth-child(3) { animation: slideRight 0.4s 16.3s forwards; }
+
+  /* Scene 5 (18 - 22) — CTA */
+  .scene-5 { animation: fadeIn 0.4s 18.0s forwards; }
+  .scene-5 .cta-lockup { animation: fadeUp 0.5s 18.2s forwards; }
+  .scene-5 .h-big { opacity: 0; animation: fadeUp 0.5s 18.6s forwards; }
+  .scene-5 .sub-med { opacity: 0; animation: fadeUp 0.5s 19.1s forwards; }
+  .scene-5 .cta-btn { animation: ctaPop 0.55s 19.7s cubic-bezier(0.34, 1.3, 0.64, 1) forwards; }
+  .scene-5 .handle-strip { animation: fadeIn 0.4s 20.5s forwards; }
 </style>
 </head>
 <body>
 
 <div class="stage">
 
-  <!-- Persistent corner marks -->
-  <div class="top-mark">
-    <span class="s">S</span><span class="dot"></span><span class="name">StackPicks</span>
-  </div>
-  <div class="stage-label">// 2026</div>
-
   <!-- ============ SCENE 1 — HOOK ============ -->
   <div class="scene scene-1">
-    <div class="kicker">// what is stackpicks?</div>
-    <div class="h-mega">Stop<br>guessing<br>your <span class="underline-lime">stack.</span></div>
-    <div class="sub-big" style="margin-top: 28px;">A curated directory of open-source dev tools.</div>
+    <div class="kicker">// stackpicks · 2026</div>
+    <div class="h-mega">Why<br>open <span class="underline-lime">source?</span></div>
+    <div class="sub-big" style="margin-top: 36px;">Because the best dev tools aren't behind a paywall.</div>
   </div>
 
-  <!-- ============ SCENE 2 — WHAT IT IS ============ -->
+  <!-- ============ SCENE 2 — 4 BENEFITS ============ -->
   <div class="scene scene-2">
-    <div class="kicker">// the difference</div>
-    <div class="h-big">Honest takes.<br>Not star <span class="underline-lime">counts.</span></div>
-    <div class="sub-med" style="margin-top: 28px;">Every repo has a "use this if / skip if" take written by a builder. Real tradeoffs, not hype.</div>
-  </div>
-
-  <!-- ============ SCENE 3 — NUMBERS ============ -->
-  <div class="scene scene-3">
-    <div class="kicker">// inside</div>
-    <div class="h-med">Everything you<br>actually need.</div>
-    <div class="stat-grid">
-      <div class="stat-item">
-        <span class="stat-num">165+</span>
-        <span class="stat-label">Curated repos</span>
+    <div class="kicker">// the case</div>
+    <div class="h-med">Four reasons it<br>wins, always.</div>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 2 6-6"/></svg></div>
+        <div class="title">Free.</div>
+        <div class="desc">// No license trap</div>
       </div>
-      <div class="stat-item">
-        <span class="stat-num">89</span>
-        <span class="stat-label">MCP servers</span>
+      <div class="benefit-card">
+        <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><path d="M9 16l6 0"/></svg></div>
+        <div class="title">No lock-in.</div>
+        <div class="desc">// Switch any time</div>
       </div>
-      <div class="stat-item">
-        <span class="stat-num">22</span>
-        <span class="stat-label">Apps for Claude</span>
+      <div class="benefit-card">
+        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/></svg></div>
+        <div class="title">Transparent.</div>
+        <div class="desc">// Read the code</div>
       </div>
-      <div class="stat-item">
-        <span class="stat-num">13</span>
-        <span class="stat-label">Stack bundles</span>
+      <div class="benefit-card">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div class="title">Community.</div>
+        <div class="desc">// Fixed by builders</div>
       </div>
     </div>
   </div>
 
-  <!-- ============ SCENE 4 — CTA ============ -->
+  <!-- ============ SCENE 3 — SHOW THE REAL SITE ============ -->
+  <div class="scene scene-3">
+    <div class="kicker">// the problem</div>
+    <div class="h-sm">But which ones<br>are actually good?</div>
+    <div class="browser-wrap">
+      <div class="browser-frame">
+        <div class="browser-bar">
+          <div class="browser-dots"><span></span><span></span><span></span></div>
+          <div class="browser-url">
+            <span class="lock">⌘</span>
+            <span>stackpicks.dev</span>
+          </div>
+        </div>
+        <img class="site-shot" src="site-home.png" alt="stackpicks.dev homepage" />
+      </div>
+    </div>
+    <div class="scene-3-cap">
+      <div class="h-sm">→ <span class="hl-lime">StackPicks</span></div>
+    </div>
+  </div>
+
+  <!-- ============ SCENE 4 — REPO CARD WITH TAKE ============ -->
   <div class="scene scene-4">
-    <div class="kicker">// start shipping</div>
-    <div class="h-big">The stack you<br><span class="hl-lime">already need.</span></div>
-    <div class="sub-med" style="margin-top: 28px;">Curated by a builder. Honest about tradeoffs.</div>
-    <a class="cta-btn">
-      stackpicks.dev
-      <span class="arrow"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span>
-    </a>
+    <div class="kicker">// the differentiator</div>
+    <div class="h-sm">Honest takes,<br>not star counts.</div>
+    <div class="repo-card">
+      <div class="repo-head">
+        <div class="repo-logo">N</div>
+        <div>
+          <div class="repo-name">shadcn/ui</div>
+          <div class="repo-meta">82k ★ · TypeScript · MIT</div>
+        </div>
+      </div>
+      <div class="take-row">
+        <div class="take-pill use">USE THIS IF</div>
+        <div class="take-text">You're on Next.js + Tailwind and want copy-paste components you own.</div>
+      </div>
+      <div class="take-row">
+        <div class="take-pill skip">SKIP IF</div>
+        <div class="take-text">You need a packaged library — shadcn is code you maintain.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCENE 5 — CTA ============ -->
+  <div class="scene scene-5">
+    <div class="cta-stack">
+      <div class="cta-lockup">
+        <span class="s">S</span><span class="dot"></span><span class="name">StackPicks</span>
+      </div>
+      <div class="h-big">Find your<br><span class="hl-lime">stack.</span></div>
+      <div class="sub-med" style="margin-top: 32px;">165+ open-source tools. Honest takes. Curated by a builder.</div>
+      <a class="cta-btn">
+        stackpicks.dev
+        <span class="arrow"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span>
+      </a>
+    </div>
     <div class="handle-strip">@stackpicks.dev · ship · iterate · scale</div>
   </div>
 
