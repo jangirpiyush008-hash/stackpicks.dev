@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>StackPicks · Intro Reel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --brand-primary: #c6ff00;
+    --brand-light: #daff5e;
+    --brand-dark: #8ab300;
+    --dark-bg: #0A0B07;
+    --card-bg: #14160E;
+    --text: #fff;
+    --text-muted: rgba(255,255,255,0.6);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { font-family: 'Plus Jakarta Sans', sans-serif; background: #000; overflow: hidden; width: 100vw; height: 100vh; }
+
+  /* === Stage fills full 9:16 viewport (1080×1920 native) === */
+  .stage {
+    width: 100vw; height: 100vh;
+    background: var(--dark-bg);
+    color: var(--text);
+    position: relative;
+    overflow: hidden;
+  }
+  .stage::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 25% 18%, rgba(198,255,0,0.10), transparent 45%),
+      radial-gradient(circle at 78% 82%, rgba(138,179,0,0.08), transparent 50%);
+    pointer-events: none;
+  }
+
+  /* Top mark */
+  .top-mark {
+    position: absolute; top: 70px; left: 60px;
+    display: flex; align-items: baseline; gap: 8px;
+    z-index: 30;
+    opacity: 0;
+    animation: fadeUp 0.5s 0.2s forwards;
+  }
+  .top-mark .s { font-size: 36px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
+  .top-mark .dot { width: 9px; height: 9px; background: var(--brand-primary); border-radius: 50%; align-self: flex-end; margin-bottom: 6px; }
+  .top-mark .name { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+
+  /* Stage label top-right */
+  .stage-label {
+    position: absolute; top: 86px; right: 60px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px; color: var(--text-muted);
+    font-weight: 500; letter-spacing: 2px;
+    z-index: 30;
+    opacity: 0;
+    animation: fadeUp 0.5s 0.4s forwards;
+  }
+
+  /* Scene base */
+  .scene {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+    padding: 0 64px;
+    opacity: 0;
+  }
+
+  /* === Typography === */
+  .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--brand-primary);
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+  .h-mega { font-size: 124px; font-weight: 800; letter-spacing: -5px; line-height: 0.92; }
+  .h-big { font-size: 92px; font-weight: 800; letter-spacing: -3.5px; line-height: 0.95; }
+  .h-med { font-size: 64px; font-weight: 800; letter-spacing: -2px; line-height: 1.0; }
+  .sub-big { font-size: 36px; color: var(--text-muted); font-weight: 500; line-height: 1.3; max-width: 900px; }
+  .sub-med { font-size: 30px; color: var(--text-muted); font-weight: 500; line-height: 1.35; max-width: 900px; }
+
+  /* Lime underline */
+  .underline-lime { position: relative; display: inline-block; }
+  .underline-lime::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 8px;
+    height: 16px; background: var(--brand-primary); z-index: -1;
+    transform: scaleX(0); transform-origin: left;
+    animation: drawLine 0.6s 0.8s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  }
+
+  /* Highlight box */
+  .hl-lime { background: var(--brand-primary); color: var(--dark-bg); padding: 4px 18px 10px; border-radius: 12px; }
+
+  /* === Big stat grid === */
+  .stat-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 28px 36px;
+    margin-top: 40px; width: 100%; max-width: 900px;
+  }
+  .stat-item .stat-num {
+    font-size: 96px; font-weight: 800; letter-spacing: -3px; line-height: 0.9;
+    color: var(--brand-primary);
+    display: block;
+    opacity: 0;
+  }
+  .stat-item .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px; color: var(--text-muted);
+    letter-spacing: 1.5px; text-transform: uppercase;
+    font-weight: 500;
+    margin-top: 8px;
+  }
+
+  /* === CTA button === */
+  .cta-btn {
+    display: inline-flex; align-items: center; gap: 18px;
+    padding: 26px 38px;
+    background: var(--brand-primary); color: var(--dark-bg);
+    font-weight: 800; font-size: 32px;
+    border-radius: 60px;
+    margin-top: 56px;
+    letter-spacing: -0.3px;
+  }
+  .cta-btn .arrow {
+    width: 52px; height: 52px; border-radius: 50%; background: var(--dark-bg);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .cta-btn .arrow svg { width: 24px; height: 24px; stroke: var(--brand-primary); stroke-width: 2.5; fill: none; }
+
+  /* === Bottom handle === */
+  .handle-strip {
+    position: absolute; bottom: 96px; left: 64px; right: 64px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    color: var(--text-muted);
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-align: center;
+    opacity: 0;
+  }
+
+  /* === KEYFRAMES === */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+  @keyframes zoomIn { from { opacity: 0; transform: scale(0.65); } to { opacity: 1; transform: scale(1); } }
+  @keyframes drawLine { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes ctaPop { 0% { opacity: 0; transform: scale(0.7); } 60% { transform: scale(1.08); } 100% { opacity: 1; transform: scale(1); } }
+
+  /* === Scene timing — total ~18 seconds === */
+
+  /* Scene 1 (0 - 4): Hook */
+  .scene-1 { animation: fadeIn 0.4s 0s forwards, fadeOut 0.4s 3.6s forwards; }
+  .scene-1 .kicker { opacity: 0; animation: fadeUp 0.5s 0.4s forwards; }
+  .scene-1 .h-mega { opacity: 0; animation: zoomIn 0.6s 0.6s cubic-bezier(0.34, 1.3, 0.64, 1) forwards; }
+  .scene-1 .sub-big { opacity: 0; animation: fadeUp 0.5s 1.4s forwards; }
+
+  /* Scene 2 (4 - 9): What it is */
+  .scene-2 { animation: fadeIn 0.4s 4.0s forwards, fadeOut 0.4s 8.6s forwards; }
+  .scene-2 .kicker { opacity: 0; animation: fadeUp 0.5s 4.2s forwards; }
+  .scene-2 .h-big { opacity: 0; animation: fadeUp 0.5s 4.5s forwards; }
+  .scene-2 .sub-med { opacity: 0; animation: fadeUp 0.5s 5.5s forwards; }
+
+  /* Scene 3 (9 - 14): The numbers */
+  .scene-3 { animation: fadeIn 0.4s 9.0s forwards, fadeOut 0.4s 13.6s forwards; }
+  .scene-3 .kicker { opacity: 0; animation: fadeUp 0.5s 9.2s forwards; }
+  .scene-3 .h-med { opacity: 0; animation: fadeUp 0.5s 9.5s forwards; }
+  .scene-3 .stat-item:nth-child(1) .stat-num { animation: fadeUp 0.4s 10.2s forwards; }
+  .scene-3 .stat-item:nth-child(2) .stat-num { animation: fadeUp 0.4s 10.6s forwards; }
+  .scene-3 .stat-item:nth-child(3) .stat-num { animation: fadeUp 0.4s 11.0s forwards; }
+  .scene-3 .stat-item:nth-child(4) .stat-num { animation: fadeUp 0.4s 11.4s forwards; }
+
+  /* Scene 4 (14 - 18): CTA */
+  .scene-4 { animation: fadeIn 0.4s 14.0s forwards; }
+  .scene-4 .kicker { opacity: 0; animation: fadeUp 0.5s 14.2s forwards; }
+  .scene-4 .h-big { opacity: 0; animation: fadeUp 0.5s 14.5s forwards; }
+  .scene-4 .sub-med { opacity: 0; animation: fadeUp 0.5s 15.3s forwards; }
+  .scene-4 .cta-btn { animation: ctaPop 0.6s 15.9s cubic-bezier(0.34, 1.3, 0.64, 1) forwards; }
+  .scene-4 .handle-strip { animation: fadeIn 0.4s 16.6s forwards; }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- Persistent corner marks -->
+  <div class="top-mark">
+    <span class="s">S</span><span class="dot"></span><span class="name">StackPicks</span>
+  </div>
+  <div class="stage-label">// 2026</div>
+
+  <!-- ============ SCENE 1 — HOOK ============ -->
+  <div class="scene scene-1">
+    <div class="kicker">// what is stackpicks?</div>
+    <div class="h-mega">Stop<br>guessing<br>your <span class="underline-lime">stack.</span></div>
+    <div class="sub-big" style="margin-top: 28px;">A curated directory of open-source dev tools.</div>
+  </div>
+
+  <!-- ============ SCENE 2 — WHAT IT IS ============ -->
+  <div class="scene scene-2">
+    <div class="kicker">// the difference</div>
+    <div class="h-big">Honest takes.<br>Not star <span class="underline-lime">counts.</span></div>
+    <div class="sub-med" style="margin-top: 28px;">Every repo has a "use this if / skip if" take written by a builder. Real tradeoffs, not hype.</div>
+  </div>
+
+  <!-- ============ SCENE 3 — NUMBERS ============ -->
+  <div class="scene scene-3">
+    <div class="kicker">// inside</div>
+    <div class="h-med">Everything you<br>actually need.</div>
+    <div class="stat-grid">
+      <div class="stat-item">
+        <span class="stat-num">165+</span>
+        <span class="stat-label">Curated repos</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">89</span>
+        <span class="stat-label">MCP servers</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">22</span>
+        <span class="stat-label">Apps for Claude</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">13</span>
+        <span class="stat-label">Stack bundles</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCENE 4 — CTA ============ -->
+  <div class="scene scene-4">
+    <div class="kicker">// start shipping</div>
+    <div class="h-big">The stack you<br><span class="hl-lime">already need.</span></div>
+    <div class="sub-med" style="margin-top: 28px;">Curated by a builder. Honest about tradeoffs.</div>
+    <a class="cta-btn">
+      stackpicks.dev
+      <span class="arrow"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span>
+    </a>
+    <div class="handle-strip">@stackpicks.dev · ship · iterate · scale</div>
+  </div>
+
+</div>
+
+</body>
+</html>

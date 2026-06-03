@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>StackPicks · Connect Flow Reel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  /* === Brand system === */
+  :root {
+    --brand-primary: #c6ff00;
+    --brand-light: #daff5e;
+    --brand-dark: #8ab300;
+    --dark-bg: #0A0B07;
+    --card-bg: #14160E;
+    --card-border: rgba(255,255,255,0.08);
+    --text: #fff;
+    --text-muted: rgba(255,255,255,0.55);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { font-family: 'Plus Jakarta Sans', sans-serif; background: #000; overflow: hidden; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* === Stage (the 9:16 viewport) ===
+     Designed at 540×960 — Playwright records at 2x DPR -> 1080×1920 final */
+  .stage {
+    width: 540px; height: 960px;
+    background: var(--dark-bg);
+    color: var(--text);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Subtle ambient gradient backdrop */
+  .stage::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(198,255,0,0.06), transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(138,179,0,0.05), transparent 60%);
+    pointer-events: none;
+  }
+
+  /* === Scene base === */
+  .scene {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 60px 36px;
+    opacity: 0;
+  }
+
+  /* === Persistent header (visible during browser/Claude scenes) === */
+  .top-bar {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    z-index: 50;
+    opacity: 0; /* shown in browser scenes */
+  }
+  .top-bar .lockup { display: flex; align-items: baseline; gap: 4px; }
+  .top-bar .lockup .s { color: var(--text); font-weight: 800; font-size: 16px; letter-spacing: -0.5px; }
+  .top-bar .lockup .dot { width: 5px; height: 5px; background: var(--brand-primary); border-radius: 50%; align-self: flex-end; margin-bottom: 5px; }
+  .top-bar .lockup .name { color: var(--text); font-weight: 800; font-size: 14px; letter-spacing: -0.4px; text-transform: none; }
+  .top-bar .stage-label { color: var(--text-muted); }
+
+  /* === Scene 1 — Title === */
+  .scene-title .title-stack {
+    text-align: center;
+  }
+  .scene-title .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    opacity: 0;
+    animation: fadeUp 0.5s 0.4s forwards;
+  }
+  .scene-title h1 {
+    font-size: 72px;
+    font-weight: 800;
+    letter-spacing: -2.5px;
+    line-height: 0.95;
+    margin-bottom: 14px;
+    opacity: 0;
+    animation: zoomIn 0.7s 0.7s cubic-bezier(0.34, 1.3, 0.64, 1) forwards;
+  }
+  .scene-title h1 .underline-lime { position: relative; display: inline-block; }
+  .scene-title h1 .underline-lime::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 4px; height: 10px; background: var(--brand-primary);
+    z-index: -1;
+    transform: scaleX(0); transform-origin: left;
+    animation: drawLine 0.6s 1.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  }
+  .scene-title .sub {
+    font-size: 22px;
+    color: var(--text-muted);
+    font-weight: 500;
+    opacity: 0;
+    animation: fadeUp 0.5s 1.9s forwards;
+  }
+
+  /* === Browser mock === */
+  .browser-frame {
+    width: 480px;
+    background: var(--card-bg);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px var(--card-border);
+  }
+  .browser-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.04);
+    border-bottom: 1px solid var(--card-border);
+  }
+  .browser-dots { display: flex; gap: 6px; }
+  .browser-dots span { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.18); }
+  .browser-dots span:nth-child(1) { background: #FF5F57; }
+  .browser-dots span:nth-child(2) { background: #FEBC2E; }
+  .browser-dots span:nth-child(3) { background: #28C840; }
+  .browser-url {
+    flex: 1;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 6px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex; align-items: center; gap: 6px;
+    overflow: hidden;
+  }
+  .browser-url .lock { color: var(--brand-primary); font-size: 10px; }
+  .browser-url .url-text { white-space: nowrap; }
+  .browser-body { padding: 22px; min-height: 480px; }
+
+  /* === App grid (in /connect page) === */
+  .app-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .app-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: all 0.3s;
+  }
+  .app-card .left { display: flex; align-items: center; gap: 10px; }
+  .app-card .logo {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 13px;
+    color: var(--text);
+  }
+  .app-card .name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .app-card .status {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 4px 9px;
+    border-radius: 12px;
+    background: var(--brand-primary);
+    color: var(--dark-bg);
+    transition: all 0.3s;
+  }
+  .app-card.connected {
+    border-color: var(--brand-primary);
+    background: rgba(198,255,0,0.05);
+  }
+  .app-card.connected .status::before { content: '✓ '; }
+  .app-card.connected .status { background: transparent; color: var(--brand-primary); border: 1px solid var(--brand-primary); }
+
+  .app-card .logo.gh { background: #fff; color: #000; }
+  .app-card .logo.sl { background: #4A154B; color: #fff; }
+  .app-card .logo.nt { background: #000; color: #fff; }
+  .app-card .logo.ln { background: #5E6AD2; color: #fff; }
+
+  /* === Scene 2 — Browser opens === */
+  .scene-browser {
+    padding-top: 80px;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .scene-browser .browser-frame { transform: translateY(80px) scale(0.92); opacity: 0; }
+  .scene-browser .stat-header {
+    margin-bottom: 22px; text-align: center;
+    opacity: 0;
+  }
+  .scene-browser .stat-header .label {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .scene-browser .stat-header h2 {
+    font-size: 28px; font-weight: 800; letter-spacing: -0.8px;
+  }
+  .scene-browser .stat-header h2 .underline-lime { position: relative; display: inline-block; }
+  .scene-browser .stat-header h2 .underline-lime::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 6px; background: var(--brand-primary); z-index: -1;
+  }
+
+  /* === Cursor === */
+  .cursor {
+    position: absolute;
+    width: 24px; height: 24px;
+    z-index: 100;
+    pointer-events: none;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
+    opacity: 0;
+  }
+  .cursor svg { width: 100%; height: 100%; }
+
+  /* === Connection counter (montage scene) === */
+  .conn-counter {
+    position: absolute;
+    top: 70px; right: 24px;
+    background: var(--brand-primary); color: var(--dark-bg);
+    padding: 8px 14px;
+    border-radius: 24px;
+    font-weight: 800; font-size: 13px;
+    z-index: 30;
+    box-shadow: 0 10px 30px rgba(198,255,0,0.25);
+    opacity: 0;
+  }
+  .conn-counter .num { font-family: 'JetBrains Mono', monospace; font-size: 16px; }
+
+  /* === Claude UI mock === */
+  .claude-frame {
+    width: 480px;
+    background: #1e1e1e;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+  }
+  .claude-titlebar {
+    background: #2a2a2a;
+    padding: 10px 14px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .claude-titlebar .dots { display: flex; gap: 6px; }
+  .claude-titlebar .dots span { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); }
+  .claude-titlebar .title { font-size: 11px; color: rgba(255,255,255,0.5); margin-left: auto; margin-right: auto; }
+  .claude-body { padding: 24px; min-height: 480px; }
+
+  /* Connector dialog */
+  .connector-dialog {
+    background: #2a2a2a;
+    border-radius: 12px;
+    padding: 18px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .connector-dialog .dlg-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .connector-dialog .dlg-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 14px;
+  }
+  .connector-dialog .url-input {
+    background: #1a1a1a;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--brand-primary);
+    margin-bottom: 12px;
+    min-height: 18px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .connector-dialog .dlg-status {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .connector-dialog .dlg-status .check { color: var(--brand-primary); font-weight: 800; opacity: 0; }
+
+  /* Chat scene */
+  .chat-msg {
+    margin-bottom: 14px;
+    max-width: 90%;
+    opacity: 0;
+  }
+  .chat-msg.user {
+    align-self: flex-end;
+    background: #3a3a3a;
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 14px 14px 4px 14px;
+    margin-left: auto;
+    font-size: 13px;
+    font-weight: 500;
+    width: fit-content;
+  }
+  .chat-msg.ai {
+    background: transparent;
+    color: rgba(255,255,255,0.9);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .chat-msg.ai .ai-tag {
+    display: inline-block;
+    font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--brand-primary);
+    margin-bottom: 6px;
+  }
+  .chat-msg.ai .repo-list { font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.7; }
+  .chat-msg.ai .repo-list span { color: var(--brand-light); }
+  .chat-flow { display: flex; flex-direction: column; }
+
+  /* Typing dots */
+  .typing-dots { display: inline-flex; gap: 4px; margin-left: 4px; }
+  .typing-dots span {
+    width: 5px; height: 5px; background: var(--text-muted); border-radius: 50%;
+    animation: blink 1.2s infinite;
+  }
+  .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+  /* === CTA scene === */
+  .scene-cta .cta-stack { text-align: center; }
+  .scene-cta .cta-lockup {
+    display: inline-flex; align-items: baseline; gap: 6px;
+    margin-bottom: 28px;
+  }
+  .scene-cta .cta-lockup .s { font-size: 36px; font-weight: 800; color: var(--text); letter-spacing: -1.2px; }
+  .scene-cta .cta-lockup .dot { width: 9px; height: 9px; background: var(--brand-primary); border-radius: 50%; align-self: flex-end; margin-bottom: 6px; }
+  .scene-cta .cta-lockup .name { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.8px; }
+  .scene-cta h2 {
+    font-size: 56px; font-weight: 800; letter-spacing: -1.8px; line-height: 1; margin-bottom: 12px;
+  }
+  .scene-cta h2 .hl { background: var(--brand-primary); color: var(--dark-bg); padding: 2px 14px 6px; border-radius: 8px; }
+  .scene-cta .sub { font-size: 20px; color: var(--text-muted); font-weight: 500; margin-bottom: 36px; }
+  .scene-cta .cta-btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 16px 26px;
+    background: var(--brand-primary); color: var(--dark-bg);
+    font-weight: 800; font-size: 17px;
+    border-radius: 36px;
+  }
+  .scene-cta .cta-btn .arrow {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--dark-bg); color: var(--brand-primary);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .scene-cta .cta-btn .arrow svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2.5; fill: none; }
+
+  /* === ANIMATION KEYFRAMES === */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+  @keyframes zoomIn { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+  @keyframes zoomOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(1.1); } }
+  @keyframes drawLine { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes blink { 0%, 80%, 100% { opacity: 0.3; } 40% { opacity: 1; } }
+  @keyframes browserUp { from { opacity: 0; transform: translateY(80px) scale(0.92); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes cardConnect {
+    0% { border-color: var(--card-border); background: rgba(255,255,255,0.04); }
+    50% { border-color: var(--brand-primary); background: rgba(198,255,0,0.15); transform: scale(1.03); }
+    100% { border-color: var(--brand-primary); background: rgba(198,255,0,0.05); transform: scale(1); }
+  }
+  @keyframes counterPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+
+  /* === SCENE TIMING ===
+     Total: ~36 sec
+     0-3.5  Title
+     3.5-9   Browser opens, page loads
+     9-14    Connect GitHub (cursor moves, click, OAuth, ✓)
+     14-19   Montage: Slack, Notion, Linear connect
+     19-25   Switch to Claude, paste URL
+     25-32   Ask "list repos" → answer
+     32-36   CTA
+  */
+
+  /* Scene 1: Title (0 -> 3.5 sec) */
+  .scene-title { animation: fadeIn 0.3s 0s forwards, fadeOut 0.5s 3.0s forwards; }
+
+  /* Top bar: visible 3.5 -> 32 sec */
+  .top-bar { animation: fadeIn 0.4s 3.5s forwards, fadeOut 0.4s 32.0s forwards; }
+
+  /* Scene 2: Browser opens (3.5 -> 9 sec) */
+  .scene-browser { animation: fadeIn 0.3s 3.5s forwards, fadeOut 0.4s 8.7s forwards; }
+  .scene-browser .stat-header { animation: fadeUp 0.5s 3.8s forwards; }
+  .scene-browser .browser-frame { animation: browserUp 0.6s 4.3s cubic-bezier(0.34, 1.2, 0.64, 1) forwards; }
+
+  /* Cursor in scene 2-3 — moves to GitHub card */
+  .cursor.c1 {
+    top: 580px; left: 100px;
+    animation: fadeIn 0.3s 6.5s forwards, cursorToGh 0.8s 6.8s cubic-bezier(0.65, 0, 0.35, 1) forwards, fadeOut 0.3s 9.2s forwards;
+  }
+  @keyframes cursorToGh {
+    from { top: 580px; left: 100px; }
+    to { top: 320px; left: 380px; }
+  }
+
+  /* GitHub card connects at 7.6s */
+  .scene-browser .app-card.gh { animation: cardConnect 0.6s 7.6s forwards; }
+  .scene-browser .app-card.gh .status { animation: gh-status 0.6s 7.6s forwards; }
+  @keyframes gh-status {
+    0% { background: var(--brand-primary); color: var(--dark-bg); }
+    100% { background: transparent; color: var(--brand-primary); border: 1px solid var(--brand-primary); }
+  }
+  .scene-browser .app-card.gh .status-text { animation: textSwap 0.6s 7.6s forwards; }
+  @keyframes textSwap { 0%, 50% { opacity: 1; } 50%, 51% { opacity: 0; } 51%, 100% { opacity: 1; } }
+
+  /* Scene 3: Montage of 3 more connections (8.7 -> 14 sec) */
+  .scene-montage { animation: fadeIn 0.3s 8.7s forwards, fadeOut 0.4s 13.8s forwards; }
+  .scene-montage .stat-header { animation: fadeUp 0.5s 8.9s forwards; }
+  .scene-montage .browser-frame { animation: fadeIn 0.4s 8.9s forwards; }
+  .scene-montage .conn-counter { animation: fadeIn 0.4s 9.0s forwards; }
+
+  /* All 4 cards start connected (GitHub from scene 2 carries over), then 3 more "connect" */
+  .scene-montage .app-card.gh { border-color: var(--brand-primary); background: rgba(198,255,0,0.05); }
+  .scene-montage .app-card.gh .status { background: transparent; color: var(--brand-primary); border: 1px solid var(--brand-primary); }
+
+  /* Slack: 9.6 */
+  .scene-montage .app-card.sl { animation: cardConnect 0.5s 9.6s forwards; }
+  .scene-montage .app-card.sl .status { animation: statusSwap 0.5s 9.6s forwards; }
+  /* Notion: 10.4 */
+  .scene-montage .app-card.nt { animation: cardConnect 0.5s 10.4s forwards; }
+  .scene-montage .app-card.nt .status { animation: statusSwap 0.5s 10.4s forwards; }
+  /* Linear: 11.2 */
+  .scene-montage .app-card.ln { animation: cardConnect 0.5s 11.2s forwards; }
+  .scene-montage .app-card.ln .status { animation: statusSwap 0.5s 11.2s forwards; }
+  @keyframes statusSwap {
+    0% { background: var(--brand-primary); color: var(--dark-bg); border: 1px solid transparent; }
+    100% { background: transparent; color: var(--brand-primary); border: 1px solid var(--brand-primary); }
+  }
+
+  /* Counter ticks up */
+  .conn-counter-num-1 { display: inline; }
+  .conn-counter-num-2 { display: none; }
+  .conn-counter-num-3 { display: none; }
+  .conn-counter-num-4 { display: none; }
+  /* swap via animation visibility */
+  .scene-montage .conn-counter .conn-counter-num-1 { animation: hideAt 0s 9.6s forwards; }
+  .scene-montage .conn-counter .conn-counter-num-2 { animation: showAt 0s 9.6s forwards, hideAt 0s 10.4s forwards, counterPulse 0.4s 9.6s; }
+  .scene-montage .conn-counter .conn-counter-num-3 { animation: showAt 0s 10.4s forwards, hideAt 0s 11.2s forwards, counterPulse 0.4s 10.4s; }
+  .scene-montage .conn-counter .conn-counter-num-4 { animation: showAt 0s 11.2s forwards, counterPulse 0.4s 11.2s; }
+  @keyframes showAt { to { display: inline; } from { display: inline; } }
+  @keyframes hideAt { to { display: none; } from { display: none; } }
+  /* CSS animations can't toggle display directly — use opacity + visibility instead */
+
+  .conn-counter-num-2, .conn-counter-num-3, .conn-counter-num-4 { display: inline; opacity: 0; position: absolute; left: 50%; transform: translateX(-50%); }
+  .conn-counter { position: absolute; width: 110px; text-align: center; }
+  .conn-counter .num-wrap { position: relative; display: inline-block; min-width: 16px; }
+  .scene-montage .conn-counter-num-1 { animation: numHide 0s 9.6s forwards; }
+  .scene-montage .conn-counter-num-2 { animation: numShow 0.1s 9.6s forwards, numHide 0s 10.4s forwards, counterPulse 0.4s 9.6s; }
+  .scene-montage .conn-counter-num-3 { animation: numShow 0.1s 10.4s forwards, numHide 0s 11.2s forwards, counterPulse 0.4s 10.4s; }
+  .scene-montage .conn-counter-num-4 { animation: numShow 0.1s 11.2s forwards, counterPulse 0.4s 11.2s; }
+  @keyframes numShow { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes numHide { from { opacity: 1; } to { opacity: 0; } }
+
+  /* Scene 4: Switch to Claude (13.8 -> 19 sec) */
+  .scene-claude-setup { animation: fadeIn 0.3s 13.8s forwards, fadeOut 0.4s 18.7s forwards; }
+  .scene-claude-setup .stat-header { animation: fadeUp 0.5s 14.0s forwards; }
+  .scene-claude-setup .claude-frame { animation: browserUp 0.5s 14.4s cubic-bezier(0.34, 1.2, 0.64, 1) forwards; opacity: 0; transform: translateY(80px) scale(0.92); }
+
+  /* URL types character-by-character */
+  .scene-claude-setup .url-input .url-typed {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 0;
+    animation: typeUrl 1.4s 15.4s steps(28, end) forwards;
+  }
+  @keyframes typeUrl { from { width: 0; } to { width: 100%; } }
+
+  /* Status check ✓ appears after URL types */
+  .scene-claude-setup .dlg-status .check { animation: fadeIn 0.4s 17.2s forwards; }
+
+  /* Scene 5: The payoff (chat) (18.7 -> 30 sec) */
+  .scene-chat { animation: fadeIn 0.3s 18.7s forwards, fadeOut 0.4s 30.5s forwards; }
+  .scene-chat .stat-header { animation: fadeUp 0.5s 18.9s forwards; }
+  .scene-chat .claude-frame { animation: browserUp 0.5s 19.3s cubic-bezier(0.34, 1.2, 0.64, 1) forwards; opacity: 0; transform: translateY(80px) scale(0.92); }
+
+  /* User message appears */
+  .scene-chat .chat-msg.user { animation: fadeUp 0.4s 20.5s forwards; }
+  /* Typing dots */
+  .scene-chat .typing-row { animation: fadeIn 0.3s 21.2s forwards, fadeOut 0.3s 23.0s forwards; }
+  /* AI response */
+  .scene-chat .chat-msg.ai { animation: fadeUp 0.5s 23.0s forwards; }
+  .scene-chat .repo-list span {
+    opacity: 0;
+  }
+  .scene-chat .repo-list span:nth-child(1) { animation: fadeUp 0.25s 23.6s forwards; }
+  .scene-chat .repo-list span:nth-child(2) { animation: fadeUp 0.25s 23.95s forwards; }
+  .scene-chat .repo-list span:nth-child(3) { animation: fadeUp 0.25s 24.3s forwards; }
+  .scene-chat .repo-list span:nth-child(4) { animation: fadeUp 0.25s 24.65s forwards; }
+  .scene-chat .repo-list span:nth-child(5) { animation: fadeUp 0.25s 25.0s forwards; }
+
+  /* Highlight pulse on whole chat scene at end */
+  .scene-chat .summary-pill {
+    opacity: 0;
+    animation: fadeUp 0.5s 26.0s forwards;
+  }
+
+  /* Scene 6: CTA (30 -> 36 sec) */
+  .scene-cta { animation: fadeIn 0.4s 30.0s forwards; }
+  .scene-cta .cta-lockup { opacity: 0; animation: fadeUp 0.5s 30.4s forwards; }
+  .scene-cta h2 { opacity: 0; }
+  .scene-cta .h2-line1 { animation: fadeUp 0.5s 30.8s forwards; }
+  .scene-cta .h2-line2 { animation: fadeUp 0.5s 31.2s forwards; }
+  .scene-cta .sub { opacity: 0; animation: fadeUp 0.5s 31.6s forwards; }
+  .scene-cta .cta-btn { opacity: 0; transform: scale(0.7); animation: zoomIn 0.5s 32.2s cubic-bezier(0.34, 1.3, 0.64, 1) forwards; }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- Top bar (visible during browser/Claude scenes) -->
+  <div class="top-bar">
+    <div class="lockup">
+      <span class="s">S</span><span class="dot"></span><span class="name">StackPicks</span>
+    </div>
+    <span class="stage-label" id="stage-label">// Connect</span>
+  </div>
+
+  <!-- ============ SCENE 1 — TITLE ============ -->
+  <div class="scene scene-title">
+    <div class="title-stack">
+      <div class="kicker">// stackpicks · 2026</div>
+      <h1>Connect any app to <span class="underline-lime">Claude.</span></h1>
+      <div class="sub">In 60 seconds. One MCP URL.</div>
+    </div>
+  </div>
+
+  <!-- ============ SCENE 2 — BROWSER OPENS /connect ============ -->
+  <div class="scene scene-browser">
+    <div class="stat-header">
+      <div class="label">// Step 1</div>
+      <h2>Open <span class="underline-lime">stackpicks.dev/connect</span></h2>
+    </div>
+    <div class="browser-frame">
+      <div class="browser-bar">
+        <div class="browser-dots"><span></span><span></span><span></span></div>
+        <div class="browser-url">
+          <span class="lock">⌘</span>
+          <span class="url-text">stackpicks.dev/connect</span>
+        </div>
+      </div>
+      <div class="browser-body">
+        <div class="app-grid">
+          <div class="app-card gh">
+            <div class="left"><div class="logo gh">G</div><div class="name">GitHub</div></div>
+            <div class="status"><span class="status-text">Connect</span></div>
+          </div>
+          <div class="app-card sl">
+            <div class="left"><div class="logo sl">#</div><div class="name">Slack</div></div>
+            <div class="status">Connect</div>
+          </div>
+          <div class="app-card nt">
+            <div class="left"><div class="logo nt">N</div><div class="name">Notion</div></div>
+            <div class="status">Connect</div>
+          </div>
+          <div class="app-card ln">
+            <div class="left"><div class="logo ln">L</div><div class="name">Linear</div></div>
+            <div class="status">Connect</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Cursor anim -->
+    <div class="cursor c1">
+      <svg viewBox="0 0 24 24" fill="white" stroke="black" stroke-width="1.5"><path d="M5 3l14 8-7 1-2 9z"/></svg>
+    </div>
+  </div>
+
+  <!-- ============ SCENE 3 — MONTAGE: 3 more connect ============ -->
+  <div class="scene scene-montage">
+    <div class="stat-header">
+      <div class="label">// One click each</div>
+      <h2>Connect <span class="underline-lime">more apps.</span></h2>
+    </div>
+    <div class="browser-frame">
+      <div class="browser-bar">
+        <div class="browser-dots"><span></span><span></span><span></span></div>
+        <div class="browser-url">
+          <span class="lock">⌘</span>
+          <span class="url-text">stackpicks.dev/connect</span>
+        </div>
+      </div>
+      <div class="browser-body">
+        <div class="app-grid">
+          <div class="app-card gh connected">
+            <div class="left"><div class="logo gh">G</div><div class="name">GitHub</div></div>
+            <div class="status">Connected</div>
+          </div>
+          <div class="app-card sl">
+            <div class="left"><div class="logo sl">#</div><div class="name">Slack</div></div>
+            <div class="status">Connect</div>
+          </div>
+          <div class="app-card nt">
+            <div class="left"><div class="logo nt">N</div><div class="name">Notion</div></div>
+            <div class="status">Connect</div>
+          </div>
+          <div class="app-card ln">
+            <div class="left"><div class="logo ln">L</div><div class="name">Linear</div></div>
+            <div class="status">Connect</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="conn-counter">
+      <span class="num-wrap">
+        <span class="conn-counter-num-1">1 connected</span>
+        <span class="conn-counter-num-2">2 connected</span>
+        <span class="conn-counter-num-3">3 connected</span>
+        <span class="conn-counter-num-4">4 connected</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- ============ SCENE 4 — CLAUDE SETUP ============ -->
+  <div class="scene scene-claude-setup">
+    <div class="stat-header">
+      <div class="label">// Step 2</div>
+      <h2>Paste one URL in <span class="underline-lime">Claude.</span></h2>
+    </div>
+    <div class="claude-frame">
+      <div class="claude-titlebar">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <div class="title">Claude · Settings → Connectors</div>
+      </div>
+      <div class="claude-body">
+        <div class="connector-dialog">
+          <div class="dlg-label">// Add custom connector</div>
+          <div class="dlg-title">MCP Server URL</div>
+          <div class="url-input">
+            <span class="url-typed">https://stackpicks.dev/api/mcp</span>
+          </div>
+          <div class="dlg-status">
+            <span class="check">✓</span>
+            <span>Connected · 4 apps detected</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCENE 5 — CHAT PAYOFF ============ -->
+  <div class="scene scene-chat">
+    <div class="stat-header">
+      <div class="label">// Now ask anything</div>
+      <h2>Claude knows your <span class="underline-lime">stack.</span></h2>
+    </div>
+    <div class="claude-frame">
+      <div class="claude-titlebar">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <div class="title">Claude · Chat</div>
+      </div>
+      <div class="claude-body">
+        <div class="chat-flow">
+          <div class="chat-msg user">List my latest GitHub repos.</div>
+          <div class="chat-msg typing-row" style="opacity:0;">
+            <span class="ai-tag">Claude</span>
+            <span class="typing-dots"><span></span><span></span><span></span></span>
+          </div>
+          <div class="chat-msg ai">
+            <span class="ai-tag">Claude</span>
+            <div class="repo-list">
+              <span>→ stackpicks/web · 0 stars · 12h ago</span>
+              <span>→ stackpicks/mcp · 14 stars · 3d ago</span>
+              <span>→ stackpicks/connect · private · today</span>
+              <span>→ stackpicks/blog · public · 2d ago</span>
+              <span>→ awesome-stackpicks · 4 stars · 1d ago</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCENE 6 — CTA ============ -->
+  <div class="scene scene-cta">
+    <div class="cta-stack">
+      <div class="cta-lockup">
+        <span class="s">S</span><span class="dot"></span><span class="name">StackPicks</span>
+      </div>
+      <h2 class="h2-line1">One URL.</h2>
+      <h2 class="h2-line2"><span class="hl">Every app.</span></h2>
+      <div class="sub">22 apps live today. Lifetime ₹99.</div>
+      <a class="cta-btn">
+        stackpicks.dev/connect
+        <span class="arrow">
+          <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+        </span>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
