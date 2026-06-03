@@ -10,6 +10,50 @@ Two daily tracks:
 
 ---
 
+## 2026-06-03 (Day 5 — Ads stack + content cluster)
+
+### Shipped today
+- **Connect: Google Ads + Meta Ads LIVE** via Bring-Your-Own-Token mode (22 providers live).
+  - Rewrote `core/connect/executors/google-ads.ts` to accept JSON config (developer_token, client_id, client_secret, refresh_token) and mint access tokens via refresh-token grant just-in-time.
+  - `core/connect/executors/facebook-ads.ts` accepts a System User Access Token as Bearer directly.
+  - Both added to `API_KEY_PROVIDERS` + `API_KEY_HINTS`. Catalog flipped → live.
+- **Google Ads dev token process kicked off:**
+  - New MCC `857-177-3115` created + existing direct account linked.
+  - Test Account dev token issued instantly.
+  - **Basic Access application submitted** (full design doc + form) — Google review SLA 3 business days.
+- **Refreshed top 5 existing blog posts** (date bump to 2026-06-03 + meaningful content updates reflecting 22 live + BYO ads):
+  - `/blog/mcp-explained` (14.5k/mo flagship), `/blog/one-mcp-for-all-apps...` (9k), `/blog/mcp-2-0-explained-2026` (6k), `/blog/claude-opus-4-8-explained-2026` (18k), `/blog/aws-mcp-server-ga-2026` (5.5k).
+- **3 new blog posts shipped — ad-ops content cluster:**
+  - `/blog/chatgpt-ads-explained-2026` (14k/mo) — news explainer on OpenAI's Feb 9 ads launch + May self-serve rollout
+  - `/blog/connect-google-ads-to-claude-mcp-2026` (4.5k/mo) — full BYO-token setup guide
+  - `/blog/connect-meta-ads-to-claude-mcp-2026` (3.8k/mo) — System User Access Token guide
+  - All 3 cross-link → forms ad-ops topical cluster. quick_answer + 6 FAQs each (FAQPage JSON-LD). Auto-wired into sitemap / llms.txt / RSS / blog index.
+
+### Files touched today
+- `core/connect/executors/google-ads.ts` (rewrote to JSON-config BYO mode)
+- `core/connect/executors/facebook-ads.ts` (existing — works as-is with System User token)
+- `core/connect/providers.ts` (added google-ads + facebook-ads to API_KEY_PROVIDERS + HINTS)
+- `apps/web/lib/connect-apps.ts` (Google Ads + Meta Ads → live)
+- `apps/web/lib/blog.ts` (3 new posts + 5 refreshed posts + TODAY_JUN3 const)
+- `docs/DAILY-LOG.md`
+
+### State
+- **Connect: 22 / 50 live.** (github, slack, notion, linear, gitlab, airtable, asana, calendly, todoist, dropbox + vercel, cloudflare, sentry, supabase, figma, firecrawl, tavily, exa, brave-search, perplexity + google-ads, facebook-ads)
+- Code-ready, awaiting Nango registration (4 OAuth): Intercom, Jira, HubSpot, ClickUp. monday.com parked (needs paid plan).
+- **Blog: 16 posts.** Newest cluster (Ads × MCP) is the highest-leverage SEO content yet — direct purchase intent + fresh news hook.
+
+### Tomorrow / next
+- **[YOU]** Google Ads Basic Access decision lands within 3 business days. Watch `stackpicks.dev@gmail.com`. Once approved → 5-min setup (OAuth Playground → paste JSON on /connect) → real ads data through Claude.
+- **[YOU]** Meta Ads System User token setup (~15 min, no waiting period) — parked today, easy win whenever.
+- **[YOU]** GSC + Bing manual indexing for the 3 new posts (~5 min each):
+  - /blog/chatgpt-ads-explained-2026
+  - /blog/connect-google-ads-to-claude-mcp-2026
+  - /blog/connect-meta-ads-to-claude-mcp-2026
+- **[YOU]** Continue Nango queue: Intercom → Jira → HubSpot → retry ClickUp. Set RESEND_AUDIENCE_ID in Railway.
+- **[ME]** Next OAuth executor batch when needed: Box, Trello, Zendesk, Discord.
+
+---
+
 ## 2026-06-02 (Day 4 — Connect push to 20 live)
 
 ### Shipped today
