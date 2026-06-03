@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>StackPicks · Why Open Source Reel</title>
+<title>StackPicks · Tutorial Reel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root {
     --brand-primary: #c6ff00;
@@ -37,7 +37,6 @@
     pointer-events: none;
   }
 
-  /* === Scene base — each scene OWNS the full stage exclusively === */
   .scene {
     position: absolute; inset: 0;
     display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -45,6 +44,20 @@
     opacity: 0;
     text-align: center;
   }
+
+  /* === REAL STACKPICKS LOGO (matches the live site header) === */
+  .logo {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: var(--text);
+    line-height: 1;
+  }
+  .logo .dot-dev { color: var(--brand-primary); }
+  .logo-lg { font-size: 60px; }
+  .logo-md { font-size: 42px; }
+  .logo-sm { font-size: 28px; }
 
   /* === Typography === */
   .kicker {
@@ -56,12 +69,12 @@
     font-weight: 600;
     margin-bottom: 28px;
   }
-  .h-mega { font-size: 140px; font-weight: 800; letter-spacing: -5px; line-height: 0.92; }
-  .h-big { font-size: 96px; font-weight: 800; letter-spacing: -3.5px; line-height: 0.95; }
-  .h-med { font-size: 64px; font-weight: 800; letter-spacing: -2px; line-height: 1.05; }
-  .h-sm { font-size: 48px; font-weight: 800; letter-spacing: -1.4px; line-height: 1.08; }
-  .sub-big { font-size: 38px; color: var(--text-muted); font-weight: 500; line-height: 1.3; max-width: 920px; }
-  .sub-med { font-size: 30px; color: var(--text-muted); font-weight: 500; line-height: 1.35; max-width: 900px; }
+  .h-mega { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 132px; font-weight: 800; letter-spacing: -5px; line-height: 0.92; }
+  .h-big { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 92px; font-weight: 800; letter-spacing: -3.5px; line-height: 0.95; }
+  .h-med { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 60px; font-weight: 800; letter-spacing: -1.8px; line-height: 1.05; }
+  .h-sm { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 46px; font-weight: 800; letter-spacing: -1.2px; line-height: 1.1; }
+  .sub-big { font-size: 36px; color: var(--text-muted); font-weight: 500; line-height: 1.3; max-width: 920px; }
+  .sub-med { font-size: 28px; color: var(--text-muted); font-weight: 500; line-height: 1.35; max-width: 880px; }
 
   .underline-lime { position: relative; display: inline-block; }
   .underline-lime::after {
@@ -72,44 +85,7 @@
   }
   .hl-lime { background: var(--brand-primary); color: var(--dark-bg); padding: 4px 22px 12px; border-radius: 14px; }
 
-  /* === Scene 2: 4 benefit cards === */
-  .benefits-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 26px;
-    width: 100%; max-width: 880px;
-    margin-top: 36px;
-  }
-  .benefit-card {
-    background: var(--card-bg);
-    border: 1.5px solid var(--card-border);
-    border-radius: 24px;
-    padding: 36px 28px;
-    text-align: left;
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  .benefit-card .ico {
-    width: 56px; height: 56px; border-radius: 50%;
-    border: 1.5px solid var(--brand-primary);
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 18px;
-  }
-  .benefit-card .ico svg { width: 26px; height: 26px; stroke: var(--brand-primary); stroke-width: 2; fill: none; }
-  .benefit-card .title {
-    font-size: 30px; font-weight: 800; letter-spacing: -0.8px;
-    color: var(--text);
-    margin-bottom: 8px;
-  }
-  .benefit-card .desc {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 16px; color: var(--text-muted);
-    letter-spacing: 1px; text-transform: uppercase;
-    font-weight: 500;
-  }
-
-  /* === Scene 3: Browser frame with real stackpicks.dev screenshot === */
+  /* === Browser frame === */
   .browser-wrap {
     width: 100%; max-width: 760px;
     margin: 30px auto 0;
@@ -138,35 +114,111 @@
     background: rgba(0,0,0,0.3);
     border: 1px solid var(--card-border);
     border-radius: 12px;
-    padding: 9px 16px;
+    padding: 10px 16px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 17px;
-    color: var(--brand-primary);
+    color: var(--text-muted);
     display: flex; align-items: center; gap: 9px;
-    font-weight: 600;
+    font-weight: 500;
   }
-  .browser-url .lock { color: var(--text-muted); font-size: 14px; }
-  .site-shot {
-    width: 100%;
-    display: block;
-    background: #F5F7F0;
+  .browser-url .lock { color: var(--brand-primary); font-size: 14px; }
+  .browser-url .url-typed {
+    color: var(--text);
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid var(--brand-primary);
   }
-  .scene-3-cap {
-    margin-top: 40px;
-    opacity: 0;
-  }
-  .scene-3-cap .h-sm { color: var(--text); }
+  .site-shot { width: 100%; display: block; background: #F5F7F0; }
 
-  /* === Scene 4: Repo card with use/skip take === */
+  /* === Search bar mock (scene 3) === */
+  .search-page {
+    background: #F5F7F0;
+    color: var(--dark-bg);
+    padding: 30px 24px;
+    min-height: 540px;
+    display: flex; flex-direction: column; align-items: stretch;
+  }
+  .search-page .page-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--dark-bg);
+    letter-spacing: -0.5px;
+    margin-bottom: 30px;
+  }
+  .search-page .page-logo .dev { color: var(--brand-dark); }
+  .search-bar {
+    background: #fff;
+    border: 2px solid #E5E9DC;
+    border-radius: 14px;
+    padding: 16px 20px;
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+    transition: border-color 0.3s;
+  }
+  .search-bar.active { border-color: var(--brand-dark); }
+  .search-bar .search-icon { color: #6B7165; font-size: 20px; flex-shrink: 0; }
+  .search-bar .search-text {
+    font-size: 19px;
+    color: var(--dark-bg);
+    font-weight: 600;
+    flex: 1;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 0;
+    border-right: 2px solid var(--brand-dark);
+  }
+
+  .search-results {
+    margin-top: 14px;
+    display: flex; flex-direction: column; gap: 8px;
+    text-align: left;
+  }
+  .search-result {
+    background: #fff;
+    border: 1.5px solid #E5E9DC;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 14px;
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  .search-result .res-logo {
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    background: var(--dark-bg);
+    color: var(--brand-primary);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700; font-size: 18px;
+    flex-shrink: 0;
+  }
+  .search-result .res-name { font-size: 16px; font-weight: 700; color: var(--dark-bg); line-height: 1.2; }
+  .search-result .res-desc { font-size: 12px; color: #6B7165; margin-top: 2px; font-weight: 500; line-height: 1.3; }
+  .search-result .res-meta { display: flex; gap: 12px; margin-top: 5px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #8A8580; font-weight: 600; }
+  .search-result .res-meta .star { color: var(--brand-dark); }
+  .search-result .pick-pill {
+    margin-left: auto; flex-shrink: 0;
+    padding: 5px 11px;
+    background: var(--brand-primary); color: var(--dark-bg);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+    border-radius: 14px;
+  }
+
+  /* === Repo card with take (scene 4) === */
   .repo-card {
     width: 100%; max-width: 760px;
     background: var(--card-bg);
     border: 1.5px solid var(--brand-primary);
     border-radius: 24px;
-    padding: 40px 36px;
+    padding: 36px 32px;
     box-shadow: 0 30px 80px rgba(198,255,0,0.08), 0 0 0 1.5px rgba(198,255,0,0.2);
     text-align: left;
-    margin-top: 30px;
+    margin-top: 28px;
     opacity: 0;
     transform: translateY(40px);
   }
@@ -175,71 +227,61 @@
     margin-bottom: 22px;
   }
   .repo-card .repo-logo {
-    width: 56px; height: 56px;
+    width: 60px; height: 60px;
     border-radius: 14px;
     background: var(--brand-primary);
     color: var(--dark-bg);
     display: flex; align-items: center; justify-content: center;
     font-weight: 800; font-size: 28px;
+    font-family: 'JetBrains Mono', monospace;
   }
-  .repo-card .repo-name {
-    font-size: 32px; font-weight: 800; letter-spacing: -0.5px;
-  }
+  .repo-card .repo-name { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; }
   .repo-card .repo-meta {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 16px; color: var(--text-muted);
+    font-size: 15px; color: var(--text-muted);
     margin-top: 4px;
   }
   .take-row {
-    display: flex; align-items: flex-start; gap: 16px;
-    padding: 18px 0;
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 16px 0;
     border-top: 1px solid var(--card-border);
     opacity: 0;
     transform: translateX(-20px);
   }
   .take-pill {
     flex-shrink: 0;
-    padding: 8px 14px;
+    padding: 7px 13px;
     border-radius: 20px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 13px; letter-spacing: 1.5px;
+    font-size: 12px; letter-spacing: 1.5px;
     text-transform: uppercase;
     font-weight: 700;
   }
   .take-pill.use { background: rgba(198,255,0,0.15); color: var(--brand-primary); border: 1px solid rgba(198,255,0,0.4); }
   .take-pill.skip { background: rgba(255,117,117,0.12); color: var(--red); border: 1px solid rgba(255,117,117,0.35); }
   .take-text {
-    font-size: 22px; line-height: 1.4; color: var(--text);
+    font-size: 21px; line-height: 1.4; color: var(--text);
     font-weight: 500;
   }
 
-  /* === Scene 5: CTA === */
-  .cta-stack { text-align: center; }
-  .cta-lockup {
-    display: inline-flex; align-items: baseline; gap: 8px;
-    margin-bottom: 36px;
-    opacity: 0;
-  }
-  .cta-lockup .s { font-size: 56px; font-weight: 800; color: var(--text); letter-spacing: -1.5px; }
-  .cta-lockup .dot { width: 14px; height: 14px; background: var(--brand-primary); border-radius: 50%; align-self: flex-end; margin-bottom: 10px; }
-  .cta-lockup .name { font-size: 44px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
+  /* === CTA === */
   .cta-btn {
     display: inline-flex; align-items: center; gap: 18px;
     padding: 26px 38px;
     background: var(--brand-primary); color: var(--dark-bg);
-    font-weight: 800; font-size: 36px;
+    font-weight: 800; font-size: 32px;
     border-radius: 60px;
     margin-top: 36px;
     opacity: 0; transform: scale(0.7);
-    letter-spacing: -0.4px;
+    letter-spacing: -0.3px;
   }
   .cta-btn .arrow {
-    width: 56px; height: 56px; border-radius: 50%; background: var(--dark-bg);
+    width: 52px; height: 52px; border-radius: 50%; background: var(--dark-bg);
     display: inline-flex; align-items: center; justify-content: center;
   }
-  .cta-btn .arrow svg { width: 26px; height: 26px; stroke: var(--brand-primary); stroke-width: 2.5; fill: none; }
+  .cta-btn .arrow svg { width: 24px; height: 24px; stroke: var(--brand-primary); stroke-width: 2.5; fill: none; }
   .handle-strip {
-    position: absolute; bottom: 80px; left: 0; right: 0;
+    position: absolute; bottom: 90px; left: 0; right: 0;
     font-family: 'JetBrains Mono', monospace;
     font-size: 22px;
     color: var(--text-muted);
@@ -258,56 +300,60 @@
   @keyframes browserUp { from { opacity: 0; transform: translateY(60px) scale(0.92); } to { opacity: 1; transform: translateY(0) scale(1); } }
   @keyframes slideRight { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
   @keyframes ctaPop { 0% { opacity: 0; transform: scale(0.7); } 60% { transform: scale(1.08); } 100% { opacity: 1; transform: scale(1); } }
+  @keyframes typeUrl { from { width: 0; } to { width: 100%; } }
+  @keyframes typeQuery { from { width: 0; } to { width: 100px; } }
+  @keyframes blink { 50% { border-color: transparent; } }
 
   /* === SCENE TIMING ===
      Total: 22 sec
-     Each scene gets EXCLUSIVE stage time. No overlap during transitions.
-     Scene N fades out 0-0.3s before Scene N+1 starts.
-
-     0.0 - 3.5   Scene 1 — "Why open source?"
-     3.5 - 9.0   Scene 2 — 4 benefit cards
-     9.0 - 14.0  Scene 3 — Browser opens stackpicks.dev (REAL site shot)
-    14.0 - 18.0  Scene 4 — Repo card with use/skip take
-    18.0 - 22.0  Scene 5 — CTA
+     0.0 - 3.5    Scene 1 — Hook: "Find any open-source tool"
+     3.5 - 9.0    Scene 2 — Open stackpicks.dev (real screenshot)
+     9.0 - 14.5   Scene 3 — Type search "supabase" → results
+    14.5 - 19.0   Scene 4 — The take (use/skip pills)
+    19.0 - 22.0   Scene 5 — CTA
   */
 
-  /* Scene 1 (0 - 3.5) */
+  /* Scene 1 */
   .scene-1 { animation: fadeIn 0.35s 0s forwards, fadeOut 0.35s 3.2s forwards; }
   .scene-1 .kicker { opacity: 0; animation: fadeUp 0.5s 0.3s forwards; }
   .scene-1 .h-mega { opacity: 0; animation: zoomIn 0.55s 0.55s cubic-bezier(0.34, 1.3, 0.64, 1) forwards; }
   .scene-1 .sub-big { opacity: 0; animation: fadeUp 0.5s 1.4s forwards; }
 
-  /* Scene 2 (3.5 - 9.0) — benefits */
+  /* Scene 2 — Open site */
   .scene-2 { animation: fadeIn 0.35s 3.5s forwards, fadeOut 0.35s 8.7s forwards; }
   .scene-2 .kicker { opacity: 0; animation: fadeUp 0.5s 3.7s forwards; }
   .scene-2 .h-med { opacity: 0; animation: fadeUp 0.5s 4.0s forwards; }
-  .scene-2 .benefit-card:nth-child(1) { animation: fadeUp 0.4s 4.7s forwards; }
-  .scene-2 .benefit-card:nth-child(2) { animation: fadeUp 0.4s 5.1s forwards; }
-  .scene-2 .benefit-card:nth-child(3) { animation: fadeUp 0.4s 5.5s forwards; }
-  .scene-2 .benefit-card:nth-child(4) { animation: fadeUp 0.4s 5.9s forwards; }
+  .scene-2 .browser-wrap { animation: browserUp 0.55s 4.6s cubic-bezier(0.34, 1.2, 0.64, 1) forwards; }
+  .scene-2 .browser-url .url-typed { animation: typeUrl 1.0s 5.3s steps(15, end) forwards, blink 0.7s 5.3s infinite; width: 0; }
 
-  /* Scene 3 (9 - 14) — show the real site */
-  .scene-3 { animation: fadeIn 0.35s 9.0s forwards, fadeOut 0.35s 13.7s forwards; }
+  /* Scene 3 — Search demo */
+  .scene-3 { animation: fadeIn 0.35s 9.0s forwards, fadeOut 0.35s 14.2s forwards; }
   .scene-3 .kicker { opacity: 0; animation: fadeUp 0.5s 9.2s forwards; }
-  .scene-3 .h-sm { opacity: 0; animation: fadeUp 0.5s 9.5s forwards; }
-  .scene-3 .browser-wrap { animation: browserUp 0.6s 10.1s cubic-bezier(0.34, 1.2, 0.64, 1) forwards; }
-  .scene-3 .scene-3-cap { animation: fadeUp 0.5s 12.5s forwards; }
+  .scene-3 .h-med { opacity: 0; animation: fadeUp 0.5s 9.5s forwards; }
+  .scene-3 .browser-wrap { animation: browserUp 0.5s 10.0s cubic-bezier(0.34, 1.2, 0.64, 1) forwards; }
+  .scene-3 .search-bar { animation: fadeUp 0.35s 10.5s forwards; opacity: 0; }
+  .scene-3 .search-bar { animation: fadeUp 0.35s 10.5s forwards, makeActive 0.1s 10.9s forwards; opacity: 0; }
+  @keyframes makeActive { to { border-color: var(--brand-dark); } }
+  .scene-3 .search-text { animation: typeQuery 1.0s 11.0s steps(8, end) forwards, blink 0.7s 11.0s infinite; width: 0; }
+  .scene-3 .search-result:nth-child(1) { animation: fadeUp 0.35s 12.1s forwards; }
+  .scene-3 .search-result:nth-child(2) { animation: fadeUp 0.35s 12.35s forwards; }
+  .scene-3 .search-result:nth-child(3) { animation: fadeUp 0.35s 12.6s forwards; }
 
-  /* Scene 4 (14 - 18) — repo card with take */
-  .scene-4 { animation: fadeIn 0.35s 14.0s forwards, fadeOut 0.35s 17.7s forwards; }
-  .scene-4 .kicker { opacity: 0; animation: fadeUp 0.5s 14.2s forwards; }
-  .scene-4 .h-sm { opacity: 0; animation: fadeUp 0.5s 14.5s forwards; }
-  .scene-4 .repo-card { animation: fadeUp 0.6s 15.0s cubic-bezier(0.34, 1.2, 0.64, 1) forwards; }
-  .scene-4 .take-row:nth-child(2) { animation: slideRight 0.4s 15.8s forwards; }
-  .scene-4 .take-row:nth-child(3) { animation: slideRight 0.4s 16.3s forwards; }
+  /* Scene 4 — Take */
+  .scene-4 { animation: fadeIn 0.35s 14.5s forwards, fadeOut 0.35s 18.7s forwards; }
+  .scene-4 .kicker { opacity: 0; animation: fadeUp 0.5s 14.7s forwards; }
+  .scene-4 .h-sm { opacity: 0; animation: fadeUp 0.5s 15.0s forwards; }
+  .scene-4 .repo-card { animation: fadeUp 0.55s 15.6s cubic-bezier(0.34, 1.2, 0.64, 1) forwards; }
+  .scene-4 .take-row:nth-child(2) { animation: slideRight 0.4s 16.5s forwards; }
+  .scene-4 .take-row:nth-child(3) { animation: slideRight 0.4s 17.0s forwards; }
 
-  /* Scene 5 (18 - 22) — CTA */
-  .scene-5 { animation: fadeIn 0.4s 18.0s forwards; }
-  .scene-5 .cta-lockup { animation: fadeUp 0.5s 18.2s forwards; }
-  .scene-5 .h-big { opacity: 0; animation: fadeUp 0.5s 18.6s forwards; }
-  .scene-5 .sub-med { opacity: 0; animation: fadeUp 0.5s 19.1s forwards; }
-  .scene-5 .cta-btn { animation: ctaPop 0.55s 19.7s cubic-bezier(0.34, 1.3, 0.64, 1) forwards; }
-  .scene-5 .handle-strip { animation: fadeIn 0.4s 20.5s forwards; }
+  /* Scene 5 — CTA */
+  .scene-5 { animation: fadeIn 0.4s 19.0s forwards; }
+  .scene-5 .logo { opacity: 0; animation: fadeUp 0.5s 19.2s forwards; }
+  .scene-5 .h-big { opacity: 0; animation: fadeUp 0.5s 19.6s forwards; }
+  .scene-5 .sub-med { opacity: 0; animation: fadeUp 0.5s 20.1s forwards; }
+  .scene-5 .cta-btn { animation: ctaPop 0.5s 20.6s cubic-bezier(0.34, 1.3, 0.64, 1) forwards; }
+  .scene-5 .handle-strip { animation: fadeIn 0.4s 21.2s forwards; }
 </style>
 </head>
 <body>
@@ -316,91 +362,109 @@
 
   <!-- ============ SCENE 1 — HOOK ============ -->
   <div class="scene scene-1">
-    <div class="kicker">// stackpicks · 2026</div>
-    <div class="h-mega">Why<br>open <span class="underline-lime">source?</span></div>
-    <div class="sub-big" style="margin-top: 36px;">Because the best dev tools aren't behind a paywall.</div>
+    <div class="kicker">// open-source · curated</div>
+    <div class="h-mega">Find any<br>open-source <span class="underline-lime">tool.</span></div>
+    <div class="sub-big" style="margin-top: 36px;">In one place. With an honest take on each.</div>
   </div>
 
-  <!-- ============ SCENE 2 — 4 BENEFITS ============ -->
+  <!-- ============ SCENE 2 — OPEN STACKPICKS.DEV ============ -->
   <div class="scene scene-2">
-    <div class="kicker">// the case</div>
-    <div class="h-med">Four reasons it<br>wins, always.</div>
-    <div class="benefits-grid">
-      <div class="benefit-card">
-        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 2 6-6"/></svg></div>
-        <div class="title">Free.</div>
-        <div class="desc">// No license trap</div>
-      </div>
-      <div class="benefit-card">
-        <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><path d="M9 16l6 0"/></svg></div>
-        <div class="title">No lock-in.</div>
-        <div class="desc">// Switch any time</div>
-      </div>
-      <div class="benefit-card">
-        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/></svg></div>
-        <div class="title">Transparent.</div>
-        <div class="desc">// Read the code</div>
-      </div>
-      <div class="benefit-card">
-        <div class="ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-        <div class="title">Community.</div>
-        <div class="desc">// Fixed by builders</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ SCENE 3 — SHOW THE REAL SITE ============ -->
-  <div class="scene scene-3">
-    <div class="kicker">// the problem</div>
-    <div class="h-sm">But which ones<br>are actually good?</div>
+    <div class="kicker">// step 1</div>
+    <div class="h-med">Go to the site.</div>
     <div class="browser-wrap">
       <div class="browser-frame">
         <div class="browser-bar">
           <div class="browser-dots"><span></span><span></span><span></span></div>
           <div class="browser-url">
             <span class="lock">⌘</span>
-            <span>stackpicks.dev</span>
+            <span class="url-typed">stackpicks.dev</span>
           </div>
         </div>
         <img class="site-shot" src="site-home.png" alt="stackpicks.dev homepage" />
       </div>
     </div>
-    <div class="scene-3-cap">
-      <div class="h-sm">→ <span class="hl-lime">StackPicks</span></div>
+  </div>
+
+  <!-- ============ SCENE 3 — SEARCH FOR A REPO ============ -->
+  <div class="scene scene-3">
+    <div class="kicker">// step 2</div>
+    <div class="h-med">Search anything.</div>
+    <div class="browser-wrap">
+      <div class="browser-frame">
+        <div class="browser-bar">
+          <div class="browser-dots"><span></span><span></span><span></span></div>
+          <div class="browser-url">
+            <span class="lock">⌘</span>
+            <span style="color: var(--text);">stackpicks.dev</span>
+          </div>
+        </div>
+        <div class="search-page">
+          <div class="page-logo">stackpicks<span class="dev">.dev</span></div>
+          <div class="search-bar">
+            <span class="search-icon">⌕</span>
+            <span class="search-text">supabase</span>
+          </div>
+          <div class="search-results">
+            <div class="search-result">
+              <div class="res-logo">S</div>
+              <div>
+                <div class="res-name">supabase / supabase</div>
+                <div class="res-desc">Open-source Firebase alternative. Postgres, auth, storage, realtime.</div>
+                <div class="res-meta"><span class="star">★ 76k</span><span>TypeScript</span><span>Apache-2.0</span></div>
+              </div>
+              <div class="pick-pill">Picked</div>
+            </div>
+            <div class="search-result">
+              <div class="res-logo">P</div>
+              <div>
+                <div class="res-name">pocketbase / pocketbase</div>
+                <div class="res-desc">Open-source backend in 1 file. Auth, file storage, realtime DB.</div>
+                <div class="res-meta"><span class="star">★ 48k</span><span>Go</span><span>MIT</span></div>
+              </div>
+            </div>
+            <div class="search-result">
+              <div class="res-logo">A</div>
+              <div>
+                <div class="res-name">appwrite / appwrite</div>
+                <div class="res-desc">Backend platform — auth, DB, storage, functions.</div>
+                <div class="res-meta"><span class="star">★ 50k</span><span>TypeScript</span><span>BSD-3</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- ============ SCENE 4 — REPO CARD WITH TAKE ============ -->
+  <!-- ============ SCENE 4 — THE TAKE ============ -->
   <div class="scene scene-4">
-    <div class="kicker">// the differentiator</div>
-    <div class="h-sm">Honest takes,<br>not star counts.</div>
+    <div class="kicker">// step 3</div>
+    <div class="h-sm">Read the honest take.<br>Then ship.</div>
     <div class="repo-card">
       <div class="repo-head">
-        <div class="repo-logo">N</div>
+        <div class="repo-logo">S</div>
         <div>
-          <div class="repo-name">shadcn/ui</div>
-          <div class="repo-meta">82k ★ · TypeScript · MIT</div>
+          <div class="repo-name">supabase</div>
+          <div class="repo-meta">76k ★ · TypeScript · Apache-2.0</div>
         </div>
       </div>
       <div class="take-row">
         <div class="take-pill use">USE THIS IF</div>
-        <div class="take-text">You're on Next.js + Tailwind and want copy-paste components you own.</div>
+        <div class="take-text">You need Postgres + auth + storage in one open-source backend you can self-host.</div>
       </div>
       <div class="take-row">
         <div class="take-pill skip">SKIP IF</div>
-        <div class="take-text">You need a packaged library — shadcn is code you maintain.</div>
+        <div class="take-text">You're building offline-first or need < 100 MB binary — try PocketBase.</div>
       </div>
     </div>
   </div>
 
   <!-- ============ SCENE 5 — CTA ============ -->
   <div class="scene scene-5">
-    <div class="cta-stack">
-      <div class="cta-lockup">
-        <span class="s">S</span><span class="dot"></span><span class="name">StackPicks</span>
-      </div>
+    <div style="text-align: center;">
+      <div class="logo logo-md" style="margin-bottom: 32px; display: inline-block;">stackpicks<span class="dot-dev">.dev</span></div>
       <div class="h-big">Find your<br><span class="hl-lime">stack.</span></div>
-      <div class="sub-med" style="margin-top: 32px;">165+ open-source tools. Honest takes. Curated by a builder.</div>
+      <div class="sub-med" style="margin-top: 30px;">165+ open-source tools. Honest takes. Curated by a builder.</div>
       <a class="cta-btn">
         stackpicks.dev
         <span class="arrow"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span>
