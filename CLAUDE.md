@@ -427,6 +427,27 @@ keyword from that news, optimized for BOTH:
 Freshness is the edge — publish while the keyword is days old and uncontested.
 Then tie it back to StackPicks Connect / the directory with internal CTAs.
 
+**MANDATORY post-write audit (every time, no exceptions):**
+After writing OR updating any blog post, BEFORE committing, run this audit
+pass and apply fixes in the same commit:
+1. **Simple steps:** every numbered list is ≤4 bullets/step, each bullet is
+   one action, no time-tags like "(5 min)", no restated intros. If a step
+   has a paragraph preamble, kill the preamble.
+2. **Tight quick_answer:** ≤350 chars, leads with the direct answer in the
+   first sentence (AI engines lift verbatim — front-load the citation).
+3. **FAQ answers:** 50-100 words each, crisp, no hedging.
+4. **Honesty check:** if a newer official solution exists (e.g. Meta's MCP
+   for Meta Ads), the post must say so before pitching ours. Never push
+   users into a worse path. Per the brand-honesty rule.
+5. **Freshness:** confirm `updated_at` is today; if dates are stale, bump
+   them. Confirm any time-bound claims (counts, "as of X") are current.
+6. **Internal links:** new post links to ≥2 existing posts; ≥1 existing
+   post links back. Use existing high-traffic posts to pass equity.
+7. **Auto-wired:** sitemap, /llms.txt, /llms-full.txt, RSS, blog index all
+   derive from `BLOG_POSTS` automatically — confirm by typecheck only,
+   no manual wiring needed.
+8. **Typecheck + commit + push.** Then report what was audited.
+
 **Distribution = OWNED channels only (Piyush has NO Reddit/HN/dev.to/social):**
 1. **Newsletter** (Resend) — send/queue the post to the owned list.
 2. **On-site internal linking** — link new post from related posts + /mcp +
