@@ -36,6 +36,405 @@ const TODAY_JUN3 = '2026-06-03';
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: 'chatgpt-ads-explained-2026',
+    title: 'ChatGPT Ads Explained — How OpenAI\'s New Ad Platform Works (2026 Guide)',
+    excerpt: 'OpenAI launched ads in ChatGPT on Feb 9, 2026 — now fully self-serve as of May. Where ads appear, who sees them, how targeting works, and how to buy your first ChatGPT ad.',
+    query: 'chatgpt ads explained how it works advertiser',
+    monthly_searches: 14000,
+    reading_time: 9,
+    published_at: TODAY_JUN3,
+    updated_at: TODAY_JUN3,
+    author: 'Piyush Jangir',
+    category: 'AI Tooling',
+    quick_answer: 'ChatGPT Ads is OpenAI\'s ad platform launched February 9, 2026 for U.S. users on the Free and ChatGPT Go tiers. Paid tiers (Plus, Pro, Business, Enterprise, Education) do not see ads. Ads appear in clearly labeled, subtly tinted boxes at the bottom of AI responses — never inside the answer itself — and use contextual matching (current conversation, past chats, past ad interactions) instead of traditional keyword targeting. As of May 2026 the platform is fully self-serve via the OpenAI Ads Manager with CPC + CPM bidding and no minimum spend.',
+    faqs: [
+      { question: 'When did ChatGPT ads launch?', answer: 'OpenAI rolled out ChatGPT advertising to U.S. users on February 9, 2026. The launch initially required a $200,000 minimum commitment through a limited pilot. By May 2026 OpenAI made the platform fully self-serve via the OpenAI Ads Manager with no minimum spend — accessible to any advertiser.' },
+      { question: 'Who sees ads in ChatGPT?', answer: 'Only users on the Free and ChatGPT Go tiers see ads, and currently only in the U.S. Subscribers on Plus, Pro, Business, Enterprise, and Education tiers do not see ads. This is OpenAI\'s monetization model for the no-revenue free tier — paying users get an ad-free experience.' },
+      { question: 'Where do ads appear in ChatGPT?', answer: 'Ads appear in clearly labeled, subtly tinted boxes at the bottom of AI responses, never embedded inside the answer itself. The model\'s answer is generated independently of any ad; the ad is shown after the answer and labeled as "Sponsored." This separation is by design — OpenAI has stated ads will not influence the model\'s output.' },
+      { question: 'How does ChatGPT ad targeting work?', answer: 'Targeting is contextual rather than keyword-based. The platform uses the current conversation topic, the user\'s prior chat history, and prior ad interactions to match relevant advertisers. There is no auction on individual queries the way Google Ads works. Bid types available: CPC (cost per click) and CPM (cost per thousand impressions).' },
+      { question: 'How do I buy ChatGPT ads?', answer: 'Go to the OpenAI Ads Manager (announced May 2026, accessible from your OpenAI account dashboard). Set up an advertiser account, create a campaign with budget and creative (text + image), choose CPC or CPM bidding, and submit. There is no minimum spend. Partner integrations exist with Adobe, Criteo, Kargo, Pacvue, and StackAdapt for advanced workflows.' },
+      { question: 'Will ChatGPT ads replace Google search ads?', answer: 'They compete for the same advertiser budget but are not direct replacements. ChatGPT Ads work on a smaller (but growing) audience that\'s asking conversational questions — high intent, but lower volume than Google Search. Most advertisers in 2026 are running both: Google for established search demand, ChatGPT for emerging conversational queries. The strategic question is no longer "either/or" but "what percentage of search-equivalent spend goes to which engine."' },
+    ],
+    content: `On **February 9, 2026**, OpenAI quietly flipped the switch on ads in ChatGPT — first for U.S. Free and Go-tier users, in a tightly limited pilot requiring a $200,000 commitment. Three months later, in May 2026, the same platform went fully self-serve with no minimum spend. ChatGPT Ads is now a real, accessible ad channel that any business can buy into.
+
+Here's what changed, where ads appear, how they're targeted, and how to actually run one.
+
+## What launched and when
+
+| Date | Event |
+|---|---|
+| Feb 9, 2026 | ChatGPT Ads launches in pilot — U.S. Free + Go tiers only, $200k minimum commitment, agency-mediated |
+| May 2026 | Self-serve **OpenAI Ads Manager** opens — no minimum spend, CPC + CPM bidding, available to any advertiser |
+| Ongoing | Major holding companies (Dentsu, Omnicom, Publicis, WPP) integrated as official partners; mid-funnel partners include Adobe, Criteo, Kargo, Pacvue, StackAdapt |
+
+## Where ads actually appear
+
+Inside ChatGPT, ads show up in **clearly labeled, subtly tinted boxes at the bottom of an AI response** — never embedded inside the answer itself. The visual treatment is closer to Google's "Sponsored" cards under a search result than to the inline brand mentions some critics feared.
+
+OpenAI has been explicit: the model's answer is generated independently of any ad. The ad is appended after. This is the same firewall Google maintains between organic and paid results.
+
+Three things to keep in mind:
+
+1. **Only Free + Go tiers see ads.** Plus, Pro, Business, Enterprise, and Education subscribers get an ad-free experience. ChatGPT's premium tiers are unchanged.
+2. **U.S. only at launch.** International rollout is staged through 2026.
+3. **Web + mobile + desktop apps** all show ads where applicable — the surface is unified.
+
+## How targeting works
+
+This is where ChatGPT Ads diverges sharply from Google Ads.
+
+| Google Search Ads | ChatGPT Ads |
+|---|---|
+| Bid on **keywords** | Bid on **contextual themes** |
+| Auction per query | Match based on conversation topic + history |
+| User intent inferred from query | User intent inferred from full conversation arc |
+| Match types: exact, phrase, broad | One match type: contextual fit |
+| Quality Score | "Relevance Score" (early signal — not yet public weighting) |
+
+The platform uses three signals to decide which ad to show:
+
+1. **Current conversation topic** — what is the user actively talking about?
+2. **Past chat history** — what topics has this user engaged with recently?
+3. **Past ad interactions** — what kinds of ads has this user clicked or dwelled on?
+
+There is **no auction at the keyword level.** You target a topic cluster, set a bid, and the platform decides when to surface you. This is closer to Meta/TikTok's interest-based ad model than to Google Search.
+
+## How to buy your first ChatGPT ad (May 2026 process)
+
+1. Go to **OpenAI Ads Manager** — link surfaces in your OpenAI account dashboard. Existing OpenAI API/Pro account holders have access automatically.
+2. Create an **Advertiser account** — business name, website, billing.
+3. Set up a **campaign** — choose objective (Awareness, Traffic, Conversions).
+4. Define a **contextual audience** — pick from topic categories (no keyword input). E.g., "Productivity tools," "Indie developer products," "Personal finance."
+5. Set **bid type** (CPC or CPM) and daily budget. No minimum.
+6. Upload **creative** — text headline (60 char) + body (140 char) + image (1200×628). One destination URL.
+7. **Submit for review** — typical approval 24-48 hours.
+8. **Monitor in Ads Manager** — impressions, clicks, CTR, CPC by topic, audience overlap reports.
+
+## What this means strategically
+
+The instinct is to ask "will ChatGPT Ads cannibalize Google Search Ads?" The honest answer is: not yet, and not entirely.
+
+- **Google still owns the volume.** ChatGPT had ~700M weekly users by Q1 2026; Google handles ~9B+ daily searches. Different orders of magnitude.
+- **ChatGPT owns deeper intent.** A user asking "what's the best dev-tool directory for solo founders" in ChatGPT is further along the funnel than someone searching "dev tools." Higher intent → higher conversion.
+- **Most 2026 advertisers run both.** The strategic question is no longer "either/or" — it's "what percentage of search-equivalent budget goes to which engine?"
+
+For B2B / dev tools / SaaS in particular, ChatGPT Ads is a real channel worth a 10-20% allocation experiment in 2026.
+
+## Where AI agents fit in (yes, this is relevant)
+
+ChatGPT Ads is also a reminder of the new shape of advertising: **users are talking to an agent, not typing keywords.** The most measurable wins in 2026 won't come from optimizing keyword bids — they'll come from agents that *manage* ad spend across platforms.
+
+If you want to actually run your Google Ads + Meta Ads + (eventually) ChatGPT Ads through one AI agent, that's exactly what [StackPicks Connect](/connect) is built for. Today, our unified MCP gateway connects:
+
+- **Google Ads** — list accounts, list campaigns, pull campaign performance (BYO-token mode, live now)
+- **Meta Ads** — list accounts, list campaigns, account + campaign insights, list ads (BYO-token mode, live now)
+- ChatGPT Ads API access is coming — we'll wire it once OpenAI ships a public Ads API.
+
+A typical workflow once both are connected: ask Claude *"compare last 7 days CPC across Google + Meta for my SaaS campaigns, flag anything where ROAS dropped under 2x."* The agent calls both platforms in the same response and answers in seconds.
+
+## Bottom line
+
+ChatGPT Ads is real, self-serve, and growing fast. The targeting model is contextual (not keyword), the surface is bottom-of-response (not embedded), and the audience is currently U.S. Free + Go tier users. The strategic question for every marketer in 2026 is allocation, not whether to test it. Run a small experiment ($500-2k) in Q2 2026, measure CPA against your existing channels, and scale based on real numbers.
+
+## Related reading
+
+- [Connect Google Ads to Claude via MCP](/blog/connect-google-ads-to-claude-mcp-2026) — full setup guide
+- [Connect Meta Ads to Claude via MCP](/blog/connect-meta-ads-to-claude-mcp-2026) — Facebook + Instagram setup
+- [Claude Opus 4.8 Explained](/blog/claude-opus-4-8-explained-2026) — the model behind agent ad-ops`,
+  },
+  {
+    slug: 'connect-google-ads-to-claude-mcp-2026',
+    title: 'Connect Google Ads to Claude via MCP — Step-by-Step Setup Guide (2026)',
+    excerpt: 'Run your real Google Ads campaigns through Claude in 20 minutes using StackPicks Connect\'s Bring-Your-Own-Token MCP gateway — no Google verification wait, no Standard Access required.',
+    query: 'connect google ads to claude mcp setup',
+    monthly_searches: 4500,
+    reading_time: 7,
+    published_at: TODAY_JUN3,
+    updated_at: TODAY_JUN3,
+    author: 'Piyush Jangir',
+    category: 'AI Tooling',
+    quick_answer: 'You connect Google Ads to Claude through StackPicks Connect using a Bring-Your-Own-Token (BYO) flow. You supply your own Google Ads developer token + OAuth refresh token (both obtained in ~20 minutes from your own Google Ads account and the Google OAuth Playground); StackPicks stores them encrypted, mints fresh access tokens at request time, and exposes Google Ads tools (list accounts, list campaigns, campaign performance) to Claude through one MCP install. No Google OAuth verification wait, no Standard Access required for the app — the user\'s own developer token does the work.',
+    faqs: [
+      { question: 'Can I connect Google Ads to Claude?', answer: 'Yes. Use StackPicks Connect\'s Google Ads provider in Bring-Your-Own-Token mode. You supply your own developer token (from Google Ads API Center) + OAuth credentials + refresh token; StackPicks stores them encrypted and proxies read-only Google Ads API calls when Claude invokes a tool. The whole setup takes ~20 minutes.' },
+      { question: 'Why does Google Ads need a developer token?', answer: 'Google Ads API access has two layers: (1) OAuth — proves the user authorized the app; (2) developer token — proves the developer applied for API access. Both are required. In BYO mode the user supplies both their own developer token (from their own Google Ads MCC account) and their own OAuth credentials, which bypasses StackPicks needing Standard Access from Google for our app.' },
+      { question: 'Do I need a Google Ads Manager (MCC) account?', answer: 'Yes. Developer tokens are only issued from a Google Ads Manager (MCC) account, not from direct accounts. Creating an MCC is free at ads.google.com/intl/en/home/tools/manager-accounts/. After creating it, link your existing direct ad account to the MCC, then apply for the developer token from the MCC\'s API Center.' },
+      { question: 'How long does Google Ads API approval take?', answer: 'Test Account Access (token for test ad accounts only) is issued instantly — you can test the integration in minutes. Basic Access (real production accounts) is typically approved within 3 business days. The application form asks for a design document, contact info, and a description of your tool\'s use case.' },
+      { question: 'Is Bring-Your-Own-Token mode secure?', answer: 'Yes. Tokens are encrypted at rest using AES-256-GCM in StackPicks\' Postgres database, with Row-Level Security so only the row owner can read their own credentials. Access tokens are minted just-in-time from the refresh token and not persisted. Every API call is audit-logged. You can revoke at any time on /dashboard/connections, which deletes the stored token immediately.' },
+      { question: 'What can Claude do with my Google Ads account?', answer: 'Currently read-only: list accessible customer IDs, list campaigns with status and budget, and pull campaign performance (spend, impressions, clicks, conversions, CTR, CPC) for a date range. No campaign creation, no bid edits, no destructive actions in the current release. Future write capabilities will require a separate user-level opt-in.' },
+    ],
+    content: `Want Claude to answer *"what was my Google Ads spend last week and which campaign had the best CTR"* without you opening the dashboard? That's exactly what this setup does.
+
+The connection uses **Bring-Your-Own-Token (BYO) mode**, which bypasses two long waits: Google's OAuth verification for the StackPicks app, and Google's Standard Access review of our developer token. You bring your own already-approved Google Ads access; we proxy the read-only API calls.
+
+End-to-end setup: **~20 minutes**, mostly done in your browser.
+
+## What you'll need
+
+1. A Google account that owns (or has admin access to) a Google Ads account.
+2. A Google Cloud Console project — free, takes 2 minutes to create.
+3. A StackPicks account ([free signup](/connect)).
+4. Claude Desktop, Cursor, or any other MCP-compatible AI client.
+
+## Step 1 — Create a Google Ads Manager (MCC) account (free, 3 min)
+
+Google issues developer tokens **only** through Manager accounts, not direct ad accounts. If you already have an MCC, skip this step.
+
+1. Go to **https://ads.google.com/intl/en/home/tools/manager-accounts/** → "Create a manager account."
+2. Use the same Google account that owns your existing Ads account.
+3. Manager account name: anything (e.g. "Yourname Manager").
+4. **What you'll use this account for:** "Manage other people's accounts."
+5. Country / time zone / currency.
+6. Submit.
+
+## Step 2 — Link your existing ad account to the MCC (2 min)
+
+1. Inside the new Manager account → **Admin → Sub-account settings → +** → **Link existing account**.
+2. Enter your direct Google Ads customer ID (the one you actually run campaigns from).
+3. Switch back to the direct account → **Admin → Access and security → Managers** → accept the link request.
+
+## Step 3 — Apply for a Developer Token (5 min, instant test-tier)
+
+1. Inside the Manager account → **Tools (wrench) → Setup → API Center**.
+2. Fill the API contact form — company name, URL, "Independent Google Ads Developer," contact email.
+3. Submit. The Developer Token is issued **instantly** with **Test Account Access** (works on test accounts).
+4. (Optional, for real campaigns) Click **"Apply for Basic Access"** — fill the form, upload a design document. Approval typically lands within 3 business days.
+5. Click **View token** → copy the 22-char string. Save it.
+
+## Step 4 — Enable the Google Ads API in Google Cloud (2 min)
+
+1. https://console.cloud.google.com → create or pick a project.
+2. **APIs & Services → Library** → search "Google Ads API" → **Enable**.
+3. **Credentials → + Create Credentials → OAuth client ID**.
+4. Application type: **Web application**. Name: "Stackpicks Connect Google Ads."
+5. **Authorized redirect URIs** → add: \`https://developers.google.com/oauthplayground\`
+6. **Create** → copy **Client ID** + **Client Secret**.
+
+## Step 5 — Get a refresh token via OAuth Playground (3 min)
+
+1. Open **https://developers.google.com/oauthplayground**.
+2. Gear icon (top-right) → tick **"Use your own OAuth credentials"** → paste the Client ID + Client Secret from Step 4 → Close.
+3. Left panel, bottom input box → paste:
+   \`\`\`
+   https://www.googleapis.com/auth/adwords
+   \`\`\`
+   → **Authorize APIs** → log in with the Google account that owns your Ads account → Allow.
+4. You're now on Step 2 of the Playground → click **Exchange authorization code for tokens**.
+5. Copy the **Refresh token** (long string starting with \`1//\`).
+
+## Step 6 — Connect on StackPicks (1 min)
+
+1. Open **https://stackpicks.dev/connect** → click the **Google Ads** card.
+2. When the prompt appears, paste this JSON (substitute your 4 values):
+   \`\`\`json
+   {
+     "developer_token": "YOUR_DEV_TOKEN",
+     "client_id": "YOUR_CLIENT_ID.apps.googleusercontent.com",
+     "client_secret": "GOCSPX-YOUR_SECRET",
+     "refresh_token": "1//YOUR_REFRESH_TOKEN"
+   }
+   \`\`\`
+3. Confirm. You should see "connected" in the dashboard.
+
+## Step 7 — Test in Claude
+
+1. In Claude → **Settings → Connectors → Add custom connector** → paste:
+   \`\`\`
+   https://stackpicks.dev/api/mcp
+   \`\`\`
+2. Claude opens a browser → log into StackPicks → approve.
+3. Ask Claude: *"List my Google Ads accounts."*
+4. Then: *"For customer XXX-XXX-XXXX, show campaign performance for the last 7 days."*
+
+If both return data, you're done. Same setup also works in **Cursor**, **Cline**, and **Windsurf** — paste the same URL in their MCP settings.
+
+## What Claude can actually do
+
+| Tool | What it returns |
+|------|----------------|
+| \`google_ads_list_accounts\` | Customer IDs the OAuth user can access |
+| \`google_ads_list_campaigns\` | Campaigns for a customer (id, name, status, channel, budget) |
+| \`google_ads_campaign_performance\` | Spend, impressions, clicks, conversions, CTR, CPC for a date range |
+
+The agent can chain these. Ask *"flag any campaign where CPC jumped over 25% week-over-week"* and Claude will pull two date ranges, compute the deltas, and answer.
+
+## Security model
+
+- Your developer token + OAuth credentials are stored **encrypted at rest** (AES-256-GCM) in StackPicks' Postgres.
+- Row-Level Security ensures only your account can read your row.
+- Access tokens are minted just-in-time and never persisted.
+- Every call is audit-logged (user_id, tool, timestamp, latency — no payloads).
+- You can revoke at any time via **/dashboard/connections** → the encrypted blob is deleted immediately.
+
+## Common errors and fixes
+
+| Error | Fix |
+|------|-----|
+| "User in the cookie is not a valid ads user" | The Google account you used in Playground (Step 5) doesn't have access to the Ads account. Re-do Step 5 with the right Google login. |
+| "Developer token is not approved" | You're on Test Access trying to read a real account. Wait for Basic Access approval or test with a test ad account. |
+| "AUTHENTICATION_ERROR" | Refresh token expired or revoked — re-run Step 5 to get a fresh one, paste new JSON in /connect. |
+| "Required field is missing" | The pasted JSON is malformed. Verify all 4 keys: developer_token, client_id, client_secret, refresh_token. |
+
+## What's next
+
+Pair Google Ads with [Meta Ads](/blog/connect-meta-ads-to-claude-mcp-2026) (same flow, different setup) for cross-channel ad ops in one Claude prompt. With both connected, ask:
+
+> *"Compare last 7 days CPC and ROAS across Google Ads and Meta Ads campaigns, flag any underperformers."*
+
+That's a 30-minute spreadsheet job done in 10 seconds.
+
+## Related reading
+
+- [Connect Meta Ads to Claude via MCP](/blog/connect-meta-ads-to-claude-mcp-2026)
+- [ChatGPT Ads Explained](/blog/chatgpt-ads-explained-2026) — the new third channel
+- [One MCP for All Your Apps](/blog/one-mcp-for-all-apps-composio-alternative-2026) — why unified gateways win`,
+  },
+  {
+    slug: 'connect-meta-ads-to-claude-mcp-2026',
+    title: 'Connect Meta Ads (Facebook + Instagram) to Claude via MCP — Setup Guide (2026)',
+    excerpt: 'Run your Meta Ads campaigns through Claude in 15 minutes using StackPicks Connect\'s Bring-Your-Own-Token MCP gateway — no Meta App Review, no Business Verification wait.',
+    query: 'connect meta ads facebook ads claude mcp setup',
+    monthly_searches: 3800,
+    reading_time: 6,
+    published_at: TODAY_JUN3,
+    updated_at: TODAY_JUN3,
+    author: 'Piyush Jangir',
+    category: 'AI Tooling',
+    quick_answer: 'You connect Meta Ads (Facebook + Instagram) to Claude through StackPicks Connect using a Bring-Your-Own-Token flow with Meta\'s System User Access Token. You create a System User inside your Business Manager, assign your ad account to it, generate a long-lived (never-expiring) token with ads_read permission, and paste it on StackPicks Connect. StackPicks stores the token encrypted and exposes Meta Ads tools (list accounts, list campaigns, account + campaign insights, list ads) to Claude through one MCP install. Setup takes ~15 minutes. No Meta App Review wait, no Business Verification gate.',
+    faqs: [
+      { question: 'Can I connect Meta Ads to Claude?', answer: 'Yes. Use StackPicks Connect\'s Meta Ads provider with a Bring-Your-Own-Token flow. You generate a System User Access Token in your own Meta Business Manager (ads_read permission, never expires), paste it on /connect, and Claude can immediately query your Facebook + Instagram ad campaigns. Setup is ~15 minutes and requires no Meta App Review.' },
+      { question: 'Why use a System User Access Token instead of normal OAuth?', answer: 'Meta\'s normal OAuth flow for ad permissions (ads_read, ads_management) requires App Review approval — typically 2-4 weeks. A System User Access Token bypasses this: it\'s a long-lived token issued from your own Business Manager, scoped only to your ad accounts. You\'re the admin, you trust yourself, so Meta lets you generate the token instantly. Companies like Make.com and n8n use the same pattern.' },
+      { question: 'What permissions does Claude need on my Meta Ads account?', answer: 'Three permissions when you generate the System User token: ads_read (required, lets us read campaign + insights data), business_management (recommended, gives lifetime tokens that don\'t expire), and optionally read_insights (some accounts list this separately). No write permissions are needed in the current release — Claude can only read your ad data.' },
+      { question: 'Is my Meta Ads access token safe to paste into StackPicks?', answer: 'Tokens are encrypted at rest using AES-256-GCM in StackPicks\' Postgres database, behind Row-Level Security so only your row owner can read it. The token is used as a Bearer header to Meta\'s Graph API for read-only queries. You can revoke at any time from Meta Business Manager (which immediately invalidates the token everywhere) or from /dashboard/connections (which deletes the stored copy from StackPicks).' },
+      { question: 'What can Claude actually do with my Meta Ads?', answer: 'Read-only insights and structure: list your ad accounts, list campaigns under each account, pull account-level insights (spend, impressions, clicks, CTR, CPC, CPM, actions) for a date preset, pull per-campaign insights, and list ads. Date presets supported: today, yesterday, last_7d, last_14d, last_30d, this_month, last_month. No campaign creation, no bid edits, no audience changes in the current release.' },
+      { question: 'Do I need a Meta Business Manager?', answer: 'Yes. System Users only exist inside a Business Manager. If you currently run ads through a personal Facebook account, create a Business Manager (free, 2 minutes at business.facebook.com), then claim or transfer your ad account into it. After that, the System User token flow is the same.' },
+    ],
+    content: `Want Claude to answer *"how much did I spend on Meta Ads yesterday and what's my best-performing campaign this week"* — no dashboard hopping? Here's the setup, end to end.
+
+The connection uses Meta's **System User Access Token** — a long-lived token you generate inside your own Business Manager. Because you're the admin issuing it to yourself, no Meta App Review is required. This is the same pattern Make.com, n8n, and Pipedream use for ad-platform integrations.
+
+Total time: **~15 minutes**. No waiting.
+
+## What you'll need
+
+1. A Facebook account with admin access to a Meta Business Manager (or willingness to create one — free, 2 min).
+2. A claimed ad account inside that Business Manager.
+3. A StackPicks account ([free signup](/connect)).
+
+## Step 1 — Open Business Manager (1 min)
+
+1. Go to **https://business.facebook.com**.
+2. If you don't have a Business Manager: top-right → **Create Account** → name it (e.g. "Yourname Business") → use your personal Facebook account → enter business email → submit.
+3. Top-right gear icon → **Business settings**.
+
+## Step 2 — Create a System User (2 min)
+
+System Users are Business Manager-level service accounts. They're how production apps authenticate to Meta APIs without depending on a human session.
+
+1. Left sidebar → **Users → System Users**.
+2. **+ Add** (re-enter your password if prompted).
+3. **System user name:** something descriptive like "StackPicks Reader."
+4. **System user role:** **Admin** (required to generate tokens — you can scope per-asset in the next step).
+5. **Create System User**.
+
+## Step 3 — Assign your Ad Account to the System User (2 min)
+
+1. With "StackPicks Reader" selected → click **Add Assets**.
+2. Left tab → **Ad Accounts** → tick your ad account(s).
+3. Toggle on **Manage campaigns** (or "View performance" for stricter read-only).
+4. **Save changes**.
+
+If your ad account isn't listed: **Business settings → Accounts → Ad Accounts → + Add → Add an Ad Account** → enter the account ID → claim it first, then come back to this step.
+
+## Step 4 — Create a Meta App (3 min)
+
+The token must be issued in the context of a Meta App. The app doesn't need to go through review for System User tokens — it just has to exist.
+
+1. Open **https://developers.facebook.com/apps** → **Create App**.
+2. **Use case:** "Other" → **App type:** **Business**.
+3. **App name:** "StackPicks Reader."
+4. **Business Account:** pick the Business Manager from Step 1.
+5. **Create app**.
+6. Left sidebar → **App settings → Basic**:
+   - **Privacy Policy URL:** \`https://stackpicks.dev/privacy\` (or your own).
+   - **Terms of Service URL:** \`https://stackpicks.dev/terms\` (or your own).
+   - **Category:** "Business and Pages."
+   - **Save changes.**
+
+## Step 5 — Generate the System User Access Token (3 min)
+
+1. Back to **Business settings → System Users → StackPicks Reader**.
+2. Top of the panel → **Generate New Token**.
+3. **Select App:** the "StackPicks Reader" app you created in Step 4.
+4. **Token Expiration:** **Never** — critical. Default tokens expire in 60 days; "Never" gives you a permanent token.
+5. **Available Permissions:** tick:
+   - ✅ \`ads_read\` (required)
+   - ✅ \`business_management\` (needed for Never-expiring tokens)
+   - ✅ \`read_insights\` (if listed)
+6. **Generate Token**.
+7. **Copy the token immediately.** Meta only shows the full token once. It's a long string starting with \`EAAB...\`. Save it in your password manager.
+
+## Step 6 — Connect on StackPicks (1 min)
+
+1. **https://stackpicks.dev/connect** → click the **Meta Ads Manager** card.
+2. Paste the System User token into the prompt.
+3. Confirm.
+
+That's the full setup. The token is now encrypted and stored, ready to be used by Claude.
+
+## Step 7 — Test in Claude
+
+1. In Claude → **Settings → Connectors → Add custom connector** → paste \`https://stackpicks.dev/api/mcp\` (skip if already added).
+2. Ask Claude: *"List my Meta ad accounts."*
+3. Then: *"For ad account act_XXXXXXX, show last 7 days spend and CTR."*
+
+Both should return data within seconds.
+
+## What Claude can do with your Meta Ads
+
+| Tool | What it returns |
+|------|----------------|
+| \`meta_ads_list_accounts\` | Ad accounts the System User can read (id, name, currency, timezone, status) |
+| \`meta_ads_list_campaigns\` | Campaigns under an ad account (id, name, objective, status, budget, dates) |
+| \`meta_ads_account_insights\` | Account-level spend, impressions, clicks, CTR, CPC, CPM, actions for a date preset |
+| \`meta_ads_campaign_insights\` | Per-campaign insights for a date preset |
+| \`meta_ads_list_ads\` | Individual ads (id, name, status, adset, campaign, creative) |
+
+Date presets: \`today\`, \`yesterday\`, \`last_7d\`, \`last_14d\`, \`last_30d\`, \`this_month\`, \`last_month\`.
+
+Claude can chain these naturally. Ask *"which campaign had the worst ROAS in last_7d and how does it compare to last_30d"* and the agent will pull both and answer.
+
+## Security model
+
+- Token encrypted at rest (AES-256-GCM) in StackPicks' Postgres.
+- Row-Level Security so only the row owner can read their own token.
+- Token used as a Bearer header to Meta's Graph API for read-only queries.
+- Audit log: every API call recorded with user_id, tool, timestamp, latency.
+- **Revoke at any time** in two places: Meta Business Manager (invalidates everywhere instantly) OR /dashboard/connections (deletes the stored copy from StackPicks).
+
+## Common errors and fixes
+
+| Error | Fix |
+|------|-----|
+| "(#200) Permissions error" | The System User wasn't assigned to the ad account in Step 3. Re-check Business settings → System Users → Add Assets. |
+| "Invalid OAuth access token" | Token was generated with expiration ≠ Never, and has now expired. Re-do Step 5 with **Never** expiration. |
+| "Application does not have permission for this action" | The token was generated against a different Meta App than the one you assigned permissions to. Confirm Step 5 → Select App matches. |
+| "Unsupported get request" / 404 on ad_account_id | The id needs the \`act_\` prefix — the meta_ads_list_accounts tool returns these in the right format. |
+
+## Pair with Google Ads for full ad ops
+
+[Connect Google Ads](/blog/connect-google-ads-to-claude-mcp-2026) the same way (also BYO-token, ~20 min). Once both are connected to the same StackPicks account, ask Claude:
+
+> *"Compare last 7 days spend and ROAS across all my Meta Ads and Google Ads campaigns. Surface anything where CPC jumped over 25% week-over-week."*
+
+The agent calls both platforms in the same response and answers in 10 seconds. That's the unified-gateway payoff — one MCP install, every ad platform in one place.
+
+## Related reading
+
+- [Connect Google Ads to Claude via MCP](/blog/connect-google-ads-to-claude-mcp-2026)
+- [ChatGPT Ads Explained](/blog/chatgpt-ads-explained-2026) — the new third ad channel
+- [One MCP for All Your Apps](/blog/one-mcp-for-all-apps-composio-alternative-2026)`,
+  },
+  {
     slug: 'claude-opus-4-8-explained-2026',
     title: 'Claude Opus 4.8 Explained — What\'s New, Pricing, and Should You Upgrade (2026)',
     excerpt: 'Anthropic shipped Claude Opus 4.8 on May 28, 2026 — stronger benchmarks, effort control, dynamic Claude Code workflows, and a cheaper fast mode. What actually changed, what it costs, and whether to switch.',
