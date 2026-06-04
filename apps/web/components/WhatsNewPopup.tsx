@@ -66,12 +66,8 @@ export function WhatsNewPopup() {
       aria-live="polite"
       className="fixed z-50 bottom-4 right-4 left-4 md:left-auto md:bottom-6 md:right-6 max-w-sm
                  rounded-2xl border border-accent/30 bg-surface/95 backdrop-blur-md
-                 shadow-[0_20px_60px_-15px_rgba(198,255,0,0.25)]
-                 animate-[slideIn_0.4s_ease-out]"
-      style={{
-        // inline fallback for the keyframe (also defined in globals via tailwind config if present)
-        animationName: 'slideIn',
-      }}
+                 shadow-2xl shadow-accent/20
+                 animate-sp-slide-in"
     >
       <button
         onClick={dismiss}
@@ -121,12 +117,6 @@ export function WhatsNewPopup() {
         </div>
       </div>
 
-      <style jsx>{`
-        @keyframes slideIn {
-          from { opacity: 0; transform: translateY(20px) scale(0.96); }
-          to   { opacity: 1; transform: translateY(0)    scale(1); }
-        }
-      `}</style>
     </div>
   );
 }
