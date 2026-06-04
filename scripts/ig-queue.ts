@@ -91,11 +91,19 @@ async function uploadOne(localPath: string): Promise<string> {
 }
 
 /**
- * Pick the next open slot. Two slots per day:
- *  - 09:30 IST (carousels / images)
- *  - 20:00 IST (reels / videos)
- * Scans existing scheduled rows and returns the first slot in the next 14
- * days that isn't taken.
+ * Pick the next open slot — "Sustainable" cadence (5 posts/week, Mon-Fri).
+ *
+ *   Mon  09:30 IST  carousel/image
+ *   Tue  20:00 IST  reel/video
+ *   Wed  09:30 IST  carousel/image
+ *   Thu  09:30 IST  carousel/image
+ *   Fri  20:00 IST  reel/video
+ *   Sat  (skip)
+ *   Sun  (skip)
+ *
+ * If the requested post_type doesn't match the day's slot type, we still
+ * fit it in but flip to the alternate slot time (so a reel queued on a
+ * "carousel day" goes to 8 PM, and vice-versa).
  */
 async function nextOpenSlot(postType: Args['type']): Promise<Date> {
   const { data: scheduled } = await supa
@@ -105,24 +113,51 @@ async function nextOpenSlot(postType: Args['type']): Promise<Date> {
     .order('scheduled_at', { ascending: true });
   const taken = new Set((scheduled ?? []).map((r) => new Date(r.scheduled_at).getTime()));
 
-  // IST is UTC+5:30
   const IST_OFFSET = 5.5 * 60 * 60 * 1000;
-  const reelSlot = postType === 'reel' || postType === 'video' ? 20 : 9.5; // hour (decimal for 9:30)
+  const isReelType = postType === 'reel' || postType === 'video';
+
+  // Slot plan, keyed by JS getDay() — 0=Sun, 1=Mon, ..., 6=Sat
+  // 'reel'      → 20:00 IST   |   'visual' → 09:30 IST   |   null = no post that day
+  const SLOT_PLAN: Record<number, 'reel' | 'visual' | null> = {
+    0: null,       // Sun
+    1: 'visual',   // Mon — carousel
+    2: 'reel',     // Tue — reel
+    3: 'visual',   // Wed — image / carousel
+    4: 'visual',   // Thu — carousel
+    5: 'reel',     // Fri — reel
+    6: null,       // Sat
+  };
+
+  const wantedSlotKind = isReelType ? 'reel' : 'visual';
   const now = new Date();
-  for (let day = 0; day < 14; day++) {
-    const istNow = new Date(now.getTime() + IST_OFFSET);
+
+  for (let day = 0; day < 21; day++) {
+    const candidate = new Date(now.getTime() + day * 24 * 60 * 60 * 1000);
+    const istDate = new Date(candidate.getTime() + IST_OFFSET);
+    const dow = istDate.getUTCDay();
+    const plan = SLOT_PLAN[dow];
+    if (plan === null) continue; // weekend — skip
+
+    // If today's planned kind matches what we want, use the matching time.
+    // Otherwise we still post (queue doesn't have to align perfectly), but
+    // we use the alternate slot time so day-of-week intent stays clean.
+    const slotHourDecimal = plan === wantedSlotKind
+      ? (plan === 'reel' ? 20 : 9.5)
+      : (wantedSlotKind === 'reel' ? 20 : 9.5);
+
     const target = new Date(Date.UTC(
-      istNow.getUTCFullYear(),
-      istNow.getUTCMonth(),
-      istNow.getUTCDate() + day,
-      Math.floor(reelSlot),
-      (reelSlot % 1) * 60,
+      istDate.getUTCFullYear(),
+      istDate.getUTCMonth(),
+      istDate.getUTCDate(),
+      Math.floor(slotHourDecimal),
+      (slotHourDecimal % 1) * 60,
       0
     ) - IST_OFFSET);
-    if (target.getTime() < now.getTime() + 5 * 60 * 1000) continue; // skip past
+
+    if (target.getTime() < now.getTime() + 5 * 60 * 1000) continue;
     if (!taken.has(target.getTime())) return target;
   }
-  throw new Error('No open slot in next 14 days — clear some queue first');
+  throw new Error('No open slot in next 21 days — clear some queue first');
 }
 
 async function main() {
