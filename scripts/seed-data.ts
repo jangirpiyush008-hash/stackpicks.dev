@@ -1631,6 +1631,118 @@ export const SEED_REPOS: SeedEntry[] = [
     use_this_if: 'You\'re making explainer videos or tutorials with programmatic animations.',
     skip_if: 'You\'re doing UI animations — Framer Motion is the right tool.',
   },
+
+  // ════════════════════════════════════════════════════════════════
+  // JUNE 2026 ADDITIONS — fresh launches + breakouts
+  // ════════════════════════════════════════════════════════════════
+  {
+    full_name: 'duckdb/duckdb',
+    category_slugs: ['database', 'analytics'],
+    is_featured: true,
+    curator_take:
+      'The in-process OLAP engine that replaced "spin up a warehouse" for 80% of analytics work. SQL over Parquet/CSV/JSON without a server. ~22k stars. Reads from S3, runs in WASM, plugs into Python/Node/R. The tradeoff is single-node — once your hot data passes ~500GB you outgrow it. But for dashboards, embedded analytics, and ad-hoc reporting up to that scale, nothing else comes close on price/perf.',
+    use_this_if: 'You need fast SQL on flat files, embedded analytics in an app, or local data exploration without infra.',
+    skip_if: 'You need multi-node concurrent writes or sub-millisecond OLTP — that\'s Postgres or ClickHouse territory.',
+  },
+  {
+    full_name: 'ClickHouse/ClickHouse',
+    category_slugs: ['database', 'analytics'],
+    is_featured: false,
+    curator_take:
+      'The OLAP database powering most "analytics at scale" stories of the last 5 years. Columnar, distributed, eats billions of rows for breakfast. ~39k stars. Used by Cloudflare, Uber, eBay for log + metric + product analytics. Operationally heavier than Postgres — schemas need thought, joins are awkward, eventual consistency on replicas. But for time-series and event streams it is the highest-throughput SQL engine you can self-host.',
+    use_this_if: 'You\'re ingesting >100M events/day and need real-time analytics with SQL.',
+    skip_if: 'You need transactional writes, ad-hoc joins, or you have <10M rows — overkill.',
+  },
+  {
+    full_name: 'All-Hands-AI/OpenHands',
+    category_slugs: ['ai-ml'],
+    is_featured: true,
+    curator_take:
+      'The strongest open-source autonomous coding agent in 2026. Originally OpenDevin, rebuilt and rebranded. ~38k stars. Runs in a sandboxed container, can read your repo, plan multi-file edits, run tests, browse the web. Real benchmarks on SWE-bench Verified put it competitive with closed-source agents at a fraction of the cost. The setup is heavier than Cursor or Aider, but you own the loop and can swap LLMs.',
+    use_this_if: 'You want a Devin-style agent you can self-host and customize, ideally with Claude or DeepSeek as the brain.',
+    skip_if: 'You just want autocomplete or a chat sidebar — Cursor or Aider is faster to start.',
+  },
+  {
+    full_name: 'modelcontextprotocol/servers',
+    category_slugs: ['ai-ml', 'devops'],
+    is_featured: true,
+    curator_take:
+      'The official monorepo of Anthropic-maintained MCP servers — filesystem, git, github, slack, postgres, puppeteer, fetch, and more. ~28k stars. Reference implementations you can clone, fork, or learn from. If you\'re building your own MCP server, read these first. If you just want to use them, paste the npx command from each README into your Claude Desktop config.',
+    use_this_if: 'You want canonical MCP server implementations to wire into Claude, Cursor, or your own agent.',
+    skip_if: 'You\'re not running an MCP-aware client yet — start with stackpicks.dev/mcp directory instead.',
+  },
+  {
+    full_name: 'deepseek-ai/DeepSeek-V3',
+    category_slugs: ['ai-ml'],
+    is_featured: true,
+    curator_take:
+      'The frontier open-weights model that broke the "frontier = closed" assumption. ~95k stars on the inference repo. Matches GPT-4o and Claude Sonnet on most benchmarks at ~1/30th the API cost. Mixture-of-experts, 671B params with 37B active. Quirk: trained on Chinese + English so it\'s slightly weaker on niche languages. The honest tradeoff is hosting cost — running V3 needs 8×H100 minimum. Most teams use the official API.',
+    use_this_if: 'You need frontier reasoning at hobbyist prices, or you need on-prem inference where data can\'t leave your network.',
+    skip_if: 'You need top-tier creative writing or you\'re not cost-constrained — Claude Opus is still the ceiling.',
+  },
+  {
+    full_name: 'get-convex/convex-backend',
+    category_slugs: ['database', 'frameworks'],
+    is_featured: false,
+    curator_take:
+      'Reactive backend-as-a-service that ships realtime, auth, scheduled jobs, and a TypeScript-native query language in one bundle. ~3k stars on the open-source backend (the hosted product is the real story). Writes are transactional, reads are reactive — your React UI updates automatically. The catch: it\'s opinionated and locks you into Convex\'s mental model. For greenfield apps that\'s a feature; for migrations it\'s painful.',
+    use_this_if: 'You\'re starting fresh, want realtime + auth + DB in one TS-native bundle, and trust the vendor.',
+    skip_if: 'You need raw SQL, multi-region replicas, or you\'re migrating an existing Postgres app.',
+  },
+  {
+    full_name: 'lobehub/lobe-chat',
+    category_slugs: ['ai-ml'],
+    is_featured: false,
+    curator_take:
+      'The best-looking self-hostable ChatGPT alternative. ~52k stars. Plugin system, function calling, agent marketplace, multimodal (vision + voice), MCP support shipped Q1 2026. Deploy to Vercel in one click, bring your own OpenAI/Anthropic/local model. Great for teams that want a polished chat UI without writing one. The plugin ecosystem is smaller than ChatGPT\'s GPTs.',
+    use_this_if: 'You want a private ChatGPT for your team or a polished personal chat front-end with MCP support.',
+    skip_if: 'You need agent autonomy (use OpenHands), or you just want CLI chat (use llm or aichat).',
+  },
+  {
+    full_name: 'Skyvern-AI/skyvern',
+    category_slugs: ['ai-ml'],
+    is_featured: false,
+    curator_take:
+      'Browser automation driven by an LLM instead of brittle selectors. ~12k stars. Describe what you want in English, Skyvern figures out the clicks. Works on sites that break Playwright scripts every week — onboarding flows, vendor portals, government forms. Slower than scripted Playwright and burns LLM tokens, but the maintenance cost is near-zero. The realistic use case is internal "RPA but actually flexible".',
+    use_this_if: 'You\'re automating flaky third-party UIs where selectors break weekly.',
+    skip_if: 'You control the target site or you need millisecond performance — scripted Playwright wins.',
+  },
+  {
+    full_name: 'ToolJet/ToolJet',
+    category_slugs: ['frameworks'],
+    is_featured: false,
+    curator_take:
+      'Open-source Retool. ~35k stars. Drag-and-drop internal-tool builder with connectors to 50+ databases and APIs. Self-hosted, MIT license. Honest tradeoff: it\'s still a few iterations behind Retool on polish, and the React-component model is more limited than writing custom code. But for internal admin dashboards where engineering time matters more than craft, it pays back fast.',
+    use_this_if: 'You need internal CRUD dashboards, you don\'t want to pay Retool $50/user/month, and self-hosting is fine.',
+    skip_if: 'You\'re building a customer-facing app or you need pixel-perfect design control.',
+  },
+  {
+    full_name: 'langfuse/langfuse',
+    category_slugs: ['ai-ml', 'analytics'],
+    is_featured: true,
+    curator_take:
+      'Open-source LLM observability that actually scales. ~9k stars. Trace every prompt, score completions, run evals, manage prompts as code. Used by Khan Academy, Sumup, Twilio. The hosted tier is cheap; self-host on Postgres + ClickHouse if you have PII concerns. The competitor space (Helicone, Phoenix, LangSmith) is crowded — Langfuse wins on "framework-agnostic + production-ready".',
+    use_this_if: 'You\'re running LLMs in production and need traces, evals, and prompt versioning in one place.',
+    skip_if: 'You\'re prototyping — console.log is enough until you ship.',
+  },
+  {
+    full_name: 'Helicone/helicone',
+    category_slugs: ['ai-ml', 'analytics'],
+    is_featured: false,
+    curator_take:
+      'LLM monitoring via a one-line proxy. ~4k stars. Point your OpenAI/Anthropic base URL at Helicone and instantly get logs, cost tracking, caching, rate-limit handling. The proxy approach has a tradeoff — added latency (~50ms) and you\'re routing prompts through their infra (self-host fixes this). Less opinionated than Langfuse, easier to drop in.',
+    use_this_if: 'You want zero-instrumentation LLM logging — just swap the base URL.',
+    skip_if: 'You need deep evals, prompt management, or you can\'t accept proxy latency.',
+  },
+  {
+    full_name: 'BuilderIO/qwik',
+    category_slugs: ['frameworks'],
+    is_featured: false,
+    curator_take:
+      'The framework that shipped "resumability" — apps start interactive instantly, no hydration. ~21k stars. Time-to-interactive numbers that embarrass React + Next.js. The catch: smaller ecosystem, fewer engineers know it, debugging the resumability model takes adjustment. Best fit for marketing sites and content-heavy apps where TTI matters more than dev-team familiarity.',
+    use_this_if: 'You\'re building a content/marketing site where lighthouse scores affect revenue.',
+    skip_if: 'You need the React ecosystem, your team only knows React, or you\'re building a complex SPA.',
+  },
 ];
 
 export const TOTAL_REPOS = SEED_REPOS.length;

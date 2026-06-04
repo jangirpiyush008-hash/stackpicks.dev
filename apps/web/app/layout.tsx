@@ -7,6 +7,7 @@ import { HeaderSearchSlot } from '../components/HeaderSearchSlot';
 import { HeaderNav } from '../components/HeaderNav';
 import { HideOnAdmin } from '../components/HideOnAdmin';
 import { NewsletterPopup } from '../components/NewsletterPopup';
+import { WhatsNewPopup } from '../components/WhatsNewPopup';
 import { FooterNewsletter } from '../components/FooterNewsletter';
 import { Analytics } from '../components/Analytics';
 import { UtmOutboundHandler } from '../components/UtmOutboundHandler';
@@ -246,6 +247,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {/* Newsletter signup — 30s delay + exit-intent triggered; hides on admin/auth */}
         <NewsletterPopup />
+
+        {/* What's New — surfaces refresh/changelog counts on /, /mcp, /connect.
+            Bump REFRESH_ID in the component when shipping a new refresh. */}
+        <WhatsNewPopup />
 
         {/* Analytics — env-driven; supports Plausible, PostHog, GA4, Umami in parallel */}
         <Analytics />

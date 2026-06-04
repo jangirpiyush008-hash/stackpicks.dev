@@ -33,8 +33,105 @@ const TODAY_29 = '2026-05-29';
 const TODAY_30 = '2026-05-30';
 const TODAY_31 = '2026-05-31';
 const TODAY_JUN3 = '2026-06-03';
+const TODAY_JUN5 = '2026-06-05';
 
 export const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: 'whats-new-june-2026-stackpicks',
+    title: 'What\'s New on StackPicks — June 2026 Refresh (12 New Repos, 8 New MCPs)',
+    excerpt: 'June 5 refresh: 12 new trending OSS repos (DuckDB, OpenHands, DeepSeek V3, Convex, Qwik, more), 8 new MCP servers (AWS, Cloudflare, Meta Ads, Groq, DeepSeek, DuckDB, Langfuse, ClickHouse), 174 existing repos re-scraped with live GitHub stats.',
+    query: 'stackpicks june 2026 new repos mcp servers refresh',
+    monthly_searches: 600,
+    reading_time: 6,
+    published_at: TODAY_JUN5,
+    updated_at: TODAY_JUN5,
+    author: 'Piyush Jangir',
+    category: 'Changelog',
+    quick_answer: 'On June 5, 2026, StackPicks shipped a catalog refresh: 12 new OSS repos added (DuckDB, OpenHands, DeepSeek V3, Convex, lobe-chat, Skyvern, ToolJet, Langfuse, Helicone, Qwik, ClickHouse, modelcontextprotocol/servers), 8 new MCP servers added to the Connect catalog (AWS, Cloudflare, Meta Ads official, Groq, DeepSeek, DuckDB, Langfuse, ClickHouse), and all 174 existing repos re-scraped with live GitHub stars + forks + language. Total: 174 repos + 122 MCP servers.',
+    faqs: [
+      { question: 'How often does StackPicks refresh GitHub data?', answer: 'Every 24 hours via a Railway-hosted cron at /api/cron/scrape-github. The job pulls live stars, forks, language, license, and last-push timestamps for every published repo and writes the fresh values to Supabase. Pages auto-revalidate on the next request via Next.js ISR.' },
+      { question: 'Which new repos were added in the June 2026 refresh?', answer: '12 fresh entries: duckdb/duckdb (analytics OLAP), ClickHouse/ClickHouse (columnar analytics), All-Hands-AI/OpenHands (autonomous coding agent), modelcontextprotocol/servers (official MCP reference servers), deepseek-ai/DeepSeek-V3 (frontier open-weights LLM), get-convex/convex-backend (reactive BaaS), lobehub/lobe-chat (self-hosted ChatGPT UI with MCP support), Skyvern-AI/skyvern (LLM browser automation), ToolJet/ToolJet (open-source Retool), langfuse/langfuse (LLM observability), Helicone/helicone (LLM monitoring proxy), and BuilderIO/qwik (resumable framework). Each ships with a curator take, use-this-if, and skip-if.' },
+      { question: 'Which new MCP servers were added?', answer: '8 production-ready MCPs: AWS MCP (Bedrock, S3, Lambda, Cost Explorer — GA May 2026), Cloudflare MCP (Workers, R2, D1, DNS — remote-hosted OAuth), Meta Ads MCP (official, launched April 29 2026 at mcp.facebook.com/ads), Groq MCP (ultra-low-latency LLM inference), DeepSeek MCP (frontier reasoning at low cost), DuckDB MCP (SQL over Parquet/CSV via MotherDuck), Langfuse MCP (LLM observability), ClickHouse MCP (real-time analytics SQL). All include install commands and auth notes.' },
+      { question: 'Are the new MCPs vetted before being listed?', answer: 'Yes. Every MCP entry on StackPicks is hand-curated, not scraped. We check the GitHub repo for active maintenance (commits in last 30 days), test the install command on Claude Desktop or Cursor, verify the docs link resolves, and write a plain-English use case. Source field flags whether maintained by the official vendor, Anthropic, or a community fork.' },
+      { question: 'How can I suggest a new repo or MCP to add?', answer: 'Use the submit form at /submit-repo. We review weekly. Criteria: open-source license (MIT/Apache/BSD/AGPL), active maintenance (commits in last 60 days), real users, and a category that exists in our taxonomy. We do not list paid-only tools, abandoned forks, or proof-of-concept demos.' },
+    ],
+    content: `**TL;DR** — On June 5, 2026 we ran a catalog refresh. 12 new OSS repos joined the directory, 8 new MCP servers landed in the Connect catalog, and every existing repo got re-scraped against the GitHub GraphQL API for fresh stars + forks + language data.
+
+Total catalog: **174 curated OSS repos** + **122 MCP servers** across 22 categories.
+
+## 12 new repos
+
+The June batch focuses on the breakouts of the last 60 days.
+
+**AI / agents:**
+- **[All-Hands-AI/OpenHands](/repo/openhands)** — strongest open-source autonomous coding agent (~38k stars, formerly OpenDevin)
+- **[deepseek-ai/DeepSeek-V3](/repo/deepseek-v3)** — frontier open-weights LLM at ~1/30th the cost of Claude/GPT-4o
+- **[lobehub/lobe-chat](/repo/lobe-chat)** — best-looking self-hostable ChatGPT alternative, MCP support shipped Q1 2026
+- **[Skyvern-AI/skyvern](/repo/skyvern)** — LLM-driven browser automation that survives selector breakage
+- **[langfuse/langfuse](/repo/langfuse)** — open-source LLM observability used by Khan Academy, Sumup, Twilio
+- **[Helicone/helicone](/repo/helicone)** — one-line LLM monitoring proxy
+
+**Data + analytics:**
+- **[duckdb/duckdb](/repo/duckdb)** — in-process OLAP that replaced "spin up a warehouse" for most workloads
+- **[ClickHouse/ClickHouse](/repo/clickhouse)** — columnar SQL at billions-of-rows scale
+
+**Frameworks + infra:**
+- **[get-convex/convex-backend](/repo/convex-backend)** — reactive BaaS with realtime + auth + scheduled jobs
+- **[BuilderIO/qwik](/repo/qwik)** — resumability-first framework, embarrassing Lighthouse scores
+- **[ToolJet/ToolJet](/repo/tooljet)** — open-source Retool
+
+**MCP infra:**
+- **[modelcontextprotocol/servers](/repo/servers)** — Anthropic's official MCP reference server monorepo
+
+Every entry ships with a curator take that goes past star count — what it actually does, the honest tradeoff, who it fits.
+
+## 8 new MCP servers
+
+These join the [/mcp directory](/mcp) and the [Connect catalog](/connect):
+
+| MCP | What it does | Auth |
+|---|---|---|
+| **AWS MCP** | Bedrock, S3, Lambda, Cost Explorer, IAM | AWS credentials |
+| **Cloudflare MCP** | Workers, R2, D1, DNS — remote hosted | OAuth |
+| **Meta Ads MCP** | Official campaign + audience + insights | Meta Business OAuth |
+| **Groq MCP** | Sub-100ms LLM inference | Groq API key |
+| **DeepSeek MCP** | Frontier reasoning at low cost | DeepSeek API key |
+| **DuckDB MCP** | SQL over Parquet/CSV/S3 | None (local) |
+| **Langfuse MCP** | LLM traces + evals + prompt mgmt | Langfuse keys |
+| **ClickHouse MCP** | Real-time analytics SQL | DB credentials |
+
+All 8 are production-ready — Anthropic/the vendor maintains them, or the community fork has had commits in the last 30 days.
+
+## 174 existing repos re-scraped
+
+Daily cron at 2 AM IST. Today's refresh swept all published repos through the GitHub GraphQL API and wrote fresh values for stars, forks, watchers, primary language, license, last-push timestamp, and description.
+
+If you bookmarked a repo page yesterday, the numbers you see today are accurate.
+
+## Why this matters
+
+StackPicks's differentiator is **opinionated takes, not star counts**. Anyone can scrape GitHub. The reason the directory works is that every entry answers three questions plainly:
+
+1. What is this thing in one sentence?
+2. Who's the honest fit — when should I actually use it?
+3. When should I skip — what's the real tradeoff?
+
+## What's coming next
+
+- **Weekly refresh** continues. New trending repos get added Sundays; MCPs that hit GA get added same-day.
+- **Reels + carousels** going live on [@stackpicks.dev](https://instagram.com/stackpicks.dev) — 5 posts/week starting Mon Jun 8.
+
+## Related reading
+
+- **[MCP 2.0 spec drop — what changed](/blog/mcp-2-explained-2026)**
+- **[Meta Ads AI Connector recap](/blog/connect-meta-ads-to-claude-mcp-2026)**
+- **[ChatGPT Ads explained](/blog/chatgpt-ads-explained-2026)**
+
+---
+
+*Posted June 5, 2026 by Piyush Jangir. Refresh cadence: daily GitHub stats, weekly new entries, real-time on major launches.*
+`,
+  },
   {
     slug: 'chatgpt-ads-explained-2026',
     title: 'ChatGPT Ads Explained — How OpenAI\'s New Ad Platform Works (2026 Guide)',
