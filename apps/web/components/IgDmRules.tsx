@@ -32,14 +32,17 @@ interface Rule {
 const EMPTY: Omit<Rule, 'id' | 'created_at'> = {
   ig_post_id: null,
   keyword: '',
-  dm_template: 'Hey {{username}} — here\'s the link you asked for. Reply if you have questions!',
+  // The friendly acknowledgment goes PUBLIC on the comment.
+  // The DM body is short — value delivery only — the follow_nudge appends the PS line,
+  // and the CTA card delivers the actual button.
+  dm_template: 'Tap the link below {{username}} — that\'s your StackPicks pick.',
   cta_url: 'https://stackpicks.dev',
   cta_label: 'Open StackPicks',
   is_active: true,
   daily_cap: null,
   label: 'New rule',
   follow_nudge: true,
-  comment_reply: 'Sent ✓ — check your DMs {{username}}',
+  comment_reply: 'Hey @{{username}} — here\'s the link you asked for',
 };
 
 export function IgDmRules() {
