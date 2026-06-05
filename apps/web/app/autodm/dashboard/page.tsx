@@ -8,6 +8,7 @@ import { adminClient } from '@stackpicks/core/db';
 import { Instagram, Sparkles, AlertCircle, CheckCircle2, Pause } from 'lucide-react';
 import { RulesEditor } from '@/components/autodm/RulesEditor';
 import { FollowupAgentToggle } from '@/components/autodm/FollowupAgentToggle';
+import { PlanUpgrade } from '@/components/autodm/PlanUpgrade';
 
 export const metadata = {
   title: 'Dashboard — StackPicks AutoDM',
@@ -163,6 +164,9 @@ export default async function DashboardPage({
           <Stat label="Active rules" value={String(rules.filter((r) => r.is_active).length)} sub={`of ${rules.length} total`} />
           <Stat label="Plan" value={tenant.plan_tier} sub="upgrade soon →" />
         </div>
+
+        {/* Plan upgrade */}
+        <PlanUpgrade currentTier={tenant.plan_tier} />
 
         {/* Follow-up agent toggle (Pro+) */}
         <div className="mb-8">
