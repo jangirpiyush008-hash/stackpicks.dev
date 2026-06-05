@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { adminClient } from '@stackpicks/core/db';
 import { isAdmin } from '../../../lib/admin';
 import { ArrowLeft, CheckCircle2, Clock, AlertTriangle, Loader2, Instagram } from 'lucide-react';
+import { IgAdminTabs } from '../../../components/IgAdminTabs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -100,49 +101,54 @@ export default async function AdminInstagramPage() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-border bg-surface/30 overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-surface/50 text-muted text-[10px] font-mono uppercase tracking-wider">
-              <tr>
-                <th className="text-left px-4 py-3">Topic</th>
-                <th className="text-left px-4 py-3">Type</th>
-                <th className="text-left px-4 py-3">Status</th>
-                <th className="text-left px-4 py-3">Scheduled</th>
-                <th className="text-left px-4 py-3">Posted</th>
-                <th className="text-left px-4 py-3">Note</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.length === 0 && (
-                <tr><td colSpan={6} className="px-4 py-12 text-center text-muted">
-                  No items in queue yet. Add one via <code className="text-accent">pnpm ig-queue ...</code>
-                </td></tr>
-              )}
-              {items.map((r) => (
-                <tr key={r.id} className="border-t border-border align-top">
-                  <td className="px-4 py-3 font-medium">{r.topic}</td>
-                  <td className="px-4 py-3 font-mono text-xs text-muted uppercase">{r.post_type}</td>
-                  <td className="px-4 py-3"><StatusPill status={r.status} /></td>
-                  <td className="px-4 py-3 font-mono text-xs text-muted whitespace-nowrap">{fmtIST(r.scheduled_at)}</td>
-                  <td className="px-4 py-3 font-mono text-xs text-muted whitespace-nowrap">
-                    {r.ig_post_id ? (
-                      <a href={`https://instagram.com/p/${r.ig_post_id}`} target="_blank" rel="noreferrer" className="text-accent hover:underline">
-                        view ↗
-                      </a>
-                    ) : fmtIST(r.posted_at)}
-                  </td>
-                  <td className="px-4 py-3 text-xs text-muted max-w-[280px]">
-                    {r.last_error ? (
-                      <span className="text-rose-300">⚠ {r.last_error.slice(0, 120)}</span>
-                    ) : r.status === 'ready' && r.attempts > 0 ? (
-                      <span className="text-amber-300">retry #{r.attempts}</span>
-                    ) : '—'}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <IgAdminTabs
+          rows={items}
+          queueTable={
+            <div className="rounded-xl border border-border bg-surface/30 overflow-hidden">
+              <table className="w-full text-sm">
+                <thead className="bg-surface/50 text-muted text-[10px] font-mono uppercase tracking-wider">
+                  <tr>
+                    <th className="text-left px-4 py-3">Topic</th>
+                    <th className="text-left px-4 py-3">Type</th>
+                    <th className="text-left px-4 py-3">Status</th>
+                    <th className="text-left px-4 py-3">Scheduled</th>
+                    <th className="text-left px-4 py-3">Posted</th>
+                    <th className="text-left px-4 py-3">Note</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {items.length === 0 && (
+                    <tr><td colSpan={6} className="px-4 py-12 text-center text-muted">
+                      No items in queue yet. Add one via <code className="text-accent">pnpm ig-queue ...</code>
+                    </td></tr>
+                  )}
+                  {items.map((r) => (
+                    <tr key={r.id} className="border-t border-border align-top">
+                      <td className="px-4 py-3 font-medium">{r.topic}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-muted uppercase">{r.post_type}</td>
+                      <td className="px-4 py-3"><StatusPill status={r.status} /></td>
+                      <td className="px-4 py-3 font-mono text-xs text-muted whitespace-nowrap">{fmtIST(r.scheduled_at)}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-muted whitespace-nowrap">
+                        {r.ig_post_id ? (
+                          <a href={`https://instagram.com/p/${r.ig_post_id}`} target="_blank" rel="noreferrer" className="text-accent hover:underline">
+                            view ↗
+                          </a>
+                        ) : fmtIST(r.posted_at)}
+                      </td>
+                      <td className="px-4 py-3 text-xs text-muted max-w-[280px]">
+                        {r.last_error ? (
+                          <span className="text-rose-300">⚠ {r.last_error.slice(0, 120)}</span>
+                        ) : r.status === 'ready' && r.attempts > 0 ? (
+                          <span className="text-amber-300">retry #{r.attempts}</span>
+                        ) : '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          }
+        />
 
         <details className="mt-8 text-sm text-muted">
           <summary className="cursor-pointer text-text font-medium">How to add a post</summary>

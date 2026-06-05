@@ -24,7 +24,8 @@
     "./connect/crypto": "./connect/crypto.ts",
     "./oauth/server": "./oauth/server.ts",
     "./instagram/publish": "./instagram/publish.ts",
-    "./instagram/captions": "./instagram/captions.ts"
+    "./instagram/captions": "./instagram/captions.ts",
+    "./instagram/dm": "./instagram/dm.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
