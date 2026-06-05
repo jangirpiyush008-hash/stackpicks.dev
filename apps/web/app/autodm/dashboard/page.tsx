@@ -1,0 +1,217 @@
+// AutoDM tenant dashboard — the page a creator lands on after connecting.
+// Shows: connection status, recent DM activity, rules list, plan info.
+
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
+import { getSupabaseServer } from '@/lib/supabase-server';
+import { adminClient } from '@stackpicks/core/db';
+import { Instagram, Sparkles, AlertCircle, CheckCircle2, Pause } from 'lucide-react';
+
+export const metadata = {
+  title: 'Dashboard — StackPicks AutoDM',
+  description: 'Manage your auto-DM rules, see live activity, monitor account safety.',
+};
+
+interface TenantRow {
+  id: string;
+  ig_business_id: string;
+  ig_username: string | null;
+  plan_tier: string;
+  hourly_cap: number;
+  daily_cap: number;
+  is_active: boolean;
+  paused_until: string | null;
+  paused_reason: string | null;
+  account_warming_ends_at: string | null;
+  created_at: string;
+}
+
+interface RuleRow {
+  id: string; label: string | null; keyword: string; is_active: boolean;
+}
+interface LogRow {
+  ig_username: string | null; status: string; created_at: string; error: string | null;
+}
+
+export default async function DashboardPage({
+  searchParams,
+}: { searchParams: Promise<{ connected?: string }> }) {
+  const supaRoute = await getSupabaseServer();
+  const { data: { user } } = await supaRoute.auth.getUser();
+  if (!user) redirect('/login?next=/autodm/dashboard');
+
+  const supa = adminClient();
+  const { data: tenants } = await supa
+    .from('autodm_tenants')
+    .select('id, ig_business_id, ig_username, plan_tier, hourly_cap, daily_cap, is_active, paused_until, paused_reason, account_warming_ends_at, created_at')
+    .eq('owner_user_id', user.id);
+  const tenant = (tenants?.[0] as TenantRow | undefined) ?? null;
+
+  if (!tenant) {
+    return (
+      <main className="min-h-screen bg-bg text-text">
+        <section className="max-w-2xl mx-auto px-6 py-20 text-center">
+          <h1 className="text-3xl font-extrabold">No Instagram connected yet.</h1>
+          <p className="mt-3 text-muted">Connect your IG to start sending auto-DMs in your voice.</p>
+          <Link href="/autodm/connect"
+            className="mt-6 inline-flex items-center gap-2 bg-accent text-bg font-semibold px-6 py-3 rounded-full hover:bg-accent/90 transition">
+            <Instagram className="w-4 h-4" />
+            Connect Instagram
+          </Link>
+        </section>
+      </main>
+    );
+  }
+
+  const { searchParams: _ } = { searchParams: await searchParams };
+  const justConnected = (await searchParams).connected === '1';
+
+  const [rulesRes, logRes] = await Promise.all([
+    supa.from('autodm_rules').select('id, label, keyword, is_active').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(50),
+    supa.from('autodm_dm_log').select('ig_username, status, created_at, error').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(20),
+  ]);
+  const rules = (rulesRes.data ?? []) as RuleRow[];
+  const logs = (logRes.data ?? []) as LogRow[];
+
+  const sentToday = logs.filter((l) =>
+    l.status === 'sent' &&
+    new Date(l.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000)
+  ).length;
+
+  const isWarming = tenant.account_warming_ends_at && new Date(tenant.account_warming_ends_at) > new Date();
+  const isPaused = tenant.paused_until && new Date(tenant.paused_until) > new Date();
+
+  return (
+    <main className="min-h-screen bg-bg text-text">
+      <section className="max-w-5xl mx-auto px-6 py-12">
+        {/* Header */}
+        <div className="flex items-start justify-between flex-wrap gap-4 mb-8">
+          <div>
+            <div className="text-xs font-mono uppercase tracking-widest text-accent mb-2">// dashboard</div>
+            <h1 className="text-3xl font-extrabold">@{tenant.ig_username || 'creator'}</h1>
+            <div className="text-sm text-muted mt-1">{tenant.plan_tier.toUpperCase()} · {tenant.hourly_cap}/hr · {tenant.daily_cap}/day</div>
+          </div>
+          <div className="flex items-center gap-2">
+            {isPaused ? (
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-500 text-xs font-semibold">
+                <Pause className="w-3 h-3" /> Paused
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-semibold">
+                <CheckCircle2 className="w-3 h-3" /> Live
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Just-connected banner */}
+        {justConnected && (
+          <div className="mb-6 rounded-2xl border border-accent/40 bg-accent/5 p-5 flex items-start gap-3">
+            <Sparkles className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+            <div>
+              <div className="font-semibold">Connected. Spinning up your AI onboarding…</div>
+              <div className="text-sm text-muted mt-1">
+                We&apos;re scanning your last 30 posts and recent replies. In ~60 seconds you&apos;ll see 5 starter
+                rules drafted in your voice. Refresh this page.
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Account-warming notice */}
+        {isWarming && (
+          <div className="mb-6 rounded-xl border border-border bg-bg-card/50 p-4 flex items-start gap-3">
+            <AlertCircle className="w-4 h-4 text-muted flex-shrink-0 mt-0.5" />
+            <div className="text-sm">
+              <strong>Account warming.</strong> <span className="text-muted">
+                For the first 21 days your daily cap is {tenant.daily_cap} to keep Meta&apos;s spam ML happy.
+                Auto-ramps after {new Date(tenant.account_warming_ends_at!).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}.
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Pause reason */}
+        {isPaused && (
+          <div className="mb-6 rounded-xl border border-amber-500/40 bg-amber-500/5 p-4 flex items-start gap-3">
+            <Pause className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+            <div className="text-sm">
+              <strong>Paused until {new Date(tenant.paused_until!).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}.</strong>
+              <div className="text-muted mt-1">{tenant.paused_reason}</div>
+            </div>
+          </div>
+        )}
+
+        {/* Stats */}
+        <div className="grid sm:grid-cols-3 gap-4 mb-8">
+          <Stat label="Sent today" value={String(sentToday)} sub={`of ${tenant.daily_cap} daily cap`} />
+          <Stat label="Active rules" value={String(rules.filter((r) => r.is_active).length)} sub={`of ${rules.length} total`} />
+          <Stat label="Plan" value={tenant.plan_tier} sub="upgrade soon →" />
+        </div>
+
+        {/* Rules */}
+        <div className="mb-10">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-semibold">Rules</h2>
+            <button className="text-xs text-accent hover:underline">+ New rule</button>
+          </div>
+          {rules.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted">
+              No rules yet. The AI onboarding will create 5 starter rules in ~60 seconds.
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {rules.map((r) => (
+                <div key={r.id} className="rounded-lg border border-border p-3 flex items-center justify-between">
+                  <div>
+                    <div className="font-medium text-sm">{r.label || 'Untitled rule'}</div>
+                    <div className="text-xs text-muted mt-1 font-mono">{r.keyword}</div>
+                  </div>
+                  <span className={`text-xs px-2 py-1 rounded-full ${r.is_active ? 'bg-emerald-500/10 text-emerald-500' : 'bg-muted/10 text-muted'}`}>
+                    {r.is_active ? 'live' : 'paused'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Activity */}
+        <div>
+          <h2 className="text-lg font-semibold mb-3">Recent activity</h2>
+          {logs.length === 0 ? (
+            <div className="text-sm text-muted">No DMs sent yet. Comments matching your keywords will appear here.</div>
+          ) : (
+            <div className="space-y-1">
+              {logs.map((l, i) => (
+                <div key={i} className="text-sm flex items-center justify-between border-b border-border/50 py-2">
+                  <div className="flex items-center gap-2">
+                    <StatusDot status={l.status} />
+                    <span>@{l.ig_username || 'anon'}</span>
+                    {l.error && <span className="text-xs text-rose-400/80">· {l.error}</span>}
+                  </div>
+                  <span className="text-xs text-muted">{new Date(l.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function Stat({ label, value, sub }: { label: string; value: string; sub: string }) {
+  return (
+    <div className="rounded-2xl border border-border bg-bg-card/50 p-5">
+      <div className="text-xs font-mono uppercase tracking-widest text-muted">{label}</div>
+      <div className="text-3xl font-extrabold mt-2 capitalize">{value}</div>
+      <div className="text-xs text-muted mt-1">{sub}</div>
+    </div>
+  );
+}
+
+function StatusDot({ status }: { status: string }) {
+  const color = status === 'sent' ? 'bg-emerald-500' : status === 'error' ? 'bg-rose-500' : 'bg-amber-500';
+  return <span className={`w-1.5 h-1.5 rounded-full ${color}`} />;
+}
