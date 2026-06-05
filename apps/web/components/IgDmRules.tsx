@@ -24,6 +24,7 @@ interface Rule {
   is_active: boolean;
   daily_cap: number | null;
   label: string | null;
+  follow_nudge: boolean;
   created_at: string;
 }
 
@@ -36,6 +37,7 @@ const EMPTY: Omit<Rule, 'id' | 'created_at'> = {
   is_active: true,
   daily_cap: null,
   label: 'New rule',
+  follow_nudge: true,
 };
 
 export function IgDmRules() {
@@ -233,6 +235,19 @@ export function IgDmRules() {
                 placeholder="1" className="sp-admin-input" />
             </Field>
           </div>
+          <label className="flex items-start gap-2 text-xs text-muted mt-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={!!draft.follow_nudge}
+              onChange={(e) => setDraft({ ...draft, follow_nudge: e.target.checked })}
+              className="mt-0.5"
+            />
+            <span>
+              <strong className="text-text">Append follow nudge</strong> — adds
+              <code className="text-accent mx-1">PS — follow @stackpicks_official for more picks like this.</code>
+              to the DM body. Non-followers convert from it; followers ignore it. Recommended ON.
+            </span>
+          </label>
           <div className="flex gap-2 mt-2">
             <button onClick={saveDraft} disabled={saving || !draft.keyword || !draft.dm_template}
               className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-md bg-accent text-bg

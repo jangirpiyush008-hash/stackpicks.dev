@@ -42,6 +42,21 @@ export interface DmRule {
   is_active: boolean;
   daily_cap: number | null;
   label: string | null;
+  follow_nudge: boolean;
+}
+
+/** Brand handle appended to follow-nudge lines. Hardcoded for now; env-overridable later. */
+const FOLLOW_HANDLE = '@stackpicks_official';
+
+/**
+ * If a rule has follow_nudge=true, append a short "follow for more" line to
+ * the DM body. Pure string transform — no API call, no follow-status check.
+ * Non-followers AND followers see the same nudge; followers ignore it,
+ * non-followers convert from it.
+ */
+export function applyFollowNudge(body: string, rule: { follow_nudge?: boolean | null }): string {
+  if (!rule.follow_nudge) return body;
+  return `${body.trimEnd()}\n\nPS — follow ${FOLLOW_HANDLE} for more picks like this.`;
 }
 
 /**

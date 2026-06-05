@@ -28,7 +28,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { adminClient } from '@stackpicks/core/db';
-import { matchRule, sendDm, renderTemplate, type DmRule } from '@stackpicks/core/instagram/dm';
+import { matchRule, sendDm, renderTemplate, applyFollowNudge, type DmRule } from '@stackpicks/core/instagram/dm';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -169,7 +169,8 @@ export async function POST(req: NextRequest) {
       }
 
       // Send
-      const body = renderTemplate(rule.dm_template, { username: fromUsername, keyword: rule.keyword });
+      const rawBody = renderTemplate(rule.dm_template, { username: fromUsername, keyword: rule.keyword });
+      const body = applyFollowNudge(rawBody, rule);
       let send;
       try {
         send = await sendDm({
