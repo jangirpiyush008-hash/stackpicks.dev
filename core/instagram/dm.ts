@@ -10,7 +10,11 @@
 //
 // Docs: https://developers.facebook.com/docs/messenger-platform/instagram
 
-const GRAPH = 'https://graph.facebook.com/v21.0';
+// Route based on which token we have: IG Login API tokens use graph.instagram.com,
+// FB-issued System User tokens use graph.facebook.com.
+const GRAPH = process.env.IG_USER_TOKEN
+  ? 'https://graph.instagram.com/v22.0'
+  : 'https://graph.facebook.com/v21.0';
 
 function token(): string {
   // Prefer the IG-OAuth user token (has the right scopes for Send API),

@@ -22,6 +22,10 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const GRAPH = 'https://graph.facebook.com/v21.0';
+// IG Login API tokens (issued by 'API setup with Instagram login' flow) route
+// through graph.instagram.com instead of graph.facebook.com — Meta returns
+// "Cannot parse access token" if you hit the wrong host.
+const GRAPH_IG = 'https://graph.instagram.com/v22.0';
 
 interface PageEntry {
   id: string;
@@ -89,10 +93,12 @@ export async function POST() {
     // the documented way to subscribe an IG Business Account in 2024+.
     const attempts: Array<{ url: string; status: number; body: unknown }> = [];
 
-    const igUrl = `${GRAPH}/${id}/subscribed_apps?subscribed_fields=comments,messages,message_reactions,mentions,live_comments&access_token=${encodeURIComponent(token)}`;
-    const igRes = await fetch(igUrl, { method: 'POST' });
+    // IG Login API path — graph.instagram.com host. Tokens from
+    // "Generate token" on the IG product setup page route here.
+    const igDirectUrl = `${GRAPH_IG}/${id}/subscribed_apps?subscribed_fields=comments,messages,message_reactions,mentions,live_comments&access_token=${encodeURIComponent(token)}`;
+    const igRes = await fetch(igDirectUrl, { method: 'POST' });
     const igJson = await igRes.json().catch(() => ({}));
-    attempts.push({ url: 'IG /subscribed_apps', status: igRes.status, body: igJson });
+    attempts.push({ url: 'graph.instagram.com IG /subscribed_apps', status: igRes.status, body: igJson });
     if (igRes.ok && (igJson as { success?: boolean }).success !== false) {
       return NextResponse.json({ ok: true, target: 'ig_business_account', response: igJson });
     }

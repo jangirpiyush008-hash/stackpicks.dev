@@ -14,7 +14,10 @@ import { isAdmin } from '../../../../lib/admin';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const GRAPH = 'https://graph.facebook.com/v21.0';
+// Route based on token type — IG Login tokens need graph.instagram.com.
+const GRAPH = process.env.IG_USER_TOKEN
+  ? 'https://graph.instagram.com/v22.0'
+  : 'https://graph.facebook.com/v21.0';
 
 export async function GET() {
   if (!(await isAdmin()).ok) return NextResponse.json({ ok: false }, { status: 401 });
