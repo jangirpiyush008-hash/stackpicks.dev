@@ -47,6 +47,10 @@ const nextConfig = {
   async redirects() {
     return [
       { source: '/mcp/category/:slug*', destination: '/mcp', permanent: false },
+      // Carousel #1 (Fri Jun 6) slide-6 references this slug — canonical
+      // blog lives at /blog/mcp-2-0-explained-2026. Permanent so SEO
+      // collapses both to one URL.
+      { source: '/blog/mcp-2026-spec-explained', destination: '/blog/mcp-2-0-explained-2026', permanent: true },
     ];
   },
 };
