@@ -56,15 +56,21 @@ export async function GET(req: NextRequest) {
 
 function verifySignature(rawBody: string, sigHeader: string | null): boolean {
   if (!sigHeader || !sigHeader.startsWith('sha256=')) return false;
-  const secret = process.env.META_APP_SECRET;
-  if (!secret) return false;
-  const expected = createHmac('sha256', secret).update(rawBody).digest('hex');
+  // IG Login API webhooks are signed with the Instagram app secret
+  // (Stackpicks.dev-IG, app id 1543430567490468), not the Meta App secret.
+  // Try IG_APP_SECRET first, fall back to META_APP_SECRET for FB Graph webhooks.
+  const secrets = [process.env.IG_APP_SECRET, process.env.META_APP_SECRET].filter(Boolean) as string[];
+  if (!secrets.length) return false;
   const provided = sigHeader.slice('sha256='.length);
-  // timingSafeEqual requires equal-length buffers
-  const a = Buffer.from(expected, 'hex');
   const b = Buffer.from(provided, 'hex');
-  if (a.length !== b.length) return false;
-  try { return timingSafeEqual(a, b); } catch { return false; }
+  for (const secret of secrets) {
+    const expected = createHmac('sha256', secret).update(rawBody).digest('hex');
+    const a = Buffer.from(expected, 'hex');
+    if (a.length === b.length) {
+      try { if (timingSafeEqual(a, b)) return true; } catch { /* try next */ }
+    }
+  }
+  return false;
 }
 
 interface MetaWebhookPayload {
