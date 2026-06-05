@@ -7,6 +7,7 @@ import { getSupabaseServer } from '@/lib/supabase-server';
 import { adminClient } from '@stackpicks/core/db';
 import { Instagram, Sparkles, AlertCircle, CheckCircle2, Pause } from 'lucide-react';
 import { RulesEditor } from '@/components/autodm/RulesEditor';
+import { FollowupAgentToggle } from '@/components/autodm/FollowupAgentToggle';
 
 export const metadata = {
   title: 'Dashboard — StackPicks AutoDM',
@@ -24,6 +25,8 @@ interface TenantRow {
   paused_until: string | null;
   paused_reason: string | null;
   account_warming_ends_at: string | null;
+  ai_followup_agent: boolean;
+  ai_dm_generation: boolean;
   created_at: string;
 }
 
@@ -55,7 +58,7 @@ export default async function DashboardPage({
   const supa = adminClient();
   const { data: tenants } = await supa
     .from('autodm_tenants')
-    .select('id, ig_business_id, ig_username, plan_tier, hourly_cap, daily_cap, is_active, paused_until, paused_reason, account_warming_ends_at, created_at')
+    .select('id, ig_business_id, ig_username, plan_tier, hourly_cap, daily_cap, is_active, paused_until, paused_reason, account_warming_ends_at, ai_followup_agent, ai_dm_generation, created_at')
     .eq('owner_user_id', user.id);
   const tenant = (tenants?.[0] as TenantRow | undefined) ?? null;
 
@@ -159,6 +162,11 @@ export default async function DashboardPage({
           <Stat label="Sent today" value={String(sentToday)} sub={`of ${tenant.daily_cap} daily cap`} />
           <Stat label="Active rules" value={String(rules.filter((r) => r.is_active).length)} sub={`of ${rules.length} total`} />
           <Stat label="Plan" value={tenant.plan_tier} sub="upgrade soon →" />
+        </div>
+
+        {/* Follow-up agent toggle (Pro+) */}
+        <div className="mb-8">
+          <FollowupAgentToggle initiallyOn={tenant.ai_followup_agent} planTier={tenant.plan_tier} />
         </div>
 
         {/* Rules (client-side editor) */}

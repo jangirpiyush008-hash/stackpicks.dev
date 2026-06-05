@@ -19,7 +19,14 @@ import {
   checkIsFollower,
 } from '@stackpicks/core/autodm/dm';
 import { decryptToken } from '@stackpicks/core/autodm/crypto';
+import { generateFollowupReply, FOLLOWUP_LIMITS } from '@stackpicks/core/autodm/followup-agent';
 import type { AutoDmTenant, AutoDmRule } from '@stackpicks/core/autodm/types';
+
+interface TranscriptTurn {
+  role: 'user' | 'creator_bot';
+  text: string;
+  at: string;
+}
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -44,12 +51,24 @@ export async function GET(req: NextRequest) {
 // ────────────────────────────────────────────────────────────────────────
 // POST — incoming Meta events
 // ────────────────────────────────────────────────────────────────────────
-type Entry = { id: string; time?: number; changes?: { field: string; value: WebhookValue }[] };
+type Entry = {
+  id: string;
+  time?: number;
+  changes?: { field: string; value: WebhookValue }[];
+  messaging?: MessagingEvent[];              // IG DM events live here
+};
 type WebhookValue = {
   id?: string;                              // comment id (Private Reply key)
   text?: string;
   from?: { id?: string; username?: string };
   media?: { id?: string };
+};
+type MessagingEvent = {
+  sender?: { id?: string };                  // recipient's IGSID when inbound
+  recipient?: { id?: string };               // our IG biz id when inbound
+  timestamp?: number;
+  message?: { mid?: string; text?: string; is_echo?: boolean };
+  read?: { mid?: string };
 };
 type Payload = { object?: string; entry?: Entry[] };
 
@@ -237,7 +256,148 @@ export async function POST(req: NextRequest) {
         ai_generated: false, body_variant_index: variantIdx,
       });
 
+      // Seed a conversation row so the follow-up agent can find it when
+      // the recipient replies. Idempotent on (tenant_id, recipient_igsid,
+      // initial_comment_text) thanks to the schema's unique constraint.
+      if (send.ok) {
+        const seedTranscript: TranscriptTurn[] = [
+          { role: 'creator_bot', text: body, at: new Date().toISOString() },
+        ];
+        await supa.from('autodm_conversations').upsert({
+          tenant_id: tenant.id,
+          recipient_igsid: fromIgsid,
+          recipient_username: fromUsername,
+          initial_rule_id: rule.id,
+          initial_comment_text: commentText.slice(0, 500),
+          turn_count: 1,
+          last_message_sent_id: send.message_id,
+          last_turn_at: new Date().toISOString(),
+          status: 'active',
+          full_transcript: seedTranscript,
+        }, { onConflict: 'tenant_id,recipient_igsid,initial_comment_text' });
+      }
+
       processed.push(send.ok ? `sent:${tenant.id}:${rule.id}` : `err:${tenant.id}:${rule.id}`);
+    }
+
+    // ──────────────────────────────────────────────────────────────────
+    // INBOUND DMs from recipients — the follow-up agent path.
+    // Only fires when:
+    //   • tenant.ai_followup_agent === true (Pro tier)
+    //   • we have an active conversation with this recipient
+    //   • the message is NOT our own echo
+    // ──────────────────────────────────────────────────────────────────
+    if (!tenant.ai_followup_agent) {
+      // Skip silently for non-Pro tenants. Conversation row still exists
+      // so we can show the inbound message in their dashboard inbox later.
+      continue;
+    }
+
+    for (const msg of entry.messaging ?? []) {
+      const senderIgsid = msg.sender?.id;
+      const text = msg.message?.text?.trim();
+      const isEcho = msg.message?.is_echo === true;
+      if (!senderIgsid || !text || isEcho) continue;
+      // Ignore messages from ourselves (defensive — echoes should be filtered above)
+      if (senderIgsid === tenant.ig_business_id) continue;
+
+      // Find the most recent active conversation with this recipient
+      const { data: convRow } = await supa
+        .from('autodm_conversations')
+        .select('id, initial_rule_id, initial_comment_text, turn_count, last_turn_at, status, full_transcript')
+        .eq('tenant_id', tenant.id)
+        .eq('recipient_igsid', senderIgsid)
+        .eq('status', 'active')
+        .order('last_turn_at', { ascending: false })
+        .limit(1)
+        .single();
+      if (!convRow) { processed.push(`skip:no_conv:${tenant.id}`); continue; }
+
+      // Hard caps
+      const ageHours = (Date.now() - new Date(convRow.last_turn_at as string).getTime()) / 36e5;
+      if ((convRow.turn_count as number) >= FOLLOWUP_LIMITS.MAX_TURNS * 2 || ageHours > FOLLOWUP_LIMITS.MAX_AGE_HOURS) {
+        await supa.from('autodm_conversations').update({ status: 'expired' }).eq('id', convRow.id);
+        processed.push(`expired:${convRow.id}`); continue;
+      }
+
+      const transcript = (convRow.full_transcript as TranscriptTurn[]) || [];
+      transcript.push({ role: 'user', text: text.slice(0, 1000), at: new Date().toISOString() });
+
+      // Load creator voice samples (last 10 captions) + the original DM body
+      const { data: voiceRows } = await supa
+        .from('autodm_rules')
+        .select('dm_template')
+        .eq('tenant_id', tenant.id).limit(10);
+      const voiceSamples = (voiceRows ?? []).map((r) => (r as { dm_template: string }).dm_template);
+      const initialBot = transcript.find((t) => t.role === 'creator_bot')?.text || '';
+
+      const { data: ruleRow } = convRow.initial_rule_id
+        ? await supa.from('autodm_rules')
+            .select('cta_url')
+            .eq('id', convRow.initial_rule_id as string).single()
+        : { data: null };
+
+      let agent;
+      try {
+        agent = await generateFollowupReply({
+          tenantUsername: tenant.ig_username || 'creator',
+          voiceSamples,
+          productContext: `Bio: @${tenant.ig_username || 'creator'}'s IG account.`,
+          initialComment: (convRow.initial_comment_text as string) || '',
+          initialDmSent: initialBot,
+          transcript,
+          ctaUrl: (ruleRow?.cta_url as string | undefined) ?? undefined,
+        });
+      } catch (e) {
+        await supa.from('autodm_conversations').update({
+          status: 'creator_escalated',
+          full_transcript: transcript,
+          last_turn_at: new Date().toISOString(),
+        }).eq('id', convRow.id);
+        processed.push(`agent_err:${(e as Error).message.slice(0, 40)}`); continue;
+      }
+
+      if (agent.intent === 'reply' && agent.reply) {
+        // Send the AI reply (standard messaging — conversation window is open)
+        let send;
+        try {
+          send = await sendDm({
+            igBusinessId: tenant.ig_business_id, tenantToken,
+            recipientIgsid: senderIgsid, body: agent.reply,
+          });
+        } catch (e) { send = { ok: false, error: (e as Error).message }; }
+
+        transcript.push({ role: 'creator_bot', text: agent.reply, at: new Date().toISOString() });
+        await supa.from('autodm_conversations').update({
+          turn_count: (convRow.turn_count as number) + 2,    // +1 user, +1 bot
+          last_message_sent_id: send.ok ? send.message_id : undefined,
+          last_turn_at: new Date().toISOString(),
+          full_transcript: transcript,
+        }).eq('id', convRow.id);
+
+        await supa.from('autodm_dm_log').insert({
+          tenant_id: tenant.id, rule_id: convRow.initial_rule_id as string | null,
+          ig_user_id: senderIgsid, trigger_event: 'message',
+          trigger_text: text.slice(0, 500),
+          status: send.ok ? 'sent' : 'error',
+          ig_message_id: send.ok ? send.message_id : undefined,
+          error: send.ok ? undefined : send.error,
+          ai_generated: true,
+        });
+        processed.push(`followup:${convRow.id}:${send.ok ? 'sent' : 'err'}`);
+      } else if (agent.intent === 'close') {
+        await supa.from('autodm_conversations').update({
+          status: 'closed', full_transcript: transcript,
+          last_turn_at: new Date().toISOString(),
+        }).eq('id', convRow.id);
+        processed.push(`closed:${convRow.id}:${agent.reason?.slice(0, 40)}`);
+      } else { // escalate
+        await supa.from('autodm_conversations').update({
+          status: 'creator_escalated', full_transcript: transcript,
+          last_turn_at: new Date().toISOString(),
+        }).eq('id', convRow.id);
+        processed.push(`escalated:${convRow.id}:${agent.reason?.slice(0, 40)}`);
+      }
     }
   }
 
