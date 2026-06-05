@@ -10,6 +10,48 @@ Two daily tracks:
 
 ---
 
+## 2026-06-05 (Day 7 — IG auto-DM live + catalog refresh + admin calendar)
+
+### Shipped today
+
+**Catalog refresh sweep**
+- Re-scraped all 162 existing repos against GitHub GraphQL API → fresh stars/forks/lang
+- Added 12 new repos: DuckDB, ClickHouse, OpenHands, modelcontextprotocol/servers, DeepSeek-V3, Convex backend, lobe-chat, Skyvern, ToolJet, Langfuse, Helicone, Qwik → 174 total published
+- Added 8 new MCP servers to /mcp directory: AWS (GA), Cloudflare, Meta Ads (official), Groq, DeepSeek, DuckDB, Langfuse, ClickHouse → 122 MCPs total
+- Shipped /blog/whats-new-june-2026-stackpicks with step-by-step install for each new MCP (quick_answer ≤350 chars, 5 FAQs, FAQPage JSON-LD)
+- WhatsNewPopup component → bottom-right toast on /, /mcp, /connect showing +12 / +8 / 174 counts. Bumpable via REFRESH_ID const
+
+**/admin/instagram — 3 tabs**
+- Calendar tab (default): month grid showing every scheduled post by IST date with time + status pill, prev/next nav, today highlight, footer stats. Pre-populated 4 carousel placeholders for Jun 8/10/11/15
+- Queue tab: existing table view
+- DM rules tab: full CRUD for comment→DM auto-reply rules, with seeded "Comment STACK → directory link" rule
+- Added `draft` status to ig_queue (cron skips drafts, calendar shows them)
+
+**IG auto-DM live end-to-end**
+- DB: ig_dm_rules + ig_dm_log + ig_webhook_log tables (RLS, service-role only)
+- /api/webhook/instagram: GET verify + POST signature check (HMAC SHA-256), comment-match → send DM, daily-cap enforced
+- /api/admin/ig-subscribe: one-click button to subscribe IG account via graph.instagram.com (auto-detects token type, tries IG-direct + Page fallback)
+- /api/admin/ig-debug: token + scopes + subscription state introspection
+- core/instagram/dm.ts: sendDm() via /<IG_BUSINESS_ID>/messages, generic template with CTA button
+- **Long debug session** to resolve Meta's IG Login API quirks:
+  - System User token couldn't subscribe webhooks (capability error) → had to OAuth via Add account flow
+  - Token routes through graph.instagram.com, not graph.facebook.com (key insight from token-debugger showing IG App ID, not Meta App ID)
+  - Webhook signatures signed with Instagram App Secret, not Meta App Secret → added IG_APP_SECRET env
+  - App had to be in Live mode for IG Login API to deliver events
+- **First DM sent ✅** — STACK comment from @piyush.jangir on Meta Ads AI Connector post → directory link DM landed
+
+**Live status**
+- IG auto-publisher: still autopilot Mon-Fri (cron-job.org → /api/cron/ig-publish)
+- IG auto-DM: live + rule active ("STACK" keyword → stackpicks.dev link)
+- Meta App: Live mode (Standard Access on instagram_business_*)
+
+### To-do tomorrow
+- Build HTML for carousels #3-#6 (MCP 2.0, Opus 4.8, AWS MCP GA, ChatGPT Ads) + export PNGs + flip draft rows to ready
+- More auto-DM rules for future content drops
+- Consider second keyword (e.g. "BUNDLE" → curated stack page)
+
+---
+
 ## 2026-06-03 (Day 5 — Ads stack + content cluster)
 
 ### Shipped today
