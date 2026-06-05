@@ -28,7 +28,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { adminClient } from '@stackpicks/core/db';
-import { matchRule, sendDm, renderTemplate, applyFollowNudge, type DmRule } from '@stackpicks/core/instagram/dm';
+import {
+  matchRule, sendDm, renderTemplate, applyFollowNudge, replyToComment,
+  type DmRule,
+} from '@stackpicks/core/instagram/dm';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -184,6 +187,23 @@ export async function POST(req: NextRequest) {
         send = { ok: false, error: (e as Error).message };
       }
 
+      // Public comment reply — fires AFTER DM succeeds. Tells the commenter
+      // "Sent ✓ check your DMs" and signals to other viewers to do the same.
+      // Best-effort: a reply failure doesn't undo the DM.
+      let replyNote: string | undefined;
+      if (send.ok && rule.comment_reply && commentId) {
+        const replyText = renderTemplate(rule.comment_reply, {
+          username: fromUsername,
+          keyword: rule.keyword,
+        });
+        try {
+          const r = await replyToComment({ commentId, message: replyText });
+          replyNote = r.ok ? `reply:${r.id}` : `replyErr:${r.error}`;
+        } catch (e) {
+          replyNote = `replyErr:${(e as Error).message}`;
+        }
+      }
+
       await supa.from('ig_dm_log').insert({
         rule_id: rule.id,
         ig_user_id: fromIgsid,
@@ -193,10 +213,10 @@ export async function POST(req: NextRequest) {
         trigger_text: commentText.slice(0, 500),
         status: send.ok ? 'sent' : 'error',
         ig_message_id: send.ok ? send.message_id : undefined,
-        error: send.ok ? undefined : send.error,
+        error: send.ok ? replyNote?.startsWith('replyErr:') ? replyNote : undefined : send.error,
       });
 
-      processed.push(send.ok ? `sent:${rule.id}` : `err:${rule.id}`);
+      processed.push(send.ok ? `sent:${rule.id}${replyNote ? `+${replyNote}` : ''}` : `err:${rule.id}`);
     }
   }
 

@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
     is_active:    body.is_active !== false,
     daily_cap:    (body.daily_cap as number)    ?? null,
     follow_nudge: body.follow_nudge === true,
+    comment_reply: (body.comment_reply as string) || null,
   };
   if (!payload.keyword || !payload.dm_template) {
     return NextResponse.json({ ok: false, error: 'keyword + dm_template required' }, { status: 400 });

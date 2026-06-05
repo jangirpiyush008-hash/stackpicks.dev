@@ -25,6 +25,7 @@ interface Rule {
   daily_cap: number | null;
   label: string | null;
   follow_nudge: boolean;
+  comment_reply: string | null;
   created_at: string;
 }
 
@@ -38,6 +39,7 @@ const EMPTY: Omit<Rule, 'id' | 'created_at'> = {
   daily_cap: null,
   label: 'New rule',
   follow_nudge: true,
+  comment_reply: 'Sent ✓ — check your DMs {{username}}',
 };
 
 export function IgDmRules() {
@@ -235,6 +237,21 @@ export function IgDmRules() {
                 placeholder="1" className="sp-admin-input" />
             </Field>
           </div>
+          <Field label="Public comment reply (optional — leave blank to skip)">
+            <input
+              type="text"
+              maxLength={280}
+              value={draft.comment_reply || ''}
+              onChange={(e) => setDraft({ ...draft, comment_reply: e.target.value || null })}
+              placeholder="Sent ✓ — check your DMs {{username}}"
+              className="sp-admin-input text-xs"
+            />
+            <p className="text-[10px] text-muted mt-1">
+              Posted as a public reply under the commenter&apos;s comment after the DM sends.
+              Boosts engagement + signals other viewers to comment the keyword too.
+              Placeholders: <code className="text-accent">{'{{username}}'}</code>, <code className="text-accent">{'{{keyword}}'}</code>
+            </p>
+          </Field>
           <label className="flex items-start gap-2 text-xs text-muted mt-2 cursor-pointer select-none">
             <input
               type="checkbox"

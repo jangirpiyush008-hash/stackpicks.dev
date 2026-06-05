@@ -43,6 +43,45 @@ export interface DmRule {
   daily_cap: number | null;
   label: string | null;
   follow_nudge: boolean;
+  comment_reply: string | null;
+}
+
+/**
+ * Reply publicly to a comment via the IG Graph API.
+ *
+ * This is the public-facing half of the "comment → DM" flow. After sending
+ * the DM, we also post a short visible reply ("Sent ✓ — check your DMs")
+ * directly under the user's comment. Three reasons:
+ *   1. Tells the commenter the action succeeded (DMs are easy to miss).
+ *   2. Signals to OTHER viewers "comment this keyword to get yours too" —
+ *      drives more comments → more engagement → algorithm boost.
+ *   3. Counts as a comment reply, which the IG algorithm rewards.
+ *
+ * Endpoint: POST /{comment-id}/replies with { message }
+ * Note: comment replies are NOT subject to the 24-hour messaging window —
+ * they're public comment activity, governed by spam policy only.
+ */
+export async function replyToComment(input: {
+  commentId: string;
+  message: string;
+}): Promise<{ ok: boolean; id?: string; error?: string }> {
+  const { commentId, message } = input;
+  if (!commentId || !message.trim()) return { ok: false, error: 'missing input' };
+
+  const url = `${GRAPH}/${commentId}/replies?access_token=${encodeURIComponent(token())}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: message.slice(0, 280) }),  // IG cap
+  });
+  const json = (await res.json().catch(() => ({}))) as {
+    id?: string;
+    error?: { message?: string };
+  };
+  if (!res.ok) {
+    return { ok: false, error: json?.error?.message || `HTTP ${res.status}` };
+  }
+  return { ok: true, id: json.id };
 }
 
 /** Brand handle appended to follow-nudge lines. Hardcoded for now; env-overridable later. */
