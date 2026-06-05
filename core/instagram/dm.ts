@@ -171,27 +171,6 @@ export async function sendDm(input: {
 }): Promise<SendDmResult> {
   const { recipientIgsid, commentId, body, ctaUrl, ctaLabel } = input;
 
-  const messagePayload =
-    ctaUrl && ctaLabel
-      ? {
-          attachment: {
-            type: 'template',
-            payload: {
-              template_type: 'generic',
-              elements: [
-                {
-                  title: body.slice(0, 80),
-                  subtitle: body.length > 80 ? body.slice(80, 240) : undefined,
-                  buttons: [
-                    { type: 'web_url', url: ctaUrl, title: ctaLabel.slice(0, 20) },
-                  ],
-                },
-              ],
-            },
-          },
-        }
-      : { text: body };
-
   // Private Reply path: address by comment_id, NOT user_id. Meta uses the
   // comment as the messaging anchor and grants a 7-day window from the
   // comment timestamp. No `messaging_type` needed — it's inferred.
@@ -199,30 +178,73 @@ export async function sendDm(input: {
   const recipient = commentId
     ? { comment_id: commentId }
     : { id: recipientIgsid };
-  const payload: Record<string, unknown> = {
-    recipient,
-    message: messagePayload,
-  };
-  if (!commentId) {
-    // Standard messaging requires this; private replies don't.
-    payload.messaging_type = 'RESPONSE';
+
+  /**
+   * IG Messaging quirk: when you use the generic-template card with a button,
+   * the `subtitle` field is tiny italic text under the title (often clipped).
+   * That ate the follow-nudge PS line completely.
+   *
+   * Fix: send TWO messages. First a plain-text DM with the FULL body
+   * (every word visible, no truncation). Then a second template-card DM
+   * with JUST a button. Matches the ManyChat-style "message + CTA card" flow.
+   *
+   * When no CTA is configured, we send a single text message only.
+   */
+  async function postMessage(messagePayload: unknown) {
+    const url = `${GRAPH}/${igBusinessId()}/messages?access_token=${encodeURIComponent(token())}`;
+    const payload: Record<string, unknown> = {
+      recipient,
+      message: messagePayload,
+    };
+    if (!commentId) payload.messaging_type = 'RESPONSE';
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const j = (await res.json().catch(() => ({}))) as {
+      message_id?: string;
+      error?: { message?: string };
+    };
+    return { ok: res.ok, json: j, status: res.status };
   }
 
-  const url = `${GRAPH}/${igBusinessId()}/messages?access_token=${encodeURIComponent(token())}`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-
-  const json = (await res.json().catch(() => ({}))) as {
-    message_id?: string;
-    error?: { message?: string };
-  };
-  if (!res.ok) {
-    return { ok: false, error: json?.error?.message || `HTTP ${res.status}` };
+  // 1. Plain-text DM with full body (incl. follow nudge, no truncation).
+  const textRes = await postMessage({ text: body.slice(0, 1000) });
+  if (!textRes.ok) {
+    return {
+      ok: false,
+      error: textRes.json?.error?.message || `HTTP ${textRes.status}`,
+    };
   }
-  return { ok: true, message_id: json.message_id };
+  const primaryId = textRes.json?.message_id;
+
+  // 2. Optional: follow-up button card. Best-effort — text DM already
+  //    landed, so a card failure is non-fatal.
+  if (ctaUrl && ctaLabel) {
+    try {
+      await postMessage({
+        attachment: {
+          type: 'template',
+          payload: {
+            template_type: 'generic',
+            elements: [
+              {
+                title: ctaLabel.slice(0, 80),       // button label as title — short + clean
+                buttons: [
+                  { type: 'web_url', url: ctaUrl, title: ctaLabel.slice(0, 20) },
+                ],
+              },
+            ],
+          },
+        },
+      });
+    } catch {
+      // Swallow — primary DM already delivered.
+    }
+  }
+
+  return { ok: true, message_id: primaryId };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
