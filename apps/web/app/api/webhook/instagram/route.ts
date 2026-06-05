@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
   // 2. Load active rules once
   const { data: rulesRaw } = await supa
     .from('ig_dm_rules')
-    .select('id, ig_post_id, keyword, dm_template, cta_url, cta_label, is_active, daily_cap, label')
+    .select('id, ig_post_id, keyword, dm_template, cta_url, cta_label, is_active, daily_cap, label, follow_nudge, comment_reply')
     .eq('is_active', true);
   const rules = (rulesRaw ?? []) as DmRule[];
 
