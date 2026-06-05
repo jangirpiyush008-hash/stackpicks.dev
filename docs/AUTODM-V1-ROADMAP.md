@@ -1,8 +1,10 @@
 # StackPicks AutoDM — v1 productization roadmap
 
-> Decision logged 2026-06-06: path B — pitch HYPD on the engine, and / or
-> spin StackPicks AutoDM out for dev creators (different ICP than HYPD).
-> Approach assumes a clearance conversation with HYPD before going public.
+> Decision logged 2026-06-06: build and sell StackPicks AutoDM as our own
+> standalone product. ICP: creators on Instagram (dev / SaaS first as the
+> wedge, then general creators). Goal — be the best auto-DM tool on the
+> market on every dimension that matters: setup speed, conversion, brand
+> voice, account safety.
 
 ## Why this can win
 
@@ -138,10 +140,10 @@ Razorpay subscription plans (we already have INR + plan IDs in `.env`).
 
 ### Day 14 — Beta with 10-20 hand-picked creators
 
-- HYPD network folks Piyush trusts (with HYPD clearance per path B).
-- 1 dev-creator (audience for the MCP angle).
-- 5 lifestyle / fashion creators (audience for voice clone + follow-up).
-- 5 commerce / fitness creators (audience for the conversion story).
+- Hand-recruited from Piyush's personal network + IG/LinkedIn DMs.
+- 5 dev / SaaS creators (audience for the MCP angle — wedge market).
+- 5 lifestyle creators (voice clone + follow-up story).
+- 5 commerce creators (conversion story).
 - Free Pro tier for 30 days. Feedback every 3 days.
 
 ## What we already have that goes straight in
@@ -161,30 +163,16 @@ Razorpay subscription plans (we already have INR + plan IDs in `.env`).
 About 60% of the engine is done. The remaining 40% is the multi-tenant
 shell + AI layer + billing.
 
-## HYPD path (per Piyush's decision)
-
-Before any public launch:
-
-1. Demo the working StackPicks bot to HYPD leadership.
-2. Receipts for HYPD's broken cases — non-follower failures, self-loops,
-   whatever Piyush has seen on the inside.
-3. Offer two paths:
-   - **Bring the engine in-house** — Piyush owns the upgrade, gets
-     a clear cash + equity bump for it.
-   - **Spin out for non-overlapping market** — StackPicks AutoDM
-     serves dev / SaaS creators (not lifestyle / fashion creators that
-     HYPD targets).
-4. Get this in writing before any code goes public.
-
 ## Open questions
 
 - Voice cloning quality — must validate on real DMs before pricing
-  the Pro tier around it.
+  the Pro tier around it. First test target: Piyush's own past IG DMs.
 - Token cost per DM — Claude API at ~₹0.20-0.50 per AI-generated DM
   shapes the Pro tier unit economics. Need a sample run before locking
   pricing.
 - Meta app review — for non-StackPicks tenants, the IG app needs to
-  pass Business Verification for "instagram_business_manage_messages"
-  scope at scale. Worth starting tomorrow.
-- HYPD employment contract — non-compete clause specifics. Path B
-  hinges on this.
+  pass Business Verification for `instagram_business_manage_messages`
+  scope at scale. Worth starting tomorrow — it's a 1-3 week wait.
+- Acquisition wedge — dev creators on IG are a small TAM. After the
+  wedge proves out, expansion path is lifestyle + commerce creators.
+  Plan when, not if.

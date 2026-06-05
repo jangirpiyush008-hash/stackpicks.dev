@@ -59,9 +59,9 @@ After Piyush flagged the IG-blocks-too-many-links risk:
 
 ### Productization — StackPicks AutoDM v1 roadmap
 
-Piyush: HYPD has an auto-DM that mostly doesn't work properly. Decision: path B
-— pitch HYPD on adopting our engine, OR spin StackPicks AutoDM out for dev /
-SaaS creators (non-overlapping ICP).
+Decision: build and sell StackPicks AutoDM as our own standalone product. Wedge
+market = dev / SaaS creators on IG (audience for the MCP angle), expansion to
+lifestyle + commerce creators after the wedge converts.
 
 Roadmap committed in `docs/AUTODM-V1-ROADMAP.md` — 14-day build to sellable v1:
 - Days 1-2: multi-tenant migration (tenant table + RLS + per-tenant tokens).
@@ -77,17 +77,19 @@ Roadmap committed in `docs/AUTODM-V1-ROADMAP.md` — 14-day build to sellable v1
 
 About 60% of the engine is already shipped tonight on the StackPicks bot.
 
-### Pre-HYPD-pitch validation TODOs (open)
+### Validation TODOs (open before pricing Pro tier)
 
-- Voice clone prototype on Piyush's own DMs — must work convincingly before pricing Pro tier around it.
-- Token cost per DM at scale (Claude API) — needs sample run.
-- Piyush's HYPD employment contract — non-compete clause specifics. Confirm path B is viable.
-- Receipts for HYPD's broken non-follower / loop cases — Piyush to gather before the pitch meeting.
+- Voice clone prototype on Piyush's own DMs — must read convincingly like him
+  before we lock the Pro tier around it. Tomorrow's first task.
+- Token cost per DM at scale (Claude API) — needs a sample run on ~50 fake
+  comments to settle Pro tier unit economics.
+- Meta app review kickoff for `instagram_business_manage_messages` scope at
+  multi-tenant scale (1-3 week wait — start now in parallel).
 
 ### Tomorrow / next session
 
 - Build voice-clone prototype using Piyush's own past DMs as input.
-- Draft 1-page HYPD pitch PDF with comparison table + screenshots of the working StackPicks bot.
+- Spec the `tenant` table + RLS migration for multi-tenant.
 - Continue Connect: 4 more OAuth apps (GitLab, Airtable, Calendly, Asana — task #116 in-progress).
 - SEO Day 5: StackShare + OpenAlternative submission (task #112 pending).
 
