@@ -11,7 +11,8 @@
  */
 
 import { useEffect, useState } from 'react';
-import { Plus, Save, Trash2, Loader2, Power, MessageCircle, ExternalLink } from 'lucide-react';
+import { Plus, Save, Trash2, Loader2, Power, MessageCircle, ExternalLink,
+  Zap, CheckCircle2, AlertTriangle } from 'lucide-react';
 
 interface Rule {
   id: string;
@@ -42,6 +43,43 @@ export function IgDmRules() {
   const [loading, setLoading] = useState(true);
   const [draft, setDraft] = useState<typeof EMPTY | null>(null);
   const [saving, setSaving] = useState(false);
+  const [subState, setSubState] = useState<{
+    loading: boolean;
+    subscribed: boolean | null;
+    detail: string | null;
+  }>({ loading: false, subscribed: null, detail: null });
+
+  async function checkSub() {
+    setSubState((s) => ({ ...s, loading: true }));
+    const res = await fetch('/api/admin/ig-subscribe');
+    const j = await res.json();
+    const data = j?.response?.data || [];
+    const isSub = Array.isArray(data) && data.length > 0;
+    setSubState({
+      loading: false,
+      subscribed: isSub,
+      detail: isSub
+        ? `Subscribed: ${data.map((d: { name?: string }) => d.name || 'app').join(', ')}`
+        : (j?.response?.error?.message || 'Not subscribed — click button to subscribe.'),
+    });
+  }
+
+  async function subscribe() {
+    setSubState((s) => ({ ...s, loading: true }));
+    const res = await fetch('/api/admin/ig-subscribe', { method: 'POST' });
+    const j = await res.json();
+    if (j.ok) {
+      setSubState({ loading: false, subscribed: true, detail: 'Subscribed ✓ — comments will now hit /api/webhook/instagram' });
+    } else {
+      setSubState({
+        loading: false,
+        subscribed: false,
+        detail: (j?.response?.error?.message || j?.error || 'Subscribe failed') + (j?.hint ? ` — ${j.hint}` : ''),
+      });
+    }
+  }
+
+  useEffect(() => { checkSub(); }, []);
 
   async function refresh() {
     setLoading(true);
@@ -85,6 +123,42 @@ export function IgDmRules() {
 
   return (
     <div className="flex flex-col gap-4">
+      {/* Webhook subscription state */}
+      <div className={`rounded-xl border p-4 ${
+        subState.subscribed === true  ? 'border-accent/40 bg-accent/5' :
+        subState.subscribed === false ? 'border-rose-500/40 bg-rose-500/5' :
+        'border-border bg-surface/30'
+      }`}>
+        <div className="flex items-start gap-3">
+          {subState.loading ? (
+            <Loader2 className="w-5 h-5 animate-spin text-muted mt-0.5 flex-shrink-0" />
+          ) : subState.subscribed ? (
+            <CheckCircle2 className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+          ) : (
+            <AlertTriangle className="w-5 h-5 text-rose-300 mt-0.5 flex-shrink-0" />
+          )}
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-text">
+              Webhook subscription —{' '}
+              {subState.loading ? 'checking…' : subState.subscribed ? 'live' : 'NOT live'}
+            </p>
+            <p className="text-xs text-muted mt-1">
+              {subState.detail || 'Configuring the webhook URL in Meta is not enough — the IG Business Account itself must be subscribed via the Graph API. Click subscribe below.'}
+            </p>
+            {!subState.subscribed && (
+              <button
+                onClick={subscribe}
+                disabled={subState.loading}
+                className="mt-3 inline-flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-md
+                           bg-accent text-bg hover:bg-accent/90 disabled:opacity-50 transition"
+              >
+                <Zap className="w-3.5 h-3.5" /> Subscribe IG account to comments
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* Intro */}
       <div className="rounded-xl border border-border bg-surface/30 p-4 text-sm text-muted">
         <div className="flex items-start gap-3">
