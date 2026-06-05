@@ -1,0 +1,46 @@
+{
+  "slug": "05-shadcn-ui",
+  "title": "StackPicks · shadcn/ui — copy-paste React components",
+  "thumUrl": "https://ui.shadcn.com",
+  "category": "components",
+  "hero": {
+    "eyebrow": "COPY · PASTE · SHIP",
+    "title_html": "React components,<br>you actually <span class=\"hl-dark-on-lime\">own.</span>",
+    "repo_line": "ui.shadcn.com · Tailwind v4 · React 19"
+  },
+  "what": {
+    "headline_html": "shadcn/ui.<br>The new <span class=\"underline-lime\">React standard.</span>",
+    "rows": [
+      { "title": "Not a library — your code", "desc": "Components copied into your repo. You fork, edit, own everything." },
+      { "title": "Tailwind v4 + React 19 ready", "desc": "Unified Radix UI under the hood. Works on Next.js, Vite, Astro, TanStack." },
+      { "title": "50+ accessible components", "desc": "Dark-mode default. New 'Rhea' style for dense product UIs (Feb 2026)." }
+    ],
+    "source": "ui.shadcn.com · github.com/shadcn-ui/ui"
+  },
+  "install": {
+    "eyebrow": "one command",
+    "headline_html": "One CLI.<br>Each component,<br><span class=\"hl-dark-on-lime\">on demand.</span>",
+    "body": "Pick what you need. Component files drop into your repo. Edit anything. No version lock-in.",
+    "command": "pnpm dlx shadcn@latest add button"
+  },
+  "vs": {
+    "headline_html": "Why shadcn<br>over <span class=\"underline-lime\">the rest.</span>",
+    "rows": [
+      { "title": "vs MUI / Chakra", "desc": "Heavy CSS-in-JS runtimes. shadcn is just JSX + Tailwind. Lighter." },
+      { "title": "vs raw Radix UI", "desc": "Radix has zero styling. shadcn = Radix + sane styles you can edit." },
+      { "title": "vs daisyUI", "desc": "daisy is Tailwind classes. shadcn is real React components. More control." }
+    ]
+  },
+  "take": {
+    "use_if": "You're building a serious React app on Tailwind. You want components you can fork, theme, and ship. shadcn is the only sane choice in 2026.",
+    "skip_if": "You don't use Tailwind. Or you want a sealed library you never touch — shadcn is the opposite of that.",
+    "sub": "MIT licensed. Maintained by @shadcn."
+  },
+  "more": {
+    "body": "Magic UI · Aceternity · Tremor · Radix · Park UI. Curated takes on each.",
+    "url_split": ["stackpicks.dev/", "category/components"],
+    "sub": "14 picks · all open source · updated this week"
+  },
+  "cta": { "keyword": "SHADCN" },
+  "caption_line": "shadcn/ui — components you actually own. Tailwind v4 + React 19 ready. The new standard for React apps in 2026. Comment SHADCN for the docs ↓"
+}

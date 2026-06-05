@@ -1,0 +1,46 @@
+{
+  "slug": "10-google-ads-mcp",
+  "title": "StackPicks · Google Ads MCP — Google ads via Claude",
+  "thumUrl": "https://github.com/cohnen/mcp-google-ads",
+  "category": "ads",
+  "hero": {
+    "eyebrow": "GOOGLE ADS · VIA CLAUDE",
+    "title_html": "Google ads,<br>from <span class=\"hl-dark-on-lime\">your chat.</span>",
+    "repo_line": "mcp-google-ads · open source · MIT"
+  },
+  "what": {
+    "headline_html": "Google Ads<br>MCP <span class=\"underline-lime\">server.</span>",
+    "rows": [
+      { "title": "Read campaigns, keywords, ad groups", "desc": "Pull live performance into Claude. Ask 'why is CPC up 40% this week' and get an answer." },
+      { "title": "Auth via OAuth refresh token", "desc": "One-time setup. Token stored locally. Claude never sees your Google password." },
+      { "title": "Bulk reporting in plain English", "desc": "'Top 10 worst-performing keywords by ROAS'. One prompt. Skip the GAds UI marathon." }
+    ],
+    "source": "github.com/cohnen/mcp-google-ads"
+  },
+  "install": {
+    "eyebrow": "one config",
+    "headline_html": "Add to<br>Claude Desktop.<br><span class=\"hl-dark-on-lime\">Done.</span>",
+    "body": "Clone the repo. Add your Google Ads OAuth credentials to .env. Add the MCP entry to claude_desktop_config.json. Restart Claude.",
+    "command": "git clone cohnen/mcp-google-ads"
+  },
+  "vs": {
+    "headline_html": "Google MCP<br>vs <span class=\"underline-lime\">Meta MCP.</span>",
+    "rows": [
+      { "title": "Meta wins for", "desc": "Setup. Sign-in with Meta = zero config. Google needs OAuth refresh token wrangling." },
+      { "title": "Google wins for", "desc": "Maturity. Google Ads API is older + more stable. Better for serious account management." },
+      { "title": "Run both side-by-side", "desc": "Cross-platform reports in one prompt. 'Show me ROAS by channel last 30 days.'" }
+    ]
+  },
+  "take": {
+    "use_if": "You run Google Ads + want to query / bulk-edit in plain English. Saves 30-60 min/day on reporting tasks for any serious advertiser.",
+    "skip_if": "You only spend ₹5k/mo on ads. The Google Ads UI is fine at that scale. MCPs shine when you have 10+ campaigns.",
+    "sub": "MIT. Maintained by @cohnen on GitHub."
+  },
+  "more": {
+    "body": "Meta Ads MCP · TikTok Ads MCP · LinkedIn Ads. Curated takes.",
+    "url_split": ["stackpicks.dev/", "mcp/category/ads"],
+    "sub": "8 picks · official + community · updated this week"
+  },
+  "cta": { "keyword": "GOOGLEADS" },
+  "caption_line": "Google Ads from Claude — open-source MCP server. OAuth setup once, query live campaigns forever. Comment GOOGLEADS for the install link ↓"
+}

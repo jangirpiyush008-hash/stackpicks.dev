@@ -1,0 +1,46 @@
+{
+  "slug": "11-magic-aceternity",
+  "title": "StackPicks · Magic UI + Aceternity — eye-candy components",
+  "thumUrl": "https://magicui.design",
+  "category": "components",
+  "hero": {
+    "eyebrow": "EYE CANDY · DROP-IN",
+    "title_html": "Particles, beams,<br>borders that <span class=\"hl-dark-on-lime\">move.</span>",
+    "repo_line": "magicui.design · ui.aceternity.com"
+  },
+  "what": {
+    "headline_html": "Magic UI<br>+ Aceternity<br><span class=\"underline-lime\">UI.</span>",
+    "rows": [
+      { "title": "Animated components, copy-paste ready", "desc": "Aurora backgrounds. Spotlight effects. Beam animations. Globe. Particles." },
+      { "title": "Built on shadcn + Motion", "desc": "Same DNA you already use. Drop into any shadcn project — zero config wrestling." },
+      { "title": "Free + open source", "desc": "150+ components between them. MIT licensed. Source on GitHub. No paywall." }
+    ],
+    "source": "magicui.design · ui.aceternity.com"
+  },
+  "install": {
+    "eyebrow": "copy · paste",
+    "headline_html": "Pick a<br>component.<br><span class=\"hl-dark-on-lime\">Paste it.</span>",
+    "body": "No npm install. Browse the showcase, click a component, copy the code into your repo. shadcn deps already in your project? You're set.",
+    "command": "magicui.design/docs/components/aurora-text"
+  },
+  "vs": {
+    "headline_html": "Magic<br>vs <span class=\"underline-lime\">Aceternity.</span>",
+    "rows": [
+      { "title": "Magic UI wins for", "desc": "Subtler effects. Text animations, button hovers, marquees. Cleaner code." },
+      { "title": "Aceternity wins for", "desc": "Bigger statement pieces. 3D card flips, spotlight cursors, full-screen effects." },
+      { "title": "Use both together", "desc": "Same shadcn base, no conflicts. Mix-and-match. That's the magic of copy-paste." }
+    ]
+  },
+  "take": {
+    "use_if": "You're building a landing page that needs to feel premium. Particle hero, aurora gradient, animated CTA. 20 minutes of work, 10x perceived effort.",
+    "skip_if": "You're building a dashboard or admin UI. Eye candy in functional surfaces = friction. Use shadcn proper.",
+    "sub": "Both MIT. Both free. Both maintained actively."
+  },
+  "more": {
+    "body": "shadcn/ui · Tremor · Park UI · Radix Themes. Curated takes.",
+    "url_split": ["stackpicks.dev/", "category/components"],
+    "sub": "14 picks · all open source · updated this week"
+  },
+  "cta": { "keyword": "MAGIC" },
+  "caption_line": "Aurora text, particle heroes, beams — Magic UI + Aceternity. Drop-in eye candy for shadcn projects. Comment MAGIC for both showcases ↓"
+}

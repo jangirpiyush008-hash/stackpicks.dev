@@ -1,0 +1,46 @@
+{
+  "slug": "07-lovable-bolt",
+  "title": "StackPicks · Lovable + Bolt — full apps from a prompt",
+  "thumUrl": "https://lovable.dev",
+  "category": "builders",
+  "hero": {
+    "eyebrow": "PROMPT IT · SHIP IT",
+    "title_html": "Full-stack apps,<br>from a <span class=\"hl-dark-on-lime\">prompt.</span>",
+    "repo_line": "lovable.dev · bolt.new · 2026 wave"
+  },
+  "what": {
+    "headline_html": "Lovable +<br>Bolt.new.<br><span class=\"underline-lime\">Pick one.</span>",
+    "rows": [
+      { "title": "Type the idea — they build the app", "desc": "Frontend + backend + DB + auth. React, Next.js, Supabase wired by default." },
+      { "title": "Live preview, instant deploy", "desc": "WebContainer (Bolt) or hosted preview (Lovable). Ship to prod in one click." },
+      { "title": "Export to GitHub, edit in Cursor", "desc": "Not a black box. You get real code. Use AI to scaffold, devs to polish." }
+    ],
+    "source": "lovable.dev · bolt.new (by StackBlitz)"
+  },
+  "install": {
+    "eyebrow": "no install",
+    "headline_html": "Open<br>the URL.<br><span class=\"hl-dark-on-lime\">Type.</span>",
+    "body": "No CLI. No setup. No local node version. Just open the site and describe what you want built.",
+    "command": "lovable.dev · bolt.new"
+  },
+  "vs": {
+    "headline_html": "Lovable<br>vs <span class=\"underline-lime\">Bolt.</span>",
+    "rows": [
+      { "title": "Lovable wins for", "desc": "Full SaaS apps with auth + DB. Supabase-native. Best mid-complexity." },
+      { "title": "Bolt wins for", "desc": "Frontend-heavy demos. WebContainer = instant Node runtime. Faster iteration." },
+      { "title": "Both lose for", "desc": "Enterprise. Multi-service. Custom infra. Use Cursor + Claude there." }
+    ]
+  },
+  "take": {
+    "use_if": "You're a non-dev with a SaaS idea. Or a dev who wants the boring 80% scaffolded. Both deliver a working app in <1 hour.",
+    "skip_if": "You need exotic infra, queues, multi-region DB, or you're already deep in your own framework. AI builders sit on stacks they know.",
+    "sub": "Lovable is free tier + $20/mo. Bolt is free tier + $20/mo."
+  },
+  "more": {
+    "body": "v0.dev · Cursor · Replit Agent · Devin. Curated takes on each.",
+    "url_split": ["stackpicks.dev/", "category/ai-builders"],
+    "sub": "12 picks · free + paid · updated this week"
+  },
+  "cta": { "keyword": "BUILDER" },
+  "caption_line": "Full apps from a prompt — Lovable + Bolt. Frontend, backend, auth, DB. Free tier on both. Comment BUILDER for our full pick ↓"
+}

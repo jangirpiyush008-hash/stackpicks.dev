@@ -1,0 +1,46 @@
+{
+  "slug": "09-three-r3f",
+  "title": "StackPicks · Three.js + R3F — 3D in your React app",
+  "thumUrl": "https://r3f.docs.pmnd.rs",
+  "category": "3d",
+  "hero": {
+    "eyebrow": "3D · IN REACT · IN MINUTES",
+    "title_html": "WebGL,<br>but it&rsquo;s <span class=\"hl-dark-on-lime\">JSX.</span>",
+    "repo_line": "three.js + react-three/fiber · poimandres"
+  },
+  "what": {
+    "headline_html": "Three.js<br>+ React Three<br><span class=\"underline-lime\">Fiber.</span>",
+    "rows": [
+      { "title": "Three.js handles the math", "desc": "Industry-standard WebGL renderer. Every 3D website you've seen uses it." },
+      { "title": "R3F wraps it in JSX", "desc": "<mesh><boxGeometry/><meshBasicMaterial/></mesh>. Declarative. Reactive. State-driven." },
+      { "title": "@react-three/drei = helpers", "desc": "Cameras, controls, loaders, post-FX. The bits that take days to wire by hand." }
+    ],
+    "source": "github.com/pmndrs/react-three-fiber · threejs.org"
+  },
+  "install": {
+    "eyebrow": "two packages",
+    "headline_html": "Two packages.<br>Then<br><span class=\"hl-dark-on-lime\">scene = JSX.</span>",
+    "body": "@react-three/fiber bridges React ↔ Three. @react-three/drei is the helper library — 100+ pre-built bits.",
+    "command": "npm i three @react-three/fiber @react-three/drei"
+  },
+  "vs": {
+    "headline_html": "R3F<br>vs <span class=\"underline-lime\">raw Three.</span>",
+    "rows": [
+      { "title": "R3F wins for", "desc": "React apps. State-driven scenes. Hot reload. Component reuse. Performance is identical." },
+      { "title": "Raw Three wins for", "desc": "Games. Non-React apps. When every frame counts and React's reconciler is overhead." },
+      { "title": "vs Babylon.js", "desc": "Babylon is heavier but has built-in physics + animation editor. Three is leaner + bigger ecosystem." }
+    ]
+  },
+  "take": {
+    "use_if": "You're on React + Next.js + want 3D hero scenes, product viewers, or interactive visualizations. R3F is the path of least pain.",
+    "skip_if": "You're shipping a 2D landing page. 3D loads slowly on mobile. Don't add it because it looks cool — add it because it tells the story.",
+    "sub": "MIT. Maintained by Poimandres collective."
+  },
+  "more": {
+    "body": "GLTF loaders · Spline · Lottie · Rive · PlayCanvas. Curated takes.",
+    "url_split": ["stackpicks.dev/", "category/3d-web"],
+    "sub": "9 picks · all open source · updated this week"
+  },
+  "cta": { "keyword": "THREE" },
+  "caption_line": "WebGL but it's JSX — React Three Fiber. The whole 3D web (Spline, Vercel, Apple's site) uses it under the hood. Comment THREE for the docs ↓"
+}

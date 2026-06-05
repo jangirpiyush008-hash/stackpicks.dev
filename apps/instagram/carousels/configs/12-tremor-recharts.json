@@ -1,0 +1,46 @@
+{
+  "slug": "12-tremor-recharts",
+  "title": "StackPicks · Tremor + Recharts — dashboards in minutes",
+  "thumUrl": "https://tremor.so",
+  "category": "dashboards",
+  "hero": {
+    "eyebrow": "DASHBOARDS · IN AN HOUR",
+    "title_html": "Charts + KPIs,<br>not <span class=\"hl-dark-on-lime\">CSS hell.</span>",
+    "repo_line": "tremor.so · recharts.org · React + Tailwind"
+  },
+  "what": {
+    "headline_html": "Tremor +<br>Recharts.<br><span class=\"underline-lime\">Two layers.</span>",
+    "rows": [
+      { "title": "Tremor = dashboard primitives", "desc": "Cards, KPIs, sparklines, donut charts, deltas. All Tailwind. All copy-paste ready." },
+      { "title": "Recharts = the chart engine", "desc": "Tremor's charts are Recharts under the hood. When you need custom — go deeper." },
+      { "title": "Build a full dashboard in 60 min", "desc": "Stripe-quality KPI cards + line charts + filters. No D3 PhD required." }
+    ],
+    "source": "tremor.so · recharts.org"
+  },
+  "install": {
+    "eyebrow": "two installs",
+    "headline_html": "One install.<br>shadcn-style<br><span class=\"hl-dark-on-lime\">CLI.</span>",
+    "body": "Tremor v3 went the shadcn route — components copied into your repo. Full control, no version lock-in.",
+    "command": "pnpm dlx @tremor/cli add card"
+  },
+  "vs": {
+    "headline_html": "Tremor<br>vs <span class=\"underline-lime\">the rest.</span>",
+    "rows": [
+      { "title": "vs Chart.js", "desc": "Chart.js is canvas-based. Tremor uses SVG (Recharts). Easier to style with Tailwind." },
+      { "title": "vs Ant Design Charts", "desc": "Antd brings opinionated everything. Tremor is just the dashboard bits. Lighter." },
+      { "title": "vs D3 from scratch", "desc": "D3 is powerful but lonely. Tremor + Recharts = 80% of dashboards in 10% of the code." }
+    ]
+  },
+  "take": {
+    "use_if": "You're building an admin dashboard, analytics screen, or SaaS reporting view. Tremor + Recharts gets you to ship in a day.",
+    "skip_if": "You need exotic chart types (Sankey, network graphs, geo maps). Drop to Visx or D3 for those edges.",
+    "sub": "Both MIT. Tremor by tremor.so. Recharts by community."
+  },
+  "more": {
+    "body": "Visx · ECharts · Apex · Chart.js · D3. Curated takes.",
+    "url_split": ["stackpicks.dev/", "category/charts-dashboards"],
+    "sub": "10 picks · all open source · updated this week"
+  },
+  "cta": { "keyword": "DASHBOARD" },
+  "caption_line": "Dashboards in an hour — Tremor + Recharts. Stripe-quality KPIs, charts, deltas. Both free, both Tailwind. Comment DASHBOARD for the kit ↓"
+}

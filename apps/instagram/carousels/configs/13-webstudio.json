@@ -1,0 +1,46 @@
+{
+  "slug": "13-webstudio",
+  "title": "StackPicks · Webstudio — open-source Webflow alternative",
+  "thumUrl": "https://webstudio.is",
+  "category": "no-code",
+  "hero": {
+    "eyebrow": "WEBFLOW · BUT OPEN SOURCE",
+    "title_html": "Visual builder,<br>you actually <span class=\"hl-dark-on-lime\">own.</span>",
+    "repo_line": "webstudio.is · self-host · AGPL"
+  },
+  "what": {
+    "headline_html": "Webstudio.<br>The Webflow<br><span class=\"underline-lime\">we deserve.</span>",
+    "rows": [
+      { "title": "Self-host the builder + site", "desc": "Run the whole stack on your infra. No Webflow lock-in. No per-page pricing. AGPL OSS." },
+      { "title": "Exports clean Next.js + Remix", "desc": "Not a black box. Real React code. Edit in your IDE after. Move on with your life." },
+      { "title": "Visual layout, real CSS variables", "desc": "Tailwind compatible. Design tokens. Mobile-first responsive. Familiar to Figma users." }
+    ],
+    "source": "webstudio.is · github.com/webstudio-is/webstudio"
+  },
+  "install": {
+    "eyebrow": "two paths",
+    "headline_html": "Use the<br>cloud.<br>Or <span class=\"hl-dark-on-lime\">self-host.</span>",
+    "body": "webstudio.is hosts the builder (free tier). Self-host via Docker if you want zero lock-in. Same code either way.",
+    "command": "docker run webstudio-is/webstudio"
+  },
+  "vs": {
+    "headline_html": "Webstudio<br>vs <span class=\"underline-lime\">Webflow.</span>",
+    "rows": [
+      { "title": "Webflow wins for", "desc": "Maturity. Plugin ecosystem. CMS at scale. 10 years of UX polish." },
+      { "title": "Webstudio wins for", "desc": "Cost. Ownership. Code export quality. No vendor lock-in. AGPL = always free to self-host." },
+      { "title": "vs Framer", "desc": "Framer is fastest for marketing pages. Webstudio is more developer-friendly + open." }
+    ]
+  },
+  "take": {
+    "use_if": "You want Webflow's visual control but hate the pricing or vendor lock-in. Or you're a dev who wants designers to build pages without writing JSX.",
+    "skip_if": "You need maturity. Webstudio is solid in 2026 but Webflow has a 10-year head start on edge cases.",
+    "sub": "AGPL licensed. Maintained by webstudio-is on GitHub."
+  },
+  "more": {
+    "body": "Framer · Plasmic · Builder.io · Bolt · Lovable. Curated takes.",
+    "url_split": ["stackpicks.dev/", "category/no-code"],
+    "sub": "11 picks · open + paid · updated this week"
+  },
+  "cta": { "keyword": "WEBSTUDIO" },
+  "caption_line": "Webflow alternative — open source, self-hostable, exports clean Next.js. Webstudio. Comment WEBSTUDIO for the docs ↓"
+}

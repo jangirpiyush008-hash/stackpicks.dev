@@ -1,0 +1,46 @@
+{
+  "slug": "06-meta-ads-mcp",
+  "title": "StackPicks · Meta Ads MCP — run ads from Claude",
+  "thumUrl": "https://www.facebook.com/business/news/meta-ads-ai-connectors",
+  "category": "ads",
+  "hero": {
+    "eyebrow": "RUN ADS FROM CLAUDE",
+    "title_html": "Meta ads,<br>via your <span class=\"hl-dark-on-lime\">AI agent.</span>",
+    "repo_line": "mcp.facebook.com/ads · official · free"
+  },
+  "what": {
+    "headline_html": "Meta Ads<br>AI <span class=\"underline-lime\">Connectors.</span>",
+    "rows": [
+      { "title": "29 tools, 4 categories", "desc": "Reporting · Campaigns · Catalog · Diagnostics. Real Meta API." },
+      { "title": "Sign in with Meta — no setup", "desc": "No developer token. No Business Verification. No API key juggling." },
+      { "title": "Works in Claude, ChatGPT, Cursor", "desc": "Any MCP-compatible AI client at launch. Open beta since Apr 2026." }
+    ],
+    "source": "facebook.com/business/news/meta-ads-ai-connectors"
+  },
+  "install": {
+    "eyebrow": "one URL",
+    "headline_html": "One URL.<br>One sign-in.<br><span class=\"hl-dark-on-lime\">Live.</span>",
+    "body": "Paste this into Claude → Settings → Connectors → Add custom connector. Sign in with your Meta account. Done.",
+    "command": "mcp.facebook.com/ads"
+  },
+  "vs": {
+    "headline_html": "Why this<br>over <span class=\"underline-lime\">the rest.</span>",
+    "rows": [
+      { "title": "vs raw Marketing API", "desc": "Marketing API needs dev tokens, app review, code. MCP needs a sign-in. That's it." },
+      { "title": "vs third-party tools (Revealbot etc.)", "desc": "₹ saved on subscriptions. Talk to your campaigns in plain English instead." },
+      { "title": "vs Meta Ads Manager UI", "desc": "Bulk edits in seconds. 'Pause anything with ROAS < 1.5'. No UI clicking marathon." }
+    ]
+  },
+  "take": {
+    "use_if": "You run Meta Ads (FB + Instagram). You want bulk edits, faster reporting, plain-English audience analysis. Free, official, zero setup.",
+    "skip_if": "You don't run Meta Ads. Or you want one MCP for Meta + Google + TikTok — wait for our Connect (we wire all three through one URL).",
+    "sub": "Free. Beta. Connect via mcp.facebook.com/ads"
+  },
+  "more": {
+    "body": "Google Ads MCP · TikTok Ads MCP · LinkedIn Ads. Curated takes on each.",
+    "url_split": ["stackpicks.dev/", "mcp/category/ads"],
+    "sub": "8 picks · official + community · updated this week"
+  },
+  "cta": { "keyword": "META" },
+  "caption_line": "Meta Ads via Claude — official MCP. No developer token, no API setup. Sign in with Meta → done. 29 tools live. Comment META for the setup link ↓"
+}

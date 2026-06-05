@@ -1,0 +1,46 @@
+{
+  "slug": "08-gsap",
+  "title": "StackPicks · GSAP — now 100% free (since 2025)",
+  "thumUrl": "https://gsap.com",
+  "category": "animation",
+  "hero": {
+    "eyebrow": "ANIMATE LITERALLY ANYTHING",
+    "title_html": "GSAP is now<br>100% <span class=\"hl-dark-on-lime\">free.</span>",
+    "repo_line": "gsap.com · acquired by Webflow · 2025"
+  },
+  "what": {
+    "headline_html": "GSAP.<br>The <span class=\"underline-lime\">gold standard.</span>",
+    "rows": [
+      { "title": "ScrollTrigger now free too", "desc": "The plugin people used to pay $99/yr for. Free since Webflow's acquisition." },
+      { "title": "Tiny core, plugin architecture", "desc": "Load only what you use. CSS animation can't compete with 1ms keyframe control." },
+      { "title": "Framework-agnostic", "desc": "React, Vue, Svelte, vanilla. Works wherever JavaScript runs. 20-year track record." }
+    ],
+    "source": "gsap.com · greensock.com"
+  },
+  "install": {
+    "eyebrow": "one install",
+    "headline_html": "One package.<br>Every<br><span class=\"hl-dark-on-lime\">plugin free.</span>",
+    "body": "ScrollTrigger, SplitText, MorphSVG, Flip — every premium plugin is now in the free tier. No license keys.",
+    "command": "npm install gsap"
+  },
+  "vs": {
+    "headline_html": "GSAP<br>vs <span class=\"underline-lime\">Motion.</span>",
+    "rows": [
+      { "title": "GSAP wins for", "desc": "Complex scroll, SVG morphing, timelines, anything not React-state-driven." },
+      { "title": "Motion wins for", "desc": "React state-bound animations. Layout transitions. Gestures + drag." },
+      { "title": "Use both side-by-side", "desc": "GSAP for hero animations + scroll. Motion for in-app interactions. Common stack." }
+    ]
+  },
+  "take": {
+    "use_if": "You build marketing sites, landing pages, or content-heavy scroll experiences. GSAP + ScrollTrigger is unbeaten. Now free, so no excuse.",
+    "skip_if": "You only need component-level micro-interactions in a React app. Motion is the lighter pick there.",
+    "sub": "MIT-friendly. Maintained by GreenSock (now Webflow)."
+  },
+  "more": {
+    "body": "Motion · Anime.js · Theatre.js · Lottie · Three.js. Curated takes.",
+    "url_split": ["stackpicks.dev/", "category/animation"],
+    "sub": "11 picks · all open source · updated this week"
+  },
+  "cta": { "keyword": "GSAP" },
+  "caption_line": "GSAP is now 100% free — every plugin too. ScrollTrigger, SplitText, MorphSVG. The gold standard for web animation. Comment GSAP for the docs ↓"
+}
