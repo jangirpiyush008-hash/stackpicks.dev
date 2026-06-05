@@ -12,7 +12,7 @@ interface QueueRow {
   media_urls: string[];
   caption: string;
   hashtags: string;
-  status: 'ready' | 'processing' | 'posted' | 'error';
+  status: 'draft' | 'ready' | 'processing' | 'posted' | 'error';
   scheduled_at: string;
   posted_at: string | null;
   ig_post_id: string | null;

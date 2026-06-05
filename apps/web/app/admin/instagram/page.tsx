@@ -2,7 +2,7 @@ import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { adminClient } from '@stackpicks/core/db';
 import { isAdmin } from '../../../lib/admin';
-import { ArrowLeft, CheckCircle2, Clock, AlertTriangle, Loader2, Instagram } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Clock, AlertTriangle, Loader2, Instagram, Layers } from 'lucide-react';
 import { IgAdminTabs } from '../../../components/IgAdminTabs';
 
 export const runtime = 'nodejs';
@@ -20,7 +20,7 @@ interface QueueRow {
   media_urls: string[];
   caption: string;
   hashtags: string;
-  status: 'ready' | 'processing' | 'posted' | 'error';
+  status: 'draft' | 'ready' | 'processing' | 'posted' | 'error';
   scheduled_at: string;
   posted_at: string | null;
   ig_post_id: string | null;
@@ -40,12 +40,13 @@ function fmtIST(iso: string | null): string {
 
 function StatusPill({ status }: { status: QueueRow['status'] }) {
   const map = {
+    draft:      { icon: Layers,        label: 'Draft',      cls: 'text-zinc-300 border-zinc-500/40 bg-zinc-500/10' },
     ready:      { icon: Clock,         label: 'Ready',      cls: 'text-amber-300 border-amber-500/40 bg-amber-500/10' },
     processing: { icon: Loader2,       label: 'Processing', cls: 'text-blue-300 border-blue-500/40 bg-blue-500/10' },
     posted:     { icon: CheckCircle2,  label: 'Posted',     cls: 'text-accent border-accent/40 bg-accent/10' },
     error:      { icon: AlertTriangle, label: 'Error',      cls: 'text-rose-300 border-rose-500/40 bg-rose-500/10' },
   } as const;
-  const it = map[status];
+  const it = map[status] || map.ready;  // defensive fallback if a new status sneaks in
   const Icon = it.icon;
   return (
     <span className={`inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider px-2 py-1 rounded-full border ${it.cls}`}>
