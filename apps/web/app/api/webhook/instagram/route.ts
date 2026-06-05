@@ -91,15 +91,24 @@ interface MetaWebhookPayload {
 export async function POST(req: NextRequest) {
   // 1. Read raw body so we can verify the signature
   const raw = await req.text();
-  if (!verifySignature(raw, req.headers.get('x-hub-signature-256'))) {
+  const sigOk = verifySignature(raw, req.headers.get('x-hub-signature-256'));
+
+  // Log EVERY hit so we can debug what Meta is/isn't sending
+  const supa = adminClient();
+  await supa.from('ig_webhook_log').insert({
+    method: 'POST',
+    signature_ok: sigOk,
+    raw_body: raw.slice(0, 4000),
+    note: sigOk ? null : 'signature failed',
+  }).then(() => undefined);
+
+  if (!sigOk) {
     return NextResponse.json({ ok: false, error: 'bad signature' }, { status: 401 });
   }
 
   let payload: MetaWebhookPayload;
   try { payload = JSON.parse(raw) as MetaWebhookPayload; }
   catch { return NextResponse.json({ ok: false, error: 'bad json' }, { status: 400 }); }
-
-  const supa = adminClient();
 
   // 2. Load active rules once
   const { data: rulesRaw } = await supa
