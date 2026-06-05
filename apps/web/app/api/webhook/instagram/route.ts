@@ -142,6 +142,22 @@ export async function POST(req: NextRequest) {
 
       if (!commentText || !postId || !fromIgsid) continue;
 
+      // CRITICAL self-loop guard: if the comment came from our OWN business
+      // account, ignore it. Otherwise our public reply ("Hey @x here's the
+      // link...") gets re-detected as a new comment with the keyword "link",
+      // triggering another reply, ad infinitum. This was actually happening
+      // — `stackpicks.dev` showed up as a commenter in ig_dm_log because the
+      // webhook fired on our own /replies output.
+      const ownBusinessId = process.env.IG_BUSINESS_ID;
+      const ownHandle = (process.env.IG_OWN_HANDLE || 'stackpicks.dev').toLowerCase();
+      if (
+        (ownBusinessId && fromIgsid === ownBusinessId) ||
+        (fromUsername && fromUsername.toLowerCase() === ownHandle)
+      ) {
+        processed.push('skip:self_comment');
+        continue;
+      }
+
       const rule = matchRule(rules, commentText, postId);
       if (!rule) continue;
 
