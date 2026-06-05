@@ -13,8 +13,10 @@
 const GRAPH = 'https://graph.facebook.com/v21.0';
 
 function token(): string {
-  const t = process.env.META_LONG_TOKEN;
-  if (!t) throw new Error('META_LONG_TOKEN env not set');
+  // Prefer the IG-OAuth user token (has the right scopes for Send API),
+  // fall back to the System User token.
+  const t = process.env.IG_USER_TOKEN || process.env.META_LONG_TOKEN;
+  if (!t) throw new Error('IG_USER_TOKEN / META_LONG_TOKEN env not set');
   return t;
 }
 

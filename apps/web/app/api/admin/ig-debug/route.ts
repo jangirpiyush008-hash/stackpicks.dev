@@ -19,12 +19,17 @@ const GRAPH = 'https://graph.facebook.com/v21.0';
 export async function GET() {
   if (!(await isAdmin()).ok) return NextResponse.json({ ok: false }, { status: 401 });
 
-  const token = process.env.META_LONG_TOKEN;
+  const sysToken = process.env.META_LONG_TOKEN;
+  const igToken = process.env.IG_USER_TOKEN;
+  const token = igToken || sysToken;
   const id = process.env.IG_BUSINESS_ID;
   const out: Record<string, unknown> = {
     env: {
-      META_LONG_TOKEN_set: !!token,
-      META_LONG_TOKEN_last4: token ? token.slice(-6) : null,
+      META_LONG_TOKEN_set: !!sysToken,
+      META_LONG_TOKEN_last4: sysToken ? sysToken.slice(-6) : null,
+      IG_USER_TOKEN_set: !!igToken,
+      IG_USER_TOKEN_last4: igToken ? igToken.slice(-6) : null,
+      preferring: igToken ? 'IG_USER_TOKEN' : 'META_LONG_TOKEN',
       IG_BUSINESS_ID: id || null,
     },
   };

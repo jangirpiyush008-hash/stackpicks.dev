@@ -31,10 +31,12 @@ interface PageEntry {
 }
 
 function env() {
-  const token = process.env.META_LONG_TOKEN;
+  // Prefer the IG-OAuth-issued user token if present (works for IG-direct
+  // /subscribed_apps), fall back to the System User token for Page-route.
+  const token = process.env.IG_USER_TOKEN || process.env.META_LONG_TOKEN;
   const id = process.env.IG_BUSINESS_ID;
   if (!token || !id) {
-    throw new Error('META_LONG_TOKEN or IG_BUSINESS_ID env missing in Railway');
+    throw new Error('IG_USER_TOKEN / META_LONG_TOKEN or IG_BUSINESS_ID env missing in Railway');
   }
   return { token, id };
 }
