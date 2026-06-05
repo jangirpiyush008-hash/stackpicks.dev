@@ -16,11 +16,14 @@
     "db:push": "supabase db push",
     "db:reset": "supabase db reset",
     "db:types": "supabase gen types typescript --local > core/db/database.types.ts",
-    "ig-queue": "tsx scripts/ig-queue.ts"
+    "ig-queue": "tsx --env-file=apps/web/.env.local scripts/ig-queue.ts"
   },
   "devDependencies": {
     "supabase": "^1.200.0",
     "tsx": "^4.22.3",
     "typescript": "^5.5.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
   }
 }
