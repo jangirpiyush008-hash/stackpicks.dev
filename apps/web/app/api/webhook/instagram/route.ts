@@ -188,19 +188,35 @@ export async function POST(req: NextRequest) {
       }
 
       // Public comment reply — fires AFTER DM succeeds. Tells the commenter
-      // "Sent ✓ check your DMs" and signals to other viewers to do the same.
-      // Best-effort: a reply failure doesn't undo the DM.
-      let replyNote: string | undefined;
-      if (send.ok && rule.comment_reply && commentId) {
+      // "here's your link" publicly and signals to other viewers to do the same.
+      // Best-effort: a reply failure doesn't undo the DM. We log the outcome
+      // verbatim so we can diagnose IG permission / API issues.
+      let replyStatus: string;        // 'sent' | 'skipped_no_template' | 'skipped_no_comment_id' | 'error'
+      let replyId: string | undefined;
+      let replyError: string | undefined;
+      if (!send.ok) {
+        replyStatus = 'skipped_dm_failed';
+      } else if (!rule.comment_reply) {
+        replyStatus = 'skipped_no_template';
+      } else if (!commentId) {
+        replyStatus = 'skipped_no_comment_id';
+      } else {
         const replyText = renderTemplate(rule.comment_reply, {
           username: fromUsername,
           keyword: rule.keyword,
         });
         try {
           const r = await replyToComment({ commentId, message: replyText });
-          replyNote = r.ok ? `reply:${r.id}` : `replyErr:${r.error}`;
+          if (r.ok) {
+            replyStatus = 'sent';
+            replyId = r.id;
+          } else {
+            replyStatus = 'error';
+            replyError = r.error;
+          }
         } catch (e) {
-          replyNote = `replyErr:${(e as Error).message}`;
+          replyStatus = 'error';
+          replyError = (e as Error).message;
         }
       }
 
@@ -213,10 +229,12 @@ export async function POST(req: NextRequest) {
         trigger_text: commentText.slice(0, 500),
         status: send.ok ? 'sent' : 'error',
         ig_message_id: send.ok ? send.message_id : undefined,
-        error: send.ok ? replyNote?.startsWith('replyErr:') ? replyNote : undefined : send.error,
+        error: send.ok ? replyError : send.error,
+        reply_status: replyStatus,
+        reply_id: replyId,
       });
 
-      processed.push(send.ok ? `sent:${rule.id}${replyNote ? `+${replyNote}` : ''}` : `err:${rule.id}`);
+      processed.push(send.ok ? `sent:${rule.id}+reply:${replyStatus}` : `err:${rule.id}`);
     }
   }
 
