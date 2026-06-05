@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { adminClient } from '@stackpicks/core/db';
 import { Instagram, Sparkles, AlertCircle, CheckCircle2, Pause } from 'lucide-react';
+import { RulesEditor } from '@/components/autodm/RulesEditor';
 
 export const metadata = {
   title: 'Dashboard — StackPicks AutoDM',
@@ -27,7 +28,18 @@ interface TenantRow {
 }
 
 interface RuleRow {
-  id: string; label: string | null; keyword: string; is_active: boolean;
+  id: string;
+  label: string | null;
+  keyword: string;
+  dm_template: string;
+  cta_url: string | null;
+  cta_label: string | null;
+  comment_reply: string | null;
+  comment_reply_follower: string | null;
+  follow_nudge: boolean;
+  daily_cap_per_recipient: number | null;
+  is_active: boolean;
+  ai_personality_hint: string | null;
 }
 interface LogRow {
   ig_username: string | null; status: string; created_at: string; error: string | null;
@@ -67,7 +79,7 @@ export default async function DashboardPage({
   const justConnected = (await searchParams).connected === '1';
 
   const [rulesRes, logRes] = await Promise.all([
-    supa.from('autodm_rules').select('id, label, keyword, is_active').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(50),
+    supa.from('autodm_rules').select('id, label, keyword, dm_template, cta_url, cta_label, comment_reply, comment_reply_follower, follow_nudge, daily_cap_per_recipient, is_active, ai_personality_hint').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(50),
     supa.from('autodm_dm_log').select('ig_username, status, created_at, error').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(20),
   ]);
   const rules = (rulesRes.data ?? []) as RuleRow[];
@@ -149,32 +161,8 @@ export default async function DashboardPage({
           <Stat label="Plan" value={tenant.plan_tier} sub="upgrade soon →" />
         </div>
 
-        {/* Rules */}
-        <div className="mb-10">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold">Rules</h2>
-            <button className="text-xs text-accent hover:underline">+ New rule</button>
-          </div>
-          {rules.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted">
-              No rules yet. The AI onboarding will create 5 starter rules in ~60 seconds.
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {rules.map((r) => (
-                <div key={r.id} className="rounded-lg border border-border p-3 flex items-center justify-between">
-                  <div>
-                    <div className="font-medium text-sm">{r.label || 'Untitled rule'}</div>
-                    <div className="text-xs text-muted mt-1 font-mono">{r.keyword}</div>
-                  </div>
-                  <span className={`text-xs px-2 py-1 rounded-full ${r.is_active ? 'bg-emerald-500/10 text-emerald-500' : 'bg-muted/10 text-muted'}`}>
-                    {r.is_active ? 'live' : 'paused'}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        {/* Rules (client-side editor) */}
+        <RulesEditor initialRules={rules} hasNoRules={rules.length === 0} justConnected={justConnected} />
 
         {/* Activity */}
         <div>

@@ -129,6 +129,20 @@ export async function GET(req: NextRequest) {
   }, { onConflict: 'ig_business_id' });
   if (upsertErr) return fail(req, `tenant_upsert:${upsertErr.message.slice(0, 60)}`);
 
-  // 5. Redirect into the dashboard — AI onboarding job kicks off there
+  // 5. Subscribe this IG account's comments to OUR webhook.
+  //    Without this, Meta never sends events for this tenant.
+  //    Endpoint: POST /{ig-business-id}/subscribed_apps?subscribed_fields=comments
+  //    Failure is non-fatal — the tenant can re-trigger from the dashboard.
+  try {
+    await fetch(
+      `${GRAPH}/${igBusinessId}/subscribed_apps?` + new URLSearchParams({
+        subscribed_fields: 'comments,messages,mentions',
+        access_token: pageToken,
+      }),
+      { method: 'POST' },
+    );
+  } catch { /* best-effort */ }
+
+  // 6. Redirect into the dashboard — AI onboarding kicks off on first view
   return NextResponse.redirect(new URL('/autodm/dashboard?connected=1', req.url));
 }
