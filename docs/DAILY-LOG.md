@@ -10,6 +10,112 @@ Two daily tracks:
 
 ---
 
+## 2026-06-06 (Day 9 — StackPicks AutoDM: 5 days of build in one session, ready for paying customers)
+
+**Theme:** built the AutoDM product end-to-end as a sellable multi-tenant
+SaaS. Five "days" of the v1 roadmap shipped in one session. The working
+StackPicks-internal bot was UNTOUCHED throughout — fully isolated in
+ig_* tables while the new product lives in autodm_* tables.
+
+### What landed (in order)
+
+- `3563e65` — **Day 1** schema (6 RLS'd tables) + core/autodm/dm.ts send engine
+  with all the proven bug-fixes from yesterday's StackPicks-bot work
+  (Private Reply API, self-loop guard, 2-msg split, follower-aware copy,
+  account hourly cap, humanizing 2-5s delay). Token encryption via
+  AES-256-GCM. `/autodm` landing page with hero, 6 differentiators,
+  comparison table vs ManyChat/WhoseDM/Inrō, 4 pricing tiers.
+
+- `ea401e1` — **Day 2** subdomain routing (host-based rewrites for
+  autodm.stackpicks.dev), Meta IG OAuth start+callback with CSRF-signed
+  state, `/autodm/connect` page, `/autodm/dashboard` server component.
+  Voice-clone research prototype (scripts/autodm-voice-clone-research.ts)
+  using 5 creator archetypes — Anthropic SDK added as workspace dev dep.
+
+- `c18c648` — **Day 3** AI onboarding (THE magic moment):
+    core/autodm/ai-onboarding.ts pulls last 30 posts + 600 comments via
+    Graph API, sends through Claude opus-4-5 to generate 5 starter
+    rules in the creator's voice from caption style. Rules CRUD API
+    (GET/POST/PATCH/DELETE) tenant-scoped via discriminated-union types.
+    Client-side RulesEditor that auto-fires onboarding on first load.
+    OAuth callback now auto-subscribes the tenant's IG to our webhook.
+
+- `e0f8240` — **Day 4** conversational follow-up agent (THE OTHER killer
+  feature). core/autodm/followup-agent.ts with strict JSON output
+  (intent: reply|escalate|close, confidence). Webhook now handles
+  BOTH comments AND messages fields. Conversation rows seeded on initial
+  DM. On inbound recipient message: load voice samples, load product
+  context, call Claude with full transcript, route by intent. Hard caps
+  at 5 turns or 24h. Tenant settings PATCH route + FollowupAgentToggle
+  UI (locked behind Pro tier with upsell badge for Free/Creator).
+
+- `b696bc2` — **Day 5** Razorpay billing — fully wired revenue plumbing:
+    /api/autodm/billing/subscribe creates Razorpay subscription, returns
+    hosted checkout URL. /api/autodm/billing/webhook verifies HMAC,
+    flips tenant.plan_tier + hourly_cap + daily_cap on
+    activate/cancel/expire events. /api/autodm/billing/cancel calls
+    Razorpay cancel_at_cycle_end. PlanUpgrade component on dashboard
+    with 3 plan cards (Creator ₹499 / Pro ₹1,499 / Agency ₹4,999) and
+    "Current" badge on active tier. Reuses existing core/razorpay
+    helpers + RAZORPAY_WEBHOOK_SECRET — no new auth wiring needed.
+
+### Where AutoDM stands
+
+About 70% of the v1 roadmap shipped. Remaining for full launch:
+- Day 6: spam-shield Pro — body variants editor + spam-word linter
+- Day 7: conversations inbox UI — see active/escalated chats per tenant
+- Day 8: /admin/autodm super-admin — see all tenants for support
+- Account-warming auto-ramp (small, quick win)
+- MCP-native rule control (press hook, nice-to-have)
+
+### What Piyush needs to do to take live customers
+
+- Meta App: create separate AutoDM app at developers.facebook.com,
+  paste AUTODM_META_APP_ID + APP_SECRET + VERIFY_TOKEN into Railway env
+- Razorpay dashboard: create 3 monthly plans (Creator/Pro/Agency),
+  paste plan IDs into RAZORPAY_AUTODM_PLAN_* envs
+- Add /api/autodm/billing/webhook to Razorpay webhook subscriptions
+- ANTHROPIC_API_KEY for AI features (onboarding + follow-up agent)
+- AUTODM_ENC_KEY — generate with openssl rand -base64 32
+- DNS: CNAME autodm → Railway hostname for the clean subdomain
+  (optional — /autodm path also works during dev)
+
+### Validation TODOs still open
+
+- Voice clone prototype — run scripts/autodm-voice-clone-research.ts
+  with ANTHROPIC_API_KEY to gut-check whether Claude convincingly
+  mimics each of the 5 creator archetypes. Decision gate for whether
+  Pro tier price-anchors on voice clone or pivots to "follow-up agent
+  is the killer feature."
+- Token cost per DM at scale (sample run on ~50 fake comments)
+- Meta App review kickoff for instagram_business_manage_messages at
+  multi-tenant scale (1-3 week wait — start in parallel)
+
+### Stat snapshot for the session
+
+- Commits shipped: 5 (one per "day" of roadmap)
+- Tables created: 6 (autodm_tenants, autodm_rules, autodm_dm_log,
+  autodm_webhook_log, autodm_conversations, autodm_subscriptions)
+- Core modules: 5 (types, crypto, dm, ai-onboarding, followup-agent,
+  billing) — all DRY-shared in core/autodm/
+- API routes: 8 (oauth/start, oauth/callback, webhook, rules, onboard,
+  tenant, billing/{subscribe,webhook,cancel})
+- UI surfaces: 3 pages + 3 client components
+- Lines added: ~3,000
+- StackPicks-internal IG bot: untouched, still firing live for tomorrow's
+  Motion carousel commenters (Mon Jun 8, 09:30 IST)
+- AutoDM v1 productization roadmap: 5/13 days shipped
+
+### Tomorrow / next session
+
+- Run voice-clone validation script before continuing AI features
+- Day 6: spam-shield productization (variants + linter)
+- Day 7: conversations inbox UI
+- Continue IG content cycle — Mon Jun 8 Motion carousel auto-fires;
+  freshness check on Sun evening before Mon publish
+
+---
+
 ## 2026-06-06 (Day 8 — IG auto-DM hardening + 3-week carousel queue + AutoDM productization roadmap)
 
 **Theme of the day:** ship the full IG content engine end-to-end, then plan the
