@@ -105,9 +105,12 @@ export async function POST() {
         hint: 'IG-direct subscribe failed AND no linked Page found. The System User needs the Page asset assigned (Business Settings → System Users → Add assets → Pages).',
       }, { status: 500 });
     }
-    // Page-level webhook subscription. For IG events to flow we historically
-    // subscribed `feed` (covers posts/comments on the page and its linked IG).
-    const pageUrl = `${GRAPH}/${linked.page.id}/subscribed_apps?subscribed_fields=feed,messages,message_reactions,messaging_postbacks,messaging_referrals&access_token=${encodeURIComponent(linked.page.access_token)}`;
+    // Page-level webhook subscription. `feed` covers comments + posts on the
+    // Page and its linked IG account — which is what we need for the
+    // comment→DM flow. We deliberately skip messages/messaging_postbacks/
+    // message_reactions because those need pages_messaging permission and
+    // aren't required for comment-trigger DMs.
+    const pageUrl = `${GRAPH}/${linked.page.id}/subscribed_apps?subscribed_fields=feed&access_token=${encodeURIComponent(linked.page.access_token)}`;
     const pageRes = await fetch(pageUrl, { method: 'POST' });
     const pageJson = await pageRes.json().catch(() => ({}));
     attempts.push({ url: 'Page /subscribed_apps', status: pageRes.status, body: pageJson });
