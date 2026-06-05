@@ -81,28 +81,51 @@ export async function POST() {
   if (!(await isAdmin()).ok) return NextResponse.json({ ok: false }, { status: 401 });
   try {
     const { token, id } = env();
+
+    // Modern IG Graph API: POST directly to the IG business account.
+    // Even though GET on this edge errors ("nonexisting field"), POST is
+    // the documented way to subscribe an IG Business Account in 2024+.
+    const attempts: Array<{ url: string; status: number; body: unknown }> = [];
+
+    const igUrl = `${GRAPH}/${id}/subscribed_apps?subscribed_fields=comments,messages,message_reactions,mentions,live_comments&access_token=${encodeURIComponent(token)}`;
+    const igRes = await fetch(igUrl, { method: 'POST' });
+    const igJson = await igRes.json().catch(() => ({}));
+    attempts.push({ url: 'IG /subscribed_apps', status: igRes.status, body: igJson });
+    if (igRes.ok && (igJson as { success?: boolean }).success !== false) {
+      return NextResponse.json({ ok: true, target: 'ig_business_account', response: igJson });
+    }
+
+    // Fallback: try the linked Page with the Page-level field set.
     const linked = await findLinkedPage(token, id);
     if (!linked.page) {
       return NextResponse.json({
         ok: false,
-        response: { error: { message: linked.error } },
-        hint: 'The System User token must be able to list pages (pages_show_list scope) AND have access to the Page linked to the IG account. Add the Page as an asset of the System User in Business Settings.',
+        attempts,
+        page_lookup_error: linked.error,
+        hint: 'IG-direct subscribe failed AND no linked Page found. The System User needs the Page asset assigned (Business Settings → System Users → Add assets → Pages).',
       }, { status: 500 });
     }
-    // Subscribe the Page to the `instagram` webhook bundle (covers
-    // comments/messages/mentions on the linked IG account).
-    const url = `${GRAPH}/${linked.page.id}/subscribed_apps?subscribed_fields=instagram&access_token=${encodeURIComponent(linked.page.access_token)}`;
-    const r = await fetch(url, { method: 'POST' });
-    const json = await r.json();
-    if (!r.ok) {
+    // Page-level webhook subscription. For IG events to flow we historically
+    // subscribed `feed` (covers posts/comments on the page and its linked IG).
+    const pageUrl = `${GRAPH}/${linked.page.id}/subscribed_apps?subscribed_fields=feed,messages,message_reactions,messaging_postbacks,messaging_referrals&access_token=${encodeURIComponent(linked.page.access_token)}`;
+    const pageRes = await fetch(pageUrl, { method: 'POST' });
+    const pageJson = await pageRes.json().catch(() => ({}));
+    attempts.push({ url: 'Page /subscribed_apps', status: pageRes.status, body: pageJson });
+    if (pageRes.ok) {
       return NextResponse.json({
-        ok: false, status: r.status,
+        ok: true,
+        target: 'page',
         page: { id: linked.page.id, name: linked.page.name },
-        response: json,
-        hint: 'Page may need to be re-linked to the IG account, or the token may not have manage_metadata-equivalent permission on this Page.',
-      }, { status: 500 });
+        response: pageJson,
+        attempts,
+      });
     }
-    return NextResponse.json({ ok: true, page: { id: linked.page.id, name: linked.page.name }, response: json });
+
+    return NextResponse.json({
+      ok: false,
+      attempts,
+      hint: 'Both IG-direct and Page-route subscriptions failed. Likely cause: app is in Dev mode and the IG/Page is not added under App Roles → Roles → Add a Tester. Add @stackpicks.dev (or its FB admin) as a Tester and re-try.',
+    }, { status: 500 });
   } catch (e) {
     return NextResponse.json({ ok: false, error: (e as Error).message }, { status: 500 });
   }
