@@ -10,6 +10,89 @@ Two daily tracks:
 
 ---
 
+## 2026-06-06 (Day 8 — IG auto-DM hardening + 3-week carousel queue + AutoDM productization roadmap)
+
+**Theme of the day:** ship the full IG content engine end-to-end, then plan the
+extraction of our auto-DM as a sellable product. Long session — wrapped late.
+
+### IG auto-DM — hardened from "scaffolded" to "production-ready for non-followers"
+
+10 commits across the night, in order:
+- `9d4778f` — switch to IG Private Reply API (recipient.comment_id) so non-followers actually receive DMs. Fixed the "outside of allowed window" Meta error.
+- `e75798c` — comma-separated keywords (one rule = STACK, LINK, DM, SEND).
+- `2fbab24` — follow_nudge toggle (auto-append "PS — follow @stackpicks_official").
+- `7c8a309` — public comment reply alongside the DM (ManyChat-style "Link sent ✓").
+- `fb8cefc` — 2-message DM split (plain text first, button card second) to fix invisible-subtitle bug.
+- `b479111` — flip the public-reply/private-DM split per Piyush's call.
+- `4fbeee7` — log reply_status + reply_id + follow_check_source/error for diagnosis.
+- `daba276` — fix webhook SELECT missing new columns (the dead-features cause).
+- `554afac` — switch follow check to graph.facebook.com (where is_user_follow_business actually exists).
+- `029e32c` — CRITICAL self-loop guard (bot was replying to its own replies — caught by `stackpicks.dev` appearing as a commenter in ig_dm_log).
+- `f40567a` — follower-aware behavior end to end. Followers get clean "Link sent ✓"; non-followers get friendly opener + follow-nudge PS.
+
+Tested live with `_zeptooo`, `basu.singh08`, `sushant.kr15`, `demo_fluenco`,
+`piyush.jangir`. All received DMs; loop bug stopped; followers no longer get the PS.
+
+### Spam-shield (shipped end of session)
+
+After Piyush flagged the IG-blocks-too-many-links risk:
+- Strip raw URLs from all 12 DM templates — button card delivers the link, body only describes value.
+- Account-level hourly cap: max 60 outbound DMs/hour (env: `IG_ACCOUNT_HOURLY_CAP`). Overflow logs as `skip:rate_limited`.
+- Humanizing 2-5 sec random delay between webhook arrival and Send API call (not the 30-120 sec I originally proposed — Piyush corrected: instant matters more than human-looking).
+- Removed trigger word "free" → "no cost" in GSAP rule.
+
+### IG content pipeline — 3 weeks of carousels queued + auto-publishing
+
+- `7026437` — config-driven carousel pipeline (apps/instagram/carousel-builder.ts + 9 JSON configs).
+- `apps/instagram/capture_hero.py` — Playwright fallback for hero PNG capture when thum.io rate-limits.
+- 11 carousels with status=ready, all media uploaded to Supabase Storage. Topics: MCP 2026-07-28 spec (Fri Jun 6), Motion (Mon), shadcn/ui (Wed), Meta Ads MCP (Thu), Lovable+Bolt (Fri), GSAP (Mon 15), Three.js+R3F (Wed 17), Google Ads MCP (Thu 18), Magic UI+Aceternity (Fri 19), Tremor+Recharts (Mon 22), Webstudio (Wed 24).
+- 12 auto-DM rules wired — every carousel CTA keyword (MOTION, SHADCN, META, etc.) DMs the topic-specific link.
+- `5dc0a9e` — comment-keyword CTA appended to every caption; 4 missing category landing pages created (`/category/3d-web`, `/ai-builders`, `/charts-dashboards`, `/no-code`); `/mcp/category/*` redirect to `/mcp`.
+- `1406e28` — `/blog/mcp-2026-spec-explained` redirects to canonical post.
+- `scripts/ig-freshness-check.ts` — pings each upcoming post's source URL, flags review if HEAD non-2xx / different host / built > 14 days ago.
+
+### Catalog updates
+
+- Renamed `ui-components` → `components` slug (matches carousel URLs).
+- Added 4 new category rows: `3d-web`, `ai-builders`, `charts-dashboards`, `no-code`.
+- These are empty for now — fill as we add tagged repos.
+
+### Productization — StackPicks AutoDM v1 roadmap
+
+Piyush: HYPD has an auto-DM that mostly doesn't work properly. Decision: path B
+— pitch HYPD on adopting our engine, OR spin StackPicks AutoDM out for dev /
+SaaS creators (non-overlapping ICP).
+
+Roadmap committed in `docs/AUTODM-V1-ROADMAP.md` — 14-day build to sellable v1:
+- Days 1-2: multi-tenant migration (tenant table + RLS + per-tenant tokens).
+- Day 3: IG Login OAuth onboarding.
+- Days 4-5: 90-sec AI onboarding (scan posts + DMs → auto-generate 5 rules in creator's voice).
+- Day 6: voice cloning from past DMs.
+- Days 7-8: conversational follow-up agent (bot stays alive 5+ turns).
+- Days 9-10: spam-shield productization (variants, warming, 429 detector, linter).
+- Day 11: Razorpay billing — Free / ₹499 Creator / ₹1,499 Pro / ₹4,999 Agency.
+- Day 12: `/autodm` landing page.
+- Day 13: MCP-native rule control (press hook).
+- Day 14: beta with 10-20 hand-picked creators.
+
+About 60% of the engine is already shipped tonight on the StackPicks bot.
+
+### Pre-HYPD-pitch validation TODOs (open)
+
+- Voice clone prototype on Piyush's own DMs — must work convincingly before pricing Pro tier around it.
+- Token cost per DM at scale (Claude API) — needs sample run.
+- Piyush's HYPD employment contract — non-compete clause specifics. Confirm path B is viable.
+- Receipts for HYPD's broken non-follower / loop cases — Piyush to gather before the pitch meeting.
+
+### Tomorrow / next session
+
+- Build voice-clone prototype using Piyush's own past DMs as input.
+- Draft 1-page HYPD pitch PDF with comparison table + screenshots of the working StackPicks bot.
+- Continue Connect: 4 more OAuth apps (GitLab, Airtable, Calendly, Asana — task #116 in-progress).
+- SEO Day 5: StackShare + OpenAlternative submission (task #112 pending).
+
+---
+
 ## 2026-06-05 (Day 7 — IG auto-DM live + catalog refresh + admin calendar)
 
 ### Shipped today

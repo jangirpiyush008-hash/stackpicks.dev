@@ -187,6 +187,35 @@ export async function POST(req: NextRequest) {
         }
       }
 
+      // Account-level rate cap — Meta's spam ML penalises high-volume bursts
+      // on new accounts. Default: 60 outbound DMs/hour. Counted across all
+      // rules, not per-rule (the account is the throttle target). Once hit,
+      // we skip cleanly and log — creator can upgrade to raise the cap later.
+      const ACCOUNT_HOURLY_CAP = Number(process.env.IG_ACCOUNT_HOURLY_CAP ?? 60);
+      const hourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+      const { count: hourlyCount } = await supa
+        .from('ig_dm_log')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'sent')
+        .gte('created_at', hourAgo);
+      if ((hourlyCount ?? 0) >= ACCOUNT_HOURLY_CAP) {
+        await supa.from('ig_dm_log').insert({
+          rule_id: rule.id, ig_user_id: fromIgsid, ig_username: fromUsername,
+          trigger_event: 'comment', trigger_post_id: postId,
+          trigger_text: commentText.slice(0, 500),
+          status: 'skipped', error: `account_hourly_cap (${ACCOUNT_HOURLY_CAP}/hr)`,
+        });
+        processed.push(`skip:rate_limited`);
+        continue;
+      }
+
+      // Humanizing delay — 2-5 seconds randomized. Feels live to the
+      // commenter, looks human to Meta's bot-detection ML. Sub-second
+      // replies pattern-match as automated. Per Piyush: don't sacrifice
+      // perceived speed, just avoid the dead-giveaway < 3s window.
+      const delayMs = 2000 + Math.floor(Math.random() * 3000);  // 2000-5000
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+
       // Follow check — branches behavior:
       //   follower     → DM body without PS nudge + concise "Link sent ✓" public reply
       //   non-follower → DM body WITH PS follow nudge + friendly "here's the link" public reply
