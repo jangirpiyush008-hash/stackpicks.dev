@@ -30,7 +30,7 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 import { adminClient } from '@stackpicks/core/db';
 import {
   matchRule, sendDm, renderTemplate, applyFollowNudge, replyToComment,
-  type DmRule,
+  checkIsFollower, type DmRule,
 } from '@stackpicks/core/instagram/dm';
 
 export const runtime = 'nodejs';
@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
   // 2. Load active rules once
   const { data: rulesRaw } = await supa
     .from('ig_dm_rules')
-    .select('id, ig_post_id, keyword, dm_template, cta_url, cta_label, is_active, daily_cap, label, follow_nudge, comment_reply')
+    .select('id, ig_post_id, keyword, dm_template, cta_url, cta_label, is_active, daily_cap, label, follow_nudge, comment_reply, comment_reply_follower')
     .eq('is_active', true);
   const rules = (rulesRaw ?? []) as DmRule[];
 
@@ -171,9 +171,17 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // Send
+      // Follow check — branches behavior:
+      //   follower     → DM body without PS nudge + concise "Link sent ✓" public reply
+      //   non-follower → DM body WITH PS follow nudge + friendly "here's the link" public reply
+      // Defaults to non-follower behavior when the API can't tell us (safer:
+      // we don't drop the nudge for someone who actually isn't following).
+      const followerCheck = await checkIsFollower(fromIgsid);
+      const isFollower = followerCheck === true;
+
+      // Send DM
       const rawBody = renderTemplate(rule.dm_template, { username: fromUsername, keyword: rule.keyword });
-      const body = applyFollowNudge(rawBody, rule);
+      const body = isFollower ? rawBody : applyFollowNudge(rawBody, rule);
       let send;
       try {
         send = await sendDm({
@@ -194,14 +202,22 @@ export async function POST(req: NextRequest) {
       let replyStatus: string;        // 'sent' | 'skipped_no_template' | 'skipped_no_comment_id' | 'error'
       let replyId: string | undefined;
       let replyError: string | undefined;
+      // Pick the right public reply template based on follow status.
+      // Followers get the concise "Link sent ✓" confirmation; non-followers
+      // get the friendly "here's the link" opener that signals other viewers
+      // to comment too. Falls back to comment_reply if follower variant unset.
+      const replyTemplate = isFollower
+        ? (rule.comment_reply_follower || rule.comment_reply)
+        : rule.comment_reply;
+
       if (!send.ok) {
         replyStatus = 'skipped_dm_failed';
-      } else if (!rule.comment_reply) {
+      } else if (!replyTemplate) {
         replyStatus = 'skipped_no_template';
       } else if (!commentId) {
         replyStatus = 'skipped_no_comment_id';
       } else {
-        const replyText = renderTemplate(rule.comment_reply, {
+        const replyText = renderTemplate(replyTemplate, {
           username: fromUsername,
           keyword: rule.keyword,
         });
@@ -232,9 +248,10 @@ export async function POST(req: NextRequest) {
         error: send.ok ? replyError : send.error,
         reply_status: replyStatus,
         reply_id: replyId,
+        is_follower: followerCheck,
       });
 
-      processed.push(send.ok ? `sent:${rule.id}+reply:${replyStatus}` : `err:${rule.id}`);
+      processed.push(send.ok ? `sent:${rule.id}+reply:${replyStatus}+follower:${isFollower}` : `err:${rule.id}`);
     }
   }
 

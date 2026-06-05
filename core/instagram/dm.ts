@@ -44,6 +44,33 @@ export interface DmRule {
   label: string | null;
   follow_nudge: boolean;
   comment_reply: string | null;
+  /** Public reply text used when commenter ALREADY follows. Falls back to comment_reply. */
+  comment_reply_follower: string | null;
+}
+
+/**
+ * Check whether an IGSID (commenter) follows the business account.
+ *
+ * Uses the IG Messaging "user profile" endpoint which exposes
+ * `is_user_follow_business` for any user with a messaging context with the
+ * business. Comments grant exactly that context (7-day window), so it's
+ * available right when we need it.
+ *
+ * Returns `true` / `false` / `null` (when the API can't answer — we default
+ * to non-follower behavior so we don't accidentally drop the follow nudge
+ * for someone who actually isn't following).
+ */
+export async function checkIsFollower(igsid: string): Promise<boolean | null> {
+  if (!igsid) return null;
+  try {
+    const url = `${GRAPH}/${igsid}?fields=is_user_follow_business&access_token=${encodeURIComponent(token())}`;
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const j = (await res.json().catch(() => ({}))) as { is_user_follow_business?: boolean };
+    return typeof j.is_user_follow_business === 'boolean' ? j.is_user_follow_business : null;
+  } catch {
+    return null;
+  }
 }
 
 /**

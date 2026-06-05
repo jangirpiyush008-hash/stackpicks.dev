@@ -26,6 +26,7 @@ interface Rule {
   label: string | null;
   follow_nudge: boolean;
   comment_reply: string | null;
+  comment_reply_follower: string | null;
   created_at: string;
 }
 
@@ -43,6 +44,7 @@ const EMPTY: Omit<Rule, 'id' | 'created_at'> = {
   label: 'New rule',
   follow_nudge: true,
   comment_reply: 'Hey @{{username}} — here\'s the link you asked for',
+  comment_reply_follower: 'Link sent to your DM ✓ {{username}}',
 };
 
 export function IgDmRules() {
@@ -240,19 +242,32 @@ export function IgDmRules() {
                 placeholder="1" className="sp-admin-input" />
             </Field>
           </div>
-          <Field label="Public comment reply (optional — leave blank to skip)">
+          <Field label="Public reply — non-followers (drives them to action)">
             <input
               type="text"
               maxLength={280}
               value={draft.comment_reply || ''}
               onChange={(e) => setDraft({ ...draft, comment_reply: e.target.value || null })}
-              placeholder="Sent ✓ — check your DMs {{username}}"
+              placeholder="Hey @{{username}} — here's the link you asked for"
               className="sp-admin-input text-xs"
             />
             <p className="text-[10px] text-muted mt-1">
-              Posted as a public reply under the commenter&apos;s comment after the DM sends.
-              Boosts engagement + signals other viewers to comment the keyword too.
-              Placeholders: <code className="text-accent">{'{{username}}'}</code>, <code className="text-accent">{'{{keyword}}'}</code>
+              For commenters who DON&apos;T follow yet. Posted publicly under their comment.
+              Friendly opener that signals other viewers to comment too. Followers see the variant below instead.
+            </p>
+          </Field>
+          <Field label="Public reply — followers (concise confirmation)">
+            <input
+              type="text"
+              maxLength={280}
+              value={draft.comment_reply_follower || ''}
+              onChange={(e) => setDraft({ ...draft, comment_reply_follower: e.target.value || null })}
+              placeholder="Link sent to your DM ✓ {{username}}"
+              className="sp-admin-input text-xs"
+            />
+            <p className="text-[10px] text-muted mt-1">
+              For commenters who ALREADY follow you. Skips the &quot;friendly opener&quot; and skips the follow-nudge in the DM
+              (they already follow). Leave blank to fall back to the non-follower text.
             </p>
           </Field>
           <label className="flex items-start gap-2 text-xs text-muted mt-2 cursor-pointer select-none">
@@ -265,7 +280,7 @@ export function IgDmRules() {
             <span>
               <strong className="text-text">Append follow nudge</strong> — adds
               <code className="text-accent mx-1">PS — follow @stackpicks_official for more picks like this.</code>
-              to the DM body. Non-followers convert from it; followers ignore it. Recommended ON.
+              to the DM body. <strong className="text-text">Only fires for non-followers</strong> — followers don&apos;t see this (they already follow). Recommended ON.
             </span>
           </label>
           <div className="flex gap-2 mt-2">
