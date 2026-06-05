@@ -26,9 +26,14 @@ export async function GET() {
   const out: Record<string, unknown> = {
     env: {
       META_LONG_TOKEN_set: !!sysToken,
+      META_LONG_TOKEN_length: sysToken?.length ?? 0,
+      META_LONG_TOKEN_first8: sysToken ? sysToken.slice(0, 8) : null,
       META_LONG_TOKEN_last4: sysToken ? sysToken.slice(-6) : null,
       IG_USER_TOKEN_set: !!igToken,
+      IG_USER_TOKEN_length: igToken?.length ?? 0,
+      IG_USER_TOKEN_first8: igToken ? igToken.slice(0, 8) : null,
       IG_USER_TOKEN_last4: igToken ? igToken.slice(-6) : null,
+      IG_USER_TOKEN_has_whitespace: igToken ? /\s/.test(igToken) : null,
       preferring: igToken ? 'IG_USER_TOKEN' : 'META_LONG_TOKEN',
       IG_BUSINESS_ID: id || null,
     },
