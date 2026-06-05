@@ -40,6 +40,15 @@ const nextConfig = {
       },
     ];
   },
+
+  // IG carousels reference /mcp/category/<slug> — those don't have dynamic
+  // routes yet. 302 redirect them to /mcp (the listing page) until we wire
+  // proper category-filtered MCP routes. Avoids 404s on slide-6 swipes.
+  async redirects() {
+    return [
+      { source: '/mcp/category/:slug*', destination: '/mcp', permanent: false },
+    ];
+  },
 };
 
 export default nextConfig;
