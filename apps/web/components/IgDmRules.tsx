@@ -71,10 +71,12 @@ export function IgDmRules() {
     if (j.ok) {
       setSubState({ loading: false, subscribed: true, detail: 'Subscribed ✓ — comments will now hit /api/webhook/instagram' });
     } else {
+      // Show the full attempts array so we can see what Meta actually said
+      const verbose = JSON.stringify(j, null, 2);
       setSubState({
         loading: false,
         subscribed: false,
-        detail: (j?.response?.error?.message || j?.error || 'Subscribe failed') + (j?.hint ? ` — ${j.hint}` : ''),
+        detail: verbose,
       });
     }
   }
@@ -142,9 +144,15 @@ export function IgDmRules() {
               Webhook subscription —{' '}
               {subState.loading ? 'checking…' : subState.subscribed ? 'live' : 'NOT live'}
             </p>
-            <p className="text-xs text-muted mt-1">
-              {subState.detail || 'Configuring the webhook URL in Meta is not enough — the IG Business Account itself must be subscribed via the Graph API. Click subscribe below.'}
-            </p>
+            {subState.subscribed === false && subState.detail && subState.detail.startsWith('{') ? (
+              <pre className="mt-1 p-2 bg-bg/50 border border-border rounded text-[10px] font-mono text-muted overflow-x-auto max-h-72">
+                {subState.detail}
+              </pre>
+            ) : (
+              <p className="text-xs text-muted mt-1">
+                {subState.detail || 'Configuring the webhook URL in Meta is not enough — the IG Business Account itself must be subscribed via the Graph API. Click subscribe below.'}
+              </p>
+            )}
             {!subState.subscribed && (
               <button
                 onClick={subscribe}
