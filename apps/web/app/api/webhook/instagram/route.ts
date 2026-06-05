@@ -132,6 +132,7 @@ export async function POST(req: NextRequest) {
 
       const v = change.value || {};
       const commentText = v.text || '';
+      const commentId = v.id || '';            // IG comment ID — unlocks Private Reply path
       const postId = v.media?.id || '';
       const fromIgsid = v.from?.id || '';
       const fromUsername = v.from?.username;
@@ -173,6 +174,7 @@ export async function POST(req: NextRequest) {
       try {
         send = await sendDm({
           recipientIgsid: fromIgsid,
+          commentId: commentId || undefined,  // Private Reply path — 7-day window, works for non-followers
           body,
           ctaUrl: rule.cta_url ?? undefined,
           ctaLabel: rule.cta_label ?? undefined,

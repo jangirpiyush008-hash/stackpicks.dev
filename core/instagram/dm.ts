@@ -88,22 +88,34 @@ export interface SendDmResult {
 /**
  * Send a DM to a user via the IG Messaging Send API.
  *
+ * Two delivery paths:
+ *
+ * 1. **Private Reply (preferred for comment triggers)** — pass `commentId`.
+ *    Meta lets you DM the commenter for up to 7 days after their comment,
+ *    even if they've NEVER messaged you before. This is the supported path
+ *    for "comment → DM" automation. Bypasses the 24-hour conversation window
+ *    that blocks first-time DMs.
+ *
+ * 2. **Standard messaging (fallback)** — pass `recipientIgsid` only.
+ *    Only works inside an active 24-hour conversation window. Use this only
+ *    when there's no comment context (e.g. message-trigger DMs).
+ *
  * `recipientIgsid` is Meta's Instagram-Scoped ID (IGSID) — it comes in on
  * the webhook event as `from.id`. NOT the user's @handle.
  *
+ * `commentId` is the IG comment ID (webhook `value.id` on a comments event).
+ *
  * If `ctaUrl` + `ctaLabel` are provided, we send the message as a "generic
  * template" with a single web_url button. Otherwise plain text.
- *
- * IG only lets you send messages within a 24-hour window after the user's
- * last interaction with you (their comment counts as an interaction).
  */
 export async function sendDm(input: {
   recipientIgsid: string;
+  commentId?: string;
   body: string;
   ctaUrl?: string;
   ctaLabel?: string;
 }): Promise<SendDmResult> {
-  const { recipientIgsid, body, ctaUrl, ctaLabel } = input;
+  const { recipientIgsid, commentId, body, ctaUrl, ctaLabel } = input;
 
   const messagePayload =
     ctaUrl && ctaLabel
@@ -126,15 +138,27 @@ export async function sendDm(input: {
         }
       : { text: body };
 
+  // Private Reply path: address by comment_id, NOT user_id. Meta uses the
+  // comment as the messaging anchor and grants a 7-day window from the
+  // comment timestamp. No `messaging_type` needed — it's inferred.
+  // Standard path: by IGSID, requires an active 24h conversation.
+  const recipient = commentId
+    ? { comment_id: commentId }
+    : { id: recipientIgsid };
+  const payload: Record<string, unknown> = {
+    recipient,
+    message: messagePayload,
+  };
+  if (!commentId) {
+    // Standard messaging requires this; private replies don't.
+    payload.messaging_type = 'RESPONSE';
+  }
+
   const url = `${GRAPH}/${igBusinessId()}/messages?access_token=${encodeURIComponent(token())}`;
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      recipient: { id: recipientIgsid },
-      message: messagePayload,
-      messaging_type: 'RESPONSE',
-    }),
+    body: JSON.stringify(payload),
   });
 
   const json = (await res.json().catch(() => ({}))) as {
