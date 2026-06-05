@@ -60,16 +60,38 @@ export interface DmRule {
  * to non-follower behavior so we don't accidentally drop the follow nudge
  * for someone who actually isn't following).
  */
-export async function checkIsFollower(igsid: string): Promise<boolean | null> {
-  if (!igsid) return null;
+/**
+ * Result of a follow-status check — boolean answer + diagnostic info so we
+ * can see in ig_dm_log exactly why the API answered the way it did.
+ */
+export interface FollowCheckResult {
+  isFollower: boolean | null;   // true / false / null when API can't answer
+  source: string;               // 'fb_graph' | 'ig_graph' | 'none'
+  rawError?: string;
+}
+
+export async function checkIsFollower(igsid: string): Promise<FollowCheckResult> {
+  if (!igsid) return { isFollower: null, source: 'none', rawError: 'no_igsid' };
+
+  // Try graph.facebook.com first — `is_user_follow_business` is documented
+  // there for Page Access Tokens (Messenger Platform). It does NOT exist on
+  // graph.instagram.com (IG Login API).
+  const fbUrl = `https://graph.facebook.com/v21.0/${igsid}?fields=is_user_follow_business&access_token=${encodeURIComponent(token())}`;
   try {
-    const url = `${GRAPH}/${igsid}?fields=is_user_follow_business&access_token=${encodeURIComponent(token())}`;
-    const res = await fetch(url);
-    if (!res.ok) return null;
-    const j = (await res.json().catch(() => ({}))) as { is_user_follow_business?: boolean };
-    return typeof j.is_user_follow_business === 'boolean' ? j.is_user_follow_business : null;
-  } catch {
-    return null;
+    const res = await fetch(fbUrl);
+    const j = (await res.json().catch(() => ({}))) as {
+      is_user_follow_business?: boolean;
+      error?: { message?: string; code?: number };
+    };
+    if (typeof j.is_user_follow_business === 'boolean') {
+      return { isFollower: j.is_user_follow_business, source: 'fb_graph' };
+    }
+    if (j.error) {
+      return { isFollower: null, source: 'fb_graph', rawError: j.error.message || `code ${j.error.code}` };
+    }
+    return { isFollower: null, source: 'fb_graph', rawError: 'no field in response' };
+  } catch (e) {
+    return { isFollower: null, source: 'fb_graph', rawError: (e as Error).message };
   }
 }
 

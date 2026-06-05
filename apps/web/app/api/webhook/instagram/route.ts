@@ -193,7 +193,7 @@ export async function POST(req: NextRequest) {
       // Defaults to non-follower behavior when the API can't tell us (safer:
       // we don't drop the nudge for someone who actually isn't following).
       const followerCheck = await checkIsFollower(fromIgsid);
-      const isFollower = followerCheck === true;
+      const isFollower = followerCheck.isFollower === true;
 
       // Send DM
       const rawBody = renderTemplate(rule.dm_template, { username: fromUsername, keyword: rule.keyword });
@@ -264,10 +264,12 @@ export async function POST(req: NextRequest) {
         error: send.ok ? replyError : send.error,
         reply_status: replyStatus,
         reply_id: replyId,
-        is_follower: followerCheck,
+        is_follower: followerCheck.isFollower,
+        follow_check_source: followerCheck.source,
+        follow_check_error: followerCheck.rawError,
       });
 
-      processed.push(send.ok ? `sent:${rule.id}+reply:${replyStatus}+follower:${isFollower}` : `err:${rule.id}`);
+      processed.push(send.ok ? `sent:${rule.id}+reply:${replyStatus}+follower:${isFollower}(${followerCheck.source})` : `err:${rule.id}`);
     }
   }
 
