@@ -199,7 +199,7 @@ Nobody can clone an honest opinion.
 Link: stackpicks.dev
 
 — Piyush
-Head of Affiliate Marketing, HYPD
+Founder, StackPicks
 Self-taught builder. Ship products, not slides.
 
 #OpenSource #DeveloperTools #BuildInPublic #IndianStartup

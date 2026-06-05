@@ -88,7 +88,7 @@ Keep it that short. Twitter DMs over 200 words get ignored.
 
 > Hi {{first_name}},
 >
-> Piyush here, Head of Affiliate Marketing at HYPD and founder of StackPicks — a curated directory of open-source dev tools that launched this week.
+> Piyush here, founder of StackPicks — a curated directory of open-source dev tools that launched this week. Background in India's creator economy + affiliate marketing.
 >
 > Saw {{their tool}} would fit in our {{category}} section perfectly. {{Specific reason — e.g. "Already getting 200 monthly searches in that category"}}.
 >

@@ -201,7 +201,7 @@ All posts for week 3 public launch. Schedule on **Tuesday or Wednesday** (highes
 **Body:**
 > StackPicks went live this week. 100+ open-source dev tools with opinionated "use this if / skip if" takes per repo. Categories: UI, AI, auth, payments, databases, animation, etc.
 >
-> Build time: ~14 days solo, between a day job (Head of Affiliate Marketing at HYPD) and side project. Stack: Next.js 15 + Supabase + Razorpay + Vercel.
+> Build time: ~14 days solo, evenings + weekends around a full-time marketing role. Stack: Next.js 15 + Supabase + Razorpay + Vercel.
 >
 > The five monetization rails (all wired from day 1):
 >

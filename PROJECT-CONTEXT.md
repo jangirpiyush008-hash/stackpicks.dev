@@ -34,7 +34,7 @@
 **Name:** StackPicks
 **Domain:** stackpicks.dev (Namecheap, ~₹1,200/year)
 **Description:** Curated directory of open-source dev tools with opinionated build-or-skip takes per repo.
-**Owner:** Piyush Jangir — Head of Affiliate Marketing at HYPD, Gurgaon/Faridabad, India.
+**Owner:** Piyush Jangir — builder + marketer based in Gurgaon/Faridabad, India. Background in India's creator economy and affiliate marketing.
 **Built in:** May 2026.
 **Live target:** Weekend of May 23-24, 2026.
 
