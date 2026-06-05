@@ -119,35 +119,35 @@ export function IgDmRules() {
         <div className="rounded-xl border border-accent/40 bg-surface/40 p-4 flex flex-col gap-3">
           <Field label="Rule label (admin-only)">
             <input type="text" value={draft.label || ''} onChange={(e) => setDraft({ ...draft, label: e.target.value })}
-              placeholder="e.g. 'Comment STACK → directory link'" className="input" />
+              placeholder="e.g. 'Comment STACK → directory link'" className="sp-admin-input" />
           </Field>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <Field label="IG post ID (optional — leave blank to match all posts)">
               <input type="text" value={draft.ig_post_id || ''} onChange={(e) => setDraft({ ...draft, ig_post_id: e.target.value || null })}
-                placeholder="18015262013700309" className="input font-mono text-xs" />
+                placeholder="18015262013700309" className="sp-admin-input font-mono text-xs" />
             </Field>
             <Field label="Trigger keyword (required)">
               <input type="text" value={draft.keyword} onChange={(e) => setDraft({ ...draft, keyword: e.target.value })}
-                placeholder="STACK" className="input" />
+                placeholder="STACK" className="sp-admin-input" />
             </Field>
           </div>
           <Field label="DM body (required)">
             <textarea rows={3} value={draft.dm_template} onChange={(e) => setDraft({ ...draft, dm_template: e.target.value })}
-              className="input font-sans text-sm" />
+              className="sp-admin-input font-sans text-sm" />
             <p className="text-[10px] text-muted mt-1">Placeholders: <code className="text-accent">{'{{username}}'}</code>, <code className="text-accent">{'{{keyword}}'}</code></p>
           </Field>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <Field label="CTA URL (optional)">
               <input type="url" value={draft.cta_url || ''} onChange={(e) => setDraft({ ...draft, cta_url: e.target.value || null })}
-                placeholder="https://stackpicks.dev" className="input text-xs" />
+                placeholder="https://stackpicks.dev" className="sp-admin-input text-xs" />
             </Field>
             <Field label="CTA button label">
               <input type="text" value={draft.cta_label || ''} maxLength={20} onChange={(e) => setDraft({ ...draft, cta_label: e.target.value || null })}
-                placeholder="Open StackPicks" className="input" />
+                placeholder="Open StackPicks" className="sp-admin-input" />
             </Field>
             <Field label="Daily cap per recipient">
               <input type="number" min={1} value={draft.daily_cap ?? ''} onChange={(e) => setDraft({ ...draft, daily_cap: e.target.value ? Number(e.target.value) : null })}
-                placeholder="1" className="input" />
+                placeholder="1" className="sp-admin-input" />
             </Field>
           </div>
           <div className="flex gap-2 mt-2">
@@ -228,21 +228,6 @@ export function IgDmRules() {
         </div>
       )}
 
-      <style jsx>{`
-        :global(.input) {
-          width: 100%;
-          padding: 0.5rem 0.75rem;
-          background: rgba(0,0,0,0.25);
-          border: 1px solid rgba(255,255,255,0.08);
-          border-radius: 0.375rem;
-          color: var(--color-text, white);
-          font-size: 0.875rem;
-        }
-        :global(.input:focus) {
-          outline: none;
-          border-color: var(--color-accent, #c6ff00);
-        }
-      `}</style>
     </div>
   );
 }
