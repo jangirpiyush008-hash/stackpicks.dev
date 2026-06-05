@@ -178,6 +178,7 @@ export function IgDmRules() {
             <ol className="list-decimal list-inside mt-2 space-y-1 text-xs">
               <li>Pin a rule to a specific IG post (paste the Media ID) <em>or</em> leave blank to match every post.</li>
               <li>Keyword is case-insensitive substring (e.g. <code className="text-accent">stack</code> matches "I want the STACK").</li>
+              <li><strong>Multiple keywords?</strong> Comma-separate them: <code className="text-accent">STACK, BUNDLE, LINK</code> → matches if ANY of those words appear in the comment.</li>
               <li>Template supports <code className="text-accent">{'{{username}}'}</code> + <code className="text-accent">{'{{keyword}}'}</code> placeholders.</li>
               <li>Daily cap is per-recipient — set to 1 to avoid spamming the same person.</li>
             </ol>
@@ -208,9 +209,9 @@ export function IgDmRules() {
               <input type="text" value={draft.ig_post_id || ''} onChange={(e) => setDraft({ ...draft, ig_post_id: e.target.value || null })}
                 placeholder="18015262013700309" className="sp-admin-input font-mono text-xs" />
             </Field>
-            <Field label="Trigger keyword (required)">
+            <Field label="Trigger keyword(s) — comma-separate for multiple">
               <input type="text" value={draft.keyword} onChange={(e) => setDraft({ ...draft, keyword: e.target.value })}
-                placeholder="STACK" className="sp-admin-input" />
+                placeholder="STACK, BUNDLE, LINK" className="sp-admin-input" />
             </Field>
           </div>
           <Field label="DM body (required)">

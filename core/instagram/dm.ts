@@ -47,11 +47,15 @@ export interface DmRule {
 /**
  * Pick the best matching rule for a comment event.
  *
- * Match precedence:
- *   1. Rules pinned to this exact post + keyword in comment text
- *   2. Global rules (ig_post_id IS NULL) + keyword in comment text
+ * The `keyword` field on a rule can hold a SINGLE keyword (e.g. `STACK`)
+ * OR a COMMA-SEPARATED list (e.g. `STACK, BUNDLE, LINK`). We split on
+ * commas, trim each, lowercase, and OR-match: if ANY token appears as a
+ * case-insensitive substring of the comment text, the rule matches.
  *
- * Keyword match is case-insensitive substring on the trimmed comment text.
+ * Match precedence:
+ *   1. Rules pinned to this exact post (ig_post_id === postId)
+ *   2. Global rules (ig_post_id IS NULL)
+ *
  * Returns null if no rule matches.
  */
 export function matchRule(
@@ -61,7 +65,12 @@ export function matchRule(
 ): DmRule | null {
   const text = (commentText || '').toLowerCase().trim();
   if (!text) return null;
-  const active = rules.filter((r) => r.is_active && text.includes(r.keyword.toLowerCase()));
+  const matches = (kw: string) =>
+    kw.split(',')
+      .map((k) => k.trim().toLowerCase())
+      .filter(Boolean)
+      .some((k) => text.includes(k));
+  const active = rules.filter((r) => r.is_active && matches(r.keyword));
   if (!active.length) return null;
   // Prefer post-specific over global
   const pinned = active.find((r) => r.ig_post_id === postId);
