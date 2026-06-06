@@ -9,7 +9,6 @@ import { Instagram, Sparkles, AlertCircle, CheckCircle2, Pause, Inbox } from 'lu
 import { RulesEditor } from '@/components/autodm/RulesEditor';
 import { FollowupAgentToggle } from '@/components/autodm/FollowupAgentToggle';
 import { PlanUpgrade } from '@/components/autodm/PlanUpgrade';
-import { McpKeysCard } from '@/components/autodm/McpKeysCard';
 
 export const metadata = {
   title: 'Dashboard — StackPicks AutoDM',
@@ -192,9 +191,6 @@ export default async function DashboardPage({
         <div className="mb-8">
           <FollowupAgentToggle initiallyOn={tenant.ai_followup_agent} planTier={tenant.plan_tier} />
         </div>
-
-        {/* MCP keys — manage rules from Claude */}
-        <McpKeysCard />
 
         {/* Rules (client-side editor) */}
         <RulesEditor initialRules={rules} hasNoRules={rules.length === 0} justConnected={justConnected} />
