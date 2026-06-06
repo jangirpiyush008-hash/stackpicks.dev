@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { adminClient } from '@stackpicks/core/db';
-import { Instagram, Sparkles, AlertCircle, CheckCircle2, Pause } from 'lucide-react';
+import { Instagram, Sparkles, AlertCircle, CheckCircle2, Pause, Inbox } from 'lucide-react';
 import { RulesEditor } from '@/components/autodm/RulesEditor';
 import { FollowupAgentToggle } from '@/components/autodm/FollowupAgentToggle';
 import { PlanUpgrade } from '@/components/autodm/PlanUpgrade';
@@ -83,12 +83,15 @@ export default async function DashboardPage({
   const { searchParams: _ } = { searchParams: await searchParams };
   const justConnected = (await searchParams).connected === '1';
 
-  const [rulesRes, logRes] = await Promise.all([
+  const [rulesRes, logRes, convCountRes] = await Promise.all([
     supa.from('autodm_rules').select('id, label, keyword, dm_template, dm_template_variants, cta_url, cta_label, comment_reply, comment_reply_follower, follow_nudge, daily_cap_per_recipient, is_active, ai_personality_hint').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(50),
     supa.from('autodm_dm_log').select('ig_username, status, created_at, error').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(20),
+    supa.from('autodm_conversations').select('id', { count: 'exact', head: true })
+        .eq('tenant_id', tenant.id).eq('status', 'creator_escalated'),
   ]);
   const rules = (rulesRes.data ?? []) as RuleRow[];
   const logs = (logRes.data ?? []) as LogRow[];
+  const escalatedCount = convCountRes.count ?? 0;
 
   const sentToday = logs.filter((l) =>
     l.status === 'sent' &&
@@ -108,7 +111,22 @@ export default async function DashboardPage({
             <h1 className="text-3xl font-extrabold">@{tenant.ig_username || 'creator'}</h1>
             <div className="text-sm text-muted mt-1">{tenant.plan_tier.toUpperCase()} · {tenant.hourly_cap}/hr · {tenant.daily_cap}/day</div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <Link
+              href="/autodm/inbox"
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition ${
+                escalatedCount > 0
+                  ? 'bg-amber-500/10 text-amber-500 hover:bg-amber-500/15'
+                  : 'bg-bg-card border border-border text-muted hover:text-text'
+              }`}
+            >
+              <Inbox className="w-3 h-3" /> Inbox
+              {escalatedCount > 0 && (
+                <span className="ml-0.5 inline-block text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-amber-500/20">
+                  {escalatedCount}
+                </span>
+              )}
+            </Link>
             {isPaused ? (
               <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-500 text-xs font-semibold">
                 <Pause className="w-3 h-3" /> Paused
