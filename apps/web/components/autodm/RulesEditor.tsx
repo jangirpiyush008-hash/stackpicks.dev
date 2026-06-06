@@ -189,10 +189,11 @@ export function RulesEditor({
             <p className="text-[10px] text-muted mt-1">Placeholders: <code className="text-accent">{'{{username}}'}</code>, <code className="text-accent">{'{{keyword}}'}</code></p>
           </Field>
 
-          {/* Body variants — randomly rotated per send for spam-shield */}
+          {/* Body variants — A/B tested via epsilon-greedy. Live CTR shown per variant for saved rules. */}
           <VariantsEditor
             variants={draft.dm_template_variants || []}
             onChange={(v) => setDraft({ ...draft, dm_template_variants: v.length > 0 ? v : null })}
+            ruleId={draft.id}
           />
 
           {/* Live linter — calls /api/autodm/lint as you type */}
@@ -306,14 +307,42 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
+interface VariantPerfRow { index: number; sent: number; clicks: number; ctr: number; isWinner: boolean }
+
 function VariantsEditor({
-  variants, onChange,
-}: { variants: string[]; onChange: (v: string[]) => void }) {
+  variants, onChange, ruleId,
+}: { variants: string[]; onChange: (v: string[]) => void; ruleId?: string }) {
+  const [perf, setPerf] = useState<Record<number, VariantPerfRow>>({});
+
+  // Fetch A/B perf for saved rules with >1 variant
+  useEffect(() => {
+    if (!ruleId || variants.length < 2) { setPerf({}); return; }
+    let cancelled = false;
+    fetch(`/api/autodm/rules/${ruleId}/variants`)
+      .then((r) => r.json())
+      .then((j) => {
+        if (cancelled || !j.ok) return;
+        const map: Record<number, VariantPerfRow> = {};
+        for (const v of j.variants ?? []) {
+          map[v.index] = {
+            index: v.index,
+            sent: v.sent ?? 0,
+            clicks: v.clicks ?? 0,
+            ctr: v.sent ? Math.round((v.clicks / v.sent) * 100) : 0,
+            isWinner: !!v.isWinner,
+          };
+        }
+        setPerf(map);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [ruleId, variants.length]);
+
   return (
     <div>
       <div className="flex items-center justify-between">
         <span className="block text-xs text-muted">
-          Body variants (optional) — randomly rotated per send
+          Body variants — A/B tested automatically. Winners get sent more.
         </span>
         {variants.length < 4 && (
           <button
@@ -326,32 +355,52 @@ function VariantsEditor({
         )}
       </div>
       <p className="text-[10px] text-muted mt-1">
-        Adding 2-3 variants makes spam detection harder. Each commenter gets a randomly-picked one.
+        We pick variants via epsilon-greedy: random while learning, then ~80% the leader, 20% explore.
+        Live CTR appears once you have 30+ sends.
       </p>
-      {variants.map((v, i) => (
-        <div key={i} className="mt-2 flex gap-2 items-start">
-          <span className="text-[10px] font-mono text-muted mt-2 w-6">#{i + 1}</span>
-          <textarea
-            rows={2}
-            value={v}
-            onChange={(e) => {
-              const next = [...variants];
-              next[i] = e.target.value;
-              onChange(next);
-            }}
-            className="sp-input text-sm flex-1"
-            placeholder="Reword the main DM body — same meaning, different words."
-          />
-          <button
-            type="button"
-            onClick={() => onChange(variants.filter((_, j) => j !== i))}
-            className="text-muted hover:text-rose-400 mt-2"
-            aria-label="remove variant"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      ))}
+      {variants.map((v, i) => {
+        const p = perf[i];
+        return (
+          <div key={i} className="mt-2">
+            <div className="flex gap-2 items-start">
+              <span className="text-[10px] font-mono text-muted mt-2 w-6">#{i + 1}</span>
+              <div className="flex-1">
+                <textarea
+                  rows={2}
+                  value={v}
+                  onChange={(e) => {
+                    const next = [...variants];
+                    next[i] = e.target.value;
+                    onChange(next);
+                  }}
+                  className="sp-input text-sm w-full"
+                  placeholder="Reword the main DM body — same meaning, different words."
+                />
+                {p && p.sent > 0 && (
+                  <div className="mt-1 flex items-center gap-2 text-[10px] font-mono">
+                    <span className="text-muted">{p.sent} sent · {p.clicks} clicked</span>
+                    <span className={`px-1.5 py-0.5 rounded ${
+                      p.isWinner ? 'bg-accent/15 text-accent font-semibold' :
+                      p.ctr >= 10 ? 'bg-amber-500/10 text-amber-500' :
+                      'bg-muted/10 text-muted'
+                    }`}>
+                      {p.ctr}% CTR{p.isWinner ? ' · winner' : ''}
+                    </span>
+                  </div>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => onChange(variants.filter((_, j) => j !== i))}
+                className="text-muted hover:text-rose-400 mt-2"
+                aria-label="remove variant"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

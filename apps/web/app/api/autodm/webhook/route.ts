@@ -22,6 +22,7 @@ import { decryptToken } from '@stackpicks/core/autodm/crypto';
 import { generateFollowupReply, FOLLOWUP_LIMITS } from '@stackpicks/core/autodm/followup-agent';
 import type { AutoDmTenant, AutoDmRule } from '@stackpicks/core/autodm/types';
 import { autodmOrigin } from '@stackpicks/core/autodm/origin';
+import { pickVariant } from '@stackpicks/core/autodm/ab-test';
 
 interface TranscriptTurn {
   role: 'user' | 'creator_bot';
@@ -218,11 +219,31 @@ export async function POST(req: NextRequest) {
       const followerCheck = await checkIsFollower(fromIgsid, tenantToken);
       const isFollower = followerCheck.isFollower === true;
 
-      // Pick body variant (if creator added multiple) — random for spam-shield
+      // Pick body variant via epsilon-greedy A/B. Cold-start = uniform
+      // random until each variant has data; warm = ~80% pick the leader.
       const variants = rule.dm_template_variants && rule.dm_template_variants.length > 0
         ? rule.dm_template_variants
         : [rule.dm_template];
-      const variantIdx = Math.floor(Math.random() * variants.length);
+      let variantIdx = 0;
+      if (variants.length > 1) {
+        // Pull per-variant perf for this rule in the last 30 days
+        const monthAgo = new Date(Date.now() - 30 * 86400_000).toISOString();
+        const { data: perfRows } = await supa
+          .from('autodm_dm_log')
+          .select('body_variant_index, click_count')
+          .eq('rule_id', rule.id)
+          .eq('status', 'sent')
+          .gt('created_at', monthAgo)
+          .limit(2000);
+        const perf: Record<number, { sent: number; clicks: number }> = {};
+        for (const r of perfRows ?? []) {
+          const i = (r.body_variant_index as number | null) ?? 0;
+          const s = perf[i] ??= { sent: 0, clicks: 0 };
+          s.sent++;
+          if ((r.click_count as number | null) ?? 0 > 0) s.clicks++;
+        }
+        variantIdx = pickVariant(variants.length, perf);
+      }
       const rawBody = renderTemplate(variants[variantIdx], {
         username: fromUsername, keyword: rule.keyword,
       });
