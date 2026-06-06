@@ -31,12 +31,20 @@ export default async function AutoDmLayout({ children }: { children: React.React
 
           <div className="flex-1" />
 
+          {/* Blog link — Meta IG automation + Private Reply API + ad MCPs */}
+          <Link
+            href="/autodm/blog"
+            className="text-xs text-muted hover:text-text px-3 py-1.5 rounded-full transition hidden sm:inline-block"
+          >
+            Blog
+          </Link>
+
           {/* "Visit StackPicks" CTA — cross-link to the directory */}
           <a
             href="https://stackpicks.dev"
             target="_blank"
             rel="noopener"
-            className="hidden sm:inline-flex items-center gap-1 text-xs text-muted hover:text-text px-3 py-1.5 rounded-full border border-border transition"
+            className="hidden md:inline-flex items-center gap-1 text-xs text-muted hover:text-text px-3 py-1.5 rounded-full border border-border transition"
           >
             Visit StackPicks <ArrowUpRight className="w-3 h-3" />
           </a>
