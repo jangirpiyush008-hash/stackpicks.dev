@@ -205,14 +205,26 @@ export async function POST(req: NextRequest) {
       const ownHandle = tenant.ig_username ? `@${tenant.ig_username}` : '@yourcreator';
       const body = applyFollowNudge(rawBody, rule, isFollower, ownHandle);
 
-      // Send DM
+      // Generate a per-send short link for click tracking. The CTA button
+      // in the DM card uses this URL; we 302-redirect to the real cta_url
+      // on click and record the timestamp + counter on autodm_dm_log.
+      // 10 random base36 chars → ~6.0e15 keyspace. Collisions practically
+      // impossible at our scale; unique index handles the edge.
+      const shortId = rule.cta_url
+        ? Math.random().toString(36).slice(2, 12)
+        : null;
+      const trackerUrl = shortId
+        ? `${process.env.AUTODM_TRACKER_ORIGIN || 'https://autodm.stackpicks.dev'}/c/${shortId}`
+        : undefined;
+
+      // Send DM (CTA button uses the tracker URL, not the original)
       let send;
       try {
         send = await sendDm({
           igBusinessId: tenant.ig_business_id, tenantToken,
           recipientIgsid: fromIgsid, commentId: commentId || undefined,
           body,
-          ctaUrl: rule.cta_url ?? undefined, ctaLabel: rule.cta_label ?? undefined,
+          ctaUrl: trackerUrl ?? undefined, ctaLabel: rule.cta_label ?? undefined,
         });
       } catch (e) { send = { ok: false, error: (e as Error).message }; }
 
@@ -254,6 +266,9 @@ export async function POST(req: NextRequest) {
         error: send.ok ? replyError : send.error,
         reply_status: replyStatus, reply_id: replyId,
         ai_generated: false, body_variant_index: variantIdx,
+        // Click tracking
+        short_id: shortId,
+        original_cta_url: rule.cta_url ?? null,
       });
 
       // Seed a conversation row so the follow-up agent can find it when

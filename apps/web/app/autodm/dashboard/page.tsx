@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { adminClient } from '@stackpicks/core/db';
-import { Instagram, Sparkles, AlertCircle, CheckCircle2, Pause, Inbox } from 'lucide-react';
+import { Instagram, Sparkles, AlertCircle, CheckCircle2, Pause, Inbox, Users } from 'lucide-react';
 import { RulesEditor } from '@/components/autodm/RulesEditor';
 import { FollowupAgentToggle } from '@/components/autodm/FollowupAgentToggle';
 import { PlanUpgrade } from '@/components/autodm/PlanUpgrade';
@@ -47,7 +47,12 @@ interface RuleRow {
   ai_personality_hint: string | null;
 }
 interface LogRow {
-  ig_username: string | null; status: string; created_at: string; error: string | null;
+  ig_username: string | null;
+  status: string;
+  created_at: string;
+  error: string | null;
+  clicked_at: string | null;
+  click_count: number;
 }
 
 export default async function DashboardPage({
@@ -85,7 +90,7 @@ export default async function DashboardPage({
 
   const [rulesRes, logRes, convCountRes] = await Promise.all([
     supa.from('autodm_rules').select('id, label, keyword, dm_template, dm_template_variants, cta_url, cta_label, comment_reply, comment_reply_follower, follow_nudge, daily_cap_per_recipient, is_active, ai_personality_hint').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(50),
-    supa.from('autodm_dm_log').select('ig_username, status, created_at, error').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(20),
+    supa.from('autodm_dm_log').select('ig_username, status, created_at, error, clicked_at, click_count').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(20),
     supa.from('autodm_conversations').select('id', { count: 'exact', head: true })
         .eq('tenant_id', tenant.id).eq('status', 'creator_escalated'),
   ]);
@@ -97,6 +102,11 @@ export default async function DashboardPage({
     l.status === 'sent' &&
     new Date(l.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000)
   ).length;
+  const clickedToday = logs.filter((l) =>
+    l.clicked_at &&
+    new Date(l.clicked_at) > new Date(Date.now() - 24 * 60 * 60 * 1000)
+  ).length;
+  const ctrToday = sentToday > 0 ? Math.round((clickedToday / sentToday) * 100) : 0;
 
   const isWarming = tenant.account_warming_ends_at && new Date(tenant.account_warming_ends_at) > new Date();
   const isPaused = tenant.paused_until && new Date(tenant.paused_until) > new Date();
@@ -112,6 +122,12 @@ export default async function DashboardPage({
             <div className="text-sm text-muted mt-1">{tenant.plan_tier.toUpperCase()} · {tenant.hourly_cap}/hr · {tenant.daily_cap}/day</div>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
+            <Link
+              href="/autodm/contacts"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition bg-bg-card border border-border text-muted hover:text-text"
+            >
+              <Users className="w-3 h-3" /> Contacts
+            </Link>
             <Link
               href="/autodm/inbox"
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition ${
@@ -178,10 +194,11 @@ export default async function DashboardPage({
         )}
 
         {/* Stats */}
-        <div className="grid sm:grid-cols-3 gap-4 mb-8">
-          <Stat label="Sent today" value={String(sentToday)} sub={`of ${tenant.daily_cap} daily cap`} />
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+          <Stat label="Sent · 24h" value={String(sentToday)} sub={`of ${tenant.daily_cap} cap`} />
+          <Stat label="Clicked · 24h" value={String(clickedToday)} sub={`${ctrToday}% CTR`} highlight={clickedToday > 0} />
           <Stat label="Active rules" value={String(rules.filter((r) => r.is_active).length)} sub={`of ${rules.length} total`} />
-          <Stat label="Plan" value={tenant.plan_tier} sub="upgrade soon →" />
+          <Stat label="Plan" value={tenant.plan_tier} sub="upgrade →" />
         </div>
 
         {/* Plan upgrade */}
@@ -220,12 +237,12 @@ export default async function DashboardPage({
   );
 }
 
-function Stat({ label, value, sub }: { label: string; value: string; sub: string }) {
+function Stat({ label, value, sub, highlight }: { label: string; value: string; sub: string; highlight?: boolean }) {
   return (
-    <div className="rounded-2xl border border-border bg-bg-card/50 p-5">
-      <div className="text-xs font-mono uppercase tracking-widest text-muted">{label}</div>
-      <div className="text-3xl font-extrabold mt-2 capitalize">{value}</div>
-      <div className="text-xs text-muted mt-1">{sub}</div>
+    <div className={`rounded-2xl border ${highlight ? 'border-accent/40 bg-accent/5' : 'border-border bg-bg-card/50'} p-4`}>
+      <div className="text-[10px] font-mono uppercase tracking-widest text-muted">{label}</div>
+      <div className="text-2xl font-extrabold mt-1 capitalize">{value}</div>
+      <div className="text-[10px] text-muted mt-0.5">{sub}</div>
     </div>
   );
 }
