@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { headers } from 'next/headers';
 import { SITE, CONTACT, ENTITY } from '@stackpicks/core/constants';
 import { organizationJsonLd, websiteJsonLd } from '@stackpicks/core/seo';
 import { Mail, Phone } from 'lucide-react';
@@ -79,7 +80,14 @@ export const metadata: Metadata = {
   formatDetection: { telephone: false, email: false, address: false },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Detect the autodm.stackpicks.dev subdomain server-side so we can
+  // skip the main StackPicks header + footer entirely. HideOnAdmin
+  // (client-side, pathname-based) can't see the host — on the subdomain
+  // the path is just '/', so a pathname check would fail.
+  const h = await headers();
+  const host = (h.get('host') || '').toLowerCase();
+  const isAutoDmHost = host === 'autodm.stackpicks.dev';
   return (
     <html lang="en">
       <head>
@@ -104,7 +112,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="font-sans antialiased min-h-screen flex flex-col">
-        <HideOnAdmin>
+        {!isAutoDmHost && <HideOnAdmin>
         <header className="border-b border-border sticky top-0 z-40 bg-bg/80 backdrop-blur">
           <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-2 md:gap-4">
             <Link href="/preview" className="font-mono font-bold tracking-tight text-base md:text-lg shrink-0">
@@ -114,11 +122,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <HeaderNav />
           </div>
         </header>
-        </HideOnAdmin>
+        </HideOnAdmin>}
 
         <main className="flex-1">{children}</main>
 
-        <HideOnAdmin>
+        {!isAutoDmHost && <HideOnAdmin>
         <footer className="border-t border-border mt-20">
           <div className="max-w-6xl mx-auto px-4 py-12">
             {/* SEO link block — internal links from every page → boosts crawl + topical authority */}
@@ -243,10 +251,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </div>
         </footer>
-        </HideOnAdmin>
+        </HideOnAdmin>}
 
         {/* Newsletter signup — 30s delay + exit-intent triggered; hides on admin/auth */}
-        <NewsletterPopup />
+        {!isAutoDmHost && <NewsletterPopup />}
 
         {/* What's New — surfaces refresh/changelog counts on /, /mcp, /connect.
             Bump REFRESH_ID in the component when shipping a new refresh. */}
