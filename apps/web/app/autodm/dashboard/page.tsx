@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { adminClient } from '@stackpicks/core/db';
-import { Instagram, Sparkles, AlertCircle, CheckCircle2, Pause, Inbox, Users } from 'lucide-react';
+import { Instagram, Sparkles, AlertCircle, CheckCircle2, Pause, Inbox, Users, BarChart3 } from 'lucide-react';
 import { RulesEditor } from '@/components/autodm/RulesEditor';
 import { FollowupAgentToggle } from '@/components/autodm/FollowupAgentToggle';
 import { PlanUpgrade } from '@/components/autodm/PlanUpgrade';
@@ -122,6 +122,12 @@ export default async function DashboardPage({
             <div className="text-sm text-muted mt-1">{tenant.plan_tier.toUpperCase()} · {tenant.hourly_cap}/hr · {tenant.daily_cap}/day</div>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
+            <Link
+              href="/autodm/analytics"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition bg-bg-card border border-border text-muted hover:text-text"
+            >
+              <BarChart3 className="w-3 h-3" /> Analytics
+            </Link>
             <Link
               href="/autodm/contacts"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition bg-bg-card border border-border text-muted hover:text-text"
