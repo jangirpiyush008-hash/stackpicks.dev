@@ -115,6 +115,29 @@ export async function POST(req: NextRequest) {
       .single();
     const tenant = tenantRow as AutoDmTenant | null;
     if (!tenant) { processed.push(`skip:no_tenant:${entry.id}`); continue; }
+
+    // Webhook-health beat. Bumped on EVERY delivery (even inactive /
+    // paused tenants) — proof that Meta is still talking to us. The
+    // dashboard renders a red banner if this stops being fresh.
+    // Fire-and-forget; webhook processing must not wait on telemetry.
+    const eventName =
+      entry.changes?.[0]?.field ||
+      (entry.messaging?.length ? 'messages' : 'unknown');
+    const healthUpdate: Record<string, unknown> = {
+      last_webhook_received_at: new Date().toISOString(),
+      last_webhook_event: eventName,
+      // Successful delivery clears any prior alert state so the next
+      // outage gets a fresh email instead of being suppressed.
+      last_webhook_alert_sent_at: null,
+    };
+    // Auto-resume if cron auto-paused this tenant for webhook silence.
+    // Manual pauses use a different reason and stay intact.
+    if (tenant.paused_reason?.startsWith('Webhook silence')) {
+      healthUpdate.paused_until = null;
+      healthUpdate.paused_reason = null;
+    }
+    void supa.from('autodm_tenants').update(healthUpdate).eq('id', tenant.id);
+
     if (!tenant.is_active) { processed.push(`skip:inactive:${tenant.id}`); continue; }
     if (tenant.paused_until && new Date(tenant.paused_until) > new Date()) {
       processed.push(`skip:paused:${tenant.id}`); continue;

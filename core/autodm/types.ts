@@ -21,6 +21,11 @@ export interface AutoDmTenant {
   is_active: boolean;
   paused_until: string | null;
   paused_reason: string | null;
+  // Webhook health beats — bumped on every Meta delivery for this tenant.
+  // Dashboard renders banner if stale; cron auto-pauses + emails if 24h+.
+  last_webhook_received_at: string | null;
+  last_webhook_event: string | null;
+  last_webhook_alert_sent_at: string | null;
   created_at: string;
   updated_at: string;
 }

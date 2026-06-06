@@ -10,6 +10,7 @@ import { RulesEditor } from '@/components/autodm/RulesEditor';
 import { FollowupAgentToggle } from '@/components/autodm/FollowupAgentToggle';
 import { PlanUpgrade } from '@/components/autodm/PlanUpgrade';
 import { SubscriptionManager } from '@/components/autodm/SubscriptionManager';
+import { WebhookHealthBanner } from '@/components/autodm/WebhookHealthBanner';
 
 export const metadata = {
   title: 'Dashboard — StackPicks AutoDM',
@@ -29,6 +30,7 @@ interface TenantRow {
   account_warming_ends_at: string | null;
   ai_followup_agent: boolean;
   ai_dm_generation: boolean;
+  last_webhook_received_at: string | null;
   created_at: string;
 }
 
@@ -66,7 +68,7 @@ export default async function DashboardPage({
   const supa = adminClient();
   const { data: tenants } = await supa
     .from('autodm_tenants')
-    .select('id, ig_business_id, ig_username, plan_tier, hourly_cap, daily_cap, is_active, paused_until, paused_reason, account_warming_ends_at, ai_followup_agent, ai_dm_generation, created_at')
+    .select('id, ig_business_id, ig_username, plan_tier, hourly_cap, daily_cap, is_active, paused_until, paused_reason, account_warming_ends_at, ai_followup_agent, ai_dm_generation, last_webhook_received_at, created_at')
     .eq('owner_user_id', user.id);
   const tenant = (tenants?.[0] as TenantRow | undefined) ?? null;
 
@@ -182,6 +184,12 @@ export default async function DashboardPage({
             )}
           </div>
         </div>
+
+        {/* Webhook health — first thing creator sees if Meta isn't delivering */}
+        <WebhookHealthBanner
+          lastWebhookReceivedAt={tenant.last_webhook_received_at}
+          tenantCreatedAt={tenant.created_at}
+        />
 
         {/* Just-connected banner */}
         {justConnected && (
