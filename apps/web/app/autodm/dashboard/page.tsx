@@ -36,6 +36,7 @@ interface RuleRow {
   label: string | null;
   keyword: string;
   dm_template: string;
+  dm_template_variants: string[] | null;
   cta_url: string | null;
   cta_label: string | null;
   comment_reply: string | null;
@@ -83,7 +84,7 @@ export default async function DashboardPage({
   const justConnected = (await searchParams).connected === '1';
 
   const [rulesRes, logRes] = await Promise.all([
-    supa.from('autodm_rules').select('id, label, keyword, dm_template, cta_url, cta_label, comment_reply, comment_reply_follower, follow_nudge, daily_cap_per_recipient, is_active, ai_personality_hint').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(50),
+    supa.from('autodm_rules').select('id, label, keyword, dm_template, dm_template_variants, cta_url, cta_label, comment_reply, comment_reply_follower, follow_nudge, daily_cap_per_recipient, is_active, ai_personality_hint').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(50),
     supa.from('autodm_dm_log').select('ig_username, status, created_at, error').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(20),
   ]);
   const rules = (rulesRes.data ?? []) as RuleRow[];

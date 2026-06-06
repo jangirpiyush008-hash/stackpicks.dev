@@ -12,12 +12,14 @@
 
 import { useEffect, useState } from 'react';
 import { Sparkles, Plus, Trash2, Save, Loader2, RefreshCw } from 'lucide-react';
+import { LinterPanel } from './LinterPanel';
 
 interface Rule {
   id: string;
   label: string | null;
   keyword: string;
   dm_template: string;
+  dm_template_variants: string[] | null;
   cta_url: string | null;
   cta_label: string | null;
   comment_reply: string | null;
@@ -32,6 +34,7 @@ const EMPTY: Omit<Rule, 'id'> = {
   label: 'New rule',
   keyword: '',
   dm_template: 'Hey {{username}} — tap the link below.',
+  dm_template_variants: null,
   cta_url: '',
   cta_label: 'Open link',
   comment_reply: 'Hey @{{username}} — sent it to your DMs',
@@ -185,6 +188,15 @@ export function RulesEditor({
               className="sp-input text-sm" />
             <p className="text-[10px] text-muted mt-1">Placeholders: <code className="text-accent">{'{{username}}'}</code>, <code className="text-accent">{'{{keyword}}'}</code></p>
           </Field>
+
+          {/* Body variants — randomly rotated per send for spam-shield */}
+          <VariantsEditor
+            variants={draft.dm_template_variants || []}
+            onChange={(v) => setDraft({ ...draft, dm_template_variants: v.length > 0 ? v : null })}
+          />
+
+          {/* Live linter — calls /api/autodm/lint as you type */}
+          <LinterPanel draft={draft} />
           <div className="grid grid-cols-2 gap-3">
             <Field label="CTA URL">
               <input type="url" value={draft.cta_url || ''}
@@ -291,5 +303,55 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       <span className="block text-xs text-muted mb-1">{label}</span>
       {children}
     </label>
+  );
+}
+
+function VariantsEditor({
+  variants, onChange,
+}: { variants: string[]; onChange: (v: string[]) => void }) {
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <span className="block text-xs text-muted">
+          Body variants (optional) — randomly rotated per send
+        </span>
+        {variants.length < 4 && (
+          <button
+            type="button"
+            onClick={() => onChange([...variants, ''])}
+            className="text-xs text-accent hover:underline inline-flex items-center gap-1"
+          >
+            <Plus className="w-3 h-3" /> Variant
+          </button>
+        )}
+      </div>
+      <p className="text-[10px] text-muted mt-1">
+        Adding 2-3 variants makes spam detection harder. Each commenter gets a randomly-picked one.
+      </p>
+      {variants.map((v, i) => (
+        <div key={i} className="mt-2 flex gap-2 items-start">
+          <span className="text-[10px] font-mono text-muted mt-2 w-6">#{i + 1}</span>
+          <textarea
+            rows={2}
+            value={v}
+            onChange={(e) => {
+              const next = [...variants];
+              next[i] = e.target.value;
+              onChange(next);
+            }}
+            className="sp-input text-sm flex-1"
+            placeholder="Reword the main DM body — same meaning, different words."
+          />
+          <button
+            type="button"
+            onClick={() => onChange(variants.filter((_, j) => j !== i))}
+            className="text-muted hover:text-rose-400 mt-2"
+            aria-label="remove variant"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      ))}
+    </div>
   );
 }
