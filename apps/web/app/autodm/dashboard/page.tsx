@@ -15,6 +15,7 @@ import { FollowupAgentToggle } from '@/components/autodm/FollowupAgentToggle';
 import { PlanUpgrade } from '@/components/autodm/PlanUpgrade';
 import { SubscriptionManager } from '@/components/autodm/SubscriptionManager';
 import { WebhookHealthBanner } from '@/components/autodm/WebhookHealthBanner';
+import { VoiceMatchCard } from '@/components/autodm/VoiceMatchCard';
 
 export const metadata = {
   title: 'Dashboard — StackPicks AutoDM',
@@ -274,9 +275,12 @@ export default async function DashboardPage({
         <PlanUpgrade currentTier={tenant.plan_tier} />
 
         {/* Follow-up agent toggle (Pro+) */}
-        <div className="mb-8">
+        <div className="mb-6">
           <FollowupAgentToggle initiallyOn={tenant.ai_followup_agent} planTier={tenant.plan_tier} />
         </div>
+
+        {/* Voice match — proves the bot speaks like the creator */}
+        <VoiceMatchCard />
 
         {/* Rules (client-side editor) */}
         <RulesEditor initialRules={rules} hasNoRules={rules.length === 0} justConnected={justConnected} />

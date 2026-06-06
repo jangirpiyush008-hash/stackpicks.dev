@@ -328,6 +328,10 @@ export async function POST(req: NextRequest) {
         error: send.ok ? replyError : send.error,
         reply_status: replyStatus, reply_id: replyId,
         ai_generated: false, body_variant_index: variantIdx,
+        // Voice-clone eval reads this to score sent DMs against the
+        // creator's voice fingerprint. Truncate at 2000 to stay polite
+        // (Meta caps at 1000 anyway).
+        sent_body: send.ok ? body.slice(0, 2000) : null,
         // Click tracking
         short_id: shortId,
         original_cta_url: rule.cta_url ?? null,
