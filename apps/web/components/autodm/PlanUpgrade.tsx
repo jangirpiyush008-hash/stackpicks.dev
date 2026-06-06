@@ -11,18 +11,30 @@ import { Loader2, ArrowRight } from 'lucide-react';
 
 type Tier = 'creator' | 'pro' | 'agency';
 
-const TIERS: { id: Tier; label: string; price: string; perks: string[]; highlight?: boolean }[] = [
+interface TierDef {
+  id: Tier;
+  label: string;
+  price: string;
+  accounts: { instagram: number; linkedin: number; x: number };
+  perks: string[];
+  highlight?: boolean;
+}
+
+const TIERS: TierDef[] = [
   {
     id: 'creator', label: 'Creator', price: '₹499/mo',
+    accounts: { instagram: 1, linkedin: 1, x: 1 },
     perks: ['5,000 DMs/mo', '10 rules', 'No StackPicks branding', 'Daily analytics'],
   },
   {
     id: 'pro', label: 'Pro', price: '₹1,499/mo', highlight: true,
+    accounts: { instagram: 3, linkedin: 3, x: 3 },
     perks: ['Unlimited DMs + rules', 'Voice-cloned bodies', 'Follow-up agent', 'Spam-shield Pro'],
   },
   {
     id: 'agency', label: 'Agency', price: '₹4,999/mo',
-    perks: ['Everything in Pro', 'Multi-account', 'White-label', 'Team seats', 'API access'],
+    accounts: { instagram: 25, linkedin: 25, x: 25 },
+    perks: ['Everything in Pro', 'White-label', 'Team seats', 'Priority support'],
   },
 ];
 
@@ -76,6 +88,23 @@ export function PlanUpgrade({ currentTier }: { currentTier: string }) {
                 {isCurrent && <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-accent text-bg font-semibold">Current</span>}
               </div>
               <div className="text-2xl font-extrabold">{t.price}</div>
+
+              {/* Per-platform account quotas. LinkedIn + X land Q3 2026 — disclosed in footer. */}
+              <div className="mt-3 grid grid-cols-3 gap-1 text-[10px] font-mono">
+                <div className="rounded bg-bg-card/60 border border-border px-1.5 py-1 text-center">
+                  <div className="text-muted uppercase tracking-wide text-[9px]">IG</div>
+                  <div className="font-bold text-sm">{t.accounts.instagram}</div>
+                </div>
+                <div className="rounded bg-bg-card/60 border border-border px-1.5 py-1 text-center">
+                  <div className="text-muted uppercase tracking-wide text-[9px]">LinkedIn</div>
+                  <div className="font-bold text-sm">{t.accounts.linkedin}</div>
+                </div>
+                <div className="rounded bg-bg-card/60 border border-border px-1.5 py-1 text-center">
+                  <div className="text-muted uppercase tracking-wide text-[9px]">X</div>
+                  <div className="font-bold text-sm">{t.accounts.x}</div>
+                </div>
+              </div>
+
               <ul className="mt-3 space-y-1 text-xs">
                 {t.perks.map((p) => (
                   <li key={p} className="flex gap-2"><span className="text-accent">✓</span>{p}</li>
@@ -95,6 +124,10 @@ export function PlanUpgrade({ currentTier }: { currentTier: string }) {
       </div>
       <p className="text-[11px] text-muted mt-3">
         Razorpay subscription · cancel anytime · INR only · GST included where applicable
+      </p>
+      <p className="text-[11px] text-muted mt-1">
+        Instagram is live today. LinkedIn + X support ships Q3 2026 — quotas listed above stay
+        the same when those platforms unlock.
       </p>
     </div>
   );

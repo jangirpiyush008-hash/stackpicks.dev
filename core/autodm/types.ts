@@ -65,10 +65,26 @@ export interface AutoDmLogInsert {
   body_variant_index?: number;
 }
 
-/** Free tier defaults — used at tenant creation. Bigger caps come from plan upgrades. */
-export const DEFAULT_PLAN_CAPS: Record<PlanTier, { hourly: number; daily: number }> = {
-  free:    { hourly: 10,  daily: 50   },
-  creator: { hourly: 30,  daily: 200  },
-  pro:     { hourly: 120, daily: 1000 },
-  agency:  { hourly: 300, daily: 5000 },
+/** Per-plan resource caps.
+ *
+ *  hourly / daily — outbound DM rate caps (enforced today on the
+ *                   StackPicks-internal bot and on every tenant via
+ *                   the webhook handler).
+ *  instagram / linkedin / x — number of social accounts a tenant can
+ *                   connect at that plan tier. Today only Instagram is
+ *                   built; LinkedIn + X land in Q3 2026 and the caps
+ *                   are set now so customers see the brand promise. */
+export interface PlanCaps {
+  hourly: number;
+  daily: number;
+  instagram_accounts: number;
+  linkedin_accounts: number;
+  x_accounts: number;
+}
+
+export const DEFAULT_PLAN_CAPS: Record<PlanTier, PlanCaps> = {
+  free:    { hourly: 10,  daily: 50,   instagram_accounts: 1,  linkedin_accounts: 0,  x_accounts: 0  },
+  creator: { hourly: 30,  daily: 200,  instagram_accounts: 1,  linkedin_accounts: 1,  x_accounts: 1  },
+  pro:     { hourly: 120, daily: 1000, instagram_accounts: 3,  linkedin_accounts: 3,  x_accounts: 3  },
+  agency:  { hourly: 300, daily: 5000, instagram_accounts: 25, linkedin_accounts: 25, x_accounts: 25 },
 };

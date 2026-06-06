@@ -95,14 +95,22 @@ export default function AutoDmLanding() {
           ManyChat charges by contacts. As you scale, your bill explodes. We charge by tier, period.
         </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <PlanCard tier="Free" price="₹0" dms="100 DMs/mo" rules="1 rule" feats={['Email support']} />
+          <PlanCard tier="Free" price="₹0" dms="100 DMs/mo" rules="1 rule"
+            accounts={{ instagram: 1, linkedin: 0, x: 0 }}
+            feats={['Email support']} />
           <PlanCard tier="Creator" price="₹499/mo" dms="5,000 DMs/mo" rules="10 rules"
+            accounts={{ instagram: 1, linkedin: 1, x: 1 }}
             feats={['Brand-free DMs', 'Public + private reply', 'Daily analytics']} />
           <PlanCard tier="Pro" price="₹1,499/mo" dms="Unlimited" rules="Unlimited" highlight
+            accounts={{ instagram: 3, linkedin: 3, x: 3 }}
             feats={['AI-generated DMs', 'Voice cloning', 'Follow-up agent', 'Spam-shield Pro']} />
           <PlanCard tier="Agency" price="₹4,999/mo" dms="Unlimited" rules="Unlimited"
-            feats={['Multi-account', 'White-label', 'Team seats', 'API access']} />
+            accounts={{ instagram: 25, linkedin: 25, x: 25 }}
+            feats={['White-label', 'Team seats', 'Priority support', 'Onboarding call']} />
         </div>
+        <p className="text-xs text-muted mt-4 text-center">
+          Instagram is live today. LinkedIn + X support ships Q3 2026 — quotas above stay the same when those platforms unlock.
+        </p>
       </section>
 
       {/* Final CTA */}
@@ -151,8 +159,10 @@ function Tick() { return <span className="text-accent">✓</span>; }
 function X() { return <span className="text-rose-500/70">✗</span>; }
 function Partial() { return <span className="text-amber-500/80">~</span>; }
 
-function PlanCard({ tier, price, dms, rules, feats, highlight }: {
-  tier: string; price: string; dms: string; rules: string; feats: string[]; highlight?: boolean;
+function PlanCard({ tier, price, dms, rules, accounts, feats, highlight }: {
+  tier: string; price: string; dms: string; rules: string;
+  accounts: { instagram: number; linkedin: number; x: number };
+  feats: string[]; highlight?: boolean;
 }) {
   return (
     <div className={`rounded-2xl border ${highlight ? 'border-accent bg-accent/5' : 'border-border bg-bg-card/50'} p-6`}>
@@ -160,6 +170,23 @@ function PlanCard({ tier, price, dms, rules, feats, highlight }: {
       <div className="text-3xl font-extrabold mt-2">{price}</div>
       <div className="text-sm text-muted mt-3">{dms}</div>
       <div className="text-sm text-muted">{rules}</div>
+
+      {/* Per-platform account quotas */}
+      <div className="mt-4 grid grid-cols-3 gap-1 text-[10px] font-mono">
+        <div className="rounded bg-bg-card/60 border border-border px-1.5 py-1.5 text-center">
+          <div className="text-muted uppercase tracking-wide text-[9px]">IG</div>
+          <div className="font-bold text-base">{accounts.instagram}</div>
+        </div>
+        <div className="rounded bg-bg-card/60 border border-border px-1.5 py-1.5 text-center">
+          <div className="text-muted uppercase tracking-wide text-[9px]">LinkedIn</div>
+          <div className="font-bold text-base">{accounts.linkedin}</div>
+        </div>
+        <div className="rounded bg-bg-card/60 border border-border px-1.5 py-1.5 text-center">
+          <div className="text-muted uppercase tracking-wide text-[9px]">X</div>
+          <div className="font-bold text-base">{accounts.x}</div>
+        </div>
+      </div>
+
       <ul className="mt-4 space-y-1 text-sm">
         {feats.map((f) => <li key={f} className="flex gap-2"><span className="text-accent">✓</span>{f}</li>)}
       </ul>
