@@ -3,8 +3,11 @@ import { ImageResponse } from 'next/og';
 // 1200×630 OG image — shown when autodm.stackpicks.dev links are pasted
 // in Twitter/X, LinkedIn, WhatsApp, iMessage, Slack, etc.
 //
-// Design: dark stage with a lime card center-left containing the chat-
-// bubble mark + product name, and a tagline right of it.
+// next/og notes:
+//  - Every div MUST have explicit display: 'flex' (or 'none') — defaults
+//    to block which next/og rejects with "Expected <div> to have explicit
+//    'display: flex' or 'display: none'".
+//  - The default bundled font doesn't support ₹ — use "Rs" instead.
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 export const alt = 'StackPicks AutoDM — auto-DM that closes, not just sends.';
@@ -46,10 +49,11 @@ export default function OG() {
             </svg>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontSize: 28, fontWeight: 800, letterSpacing: -1 }}>
-              stackpicks<span style={{ color: '#c6ff00' }}>.dev</span>
+            <div style={{ display: 'flex', fontSize: 28, fontWeight: 800, letterSpacing: -1 }}>
+              stackpicks
+              <span style={{ display: 'flex', color: '#c6ff00' }}>.dev</span>
             </div>
-            <div style={{ fontSize: 16, color: '#888' }}>/ autodm</div>
+            <div style={{ display: 'flex', fontSize: 16, color: '#888' }}>/ autodm</div>
           </div>
         </div>
 
@@ -57,6 +61,7 @@ export default function OG() {
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div
             style={{
+              display: 'flex',
               fontSize: 88,
               fontWeight: 900,
               letterSpacing: -3,
@@ -67,6 +72,7 @@ export default function OG() {
           </div>
           <div
             style={{
+              display: 'flex',
               fontSize: 88,
               fontWeight: 900,
               letterSpacing: -3,
@@ -78,7 +84,7 @@ export default function OG() {
           </div>
         </div>
 
-        {/* Bottom — proof bar */}
+        {/* Bottom — proof bar (₹ replaced with Rs — next/og default font lacks ₹) */}
         <div
           style={{
             display: 'flex',
@@ -89,13 +95,13 @@ export default function OG() {
             borderTop: '1px solid #222',
           }}
         >
-          <span>90-second AI setup</span>
-          <span style={{ color: '#444' }}>·</span>
-          <span>Voice-cloned DMs</span>
-          <span style={{ color: '#444' }}>·</span>
-          <span>Follow-up agent</span>
-          <span style={{ color: '#444' }}>·</span>
-          <span>From ₹499/mo</span>
+          <span style={{ display: 'flex' }}>90-second AI setup</span>
+          <span style={{ display: 'flex', color: '#444' }}>·</span>
+          <span style={{ display: 'flex' }}>Voice-cloned DMs</span>
+          <span style={{ display: 'flex', color: '#444' }}>·</span>
+          <span style={{ display: 'flex' }}>Follow-up agent</span>
+          <span style={{ display: 'flex', color: '#444' }}>·</span>
+          <span style={{ display: 'flex' }}>From Rs 499/mo</span>
         </div>
       </div>
     ),

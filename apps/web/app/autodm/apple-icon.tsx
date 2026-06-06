@@ -30,6 +30,7 @@ export default function AppleIcon() {
         </svg>
         <div
           style={{
+            display: 'flex',
             fontFamily: 'monospace',
             fontWeight: 800,
             fontSize: 20,
