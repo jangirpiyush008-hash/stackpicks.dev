@@ -4,8 +4,10 @@
 
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { cookies } from 'next/headers';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { adminClient } from '@stackpicks/core/db';
+import { getActiveTenant, ACTIVE_TENANT_COOKIE } from '@stackpicks/core/autodm/active-tenant';
 import { Users, ArrowLeft, MousePointerClick, MessageSquare, ExternalLink } from 'lucide-react';
 
 export const metadata = {
@@ -45,12 +47,9 @@ export default async function ContactsPage({
   if (!user) redirect('/login?next=/autodm/contacts');
 
   const admin = adminClient();
-  const { data: tenants } = await admin
-    .from('autodm_tenants')
-    .select('id, ig_username')
-    .eq('owner_user_id', user.id)
-    .limit(1);
-  const tenant = tenants?.[0];
+  const cookieStore = await cookies();
+  const preferredId = cookieStore.get(ACTIVE_TENANT_COOKIE)?.value ?? null;
+  const { tenant } = await getActiveTenant(admin, user.id, preferredId);
   if (!tenant) redirect('/autodm/connect');
 
   // Pull last 1000 send attempts → group client-side per recipient

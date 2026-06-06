@@ -6,8 +6,10 @@
 
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { cookies } from 'next/headers';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { adminClient } from '@stackpicks/core/db';
+import { getActiveTenant, ACTIVE_TENANT_COOKIE } from '@stackpicks/core/autodm/active-tenant';
 import { BarChart3, ArrowLeft, TrendingUp, MousePointerClick, Send, Users } from 'lucide-react';
 
 export const metadata = {
@@ -36,12 +38,17 @@ export default async function AnalyticsPage() {
   if (!user) redirect('/login?next=/autodm/analytics');
 
   const admin = adminClient();
-  const { data: tenants } = await admin
+  const cookieStore = await cookies();
+  const preferredId = cookieStore.get(ACTIVE_TENANT_COOKIE)?.value ?? null;
+  const { tenant: active } = await getActiveTenant(admin, user.id, preferredId);
+  if (!active) redirect('/autodm/connect');
+  // Hydrate cap fields not in the resolver projection
+  const { data: tenantRow } = await admin
     .from('autodm_tenants')
     .select('id, ig_username, plan_tier, daily_cap, hourly_cap')
-    .eq('owner_user_id', user.id)
-    .limit(1);
-  const tenant = tenants?.[0];
+    .eq('id', active.id)
+    .single();
+  const tenant = tenantRow as { id: string; ig_username: string | null; plan_tier: string; daily_cap: number; hourly_cap: number };
   if (!tenant) redirect('/autodm/connect');
 
   const fourteenDaysAgo = new Date(Date.now() - 14 * 86400_000).toISOString();

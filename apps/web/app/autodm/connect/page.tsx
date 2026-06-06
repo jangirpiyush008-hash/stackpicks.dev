@@ -2,18 +2,42 @@
 // User clicks "Connect Instagram" → /api/autodm/oauth/start kicks off Meta OAuth.
 
 import Link from 'next/link';
-import { Instagram, Shield, Zap, Sparkles } from 'lucide-react';
+import { Instagram, Shield, Zap, Sparkles, AlertTriangle } from 'lucide-react';
 
 export const metadata = {
   title: 'Connect Instagram — StackPicks AutoDM',
   description: 'One-tap Instagram connection. Sign in with Meta, we handle the rest.',
 };
 
-export default function ConnectPage() {
+export default async function ConnectPage({
+  searchParams,
+}: { searchParams: Promise<{ error?: string; plan?: string; allowed?: string }> }) {
+  const { error, plan, allowed } = await searchParams;
   return (
     <main className="min-h-screen bg-bg text-text">
       <section className="max-w-2xl mx-auto px-6 py-20">
         <Link href="/autodm" className="text-xs text-muted hover:text-text">← Back to AutoDM</Link>
+
+        {error === 'cap_reached' && (
+          <div className="mt-6 rounded-2xl border-2 border-amber-500/50 bg-amber-500/5 p-5 flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+            <div className="text-sm">
+              <div className="font-semibold text-amber-300">Plan limit hit.</div>
+              <div className="text-muted mt-1">
+                Your <strong className="capitalize">{plan || 'current'}</strong> plan includes
+                {' '}<strong>{allowed || 1}</strong> Instagram slot{allowed === '1' ? '' : 's'} and
+                they&apos;re all used. Upgrade your plan from the dashboard to connect another, or
+                disconnect an existing IG first.
+              </div>
+              <Link
+                href="/autodm/dashboard#plan"
+                className="mt-3 inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-500/90 text-white text-xs font-semibold px-3.5 py-2 rounded-full"
+              >
+                Upgrade plan →
+              </Link>
+            </div>
+          </div>
+        )}
 
         <h1 className="mt-6 text-4xl font-extrabold tracking-tight leading-[1.05]">
           Connect Instagram.

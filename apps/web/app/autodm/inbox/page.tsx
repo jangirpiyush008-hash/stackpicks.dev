@@ -4,8 +4,10 @@
 
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { adminClient } from '@stackpicks/core/db';
+import { getActiveTenant, ACTIVE_TENANT_COOKIE } from '@stackpicks/core/autodm/active-tenant';
 import { InboxClient } from '@/components/autodm/InboxClient';
 import { Inbox as InboxIcon, ArrowLeft } from 'lucide-react';
 
@@ -33,12 +35,16 @@ export default async function InboxPage() {
   if (!user) redirect('/login?next=/autodm/inbox');
 
   const admin = adminClient();
-  const { data: tenants } = await admin
+  const cookieStore = await cookies();
+  const preferredId = cookieStore.get(ACTIVE_TENANT_COOKIE)?.value ?? null;
+  const { tenant: active } = await getActiveTenant(admin, user.id, preferredId);
+  if (!active) redirect('/autodm/connect');
+  const { data: tenantRow } = await admin
     .from('autodm_tenants')
     .select('id, ig_username, ai_followup_agent, plan_tier')
-    .eq('owner_user_id', user.id)
-    .limit(1);
-  const tenant = tenants?.[0];
+    .eq('id', active.id)
+    .single();
+  const tenant = tenantRow as { id: string; ig_username: string | null; ai_followup_agent: boolean; plan_tier: string };
   if (!tenant) redirect('/autodm/connect');
 
   // Initial fetch — newest 100 across all statuses

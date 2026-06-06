@@ -18,6 +18,8 @@ import { getSupabaseServer } from '@/lib/supabase-server';
 import { adminClient } from '@stackpicks/core/db';
 import { encryptToken } from '@stackpicks/core/autodm/crypto';
 import { autodmOrigin } from '@stackpicks/core/autodm/origin';
+import { DEFAULT_PLAN_CAPS, type PlanTier } from '@stackpicks/core/autodm/types';
+import { ACTIVE_TENANT_COOKIE, ACTIVE_TENANT_COOKIE_MAX_AGE } from '@stackpicks/core/autodm/active-tenant';
 
 export const runtime = 'nodejs';
 
@@ -110,23 +112,56 @@ export async function GET(req: NextRequest) {
   const igJson = (await igRes.json().catch(() => ({}))) as { username?: string };
   const igUsername = igJson.username ?? null;
 
-  // 4. Upsert tenant — encrypts the token at rest
+  // 4. Cap check + tenant upsert — encrypts the token at rest.
   const supa = adminClient();
+
+  // Inspect the user's existing tenants. We use the highest plan tier
+  // across their owned tenants as the "owner plan" — same human, same
+  // subscription. We enforce per-platform Instagram quota.
+  const { data: existing } = await supa
+    .from('autodm_tenants')
+    .select('id, ig_business_id, plan_tier')
+    .eq('owner_user_id', user.id);
+  const existingTenants = existing ?? [];
+  const isReconnect = existingTenants.some((t) => t.ig_business_id === igBusinessId);
+
+  // Owner plan = highest tier they own. Default 'free' if none.
+  const tierRank: Record<PlanTier, number> = { free: 0, creator: 1, pro: 2, agency: 3 };
+  const ownerPlan: PlanTier = (existingTenants
+    .map((t) => (t.plan_tier as PlanTier))
+    .sort((a, b) => tierRank[b] - tierRank[a])[0]) ?? 'free';
+
+  // For NEW connects (not reconnect), check Instagram quota for owner plan.
+  if (!isReconnect) {
+    const allowed = DEFAULT_PLAN_CAPS[ownerPlan].instagram_accounts;
+    const igCount = existingTenants.length;
+    if (igCount >= allowed) {
+      return NextResponse.redirect(new URL(
+        `/autodm/connect?error=cap_reached&plan=${ownerPlan}&allowed=${allowed}`,
+        req.url,
+      ));
+    }
+  }
+
   const encryptedToken = encryptToken(pageToken);
   const expiresAt = new Date(Date.now() + expiresIn * 1000).toISOString();
   const warmingEnds = new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString();
+  const caps = DEFAULT_PLAN_CAPS[ownerPlan];
 
-  const { error: upsertErr } = await supa.from('autodm_tenants').upsert({
+  const { data: upserted, error: upsertErr } = await supa.from('autodm_tenants').upsert({
     owner_user_id: user.id,
     ig_business_id: igBusinessId,
     ig_username: igUsername,
     ig_user_token_encrypted: encryptedToken,
     ig_token_expires_at: expiresAt,
     account_warming_ends_at: warmingEnds,
+    plan_tier: ownerPlan,
+    hourly_cap: caps.hourly,
+    daily_cap: caps.daily,
     is_active: true,
     paused_until: null,
     paused_reason: null,
-  }, { onConflict: 'ig_business_id' });
+  }, { onConflict: 'ig_business_id' }).select('id').single();
   if (upsertErr) return fail(req, `tenant_upsert:${upsertErr.message.slice(0, 60)}`);
 
   // 5. Subscribe this IG account's comments to OUR webhook.
@@ -143,6 +178,19 @@ export async function GET(req: NextRequest) {
     );
   } catch { /* best-effort */ }
 
-  // 6. Redirect into the dashboard — AI onboarding kicks off on first view
-  return NextResponse.redirect(new URL('/autodm/dashboard?connected=1', req.url));
+  // 6. Redirect into the dashboard — AI onboarding kicks off on first view.
+  // Also set the active-tenant cookie to the just-connected account so the
+  // dashboard lands on it (instead of falling back to most-recent which
+  // is the SAME row but selected via different path).
+  const res = NextResponse.redirect(new URL('/autodm/dashboard?connected=1', req.url));
+  if (upserted?.id) {
+    res.cookies.set(ACTIVE_TENANT_COOKIE, upserted.id, {
+      maxAge: ACTIVE_TENANT_COOKIE_MAX_AGE,
+      path: '/',
+      sameSite: 'lax',
+      httpOnly: true,
+      secure: true,
+    });
+  }
+  return res;
 }

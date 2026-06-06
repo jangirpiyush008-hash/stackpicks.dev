@@ -3,8 +3,12 @@
 
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { cookies } from 'next/headers';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { adminClient } from '@stackpicks/core/db';
+import { getActiveTenant, ACTIVE_TENANT_COOKIE } from '@stackpicks/core/autodm/active-tenant';
+import { DEFAULT_PLAN_CAPS, type PlanTier } from '@stackpicks/core/autodm/types';
+import { TenantSwitcher } from '@/components/autodm/TenantSwitcher';
 import { Instagram, Sparkles, AlertCircle, CheckCircle2, Pause, Inbox, Users, BarChart3 } from 'lucide-react';
 import { RulesEditor } from '@/components/autodm/RulesEditor';
 import { FollowupAgentToggle } from '@/components/autodm/FollowupAgentToggle';
@@ -66,11 +70,20 @@ export default async function DashboardPage({
   if (!user) redirect('/login?next=/autodm/dashboard');
 
   const supa = adminClient();
-  const { data: tenants } = await supa
-    .from('autodm_tenants')
-    .select('id, ig_business_id, ig_username, plan_tier, hourly_cap, daily_cap, is_active, paused_until, paused_reason, account_warming_ends_at, ai_followup_agent, ai_dm_generation, last_webhook_received_at, created_at')
-    .eq('owner_user_id', user.id);
-  const tenant = (tenants?.[0] as TenantRow | undefined) ?? null;
+  const cookieStore = await cookies();
+  const preferredId = cookieStore.get(ACTIVE_TENANT_COOKIE)?.value ?? null;
+  const { tenant: activeLite, all: allTenants } = await getActiveTenant(supa, user.id, preferredId);
+
+  // Hydrate the active tenant fully (all dashboard fields)
+  let tenant: TenantRow | null = null;
+  if (activeLite) {
+    const { data: full } = await supa
+      .from('autodm_tenants')
+      .select('id, ig_business_id, ig_username, plan_tier, hourly_cap, daily_cap, is_active, paused_until, paused_reason, account_warming_ends_at, ai_followup_agent, ai_dm_generation, last_webhook_received_at, created_at')
+      .eq('id', activeLite.id)
+      .single();
+    tenant = (full as TenantRow | null);
+  }
 
   if (!tenant) {
     return (
@@ -135,6 +148,14 @@ export default async function DashboardPage({
   const isWarming = tenant.account_warming_ends_at && new Date(tenant.account_warming_ends_at) > new Date();
   const isPaused = tenant.paused_until && new Date(tenant.paused_until) > new Date();
 
+  // Plan-cap math for the switcher dropdown
+  const tierRank: Record<PlanTier, number> = { free: 0, creator: 1, pro: 2, agency: 3 };
+  const ownerPlan: PlanTier = (allTenants
+    .map((t) => (t.plan_tier as PlanTier))
+    .sort((a, b) => tierRank[b] - tierRank[a])[0]) ?? 'free';
+  const igAllowed = DEFAULT_PLAN_CAPS[ownerPlan].instagram_accounts;
+  const canAddMore = allTenants.length < igAllowed;
+
   return (
     <main className="min-h-screen bg-bg text-text">
       <section className="max-w-5xl mx-auto px-6 py-12">
@@ -146,6 +167,12 @@ export default async function DashboardPage({
             <div className="text-sm text-muted mt-1">{tenant.plan_tier.toUpperCase()} · {tenant.hourly_cap}/hr · {tenant.daily_cap}/day</div>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
+            <TenantSwitcher
+              active={{ id: tenant.id, ig_username: tenant.ig_username, plan_tier: tenant.plan_tier, is_active: tenant.is_active }}
+              all={allTenants}
+              canAddMore={canAddMore}
+              capInfo={{ used: allTenants.length, allowed: igAllowed, plan: ownerPlan }}
+            />
             <Link
               href="/autodm/analytics"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition bg-bg-card border border-border text-muted hover:text-text"
