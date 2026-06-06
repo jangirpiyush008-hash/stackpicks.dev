@@ -28,6 +28,9 @@ interface Rule {
   daily_cap_per_recipient: number | null;
   is_active: boolean;
   ai_personality_hint: string | null;
+  active_hour_start: number | null;
+  active_hour_end: number | null;
+  active_days: number[] | null;
 }
 
 const EMPTY: Omit<Rule, 'id'> = {
@@ -43,6 +46,9 @@ const EMPTY: Omit<Rule, 'id'> = {
   daily_cap_per_recipient: 1,
   is_active: false,
   ai_personality_hint: null,
+  active_hour_start: null,
+  active_hour_end: null,
+  active_days: null,
 };
 
 export function RulesEditor({
@@ -225,6 +231,18 @@ export function RulesEditor({
               onChange={(e) => setDraft({ ...draft, follow_nudge: e.target.checked })} />
             Append follow nudge for non-followers
           </label>
+
+          <ScheduleEditor
+            start={draft.active_hour_start ?? null}
+            end={draft.active_hour_end ?? null}
+            days={draft.active_days ?? null}
+            onChange={(s, e, d) => setDraft({
+              ...draft,
+              active_hour_start: s,
+              active_hour_end: e,
+              active_days: d,
+            })}
+          />
           <label className="flex items-center gap-2 text-xs text-muted">
             <input type="checkbox" checked={draft.is_active !== false}
               onChange={(e) => setDraft({ ...draft, is_active: e.target.checked })} />
@@ -403,4 +421,140 @@ function VariantsEditor({
       })}
     </div>
   );
+}
+
+const HOURS = Array.from({ length: 24 }, (_, i) => i);
+const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+function ScheduleEditor({
+  start, end, days, onChange,
+}: {
+  start: number | null;
+  end: number | null;
+  days: number[] | null;
+  onChange: (s: number | null, e: number | null, d: number[] | null) => void;
+}) {
+  const isScheduled = start != null && end != null;
+  const [open, setOpen] = useState(isScheduled || !!(days && days.length && days.length < 7));
+
+  function setPreset(preset: 'always' | 'biz' | 'evenings' | 'weekdays') {
+    if (preset === 'always')   onChange(null, null, null);
+    if (preset === 'biz')      onChange(9, 21, [1, 2, 3, 4, 5]);  // 9 AM-9 PM weekdays
+    if (preset === 'evenings') onChange(18, 22, null);             // 6 PM-10 PM daily
+    if (preset === 'weekdays') onChange(start, end, [1, 2, 3, 4, 5]);
+  }
+
+  function toggleDay(d: number) {
+    const cur = new Set(days ?? [0, 1, 2, 3, 4, 5, 6]);
+    if (cur.has(d)) cur.delete(d);
+    else cur.add(d);
+    const arr = Array.from(cur).sort((a, b) => a - b);
+    onChange(start, end, arr.length === 7 ? null : arr);
+  }
+
+  return (
+    <div className="rounded-xl border border-border bg-bg-card/30 p-3">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between text-left"
+      >
+        <span className="text-xs text-muted">
+          When this rule fires:{' '}
+          <strong className="text-text">
+            {isScheduled || (days && days.length && days.length < 7)
+              ? scheduleSummary(start, end, days)
+              : 'always on'}
+          </strong>
+        </span>
+        <span className="text-[10px] text-muted">{open ? 'hide' : 'edit'}</span>
+      </button>
+
+      {open && (
+        <div className="mt-3 space-y-3">
+          <div className="flex gap-1.5 flex-wrap">
+            <PresetBtn label="Always on" onClick={() => setPreset('always')} active={start == null && (!days || days.length === 7)} />
+            <PresetBtn label="Biz hours (9-9, Mon-Fri)" onClick={() => setPreset('biz')} active={start === 9 && end === 21 && JSON.stringify(days) === JSON.stringify([1, 2, 3, 4, 5])} />
+            <PresetBtn label="Evenings (6-10 PM)" onClick={() => setPreset('evenings')} active={start === 18 && end === 22 && !days} />
+          </div>
+
+          <div className="flex items-center gap-2 text-xs">
+            <span className="text-muted">From</span>
+            <select
+              value={start ?? ''}
+              onChange={(e) => onChange(e.target.value === '' ? null : Number(e.target.value), end, days)}
+              className="bg-bg border border-border rounded px-2 py-1 text-xs font-mono"
+            >
+              <option value="">always</option>
+              {HOURS.map((h) => <option key={h} value={h}>{fmtH(h)}</option>)}
+            </select>
+            <span className="text-muted">to</span>
+            <select
+              value={end ?? ''}
+              onChange={(e) => onChange(start, e.target.value === '' ? null : Number(e.target.value), days)}
+              className="bg-bg border border-border rounded px-2 py-1 text-xs font-mono"
+            >
+              <option value="">always</option>
+              {HOURS.map((h) => <option key={h} value={h}>{fmtH(h)}</option>)}
+            </select>
+            <span className="text-muted text-[10px]">IST</span>
+          </div>
+
+          <div className="flex gap-1">
+            {DAY_LABELS.map((label, d) => {
+              const sel = !days || days.length === 0 || days.includes(d);
+              return (
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => toggleDay(d)}
+                  className={`px-2 py-1 text-[10px] font-mono rounded transition ${
+                    sel ? 'bg-accent/15 text-accent' : 'bg-bg border border-border text-muted'
+                  }`}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+
+          <p className="text-[10px] text-muted">
+            Outside this window, matching comments still get logged as &quot;skipped: schedule&quot;.
+            DMs sent at 3 AM convert ~3× worse than business hours — this is the easiest CTR lever.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PresetBtn({ label, onClick, active }: { label: string; onClick: () => void; active: boolean }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`text-[10px] font-mono px-2 py-1 rounded-full border transition ${
+        active ? 'bg-accent/15 border-accent/40 text-accent' : 'border-border text-muted hover:text-text'
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
+function fmtH(h: number): string {
+  if (h === 0) return '12 AM';
+  if (h === 12) return '12 PM';
+  return h < 12 ? `${h} AM` : `${h - 12} PM`;
+}
+
+function scheduleSummary(s: number | null, e: number | null, d: number[] | null): string {
+  const parts: string[] = [];
+  if (s != null && e != null) parts.push(`${fmtH(s)}-${fmtH(e)} IST`);
+  if (d && d.length > 0 && d.length < 7) {
+    if (d.length === 5 && JSON.stringify(d.sort()) === JSON.stringify([1, 2, 3, 4, 5])) parts.push('Mon-Fri');
+    else if (d.length === 2 && JSON.stringify(d.sort()) === JSON.stringify([0, 6])) parts.push('Weekends');
+    else parts.push(d.map((x) => DAY_LABELS[x]).join(','));
+  }
+  return parts.length ? parts.join(' · ') : 'always on';
 }

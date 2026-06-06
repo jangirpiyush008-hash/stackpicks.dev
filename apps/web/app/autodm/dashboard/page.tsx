@@ -52,6 +52,9 @@ interface RuleRow {
   daily_cap_per_recipient: number | null;
   is_active: boolean;
   ai_personality_hint: string | null;
+  active_hour_start: number | null;
+  active_hour_end: number | null;
+  active_days: number[] | null;
 }
 interface LogRow {
   ig_username: string | null;
@@ -105,7 +108,7 @@ export default async function DashboardPage({
   const justConnected = (await searchParams).connected === '1';
 
   const [rulesRes, logRes, convCountRes, subRes] = await Promise.all([
-    supa.from('autodm_rules').select('id, label, keyword, dm_template, dm_template_variants, cta_url, cta_label, comment_reply, comment_reply_follower, follow_nudge, daily_cap_per_recipient, is_active, ai_personality_hint').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(50),
+    supa.from('autodm_rules').select('id, label, keyword, dm_template, dm_template_variants, cta_url, cta_label, comment_reply, comment_reply_follower, follow_nudge, daily_cap_per_recipient, is_active, ai_personality_hint, active_hour_start, active_hour_end, active_days').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(50),
     supa.from('autodm_dm_log').select('ig_username, status, created_at, error, clicked_at, click_count').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(20),
     supa.from('autodm_conversations').select('id', { count: 'exact', head: true })
         .eq('tenant_id', tenant.id).eq('status', 'creator_escalated'),

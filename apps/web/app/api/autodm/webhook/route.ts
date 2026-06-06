@@ -23,6 +23,7 @@ import { generateFollowupReply, FOLLOWUP_LIMITS } from '@stackpicks/core/autodm/
 import type { AutoDmTenant, AutoDmRule } from '@stackpicks/core/autodm/types';
 import { autodmOrigin } from '@stackpicks/core/autodm/origin';
 import { pickVariant } from '@stackpicks/core/autodm/ab-test';
+import { isRuleActiveNow } from '@stackpicks/core/autodm/schedule';
 
 interface TranscriptTurn {
   role: 'user' | 'creator_bot';
@@ -192,6 +193,24 @@ export async function POST(req: NextRequest) {
 
       const rule = matchRule(rules, commentText, postId);
       if (!rule) continue;
+
+      // Schedule guard — skip if outside the rule's active hours/days (IST).
+      // We log it so the creator can see "20 comments skipped — outside
+      // active hours" in their dashboard instead of silent drop.
+      const sched = isRuleActiveNow({
+        active_hour_start: (rule as { active_hour_start?: number | null }).active_hour_start ?? null,
+        active_hour_end: (rule as { active_hour_end?: number | null }).active_hour_end ?? null,
+        active_days: (rule as { active_days?: number[] | null }).active_days ?? null,
+      });
+      if (!sched.active) {
+        await supa.from('autodm_dm_log').insert({
+          tenant_id: tenant.id, rule_id: rule.id, ig_user_id: fromIgsid, ig_username: fromUsername,
+          trigger_event: 'comment', trigger_post_id: postId,
+          trigger_text: commentText.slice(0, 500), trigger_comment_id: commentId,
+          status: 'skipped', error: `schedule:${sched.reason}`,
+        });
+        processed.push(`skip:schedule:${rule.id}:${sched.reason}`); continue;
+      }
 
       // Per-recipient daily cap
       if (rule.daily_cap_per_recipient) {

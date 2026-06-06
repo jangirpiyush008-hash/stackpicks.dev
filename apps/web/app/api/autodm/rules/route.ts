@@ -59,6 +59,9 @@ export async function POST(req: NextRequest) {
     is_active:      body.is_active !== false,
     use_ai_generation: body.use_ai_generation === true,
     ai_personality_hint: (body.ai_personality_hint as string) || null,
+    active_hour_start: normHour(body.active_hour_start),
+    active_hour_end:   normHour(body.active_hour_end),
+    active_days:       normDays(body.active_days),
   };
   if (!payload.keyword || !payload.dm_template) {
     return NextResponse.json({ ok: false, error: 'keyword + dm_template required' }, { status: 400 });
@@ -66,6 +69,22 @@ export async function POST(req: NextRequest) {
   const { data, error } = await ctx.admin.from('autodm_rules').insert(payload).select().single();
   if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true, rule: data });
+}
+
+function normHour(v: unknown): number | null {
+  if (v === null || v === undefined || v === '') return null;
+  const n = Number(v);
+  if (!Number.isInteger(n) || n < 0 || n > 23) return null;
+  return n;
+}
+function normDays(v: unknown): number[] | null {
+  if (!Array.isArray(v) || v.length === 0 || v.length >= 7) return null;
+  const out: number[] = [];
+  for (const d of v) {
+    const n = Number(d);
+    if (Number.isInteger(n) && n >= 0 && n <= 6 && !out.includes(n)) out.push(n);
+  }
+  return out.length === 0 ? null : out.sort((a, b) => a - b);
 }
 
 export async function PATCH(req: NextRequest) {
@@ -83,6 +102,9 @@ export async function PATCH(req: NextRequest) {
     'use_ai_generation', 'ai_personality_hint',
   ];
   for (const f of allowed) if (f in body) updates[f] = body[f];
+  if ('active_hour_start' in body) updates.active_hour_start = normHour(body.active_hour_start);
+  if ('active_hour_end' in body)   updates.active_hour_end   = normHour(body.active_hour_end);
+  if ('active_days' in body)       updates.active_days       = normDays(body.active_days);
   const { data, error } = await ctx.admin.from('autodm_rules')
     .update(updates).eq('id', id).eq('tenant_id', ctx.tenantId).select().single();
   if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
