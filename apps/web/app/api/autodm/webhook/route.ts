@@ -21,6 +21,7 @@ import {
 import { decryptToken } from '@stackpicks/core/autodm/crypto';
 import { generateFollowupReply, FOLLOWUP_LIMITS } from '@stackpicks/core/autodm/followup-agent';
 import type { AutoDmTenant, AutoDmRule } from '@stackpicks/core/autodm/types';
+import { autodmOrigin } from '@stackpicks/core/autodm/origin';
 
 interface TranscriptTurn {
   role: 'user' | 'creator_bot';
@@ -213,9 +214,7 @@ export async function POST(req: NextRequest) {
       const shortId = rule.cta_url
         ? Math.random().toString(36).slice(2, 12)
         : null;
-      const trackerUrl = shortId
-        ? `${process.env.AUTODM_TRACKER_ORIGIN || 'https://autodm.stackpicks.dev'}/c/${shortId}`
-        : undefined;
+      const trackerUrl = shortId ? `${autodmOrigin()}/c/${shortId}` : undefined;
 
       // Send DM (CTA button uses the tracker URL, not the original)
       let send;

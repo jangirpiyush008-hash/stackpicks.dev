@@ -19,13 +19,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminClient } from '@stackpicks/core/db';
 import { buildDigestHtml, sendDigestEmail, type DigestStats } from '@stackpicks/core/autodm/digest-email';
+import { autodmOrigin } from '@stackpicks/core/autodm/origin';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 120;
 
 const FROM_DEFAULT = 'StackPicks AutoDM <hello@stackpicks.dev>';
-const SITE = process.env.AUTODM_TRACKER_ORIGIN || 'https://autodm.stackpicks.dev';
 
 interface TenantRow {
   id: string;
@@ -162,9 +162,12 @@ export async function GET(req: NextRequest) {
       followerSent, followerClicks,
       nonFollowerSent, nonFollowerClicks,
       bestRule,
-      upgradeUrl: `${SITE}/autodm/dashboard#plan`,
-      analyticsUrl: `${SITE}/autodm/analytics`,
-      contactsUrl: `${SITE}/autodm/contacts`,
+      // On autodm.stackpicks.dev the middleware rewrites bare paths
+      // (/dashboard, /analytics) → /autodm/* internally. Email links
+      // must use the BARE path or they 404.
+      upgradeUrl: `${autodmOrigin()}/dashboard#plan`,
+      analyticsUrl: `${autodmOrigin()}/analytics`,
+      contactsUrl: `${autodmOrigin()}/contacts`,
     };
     const { subject, html, text } = buildDigestHtml(stats);
 

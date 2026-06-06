@@ -3,10 +3,10 @@
  * recording the click on the originating dm_log row.
  *
  *   GET https://autodm.stackpicks.dev/c/<shortId>
- *   or  https://stackpicks.dev/autodm/c/<shortId>
  *
- * Both URLs resolve to the same handler because the middleware rewrites
- * autodm.stackpicks.dev/* → /autodm/* internally.
+ * The middleware rewrites autodm.stackpicks.dev/* → /autodm/*
+ * internally, so this Next.js route file lives at /autodm/c/[shortId]
+ * but is reached at the bare path /c/<shortId> on the AutoDM subdomain.
  *
  * Effects:
  *   • increments click_count
@@ -19,6 +19,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { adminClient } from '@stackpicks/core/db';
+import { autodmOrigin } from '@stackpicks/core/autodm/origin';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -53,6 +54,6 @@ export async function GET(
     clicked_at: row.clicked_at ?? now,
   }).eq('id', row.id);
 
-  const destination = (row.original_cta_url as string) || 'https://stackpicks.dev';
+  const destination = (row.original_cta_url as string) || autodmOrigin();
   return NextResponse.redirect(destination, { status: 302 });
 }

@@ -1,5 +1,7 @@
 // StackPicks AutoDM — public landing page
-// Lives at stackpicks.dev/autodm — the first surface customers see.
+// Lives at autodm.stackpicks.dev — the first surface customers see.
+// (Path is /autodm internally; middleware rewrites the subdomain root
+// to /autodm so autodm.stackpicks.dev/ → this page.)
 
 import Link from 'next/link';
 import { CheckCircle2, MessageSquare, Sparkles, Shield, Zap, Bot } from 'lucide-react';

@@ -15,6 +15,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHmac, randomBytes } from 'node:crypto';
 import { getSupabaseServer } from '@/lib/supabase-server';
+import { autodmOrigin } from '@stackpicks/core/autodm/origin';
 
 export const runtime = 'nodejs';
 
@@ -40,7 +41,6 @@ export async function GET(req: NextRequest) {
 
   const appId = process.env.AUTODM_META_APP_ID;
   const appSecret = process.env.AUTODM_META_APP_SECRET;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://stackpicks.dev';
   if (!appId || !appSecret) {
     return NextResponse.json({ ok: false, error: 'autodm meta app not configured' }, { status: 500 });
   }
@@ -49,7 +49,8 @@ export async function GET(req: NextRequest) {
   const nonce = randomBytes(16).toString('hex');
   const state = `${user.id}:${nonce}:${sign(`${user.id}:${nonce}`, appSecret)}`;
 
-  const redirectUri = `${siteUrl}/api/autodm/oauth/callback`;
+  // MUST match the Valid OAuth Redirect URI whitelisted in the Meta App console.
+  const redirectUri = `${autodmOrigin()}/api/autodm/oauth/callback`;
   const params = new URLSearchParams({
     client_id: appId,
     redirect_uri: redirectUri,

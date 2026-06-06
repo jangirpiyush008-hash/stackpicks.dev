@@ -15,6 +15,7 @@ import { getSupabaseServer } from '@/lib/supabase-server';
 import { adminClient } from '@stackpicks/core/db';
 import { decryptToken } from '@stackpicks/core/autodm/crypto';
 import { fetchCreatorSnapshot, generateStarterRules } from '@stackpicks/core/autodm/ai-onboarding';
+import { autodmOrigin } from '@stackpicks/core/autodm/origin';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -62,7 +63,7 @@ export async function POST(req: NextRequest) {
       igUsername: tenant.ig_username || 'creator',
       captions: snapshot.captions,
       comments: snapshot.comments,
-      fallbackCtaUrl: 'https://stackpicks.dev',
+      fallbackCtaUrl: autodmOrigin(),
     });
   } catch (e) {
     return NextResponse.json({ ok: false, error: `claude:${(e as Error).message}` }, { status: 500 });

@@ -17,6 +17,7 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { adminClient } from '@stackpicks/core/db';
 import { encryptToken } from '@stackpicks/core/autodm/crypto';
+import { autodmOrigin } from '@stackpicks/core/autodm/origin';
 
 export const runtime = 'nodejs';
 
@@ -42,7 +43,6 @@ export async function GET(req: NextRequest) {
 
   const appId = process.env.AUTODM_META_APP_ID;
   const appSecret = process.env.AUTODM_META_APP_SECRET;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://stackpicks.dev';
   if (!appId || !appSecret) return fail(req, 'app_not_configured');
 
   // Verify state CSRF — format: userId:nonce:sig
@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
   const { data: { user } } = await supaRoute.auth.getUser();
   if (!user || user.id !== stateUserId) return fail(req, 'auth_mismatch');
 
-  const redirectUri = `${siteUrl}/api/autodm/oauth/callback`;
+  const redirectUri = `${autodmOrigin()}/api/autodm/oauth/callback`;
 
   // 1. code → short-lived token
   const shortRes = await fetch(
