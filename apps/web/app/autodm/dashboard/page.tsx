@@ -9,6 +9,7 @@ import { Instagram, Sparkles, AlertCircle, CheckCircle2, Pause, Inbox, Users, Ba
 import { RulesEditor } from '@/components/autodm/RulesEditor';
 import { FollowupAgentToggle } from '@/components/autodm/FollowupAgentToggle';
 import { PlanUpgrade } from '@/components/autodm/PlanUpgrade';
+import { SubscriptionManager } from '@/components/autodm/SubscriptionManager';
 
 export const metadata = {
   title: 'Dashboard — StackPicks AutoDM',
@@ -88,15 +89,36 @@ export default async function DashboardPage({
   const { searchParams: _ } = { searchParams: await searchParams };
   const justConnected = (await searchParams).connected === '1';
 
-  const [rulesRes, logRes, convCountRes] = await Promise.all([
+  const [rulesRes, logRes, convCountRes, subRes] = await Promise.all([
     supa.from('autodm_rules').select('id, label, keyword, dm_template, dm_template_variants, cta_url, cta_label, comment_reply, comment_reply_follower, follow_nudge, daily_cap_per_recipient, is_active, ai_personality_hint').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(50),
     supa.from('autodm_dm_log').select('ig_username, status, created_at, error, clicked_at, click_count').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(20),
     supa.from('autodm_conversations').select('id', { count: 'exact', head: true })
         .eq('tenant_id', tenant.id).eq('status', 'creator_escalated'),
+    supa.from('autodm_subscriptions')
+        .select('id, razorpay_subscription_id, plan_tier, status, current_period_end, cancel_at_cycle_end')
+        .eq('tenant_id', tenant.id)
+        .order('created_at', { ascending: false })
+        .limit(1),
   ]);
   const rules = (rulesRes.data ?? []) as RuleRow[];
   const logs = (logRes.data ?? []) as LogRow[];
   const escalatedCount = convCountRes.count ?? 0;
+  const subRow = (subRes.data?.[0] as {
+    id: string;
+    razorpay_subscription_id: string;
+    plan_tier: 'creator' | 'pro' | 'agency';
+    status: string;
+    current_period_end: string | null;
+    cancel_at_cycle_end: boolean;
+  } | undefined) ?? null;
+  const subscription = subRow ? {
+    id: subRow.id,
+    razorpay_subscription_id: subRow.razorpay_subscription_id,
+    plan_tier: subRow.plan_tier,
+    status: subRow.status,
+    current_end: subRow.current_period_end,
+    cancel_at_cycle_end: subRow.cancel_at_cycle_end,
+  } : null;
 
   const sentToday = logs.filter((l) =>
     l.status === 'sent' &&
@@ -206,6 +228,9 @@ export default async function DashboardPage({
           <Stat label="Active rules" value={String(rules.filter((r) => r.is_active).length)} sub={`of ${rules.length} total`} />
           <Stat label="Plan" value={tenant.plan_tier} sub="upgrade →" />
         </div>
+
+        {/* Subscription manager — cancel + status of active Razorpay sub */}
+        <SubscriptionManager subscription={subscription} currentTier={tenant.plan_tier} />
 
         {/* Plan upgrade */}
         <PlanUpgrade currentTier={tenant.plan_tier} />
