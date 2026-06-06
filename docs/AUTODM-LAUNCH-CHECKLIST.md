@@ -131,7 +131,6 @@ The JSON response will tell you which tenant has gone silent.
 - Google OAuth verification kickoff (task #114)
 - 4 more OAuth apps for Connect (task #116)
 - Carousels #3-#6 for IG (tasks #118, #119)
-- Public referral page (₹500 credit per signup) — not built yet, ~45 min
 
 ---
 

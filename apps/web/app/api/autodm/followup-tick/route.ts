@@ -20,6 +20,7 @@ import { adminClient } from '@stackpicks/core/db';
 import { decryptToken } from '@stackpicks/core/autodm/crypto';
 import { sendDm, renderTemplate } from '@stackpicks/core/autodm/dm';
 import { generateFollowupNudge } from '@stackpicks/core/autodm/followup-nudge';
+import { autodmOrigin } from '@stackpicks/core/autodm/origin';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -126,7 +127,18 @@ export async function GET(req: NextRequest) {
       continue;
     }
 
-    // Generate the nudge
+    // Skip if the original DM had no CTA URL — there's nothing to re-send
+    if (!r.original_cta_url) {
+      await supa.from('autodm_dm_log').update({
+        followup_sent_at: new Date().toISOString(),
+        followup_skipped_reason: 'no_original_cta_url',
+      }).eq('id', r.id);
+      results.push(`skip:${r.id}:no_cta`);
+      continue;
+    }
+
+    // Generate the reminder text — short, friendly, one sentence in the
+    // creator's voice. Critically: the link gets appended separately.
     let nudgeTpl: string;
     try {
       nudgeTpl = await generateFollowupNudge({
@@ -135,9 +147,18 @@ export async function GET(req: NextRequest) {
         originalDmText: `Followup for the link sent earlier to @${r.ig_username || 'them'}.`,
       });
     } catch {
-      nudgeTpl = `hey {{username}} — just checking, did you get the link from earlier?`;
+      nudgeTpl = `hey {{username}} — just bumping the link from earlier in case you missed it`;
     }
-    const nudge = renderTemplate(nudgeTpl, { username: r.ig_username || undefined });
+    const nudgeText = renderTemplate(nudgeTpl, { username: r.ig_username || undefined });
+
+    // Generate a NEW short_id for the followup so we can attribute its
+    // clicks separately. Same destination URL as the original.
+    const followupShortId = Math.random().toString(36).slice(2, 12);
+    const trackerUrl = `${autodmOrigin()}/c/${followupShortId}`;
+
+    // Final body = nudge text + link on its own line. Apparent in IG chat
+    // as a normal message preview with the URL as the second line.
+    const body = `${nudgeText}\n\n${trackerUrl}`;
 
     // Send via standard messaging — conversation window from the original
     // DM is still open if the recipient hasn't replied. If outside the
@@ -146,7 +167,7 @@ export async function GET(req: NextRequest) {
       igBusinessId: ctx.igBusinessId,
       tenantToken: ctx.token,
       recipientIgsid: r.ig_user_id as string,
-      body: nudge,
+      body,
     }).catch((e) => ({ ok: false, error: (e as Error).message }));
 
     if (out.ok) {
@@ -155,6 +176,7 @@ export async function GET(req: NextRequest) {
       await supa.from('autodm_dm_log').update({
         followup_sent_at: new Date().toISOString(),
         followup_message_id: msgId,
+        followup_short_id: followupShortId,
       }).eq('id', r.id);
       results.push(`sent:${r.id}`);
     } else {

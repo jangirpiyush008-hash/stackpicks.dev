@@ -34,11 +34,15 @@ export async function GET(
   }
 
   const supa = adminClient();
+  // Match either the initial DM short_id OR the 4h followup's short_id —
+  // both redirect to the same original_cta_url, and either click marks
+  // the row as converted.
   const { data: row } = await supa
     .from('autodm_dm_log')
     .select('id, original_cta_url, click_count, clicked_at')
-    .eq('short_id', shortId)
-    .single();
+    .or(`short_id.eq.${shortId},followup_short_id.eq.${shortId}`)
+    .limit(1)
+    .maybeSingle();
 
   if (!row) {
     // Stale or revoked link — send them to the AutoDM landing instead of 404

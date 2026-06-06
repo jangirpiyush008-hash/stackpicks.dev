@@ -14,21 +14,23 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 
-const SYSTEM = `You write very short, friendly Instagram DM nudges. Constraints:
-- 1 sentence MAX. Conversational, casual, like a friend checking in.
-- Refer to the original DM with phrases like "the link from earlier", "what I sent yesterday", "yesterday's pick".
+const SYSTEM = `You write very short Instagram DM reminder messages. The message will have a LINK appended after it on a new line — your job is to write only the lead-in sentence.
+
+Constraints:
+- 1 sentence MAX. Conversational, casual, like a friend bumping a message.
+- Phrase it as a soft re-send: "here it is again", "bumping this", "wanted to make sure you got this", "the link from earlier in case it got buried".
+- DO NOT include any URL — the link is appended automatically.
 - NEVER pushy. Never "act now", "don't miss out", "limited time", "buy now". No exclamation marks.
-- NEVER ask for the sale. Just check in.
 - Match the voice of the creator from the samples provided.
 - If the creator's voice uses emojis, use ONE (max). Otherwise none.
-- Output ONLY the nudge text — no quotes, no preamble.`;
+- Output ONLY the message text — no quotes, no preamble, no link.`;
 
 export async function generateFollowupNudge(input: {
   tenantUsername: string;
   voiceSamples: string[];      // creator's past DM bodies (max 6)
   originalDmText: string;      // what we sent originally
 }): Promise<string> {
-  const fallback = `hey {{username}} — just checking, did you get the link from earlier?`;
+  const fallback = `hey {{username}} — bumping the link from earlier in case you missed it`;
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return fallback;
 
@@ -42,7 +44,7 @@ ${input.voiceSamples.slice(0, 6).map((s, i) => `${i + 1}. "${s.slice(0, 200)}"`)
 Original DM that was sent ~4 hours ago to the recipient (use {{username}} placeholder for their handle):
 "${input.originalDmText.slice(0, 300)}"
 
-Write a 1-sentence followup nudge in this creator's voice.`;
+Write a 1-sentence lead-in for re-sending the same link. The URL will be appended automatically after your message on a new line — DO NOT include any URL or "here:" in your output.`;
 
     const res = await claude.messages.create({
       model: 'claude-opus-4-5',
