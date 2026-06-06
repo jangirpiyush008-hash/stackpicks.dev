@@ -22,23 +22,10 @@ const nextConfig = {
   // (…/oauth-authorization-server/api/mcp), so map that variant too.
   async rewrites() {
     return [
-      // ── autodm.stackpicks.dev → /autodm/* (subdomain serving) ────────────
-      // When a request comes in for the autodm.stackpicks.dev hostname,
-      // rewrite the path so the user sees clean URLs like
-      // autodm.stackpicks.dev/connect (not /autodm/connect). Routes still
-      // live under app/autodm/* — only the URL bar changes.
-      {
-        source: '/',
-        has: [{ type: 'host', value: 'autodm.stackpicks.dev' }],
-        destination: '/autodm',
-      },
-      {
-        source: '/:path*',
-        has: [{ type: 'host', value: 'autodm.stackpicks.dev' }],
-        destination: '/autodm/:path*',
-      },
-
       // ── OAuth discovery (MCP clients probe these well-known paths) ───────
+      // Subdomain routing for autodm.stackpicks.dev lives in middleware.ts
+      // — it can't be done with path-based rewrites without infinite-loop
+      // pitfalls on internal Link clicks.
       {
         source: '/.well-known/oauth-authorization-server',
         destination: '/api/oauth/metadata/authorization-server',
