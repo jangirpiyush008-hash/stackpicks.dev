@@ -91,6 +91,25 @@ export function SubscriptionManager({
     }
   }
 
+  async function handleResume() {
+    setBusy(true);
+    setResult(null);
+    try {
+      const res = await fetch('/api/autodm/billing/resume', { method: 'POST' });
+      const j = await res.json();
+      if (j.ok) {
+        setResult({ ok: true, msg: 'Plan resumed. Your subscription will renew normally.' });
+        setTimeout(() => window.location.reload(), 1500);
+      } else {
+        setResult({ ok: false, msg: j.error || 'Resume failed.' });
+      }
+    } catch (e) {
+      setResult({ ok: false, msg: (e as Error).message });
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <div className={`rounded-2xl border ${cancelScheduled ? 'border-amber-500/40 bg-amber-500/5' : 'border-border bg-bg-card/30'} p-5 mb-6`}>
       <div className="flex items-start justify-between gap-3 flex-wrap">
@@ -164,8 +183,15 @@ export function SubscriptionManager({
       {cancelScheduled && (
         <div className="mt-3 p-3 rounded-xl bg-amber-500/5 border border-amber-500/20 text-xs text-amber-400 flex items-start gap-2">
           <Calendar className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-          <div>
-            Your plan ends on <strong>{periodEnd}</strong>. To resubscribe before that, pick a tier below — the new sub starts when the old one ends.
+          <div className="flex-1">
+            Your plan ends on <strong>{periodEnd}</strong>.
+            <button
+              onClick={handleResume}
+              disabled={busy}
+              className="ml-2 underline hover:text-amber-300 disabled:opacity-50"
+            >
+              Keep my plan instead
+            </button>
           </div>
         </div>
       )}

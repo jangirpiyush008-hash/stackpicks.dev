@@ -8,7 +8,7 @@ import { cookies } from 'next/headers';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { adminClient } from '@stackpicks/core/db';
 import { getActiveTenant, ACTIVE_TENANT_COOKIE } from '@stackpicks/core/autodm/active-tenant';
-import { Users, ArrowLeft, MousePointerClick, MessageSquare, ExternalLink } from 'lucide-react';
+import { Users, ArrowLeft, MousePointerClick, MessageSquare, ExternalLink, Download } from 'lucide-react';
 
 export const metadata = {
   title: 'Contacts — StackPicks AutoDM',
@@ -120,8 +120,17 @@ export default async function ContactsPage({
         </div>
       </div>
 
+      <div className="flex justify-end mt-6">
+        <a
+          href={`/api/autodm/contacts/export${filter ? `?filter=${filter}` : ''}`}
+          className="inline-flex items-center gap-1.5 text-xs text-muted hover:text-text px-3 py-1.5 rounded-full border border-border hover:border-accent/40"
+        >
+          <Download className="w-3 h-3" /> Export CSV
+        </a>
+      </div>
+
       {/* Filter tabs */}
-      <div className="border-b border-border flex gap-1 mb-4 mt-6 overflow-x-auto">
+      <div className="border-b border-border flex gap-1 mb-4 mt-3 overflow-x-auto">
         <Tab label="All" filter="all" current={filter || 'all'} count={counts.all} />
         <Tab label="Clicked" filter="clicked" current={filter || 'all'} count={counts.clicked} accent />
         <Tab label="No click" filter="no_click" current={filter || 'all'} count={counts.no_click} />
