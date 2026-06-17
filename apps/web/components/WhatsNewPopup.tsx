@@ -14,20 +14,13 @@
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Sparkles, X, GitBranch, Plug, RefreshCw, ArrowRight } from 'lucide-react';
+import { Sparkles, X, ArrowRight } from 'lucide-react';
 
-const REFRESH_ID = 'jun-2026-01';
+const REFRESH_ID = 'jun-2026-02';
 const STORAGE_KEY = `sp_whatsnew_dismissed_${REFRESH_ID}`;
 const SHOW_DELAY_MS = 2_500;
 
-// Counts shown in the toast — bump these when you ship a refresh.
-const STATS = {
-  new_repos: 12,
-  new_mcps: 8,
-  refreshed_repos: 174,
-};
-
-const CHANGELOG_HREF = '/blog/whats-new-june-2026-stackpicks';
+const CHANGELOG_HREF = '/blog/mcp-stateless-protocol-2026';
 
 export function WhatsNewPopup() {
   const pathname = usePathname();
@@ -83,20 +76,19 @@ export function WhatsNewPopup() {
             <Sparkles className="w-4 h-4 text-accent" />
           </span>
           <div className="flex flex-col">
-            <span className="text-xs font-mono uppercase tracking-wider text-accent">Just shipped</span>
-            <span className="text-[10px] text-muted">June 5, 2026 refresh</span>
+            <span className="text-xs font-mono uppercase tracking-wider text-accent">Fresh on the blog</span>
+            <span className="text-[10px] text-muted">June 18, 2026</span>
           </div>
         </div>
 
-        <h3 className="text-sm font-semibold text-text mb-3 leading-snug">
-          Catalog refresh — new repos, new MCPs, fresh GitHub data
+        <h3 className="text-sm font-semibold text-text mb-2 leading-snug">
+          MCP just went stateless — the 2026 spec, explained
         </h3>
 
-        <div className="grid grid-cols-3 gap-2 mb-4">
-          <Stat icon={GitBranch} value={`+${STATS.new_repos}`} label="repos" />
-          <Stat icon={Plug}      value={`+${STATS.new_mcps}`}  label="MCPs"  />
-          <Stat icon={RefreshCw} value={STATS.refreshed_repos} label="rescraped" />
-        </div>
+        <p className="text-xs text-muted mb-4 leading-relaxed">
+          No more session IDs or sticky load balancers. Plus June&apos;s launches —
+          Claude Fable 5, GLM-5.2, Copilot usage billing — in one breakdown.
+        </p>
 
         <div className="flex items-center justify-between gap-2">
           <Link
@@ -105,7 +97,7 @@ export function WhatsNewPopup() {
             className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-medium
                        px-3 py-2 rounded-md bg-accent text-bg hover:bg-accent/90 transition"
           >
-            See what's new
+            Read the breakdown
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
           <button
@@ -117,18 +109,6 @@ export function WhatsNewPopup() {
         </div>
       </div>
 
-    </div>
-  );
-}
-
-function Stat({
-  icon: Icon, value, label,
-}: { icon: typeof Sparkles; value: number | string; label: string }) {
-  return (
-    <div className="flex flex-col items-start gap-0.5 p-2 rounded-lg border border-border/60 bg-bg/40">
-      <Icon className="w-3.5 h-3.5 text-accent mb-0.5" />
-      <span className="text-base font-semibold tabular-nums text-text leading-none">{value}</span>
-      <span className="text-[10px] text-muted uppercase tracking-wider">{label}</span>
     </div>
   );
 }

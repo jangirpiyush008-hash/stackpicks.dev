@@ -34,8 +34,97 @@ const TODAY_30 = '2026-05-30';
 const TODAY_31 = '2026-05-31';
 const TODAY_JUN3 = '2026-06-03';
 const TODAY_JUN5 = '2026-06-05';
+const TODAY_JUN18 = '2026-06-18';
 
 export const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: 'mcp-stateless-protocol-2026',
+    title: 'MCP Goes Stateless: What the 2026 Spec Release Candidate Means for Your Servers',
+    excerpt: 'The MCP 2026 spec release candidate drops the initialize handshake and session IDs so servers run behind a plain load balancer. Plus Extensions, MCP Apps, Tasks, and OAuth hardening — explained.',
+    query: 'mcp stateless protocol 2026 spec release candidate',
+    monthly_searches: 1400,
+    reading_time: 7,
+    published_at: TODAY_JUN18,
+    updated_at: TODAY_JUN18,
+    author: 'Piyush Jangir',
+    category: 'AI Engineering',
+    quick_answer: 'The MCP 2026 spec release candidate (published May 21, 2026; final July 28, 2026) makes the protocol stateless: no initialize handshake, no Mcp-Session-Id header. Servers run behind a plain round-robin load balancer. It also adds an Extensions framework, MCP Apps, a Tasks extension, ttlMs caching, and OAuth hardening.',
+    faqs: [
+      { question: 'What does "stateless MCP" actually mean?', answer: 'In the 2026 release candidate, MCP drops the initialize/initialized handshake and the Mcp-Session-Id header. Client metadata now rides in _meta on every request instead of being exchanged once at connection time. Practically: a remote MCP server no longer needs sticky sessions, a shared session store, or deep packet inspection at the gateway. It can sit behind a plain round-robin load balancer, which makes horizontal scaling and serverless deploys far simpler.' },
+      { question: 'When does the MCP 2026 spec become final?', answer: 'The release candidate was published May 21, 2026. The final specification lands July 28, 2026, after a roughly ten-week validation window for SDK maintainers and client implementers to test against real workloads. Tier 1 SDKs (TypeScript, Python) are expected to ship support within that window. Until then, the current stable spec dated 2025-11-25 remains in production use, so you do not need to migrate anything today.' },
+      { question: 'What are MCP Extensions and MCP Apps?', answer: 'Extensions are a new framework letting MCP grow without bloating the core spec. Each is identified by a reverse-DNS ID and negotiated through an extensions map, versioned independently of the spec. Two official extensions ship in the RC: MCP Apps, which lets a server render sandboxed iframe UIs inside the client, and Tasks, a stateless model for long-running operations moved out of the experimental core. This keeps the base protocol small while allowing optional power features.' },
+      { question: 'Will the stateless change break my existing MCP server?', answer: 'Not immediately. The current stable spec (2025-11-25) stays valid and nothing is removed on July 28. The RC introduces a formal deprecation policy: features move through Active, Deprecated, and Removed with at least twelve months between deprecation and removal. Roots, Sampling, and Logging are deprecated in this release, so you have until at least mid-2027 to migrate off them. Plan the move, but do not panic-rewrite.' },
+      { question: 'Where can I find MCP servers that already work today?', answer: 'StackPicks maintains a curated MCP directory at /mcp with install commands, auth notes, and whether each server runs locally (npx, uvx) or as a remote URL. For a managed gateway that exposes many apps through one MCP endpoint, StackPicks Connect lets you wire tools without hand-editing config files. Both work against the current stable spec and will track the 2026 changes as Tier 1 SDKs ship support.' },
+    ],
+    content: `**Short version:** The Model Context Protocol's **2026 spec release candidate** (published May 21, 2026, final on **July 28, 2026**) makes MCP **stateless**. No more \`initialize\` handshake. No more \`Mcp-Session-Id\`. Your server can run behind an ordinary load balancer. This is the biggest architectural change since MCP launched — here is what matters and what you should do about it.
+
+## The headline: MCP is now stateless
+
+Until now, a remote MCP server carried session state. The client and server exchanged an \`initialize\`/\`initialized\` handshake, then every later request rode an \`Mcp-Session-Id\` header. That forced infrastructure most teams hated:
+
+- Sticky sessions at the load balancer
+- A shared session store (Redis, usually)
+- Deep packet inspection at the gateway to route by session
+
+The release candidate removes all of it. Client metadata now travels in \`_meta\` on **every** request rather than being negotiated once. The result:
+
+- Run behind a plain **round-robin load balancer**
+- No session store, no sticky routing
+- Serverless and edge deploys get genuinely easy
+
+If you have shipped a remote MCP server, this is the change you will feel first.
+
+## Routing, caching, and tracing — built in
+
+Three operational features land alongside the stateless core:
+
+1. **Routing headers.** \`Mcp-Method\` and \`Mcp-Name\` let gateways and rate-limiters route on the operation without parsing the body.
+2. **Caching controls.** Results carry \`ttlMs\` and \`cacheScope\` (modeled on HTTP \`Cache-Control\`), so a client knows exactly how long a \`tools/list\` response stays fresh and whether it is safe to share across users.
+3. **Distributed tracing.** W3C Trace Context (\`traceparent\`, \`tracestate\`, \`baggage\`) is now documented in \`_meta\`, so OpenTelemetry traces correlate across SDKs and gateways.
+
+These are the unglamorous features that make MCP production-grade rather than a demo protocol.
+
+## Extensions, MCP Apps, and Tasks
+
+The RC adds an **Extensions framework**. Each extension has a reverse-DNS ID, is negotiated through an extensions map, and versions independently of the core spec. That keeps the base protocol small while allowing optional power features. Two official extensions ship:
+
+- **MCP Apps** — servers can render **server-rendered UIs** in sandboxed iframes, with prefetching and caching. This is how MCP grows beyond text tools into interactive surfaces.
+- **Tasks** — long-running operations move out of the experimental core into a clean stateless model.
+
+## Authorization got harder to get wrong
+
+Six proposals tighten OAuth 2.0 / OpenID Connect alignment — including \`iss\` parameter validation per RFC 9207 and declaring application type during Dynamic Client Registration. If you are building auth for a remote MCP server, this closes real attack surface. We covered the earlier auth model in [MCP 2.0 explained](/blog/mcp-2-0-explained-2026) and the basics in [what MCP is](/blog/mcp-explained).
+
+## A real deprecation policy (finally)
+
+Features now move through **Active → Deprecated → Removed**, with at least **twelve months** between deprecation and removal. Deprecated in this release: **Roots, Sampling, and Logging**. Nothing is removed on July 28 — you have until at least mid-2027 to migrate. Plan it; do not panic-rewrite.
+
+## The India angle: MCP Dev Summit Bengaluru
+
+The community ran the **MCP Dev Summit in Bengaluru on June 9-10, 2026** — a signal that MCP's center of gravity now includes India's builder scene, not just SF. If you are an Indian dev shipping agents, this is your protocol too.
+
+## What else shipped in June 2026
+
+The spec was not the only news this month:
+
+- **Claude Fable 5** (June 9) — Anthropic's latest, available in Claude Code and GitHub Copilot.
+- **GLM-5.2** from Z.ai (June 13) — 1M-token context, drops into Claude Code and Cline via an Anthropic-compatible endpoint.
+- **GitHub Copilot** moved to **usage-based billing with AI Credits** (June 1).
+- The industry shift is clear: tools are moving from autocomplete and AI IDEs into **engineered agent workflows** — exactly what MCP standardizes.
+
+## What you should do this week
+
+1. **Don't migrate yet.** The stable 2025-11-25 spec is still production-correct.
+2. **Read your SDK's RC notes** if you maintain a remote server — the stateless change simplifies your infra.
+3. **Audit for Roots/Sampling/Logging** so you know your 2027 migration surface.
+4. **Browse working servers** on the [StackPicks MCP directory](/mcp) — every entry lists install steps and auth.
+
+The takeaway: MCP just shed the heaviest part of its infrastructure. Stateless servers, real caching, and a clean extension model mean the protocol is ready for the agent workflows everyone is shipping in 2026. Wire your stack now on the stable spec, and the July 28 change will be an upgrade, not a rewrite — start at [StackPicks Connect](/connect).
+
+---
+
+*Sources: [MCP 2026-07-28 Release Candidate](https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/) and the [Model Context Protocol blog](https://blog.modelcontextprotocol.io/). Last updated June 18, 2026.*`,
+  },
   {
     slug: 'whats-new-june-2026-stackpicks',
     title: 'What\'s New on StackPicks — June 2026 Refresh (12 New Repos, 8 New MCPs)',
@@ -635,7 +724,7 @@ Claude Opus 4.8 is an incremental-but-real upgrade: better quality, better hones
     monthly_searches: 6000,
     reading_time: 9,
     published_at: TODAY_29,
-    updated_at: TODAY_JUN3,
+    updated_at: TODAY_JUN18,
     author: 'Piyush Jangir',
     category: 'AI Tooling',
     quick_answer: 'MCP 2.0 is the 2026-07-28 Model Context Protocol release candidate (published May 21, 2026) — the largest revision since the protocol launched in November 2024. The headline changes: a stateless protocol core (servers run behind a plain load balancer, no sticky sessions), hardened OAuth 2.1 authorization so connecting a server can be a single Google or GitHub login with no JSON config, plus three new building blocks — MCP Apps (server-rendered UIs), Tasks (long-running work), and Server Cards (capability discovery via a .well-known URL). The final spec lands July 28, 2026.',
@@ -729,6 +818,7 @@ The takeaway for builders who just want results: the OAuth-gateway model won. [S
 
 ## Related reading
 
+- [MCP Goes Stateless — the 2026 spec, explained](/blog/mcp-stateless-protocol-2026) — the infra-focused deep dive + June 2026 launch roundup
 - [MCP Servers Explained](/blog/mcp-explained) — the full 2026 guide + 89-server directory
 - [One MCP for All Your Apps](/blog/one-mcp-for-all-apps-composio-alternative-2026) — the unified-gateway model
 - [89 MCP Servers Directory](/mcp) — browse + install the local ones a gateway can't reach`,
