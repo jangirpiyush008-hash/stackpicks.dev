@@ -10,6 +10,59 @@ Two daily tracks:
 
 ---
 
+## 2026-06-18 (AutoDM hardening to launch-ready + content refresh)
+
+**Theme:** closed every structural risk in AutoDM and shipped the first
+fresh blog post in 13 days. Two tracks left to *finish tomorrow*: AutoDM
+final polish + go-live, and the SEO/content catch-up.
+
+### What landed today
+
+- **AutoDM P0 launch-blockers (all 3):**
+  - Subscription manager UI — cancel (cycle-end, no-refund warning),
+    receipts deeplink, status pill, "keep my plan" resume.
+  - Multi-account switcher — per-plan IG slot enforcement (Free 1 /
+    Creator 1 / Pro 3 / Agency 25), cookie-based active tenant across
+    all pages, cap-reached banner on connect.
+  - Webhook health monitor — dashboard banner (fresh/stale/critical),
+    `webhook-health-tick` cron with outage email + 24h auto-pause +
+    auto-resume on next event.
+- **AutoDM P1 compounders (all 3):**
+  - A/B test DM variants with epsilon-greedy learning + per-variant CTR.
+  - Rule scheduling — IST active-hours + day toggles, webhook guard.
+  - Voice-clone validation harness — lexical fingerprint, 0-100 score,
+    dashboard card.
+- **AutoDM P2 polish:** CSV export of contacts, token-expiry warning
+  email (folded into health cron), launch checklist doc.
+- **Followup fix:** 4h auto-followup now **re-sends the same CTA link**
+  with a voice-cloned one-liner (was just "did you check it?"). New
+  short_id per followup; either click counts as conversion.
+- **Domain rule:** every AutoDM URL routes through `autodm.stackpicks.dev`
+  via a single `autodmOrigin()` resolver.
+- **Content:** shipped `/blog/mcp-stateless-protocol-2026` (MCP 2026
+  spec RC — stateless core + June launches roundup, India/Bengaluru
+  angle). Full SEO+GEO armor, cross-linked with mcp-2-0 post.
+  WhatsNewPopup bumped (`jun-2026-02`) to notify all visitors.
+
+### Tomorrow's plan (carry-over) — "finish AutoDM completely + this part"
+
+**Track A — AutoDM go-live (mostly [YOU] setup, code is done):**
+1. Walk `docs/AUTODM-LAUNCH-CHECKLIST.md`: Meta App review + OAuth
+   redirect + webhook callback; Razorpay 3 plans + webhook; Resend
+   domain verify; Railway env (9 vars); 3 crons on cron-job.org.
+2. Smoke test once Meta clears (connect → comment → DM → click → analytics).
+3. [ME] fix anything the smoke test surfaces.
+4. Decide on failed-DM retry queue — build only if Meta send failures appear.
+
+**Track B — content/SEO catch-up:**
+1. [ME] refresh repo/MCP catalog (`scripts/seed-data.ts`) with launches
+   since June 5.
+2. [ME] ping IndexNow for the new post once Railway redeploys.
+3. [YOU] GSC "Request indexing" + Bing "Submit URL" for the new post.
+4. [YOU decision] queue the newsletter blast for the MCP post.
+
+---
+
 ## 2026-06-06 (Day 9 — StackPicks AutoDM: 5 days of build in one session, ready for paying customers)
 
 **Theme:** built the AutoDM product end-to-end as a sellable multi-tenant
