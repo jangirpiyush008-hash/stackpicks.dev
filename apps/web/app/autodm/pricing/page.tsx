@@ -290,8 +290,14 @@ export default function AutoDmPricingPage() {
             <div className="text-muted">If AutoDM isn&apos;t working for you in the first 7 days, email us and we refund — no questions.</div>
           </div>
           <div>
-            <div className="text-text font-semibold mb-1">Secure subscription billing</div>
-            <div className="text-muted">Powered by Razorpay. Card, UPI Autopay, and bank-mandate options where supported.</div>
+            <div className="text-text font-semibold mb-1">
+              {cur === 'inr' ? 'Built in India 🇮🇳' : 'Secure subscription billing'}
+            </div>
+            <div className="text-muted">
+              {cur === 'inr'
+                ? 'UPI Autopay, Indian cards, and net-banking via Razorpay. GST invoice on request.'
+                : 'Powered by Razorpay. Secure international card subscription with auto-renewal.'}
+            </div>
           </div>
         </div>
       </div>

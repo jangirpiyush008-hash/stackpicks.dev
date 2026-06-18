@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { CheckCircle2, MessageSquare, Sparkles, Shield, Zap, Bot, Radio, Instagram, Linkedin } from 'lucide-react';
 import { XLogo } from '@/components/autodm/XLogo';
 import { HomePlanCards } from '@/components/autodm/HomePlanCards';
+import { GeoText } from '@/components/autodm/GeoText';
 
 export const metadata = {
   title: 'StackPicks AutoDM — Auto-DM that closes, not just sends',
@@ -67,7 +68,12 @@ export default function AutoDmLanding() {
         <h2 className="text-3xl font-bold mb-12">Built on every bug we found in the others.</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <Feature icon={<Sparkles />} title="Voice-cloned DMs"
-            body="AI reads your past 100 DMs, then writes new ones in your tone. Language mix, emoji style, sign-offs — all preserved. Recipients can't tell it's a bot." />
+            body={
+              <GeoText
+                india="AI reads your past 100 DMs, then writes new ones in your tone. Hinglish, emojis, sign-offs — all preserved. Recipients can't tell it's a bot."
+                world="AI reads your past 100 DMs, then writes new ones in your tone. Language mix, emoji style, sign-offs — all preserved. Recipients can't tell it's a bot."
+              />
+            } />
           <Feature icon={<Bot />} title="Conversational follow-up"
             body="When the recipient replies, our AI agent keeps the conversation going for 5+ turns. Handles 'what size', 'is it returnable', 'do you ship to Delhi'. Pings you only if it can't answer." />
           <Feature icon={<Zap />} title="90-second AI setup"
@@ -152,7 +158,7 @@ export default function AutoDmLanding() {
   );
 }
 
-function Feature({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
+function Feature({ icon, title, body }: { icon: React.ReactNode; title: string; body: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-border bg-bg-card/50 p-6">
       <div className="w-9 h-9 rounded-full bg-accent/10 text-accent flex items-center justify-center mb-3">
