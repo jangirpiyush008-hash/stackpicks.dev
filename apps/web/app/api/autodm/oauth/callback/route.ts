@@ -29,8 +29,9 @@ function sign(value: string, secret: string): string {
   return createHmac('sha256', secret).update(value).digest('hex');
 }
 
-function fail(req: NextRequest, reason: string) {
-  const u = new URL('/autodm/connect', req.url);
+function fail(_req: NextRequest, reason: string) {
+  // Public origin — req.url is the internal Railway host behind the proxy.
+  const u = new URL('/connect', autodmOrigin());
   u.searchParams.set('error', reason);
   return NextResponse.redirect(u);
 }
@@ -143,8 +144,8 @@ export async function GET(req: NextRequest) {
     const igCount = existingTenants.length;
     if (igCount >= allowed) {
       return NextResponse.redirect(new URL(
-        `/autodm/connect?error=cap_reached&plan=${ownerPlan}&allowed=${allowed}`,
-        req.url,
+        `/connect?error=cap_reached&plan=${ownerPlan}&allowed=${allowed}`,
+        autodmOrigin(),
       ));
     }
   }
@@ -191,7 +192,7 @@ export async function GET(req: NextRequest) {
   // Also set the active-tenant cookie to the just-connected account so the
   // dashboard lands on it (instead of falling back to most-recent which
   // is the SAME row but selected via different path).
-  const res = NextResponse.redirect(new URL('/autodm/dashboard?connected=1', req.url));
+  const res = NextResponse.redirect(new URL('/dashboard?connected=1', autodmOrigin()));
   if (upserted?.id) {
     res.cookies.set(ACTIVE_TENANT_COOKIE, upserted.id, {
       maxAge: ACTIVE_TENANT_COOKIE_MAX_AGE,

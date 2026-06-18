@@ -37,6 +37,15 @@ export function middleware(req: NextRequest) {
       return NextResponse.next();
     }
 
+    // Auth pages are shared with the main app — serve them as-is on the
+    // subdomain (do NOT rewrite to /autodm/login, which doesn't exist).
+    // Login here sets a session cookie scoped to autodm.stackpicks.dev,
+    // which the OAuth connect flow (same host) then reads.
+    const AUTH_PATHS = ['/login', '/signup', '/auth', '/forgot-password', '/reset-password'];
+    if (AUTH_PATHS.some((p) => url.pathname === p || url.pathname.startsWith(p + '/'))) {
+      return NextResponse.next();
+    }
+
     // Rewrite naked paths to their /autodm counterpart
     url.pathname = '/autodm' + (url.pathname === '/' ? '' : url.pathname);
     return NextResponse.rewrite(url);

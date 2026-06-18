@@ -39,8 +39,12 @@ export async function GET(req: NextRequest) {
   const supa = await getSupabaseServer();
   const { data: { user } } = await supa.auth.getUser();
   if (!user) {
-    const next = new URL('/login', req.url);
-    next.searchParams.set('next', '/autodm/connect');
+    // Build from the public origin — req.url resolves to the internal
+    // Railway host (localhost:PORT) behind the proxy, which the browser
+    // can't reach. Login runs on the same host so the session cookie is
+    // visible to this OAuth flow afterward.
+    const next = new URL('/login', autodmOrigin());
+    next.searchParams.set('next', '/connect');
     return NextResponse.redirect(next);
   }
 
