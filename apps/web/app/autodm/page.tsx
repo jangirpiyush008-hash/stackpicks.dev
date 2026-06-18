@@ -30,15 +30,35 @@ export default function AutoDmLanding() {
           that learns your voice from your past DMs, and stays in the chat after the
           first message — so you close the sale while you sleep.
         </p>
-        <div className="mt-8 flex flex-wrap items-center gap-4">
+        <div className="mt-8 flex flex-wrap items-center gap-3">
           <Link
             href="/autodm/connect"
             className="inline-flex items-center gap-2 bg-accent text-bg font-semibold px-6 py-3 rounded-full hover:bg-accent/90 transition"
           >
             Connect Instagram <span aria-hidden>→</span>
           </Link>
-          <span className="text-sm text-muted">90-second setup · free tier · no card required</span>
+          <Link
+            href="/autodm/coming-soon/linkedin"
+            className="inline-flex items-center gap-2 border border-border bg-surface/40 text-text font-medium px-5 py-3 rounded-full hover:border-accent hover:text-accent transition relative"
+          >
+            Connect LinkedIn
+            <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-accent/15 text-accent">
+              Soon
+            </span>
+          </Link>
+          <Link
+            href="/autodm/coming-soon/x"
+            className="inline-flex items-center gap-2 border border-border bg-surface/40 text-text font-medium px-5 py-3 rounded-full hover:border-accent hover:text-accent transition"
+          >
+            Connect X
+            <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-accent/15 text-accent">
+              Soon
+            </span>
+          </Link>
         </div>
+        <p className="mt-3 text-sm text-muted">
+          90-second setup · free tier · no card required · LinkedIn & X land Q3 2026
+        </p>
       </section>
 
       {/* Why we're different */}

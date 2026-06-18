@@ -28,18 +28,29 @@ export function planIdFor(tier: PaidTier, cycle: BillingCycle = 'monthly'): stri
   return id;
 }
 
-export function capsFor(tier: PlanTier) {
-  return DEFAULT_PLAN_CAPS[tier];
+/** Yearly subscribers get a +25% throughput bonus on top of their tier's
+ *  base caps. This is a real benefit, wired through the webhook → tenant. */
+export const YEARLY_CAP_BONUS = 0.25;
+
+export function capsFor(tier: PlanTier, cycle: BillingCycle = 'monthly') {
+  const base = DEFAULT_PLAN_CAPS[tier];
+  if (tier === 'free' || cycle !== 'yearly') return base;
+  return {
+    ...base,
+    hourly: Math.round(base.hourly * (1 + YEARLY_CAP_BONUS)),
+    daily:  Math.round(base.daily  * (1 + YEARLY_CAP_BONUS)),
+  };
 }
 
 /** Map a Razorpay subscription status to our internal plan_tier transition.
- *  active|authenticated → plan stays at the subscribed tier.
+ *  active|authenticated → plan stays at the subscribed tier (yearly gets bonus caps).
  *  cancelled|completed|expired|paused → drop to 'free'. */
 export function statusToPlanTier(
-  status: string, subscribedTier: PlanTier,
+  status: string, subscribedTier: PlanTier, cycle: BillingCycle = 'monthly',
 ): { plan_tier: PlanTier; hourly_cap: number; daily_cap: number } {
   const isLive = ['active', 'authenticated', 'created'].includes(status);
   const tier: PlanTier = isLive ? subscribedTier : 'free';
-  const caps = capsFor(tier);
+  // Free fallback never carries the yearly bonus.
+  const caps = capsFor(tier, isLive ? cycle : 'monthly');
   return { plan_tier: tier, hourly_cap: caps.hourly, daily_cap: caps.daily };
 }

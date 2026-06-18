@@ -12,7 +12,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { ArrowRight, Check, Sparkles, MessageSquare, Mail } from 'lucide-react';
-import { BILLING_PRICES_INR, type BillingCycle } from '@stackpicks/core/autodm/billing';
+import { BILLING_PRICES_INR, YEARLY_CAP_BONUS, type BillingCycle } from '@stackpicks/core/autodm/billing';
 import { DEFAULT_PLAN_CAPS } from '@stackpicks/core/autodm/types';
 
 const SUPPORT_EMAIL = 'stackpicks.dev@gmail.com';
@@ -27,7 +27,23 @@ interface Tier {
   price: (cycle: BillingCycle) => { label: string; cadence: string; subline?: string };
   cta: (cycle: BillingCycle) => { label: string; href: string; mailto?: boolean };
   highlight?: boolean;
+  // Base features always shown. Yearly subscribers also get the YEARLY_PERKS list.
   features: string[];
+  // Paid tiers get yearly-only feature lines appended on top of the base ones.
+  hasYearlyPerks?: boolean;
+}
+
+// Yearly-exclusive perks, appended to paid tier feature lists when the
+// page is in Yearly mode. Caps bonus is the only one wired in the
+// backend; the others are policy commitments we keep.
+function yearlyPerksFor(tier: TierKey): string[] {
+  if (!['creator', 'pro', 'agency'].includes(tier)) return [];
+  const pct = Math.round(YEARLY_CAP_BONUS * 100);
+  return [
+    `+${pct}% DM caps (auto-applied)`,
+    'Locked launch pricing for life',
+    'Early access to LinkedIn + X seats',
+  ];
 }
 
 const F = DEFAULT_PLAN_CAPS;
@@ -216,6 +232,12 @@ export default function AutoDmPricingPage() {
                   <li key={f} className="flex items-start gap-2 text-sm text-muted">
                     <Check className="w-4 h-4 text-accent shrink-0 mt-0.5" />
                     <span>{f}</span>
+                  </li>
+                ))}
+                {cycle === 'yearly' && yearlyPerksFor(t.key).map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-sm">
+                    <Check className="w-4 h-4 text-accent shrink-0 mt-0.5" />
+                    <span className="text-accent font-medium">{f}</span>
                   </li>
                 ))}
               </ul>

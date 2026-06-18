@@ -75,6 +75,7 @@ export async function POST(req: NextRequest) {
     razorpay_subscription_id: sub.id,
     razorpay_plan_id: sub.plan_id,
     plan_tier: tier,
+    billing_cycle: cycle,
     status: sub.status,
   }, { onConflict: 'razorpay_subscription_id' });
 

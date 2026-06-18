@@ -16,7 +16,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminClient } from '@stackpicks/core/db';
 import { verifyWebhookSignature } from '@stackpicks/core/razorpay';
-import { statusToPlanTier } from '@stackpicks/core/autodm/billing';
+import { statusToPlanTier, type BillingCycle } from '@stackpicks/core/autodm/billing';
 import type { PlanTier } from '@stackpicks/core/autodm/types';
 
 export const runtime = 'nodejs';
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
   // Find the matching autodm_subscriptions row
   const { data: subRow } = await admin
     .from('autodm_subscriptions')
-    .select('tenant_id, plan_tier')
+    .select('tenant_id, plan_tier, billing_cycle')
     .eq('razorpay_subscription_id', sub.id)
     .single();
   if (!subRow) {
@@ -69,7 +69,8 @@ export async function POST(req: NextRequest) {
   }
 
   const subscribedTier = (subRow.plan_tier as PlanTier);
-  const { plan_tier, hourly_cap, daily_cap } = statusToPlanTier(sub.status, subscribedTier);
+  const cycle: BillingCycle = (subRow.billing_cycle as BillingCycle) ?? 'monthly';
+  const { plan_tier, hourly_cap, daily_cap } = statusToPlanTier(sub.status, subscribedTier, cycle);
   const periodEnd = sub.current_end ? new Date(sub.current_end * 1000).toISOString() : null;
 
   // Update the subscription row
