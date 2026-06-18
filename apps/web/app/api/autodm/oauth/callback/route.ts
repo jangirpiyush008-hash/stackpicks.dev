@@ -23,7 +23,7 @@ import { ACTIVE_TENANT_COOKIE, ACTIVE_TENANT_COOKIE_MAX_AGE } from '@stackpicks/
 
 export const runtime = 'nodejs';
 
-const GRAPH = 'https://graph.facebook.com/v22.0';
+const GRAPH_IG = 'https://graph.instagram.com/v22.0';
 
 function sign(value: string, secret: string): string {
   return createHmac('sha256', secret).update(value).digest('hex');
@@ -64,26 +64,34 @@ export async function GET(req: NextRequest) {
 
   const redirectUri = `${autodmOrigin()}/api/autodm/oauth/callback`;
 
-  // 1. code → short-lived token
-  const shortRes = await fetch(
-    `${GRAPH}/oauth/access_token?` + new URLSearchParams({
-      client_id: appId, client_secret: appSecret, redirect_uri: redirectUri, code,
-    }),
-  );
+  // 1. code → short-lived Instagram token (Business Login for Instagram).
+  //    Exchanged on api.instagram.com via form-encoded POST. Returns the
+  //    short-lived token + the Instagram-scoped user_id.
+  const shortRes = await fetch('https://api.instagram.com/oauth/access_token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id: appId,                 // Instagram app ID
+      client_secret: appSecret,         // Instagram app secret
+      grant_type: 'authorization_code',
+      redirect_uri: redirectUri,
+      code,
+    }).toString(),
+  });
   const shortJson = (await shortRes.json().catch(() => ({}))) as {
-    access_token?: string; error?: { message?: string };
+    access_token?: string; user_id?: number | string; error_message?: string;
   };
   if (!shortRes.ok || !shortJson.access_token) {
-    return fail(req, `code_exchange:${shortJson.error?.message?.slice(0, 60) || shortRes.status}`);
+    return fail(req, `code_exchange:${(shortJson.error_message || shortRes.status).toString().slice(0, 60)}`);
   }
   const shortToken = shortJson.access_token;
 
-  // 2. short-lived → long-lived (60 days)
+  // 2. short-lived → long-lived (60 days) on graph.instagram.com.
   const longRes = await fetch(
-    `${GRAPH}/oauth/access_token?` + new URLSearchParams({
-      grant_type: 'fb_exchange_token',
-      client_id: appId, client_secret: appSecret,
-      fb_exchange_token: shortToken,
+    `${GRAPH_IG}/access_token?` + new URLSearchParams({
+      grant_type: 'ig_exchange_token',
+      client_secret: appSecret,
+      access_token: shortToken,
     }),
   );
   const longJson = (await longRes.json().catch(() => ({}))) as {
@@ -92,35 +100,23 @@ export async function GET(req: NextRequest) {
   const longToken = longJson.access_token ?? shortToken;
   const expiresIn = longJson.expires_in ?? 60 * 24 * 60 * 60;
 
-  // 2b. Capture the Meta (app-scoped) user id — this is the same id Meta
-  // sends in the data-deletion / deauthorize signed_request, so storing it
-  // lets that callback find and delete exactly this user's tenants.
-  let metaUserId: string | null = null;
-  try {
-    const meIdRes = await fetch(`${GRAPH}/me?fields=id&access_token=${encodeURIComponent(longToken)}`);
-    const meIdJson = (await meIdRes.json().catch(() => ({}))) as { id?: string };
-    metaUserId = meIdJson.id ?? null;
-  } catch { /* non-fatal */ }
-
-  // 3. Fetch IG business identity
-  const meRes = await fetch(`${GRAPH}/me/accounts?access_token=${encodeURIComponent(longToken)}`);
+  // 3. Fetch the Instagram identity. With Instagram Login the account IS the
+  //    user — no Facebook Page hop. user_id doubles as the messaging id and
+  //    as the id Meta sends in the data-deletion / deauthorize signed_request.
+  const meRes = await fetch(
+    `${GRAPH_IG}/me?fields=user_id,username&access_token=${encodeURIComponent(longToken)}`,
+  );
   const meJson = (await meRes.json().catch(() => ({}))) as {
-    data?: { id: string; access_token?: string; instagram_business_account?: { id: string } }[];
-    error?: { message?: string };
+    user_id?: string | number; username?: string; error?: { message?: string };
   };
-  // Find a page that has a linked IG Business account
-  const pageWithIg = (meJson.data ?? []).find((p) => p.instagram_business_account?.id);
-  if (!pageWithIg?.instagram_business_account?.id) {
-    return fail(req, 'no_ig_business_account');
+  const igBusinessId = (meJson.user_id ?? shortJson.user_id ?? '').toString();
+  if (!igBusinessId) {
+    return fail(req, `no_ig_account:${meJson.error?.message?.slice(0, 50) || 'no_user_id'}`);
   }
-  const igBusinessId = pageWithIg.instagram_business_account.id;
-  // Use the page access token for IG send API
-  const pageToken = pageWithIg.access_token || longToken;
-
-  // Fetch IG username for display + self-loop guard
-  const igRes = await fetch(`${GRAPH}/${igBusinessId}?fields=username&access_token=${encodeURIComponent(pageToken)}`);
-  const igJson = (await igRes.json().catch(() => ({}))) as { username?: string };
-  const igUsername = igJson.username ?? null;
+  const igUsername = meJson.username ?? null;
+  const metaUserId = igBusinessId;       // same id arrives in deletion signed_request
+  // Instagram Login: the user token IS the send token (no page token).
+  const pageToken = longToken;
 
   // 4. Cap check + tenant upsert — encrypts the token at rest.
   const supa = adminClient();
@@ -183,7 +179,7 @@ export async function GET(req: NextRequest) {
   //    Failure is non-fatal — the tenant can re-trigger from the dashboard.
   try {
     await fetch(
-      `${GRAPH}/${igBusinessId}/subscribed_apps?` + new URLSearchParams({
+      `${GRAPH_IG}/${igBusinessId}/subscribed_apps?` + new URLSearchParams({
         subscribed_fields: 'comments,live_comments,messages,mentions',
         access_token: pageToken,
       }),

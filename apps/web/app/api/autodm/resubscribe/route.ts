@@ -23,7 +23,7 @@ import { getActiveTenant, ACTIVE_TENANT_COOKIE } from '@stackpicks/core/autodm/a
 
 export const runtime = 'nodejs';
 
-const GRAPH = 'https://graph.facebook.com/v22.0';
+const GRAPH = 'https://graph.instagram.com/v22.0';
 const FIELDS = 'comments,live_comments,messages,mentions';
 
 export async function POST() {

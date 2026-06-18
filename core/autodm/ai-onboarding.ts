@@ -15,7 +15,8 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 
-const GRAPH = 'https://graph.facebook.com/v22.0';
+// Business Login for Instagram — read posts + comments via graph.instagram.com.
+const GRAPH = 'https://graph.instagram.com/v22.0';
 
 export interface RuleDraft {
   label: string;

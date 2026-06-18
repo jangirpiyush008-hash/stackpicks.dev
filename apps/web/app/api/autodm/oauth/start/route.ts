@@ -1,9 +1,13 @@
 /**
- * AutoDM OAuth — kick off the Meta IG Login flow.
+ * AutoDM OAuth — kick off Business Login for Instagram.
  *
- * Redirects the user to Facebook's authorization endpoint with the
- * scopes we need for the auto-DM product:
- *   - instagram_business_basic         (profile + posts read)
+ * Uses the Instagram-login flow (NOT Facebook login): the creator does not
+ * need a linked Facebook Page. Authorization happens on instagram.com with
+ * the Instagram app ID, and tokens are exchanged on api.instagram.com /
+ * graph.instagram.com in the callback.
+ *
+ * Scopes:
+ *   - instagram_business_basic           (profile + posts read)
  *   - instagram_business_manage_messages (send DMs, reply to comments)
  *   - instagram_business_manage_comments (read + reply to comments)
  *
@@ -19,7 +23,8 @@ import { autodmOrigin } from '@stackpicks/core/autodm/origin';
 
 export const runtime = 'nodejs';
 
-const META_AUTHZ_URL = 'https://www.facebook.com/v22.0/dialog/oauth';
+// Business Login for Instagram authorization endpoint.
+const IG_AUTHZ_URL = 'https://www.instagram.com/oauth/authorize';
 const SCOPES = [
   'instagram_business_basic',
   'instagram_business_manage_messages',
@@ -52,12 +57,13 @@ export async function GET(req: NextRequest) {
   // MUST match the Valid OAuth Redirect URI whitelisted in the Meta App console.
   const redirectUri = `${autodmOrigin()}/api/autodm/oauth/callback`;
   const params = new URLSearchParams({
-    client_id: appId,
+    client_id: appId,                 // Instagram app ID
     redirect_uri: redirectUri,
     response_type: 'code',
     scope: SCOPES.join(','),
     state,
+    force_authentication: '1',
   });
 
-  return NextResponse.redirect(`${META_AUTHZ_URL}?${params.toString()}`);
+  return NextResponse.redirect(`${IG_AUTHZ_URL}?${params.toString()}`);
 }

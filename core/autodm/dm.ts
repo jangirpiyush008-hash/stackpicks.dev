@@ -5,10 +5,11 @@
 // All the hard-won fixes carry over:
 //   • Private Reply API by comment_id (works for non-followers, 7-day window)
 //   • 2-message split: plain text body + button card (no invisible subtitle)
-//   • Real-time follower detection via graph.facebook.com
+//   • Real-time follower detection via graph.instagram.com
 //   • Public comment reply path (separate endpoint)
 
-const GRAPH = 'https://graph.facebook.com/v21.0';
+// AutoDM uses Business Login for Instagram — every call goes to
+// graph.instagram.com with the creator's Instagram user token.
 const GRAPH_IG = 'https://graph.instagram.com/v22.0';
 
 export interface SendDmResult {
@@ -35,7 +36,7 @@ export async function sendDm(input: {
   const { igBusinessId, tenantToken, recipientIgsid, commentId, body, ctaUrl, ctaLabel } = input;
 
   const recipient = commentId ? { comment_id: commentId } : { id: recipientIgsid };
-  const baseUrl = tenantToken.length > 200 ? GRAPH_IG : GRAPH;  // crude: IG-Login tokens are longer
+  const baseUrl = GRAPH_IG;
 
   async function post(messagePayload: unknown) {
     const url = `${baseUrl}/${igBusinessId}/messages?access_token=${encodeURIComponent(tenantToken)}`;
@@ -89,8 +90,7 @@ export async function replyToComment(input: {
   const { tenantToken, commentId, message } = input;
   if (!commentId || !message.trim()) return { ok: false, error: 'missing input' };
 
-  const baseUrl = tenantToken.length > 200 ? GRAPH_IG : GRAPH;
-  const url = `${baseUrl}/${commentId}/replies?access_token=${encodeURIComponent(tenantToken)}`;
+  const url = `${GRAPH_IG}/${commentId}/replies?access_token=${encodeURIComponent(tenantToken)}`;
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -104,9 +104,9 @@ export async function replyToComment(input: {
 }
 
 /**
- * Follow-status check. Uses graph.facebook.com where the field exists
- * for Page Access Tokens. Returns null when API can't answer (default
- * to non-follower behavior for safety).
+ * Follow-status check via graph.instagram.com. Returns null when the API
+ * can't answer (we then default to non-follower behavior for safety —
+ * which only ever ADDS the follow nudge, never withholds the link).
  */
 export interface FollowCheckResult {
   isFollower: boolean | null;
@@ -119,18 +119,18 @@ export async function checkIsFollower(
 ): Promise<FollowCheckResult> {
   if (!igsid) return { isFollower: null, source: 'none', rawError: 'no_igsid' };
   try {
-    const url = `${GRAPH}/${igsid}?fields=is_user_follow_business&access_token=${encodeURIComponent(tenantToken)}`;
+    const url = `${GRAPH_IG}/${igsid}?fields=is_user_follow_business&access_token=${encodeURIComponent(tenantToken)}`;
     const res = await fetch(url);
     const j = (await res.json().catch(() => ({}))) as {
       is_user_follow_business?: boolean;
       error?: { message?: string };
     };
     if (typeof j.is_user_follow_business === 'boolean') {
-      return { isFollower: j.is_user_follow_business, source: 'fb_graph' };
+      return { isFollower: j.is_user_follow_business, source: 'ig_graph' };
     }
-    return { isFollower: null, source: 'fb_graph', rawError: j.error?.message || 'no field' };
+    return { isFollower: null, source: 'ig_graph', rawError: j.error?.message || 'no field' };
   } catch (e) {
-    return { isFollower: null, source: 'fb_graph', rawError: (e as Error).message };
+    return { isFollower: null, source: 'ig_graph', rawError: (e as Error).message };
   }
 }
 
