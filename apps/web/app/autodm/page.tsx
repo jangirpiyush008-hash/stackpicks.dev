@@ -101,14 +101,11 @@ export default function AutoDmLanding() {
               </tr>
             </thead>
             <tbody>
-              <Row a="INR billing + UPI Autopay + GST invoice" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
-              <Row a="AI drafts starter rules from your posts" b={<Tick/>} c={<X/>} d={<X/>} e={<Partial/>} />
-              <Row a="4-hour follow-up that re-sends your link" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
-              <Row a="Flat pricing (no per-contact charges)" b={<Tick/>} c={<X/>} d={<Tick/>} e={<Tick/>} />
-              <Row a="Rate-limit-aware auto-pause" b={<Tick/>} c={<Partial/>} d={<Partial/>} e={<Partial/>} />
-              <Row a="Works for non-followers (Private Reply API)" b={<Tick/>} c={<Tick/>} d={<Tick/>} e={<Tick/>} />
-              <Row a="Public + private reply combo" b={<Tick/>} c={<Tick/>} d={<Tick/>} e={<Tick/>} />
-              <Row a="Free tier" b="50 DMs/day" c="1,000 contacts" d="—" e="Trial only" />
+              <Row a="AI drafts your starter rules from your past 30 posts" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
+              <Row a="Auto follow-up at 4 hours if the link wasn't clicked" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
+              <Row a="Yearly subscribers get +25% DM caps automatically" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
+              <Row a="Free tier with a real daily allowance (50 DMs/day)" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
+              <Row a="INR billing — UPI Autopay + GST invoice" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
             </tbody>
           </table>
         </div>
