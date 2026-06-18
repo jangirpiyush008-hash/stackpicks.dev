@@ -4,7 +4,7 @@
 // to /autodm so autodm.stackpicks.dev/ → this page.)
 
 import Link from 'next/link';
-import { CheckCircle2, MessageSquare, Sparkles, Shield, Zap, Bot, Radio, Instagram, Linkedin } from 'lucide-react';
+import { CheckCircle2, MessageSquare, Sparkles, Shield, Zap, Bot, Radio, Instagram, Linkedin, ArrowRight } from 'lucide-react';
 import { XLogo } from '@/components/autodm/XLogo';
 import { HomePlanCards } from '@/components/autodm/HomePlanCards';
 import { GeoText } from '@/components/autodm/GeoText';
@@ -137,6 +137,20 @@ export default function AutoDmLanding() {
         <p className="text-xs text-muted mt-4 text-center">
           Instagram is live today. LinkedIn + X support ships Q3 2026 — quotas above stay the same when those platforms unlock.
         </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/autodm/pricing"
+            className="inline-flex items-center gap-2 border border-border bg-surface/40 text-text font-medium px-5 py-2.5 rounded-full hover:border-accent hover:text-accent transition"
+          >
+            See full pricing details <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+          <Link
+            href="/autodm/connect"
+            className="inline-flex items-center gap-2 bg-accent text-bg font-semibold px-5 py-2.5 rounded-full hover:bg-accent/90 transition"
+          >
+            Connect Instagram — free <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
       </section>
 
       {/* Final CTA */}

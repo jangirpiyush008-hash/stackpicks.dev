@@ -2,56 +2,80 @@
 
 /**
  * The 4-card pricing grid on the AutoDM landing page. Server component
- * can't manage selection state, so this is the client island. Pro starts
- * selected (matches the "Recommended" badge); clicking any other card
- * promotes it to the highlighted spot.
- *
- * Visual highlight = accent border + tinted background + soft glow. The
- * "Recommended" badge stays pinned to Pro regardless of selection — it's
- * editorial, not user-driven.
+ * can't manage selection state or read geo, so this is the client island.
+ * - Pro starts as highlighted + pinned "Recommended" badge (editorial).
+ * - Clicking a card promotes it to the highlighted spot.
+ * - Each card has its own CTA that routes to /dashboard with the right
+ *   tier + currency in the URL (Free goes to /signup).
+ * - Currency is geo-decided via useCurrency() — Indian visitors see ₹,
+ *   everyone else sees $. No visible toggle.
  */
 
+import Link from 'next/link';
 import { useState } from 'react';
+import { ArrowRight } from 'lucide-react';
+import { BILLING_PRICES, type Currency } from '@stackpicks/core/autodm/billing';
+import { useCurrency } from './useCurrency';
 
 type TierId = 'free' | 'creator' | 'pro' | 'agency';
 
 interface PlanDef {
   id: TierId;
   tier: string;
-  price: string;
   dms: string;
   rules: string;
   accounts: { instagram: number; linkedin: number; x: number };
   feats: string[];
+  ctaLabel: string;
 }
 
 const PLANS: PlanDef[] = [
   {
-    id: 'free', tier: 'Free', price: '₹0', dms: '100 DMs/mo', rules: '1 rule',
+    id: 'free', tier: 'Free', dms: '50 DMs/day', rules: '1 rule',
     accounts: { instagram: 1, linkedin: 0, x: 0 },
-    feats: ['Email support'],
+    feats: ['Email support', 'AI rule drafting', '4h follow-up'],
+    ctaLabel: 'Get started free',
   },
   {
-    id: 'creator', tier: 'Creator', price: '₹499/mo', dms: '5,000 DMs/mo', rules: '10 rules',
+    id: 'creator', tier: 'Creator', dms: '200 DMs/day', rules: 'Unlimited rules',
     accounts: { instagram: 1, linkedin: 1, x: 1 },
-    feats: ['Brand-free DMs', 'Public + private reply', 'Daily analytics'],
+    feats: ['Brand-free DMs', 'Click tracking + CRM', 'Auto A/B testing'],
+    ctaLabel: 'Pick Creator',
   },
   {
-    id: 'pro', tier: 'Pro', price: '₹1,499/mo', dms: 'Unlimited', rules: 'Unlimited',
+    id: 'pro', tier: 'Pro', dms: '1,000 DMs/day', rules: 'Unlimited rules',
     accounts: { instagram: 3, linkedin: 3, x: 3 },
-    feats: ['AI-generated DMs', 'Voice cloning', 'Follow-up agent', 'Spam-shield Pro'],
+    feats: ['Image-aware DMs', 'Voice cloning', '5-turn AI follow-up', 'Daily AI digest'],
+    ctaLabel: 'Pick Pro',
   },
   {
-    id: 'agency', tier: 'Agency', price: '₹4,999/mo', dms: 'Unlimited', rules: 'Unlimited',
+    id: 'agency', tier: 'Agency', dms: '5,000 DMs/day', rules: 'Unlimited rules',
     accounts: { instagram: 25, linkedin: 25, x: 25 },
-    feats: ['White-label', 'Team seats', 'Priority support', 'Onboarding call'],
+    feats: ['Everything in Pro', 'Manage many accounts', 'Priority support'],
+    ctaLabel: 'Pick Agency',
   },
 ];
 
 const RECOMMENDED: TierId = 'pro';
 
+function priceFor(id: TierId, cur: Currency): string {
+  if (id === 'free') return cur === 'inr' ? '₹0' : '$0';
+  const price = BILLING_PRICES[cur][id].monthly;
+  return cur === 'inr'
+    ? `₹${price.toLocaleString('en-IN')}/mo`
+    : `$${price}/mo`;
+}
+
+function ctaHrefFor(id: TierId, cur: Currency): string {
+  if (id === 'free') return '/signup';
+  return `/dashboard?cycle=monthly&tier=${id}&currency=${cur}`;
+}
+
 export function HomePlanCards() {
   const [selected, setSelected] = useState<TierId>(RECOMMENDED);
+  const { currency } = useCurrency();
+  // Default to USD pre-resolution so non-Indian visitors never flash ₹.
+  const cur: Currency = currency === 'INR' ? 'inr' : 'usd';
 
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -59,12 +83,10 @@ export function HomePlanCards() {
         const isSelected = selected === p.id;
         const isRecommended = p.id === RECOMMENDED;
         return (
-          <button
+          <div
             key={p.id}
-            type="button"
             onClick={() => setSelected(p.id)}
-            aria-pressed={isSelected}
-            className={`relative text-left rounded-2xl border p-6 transition cursor-pointer ${
+            className={`relative text-left rounded-2xl border p-6 flex flex-col cursor-pointer transition ${
               isSelected
                 ? 'border-accent bg-accent/5 shadow-[0_0_60px_-15px_rgba(74,222,128,0.25)]'
                 : 'border-border bg-bg-card/50 hover:border-accent/40'
@@ -76,7 +98,7 @@ export function HomePlanCards() {
               </div>
             )}
             <div className="text-xs font-mono uppercase tracking-widest text-muted">{p.tier}</div>
-            <div className="text-3xl font-extrabold mt-2">{p.price}</div>
+            <div className="text-3xl font-extrabold mt-2">{priceFor(p.id, cur)}</div>
             <div className="text-sm text-muted mt-3">{p.dms}</div>
             <div className="text-sm text-muted">{p.rules}</div>
 
@@ -95,12 +117,25 @@ export function HomePlanCards() {
               </div>
             </div>
 
-            <ul className="mt-4 space-y-1 text-sm">
+            <ul className="mt-4 space-y-1 text-sm flex-1">
               {p.feats.map((f) => (
                 <li key={f} className="flex gap-2"><span className="text-accent">✓</span>{f}</li>
               ))}
             </ul>
-          </button>
+
+            <Link
+              href={ctaHrefFor(p.id, cur)}
+              onClick={(e) => e.stopPropagation()}
+              className={`mt-5 inline-flex items-center justify-center gap-1.5 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition ${
+                isRecommended
+                  ? 'bg-accent text-bg hover:opacity-90'
+                  : 'border border-border bg-surface/60 hover:border-accent hover:text-accent'
+              }`}
+            >
+              {p.ctaLabel}
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
         );
       })}
     </div>
