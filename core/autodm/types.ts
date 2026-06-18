@@ -8,6 +8,7 @@ export interface AutoDmTenant {
   owner_user_id: string;
   ig_business_id: string;
   ig_username: string | null;
+  meta_user_id: string | null;
   ig_user_token_encrypted: string | null;
   ig_token_expires_at: string | null;
   meta_long_token_encrypted: string | null;

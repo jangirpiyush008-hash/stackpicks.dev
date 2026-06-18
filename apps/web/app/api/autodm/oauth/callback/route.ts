@@ -92,6 +92,16 @@ export async function GET(req: NextRequest) {
   const longToken = longJson.access_token ?? shortToken;
   const expiresIn = longJson.expires_in ?? 60 * 24 * 60 * 60;
 
+  // 2b. Capture the Meta (app-scoped) user id — this is the same id Meta
+  // sends in the data-deletion / deauthorize signed_request, so storing it
+  // lets that callback find and delete exactly this user's tenants.
+  let metaUserId: string | null = null;
+  try {
+    const meIdRes = await fetch(`${GRAPH}/me?fields=id&access_token=${encodeURIComponent(longToken)}`);
+    const meIdJson = (await meIdRes.json().catch(() => ({}))) as { id?: string };
+    metaUserId = meIdJson.id ?? null;
+  } catch { /* non-fatal */ }
+
   // 3. Fetch IG business identity
   const meRes = await fetch(`${GRAPH}/me/accounts?access_token=${encodeURIComponent(longToken)}`);
   const meJson = (await meRes.json().catch(() => ({}))) as {
@@ -152,6 +162,7 @@ export async function GET(req: NextRequest) {
     owner_user_id: user.id,
     ig_business_id: igBusinessId,
     ig_username: igUsername,
+    meta_user_id: metaUserId,
     ig_user_token_encrypted: encryptedToken,
     ig_token_expires_at: expiresAt,
     account_warming_ends_at: warmingEnds,

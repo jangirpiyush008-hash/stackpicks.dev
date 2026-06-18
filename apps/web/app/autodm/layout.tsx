@@ -64,7 +64,8 @@ export default async function AutoDmLayout({ children }: { children: React.React
           <div>
             © {new Date().getFullYear()} StackPicks AutoDM ·{' '}
             <a href="/autodm/terms" className="hover:text-text">Terms</a> ·{' '}
-            <a href="/autodm/privacy" className="hover:text-text">Privacy</a>
+            <a href="/autodm/privacy" className="hover:text-text">Privacy</a> ·{' '}
+            <a href="/autodm/data-deletion" className="hover:text-text">Delete data</a>
           </div>
           <a
             href="https://stackpicks.dev"

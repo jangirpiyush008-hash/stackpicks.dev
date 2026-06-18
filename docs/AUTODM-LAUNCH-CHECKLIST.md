@@ -26,6 +26,16 @@ Go to https://developers.facebook.com/apps → your AutoDM app.
   Subscribe to: `comments`, `live_comments`, `messages`, `mentions`.
   (`live_comments` is what powers the "comment on my Live → instant DM"
   flow — it is a separate field from `comments` and must be ticked.)
+- [ ] **Settings → Basic** → paste the compliance URLs (all live on the AutoDM domain):
+  ```
+  Privacy Policy URL:                       https://autodm.stackpicks.dev/privacy
+  Terms of Service URL:                     https://autodm.stackpicks.dev/terms
+  User Data Deletion → Data Deletion
+    Request Callback URL:                   https://autodm.stackpicks.dev/api/autodm/data-deletion
+    (or Data Deletion Instructions URL:     https://autodm.stackpicks.dev/data-deletion )
+  Deauthorize Callback URL (optional):      https://autodm.stackpicks.dev/api/autodm/data-deletion
+  App Domain:                               autodm.stackpicks.dev
+  ```
 - [ ] **App Review** → submit. Expect 5-14 day review.
 
 ---
