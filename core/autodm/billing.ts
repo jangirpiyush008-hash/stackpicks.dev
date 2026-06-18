@@ -1,28 +1,63 @@
 /**
  * AutoDM billing — Razorpay plan mapping + caps.
  *
- * Plans are created once in Razorpay dashboard and their IDs go in env.
- * Two billing cycles per paid tier: monthly and yearly. Yearly = 10× the
- * monthly price (i.e., 2 months free).
+ * Plans live in two currencies (INR for India, USD for the rest of the
+ * world) × two billing cycles (monthly, yearly) × three paid tiers.
+ * Each tier × cycle × currency maps to a Razorpay plan ID via env var.
+ *
+ * Indian INR plans require an Indian-acceptable payment method (UPI,
+ * Indian card, net-banking); USD plans require Razorpay International
+ * Payments and a foreign card. That separation gives us natural
+ * arbitrage protection — a non-Indian can't grab the INR-priced plan
+ * without an Indian payment instrument.
+ *
+ * Yearly cycle = 10× monthly (2 months free). YEARLY_CAP_BONUS lifts
+ * a yearly subscriber's DM caps by +25%, applied at webhook time.
  */
 
 import { DEFAULT_PLAN_CAPS, type PlanTier } from './types';
 
 export type BillingCycle = 'monthly' | 'yearly';
+export type Currency = 'inr' | 'usd';
 
 type PaidTier = Exclude<PlanTier, 'free'>;
 
-export const BILLING_PRICES_INR: Record<PaidTier, Record<BillingCycle, number>> = {
-  creator: { monthly: 499,   yearly: 4_990  },
-  pro:     { monthly: 1_499, yearly: 14_990 },
-  agency:  { monthly: 4_999, yearly: 49_990 },
+/** Sticker prices shown on the pricing page. INR are in rupees, USD in
+ *  whole dollars. Yearly = 10× monthly (2 months free vs paying month
+ *  to month). */
+export const BILLING_PRICES: Record<Currency, Record<PaidTier, Record<BillingCycle, number>>> = {
+  inr: {
+    creator: { monthly: 499,   yearly: 4_990  },
+    pro:     { monthly: 1_499, yearly: 14_990 },
+    agency:  { monthly: 4_999, yearly: 49_990 },
+  },
+  usd: {
+    creator: { monthly: 15,  yearly: 150 },
+    pro:     { monthly: 25,  yearly: 250 },
+    agency:  { monthly: 79,  yearly: 790 },
+  },
 };
 
-/** Razorpay plan IDs come from env so creating the plans in the dashboard
- *  doesn't require a code change. Yearly plans use the *_YEARLY suffix. */
-export function planIdFor(tier: PaidTier, cycle: BillingCycle = 'monthly'): string {
-  const suffix = cycle === 'yearly' ? '_YEARLY' : '';
-  const key = `RAZORPAY_AUTODM_PLAN_${tier.toUpperCase()}${suffix}`;
+/** Legacy alias retained for any callers still importing the old name —
+ *  resolves to the INR slice. Prefer BILLING_PRICES directly. */
+export const BILLING_PRICES_INR = BILLING_PRICES.inr;
+
+/** Razorpay plan IDs come from env so creating plans in the dashboard
+ *  doesn't require a code change. Naming convention:
+ *    RAZORPAY_AUTODM_PLAN_{TIER}             — INR monthly
+ *    RAZORPAY_AUTODM_PLAN_{TIER}_YEARLY      — INR yearly
+ *    RAZORPAY_AUTODM_PLAN_{TIER}_USD         — USD monthly
+ *    RAZORPAY_AUTODM_PLAN_{TIER}_USD_YEARLY  — USD yearly
+ */
+export function planIdFor(
+  tier: PaidTier,
+  cycle: BillingCycle = 'monthly',
+  currency: Currency = 'inr',
+): string {
+  const tierKey = tier.toUpperCase();
+  const currencySuffix = currency === 'usd' ? '_USD' : '';
+  const cycleSuffix = cycle === 'yearly' ? '_YEARLY' : '';
+  const key = `RAZORPAY_AUTODM_PLAN_${tierKey}${currencySuffix}${cycleSuffix}`;
   const id = process.env[key];
   if (!id) throw new Error(`Missing ${key} env (set the Razorpay plan ID)`);
   return id;
@@ -50,7 +85,6 @@ export function statusToPlanTier(
 ): { plan_tier: PlanTier; hourly_cap: number; daily_cap: number } {
   const isLive = ['active', 'authenticated', 'created'].includes(status);
   const tier: PlanTier = isLive ? subscribedTier : 'free';
-  // Free fallback never carries the yearly bonus.
   const caps = capsFor(tier, isLive ? cycle : 'monthly');
   return { plan_tier: tier, hourly_cap: caps.hourly, daily_cap: caps.daily };
 }

@@ -11,7 +11,7 @@ import { HomePlanCards } from '@/components/autodm/HomePlanCards';
 export const metadata = {
   title: 'StackPicks AutoDM — Auto-DM that closes, not just sends',
   description:
-    'The only Instagram auto-DM tool that talks back. 90-second AI setup. Voice cloned from your past DMs. AI agent stays in the conversation. Built in India for global creators.',
+    'The only Instagram auto-DM tool that talks back. 90-second AI setup. Image-aware DMs that read the post. 5-turn AI follow-up agent. For creators worldwide.',
 };
 
 export default function AutoDmLanding() {
@@ -85,7 +85,7 @@ export default function AutoDmLanding() {
 
       {/* vs the market */}
       <section className="px-6 py-16 max-w-6xl mx-auto border-t border-border">
-        <h2 className="text-3xl font-bold mb-3">Why creators in India pick AutoDM.</h2>
+        <h2 className="text-3xl font-bold mb-3">Why creators pick AutoDM.</h2>
         <p className="text-muted mb-8">
           Honest comparison. Updated June 2026 — based on each tool&apos;s public pricing
           page and product docs. Tell us if something changed: <a href="mailto:stackpicks.dev@gmail.com" className="underline underline-offset-4 hover:text-accent">stackpicks.dev@gmail.com</a>.
@@ -110,7 +110,7 @@ export default function AutoDmLanding() {
               <Row a="Auto A/B testing with AI-picked winner" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
               <Row a="Daily AI digest — hot leads + escalations" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
               <Row a="Yearly subscribers get +25% DM caps automatically" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
-              <Row a="INR billing — UPI Autopay + GST invoice" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
+              <Row a="Pay in your currency (₹ INR + UPI Autopay or $ USD)" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
               {/* Table stakes — we match everyone */}
               <Row a="Works for non-followers (Private Reply API)" b={<Tick/>} c={<Tick/>} d={<Tick/>} e={<Tick/>} />
               <Row a="Public + private reply combo" b={<Tick/>} c={<Tick/>} d={<Tick/>} e={<Tick/>} />

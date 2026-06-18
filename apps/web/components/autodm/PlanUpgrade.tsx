@@ -13,7 +13,8 @@
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Loader2, ArrowRight } from 'lucide-react';
-import { BILLING_PRICES_INR, type BillingCycle } from '@stackpicks/core/autodm/billing';
+import { BILLING_PRICES, type BillingCycle, type Currency } from '@stackpicks/core/autodm/billing';
+import { useCurrency } from './useCurrency';
 
 type Tier = 'creator' | 'pro' | 'agency';
 
@@ -43,24 +44,34 @@ const TIERS: TierDef[] = [
   },
 ];
 
-const fmt = (n: number) => `₹${n.toLocaleString('en-IN')}`;
+const fmt = (n: number, cur: Currency) =>
+  cur === 'inr' ? `₹${n.toLocaleString('en-IN')}` : `$${n.toLocaleString('en-US')}`;
 
-function priceLabel(tier: Tier, cycle: BillingCycle) {
-  const p = BILLING_PRICES_INR[tier][cycle];
-  return cycle === 'yearly' ? `${fmt(p)}/yr` : `${fmt(p)}/mo`;
+function priceLabel(tier: Tier, cycle: BillingCycle, cur: Currency) {
+  const p = BILLING_PRICES[cur][tier][cycle];
+  return cycle === 'yearly' ? `${fmt(p, cur)}/yr` : `${fmt(p, cur)}/mo`;
 }
 
 export function PlanUpgrade({ currentTier }: { currentTier: string }) {
   const params = useSearchParams();
   const initialCycle: BillingCycle = params?.get('cycle') === 'yearly' ? 'yearly' : 'monthly';
+  const initialCurrencyParam = params?.get('currency');
   const [cycle, setCycle] = useState<BillingCycle>(initialCycle);
+  const { currency: detected } = useCurrency();
+  // URL param wins, else detected currency, else INR fallback.
+  const cur: Currency = (() => {
+    if (initialCurrencyParam === 'inr' || initialCurrencyParam === 'usd') return initialCurrencyParam;
+    if (detected === 'INR') return 'inr';
+    if (detected === 'USD') return 'usd';
+    return 'inr';
+  })();
   const [busy, setBusy] = useState<Tier | null>(null);
   const [cancelling, setCancelling] = useState(false);
 
   async function upgrade(tier: Tier) {
     setBusy(tier);
     try {
-      const r = await fetch(`/api/autodm/billing/subscribe?tier=${tier}&cycle=${cycle}`, { method: 'POST' });
+      const r = await fetch(`/api/autodm/billing/subscribe?tier=${tier}&cycle=${cycle}&currency=${cur}`, { method: 'POST' });
       const j = (await r.json()) as { ok: boolean; checkout_url?: string; error?: string };
       if (j.ok && j.checkout_url) window.location.href = j.checkout_url;
       else alert(j.error || 'failed to start checkout');
@@ -129,10 +140,10 @@ export function PlanUpgrade({ currentTier }: { currentTier: string }) {
                 <div className="text-xs font-mono uppercase tracking-widest text-muted">{t.label}</div>
                 {isCurrent && <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-accent text-bg font-semibold">Current</span>}
               </div>
-              <div className="text-2xl font-extrabold">{priceLabel(t.id, cycle)}</div>
+              <div className="text-2xl font-extrabold">{priceLabel(t.id, cycle, cur)}</div>
               {cycle === 'yearly' && (
                 <div className="text-[10px] text-accent font-medium mt-0.5">
-                  ~{fmt(Math.round(BILLING_PRICES_INR[t.id].yearly / 12))}/mo · 2 months free
+                  ~{fmt(Math.round(BILLING_PRICES[cur][t.id].yearly / 12), cur)}/mo · 2 months free
                 </div>
               )}
 

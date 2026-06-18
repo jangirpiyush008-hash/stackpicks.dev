@@ -1,20 +1,28 @@
 // AutoDM pricing page — public, no login required.
 // Lives at autodm.stackpicks.dev/pricing.
 //
-// Monthly/Yearly toggle. Yearly = 2 months free vs paying month-to-month
-// (i.e. 10× monthly). Prices + caps come from core/autodm so a change in
-// code auto-reflects here. The plan_id Razorpay actually charges is
-// resolved server-side in /api/autodm/billing/subscribe — this page only
-// passes the chosen cycle through the dashboard query string.
+// Geo-aware: Indian visitors see ₹ prices (Razorpay UPI/Indian card),
+// everyone else sees $ prices (Razorpay international card). Detection
+// is VPN-aware via ipapi.co; a [$/₹] toggle lets the visitor override
+// (persisted to localStorage).
+//
+// Monthly/Yearly toggle: yearly = 10× monthly (2 months free).
+// Yearly subscribers also get +25% DM caps automatically.
 
 'use client';
 
 import Link from 'next/link';
 import { useState } from 'react';
 import { ArrowRight, Check, Sparkles, MessageSquare, Mail } from 'lucide-react';
-import { BILLING_PRICES_INR, YEARLY_CAP_BONUS, type BillingCycle } from '@stackpicks/core/autodm/billing';
+import {
+  BILLING_PRICES,
+  YEARLY_CAP_BONUS,
+  type BillingCycle,
+  type Currency as PlanCurrency,
+} from '@stackpicks/core/autodm/billing';
 import { DEFAULT_PLAN_CAPS } from '@stackpicks/core/autodm/types';
 import { CONTACT } from '@stackpicks/core/constants';
+import { useCurrency } from '@/components/autodm/useCurrency';
 
 const SUPPORT_EMAIL = CONTACT.email;
 
@@ -24,19 +32,18 @@ interface Tier {
   key: TierKey;
   name: string;
   pitch: string;
-  // Pricing differs by cycle for paid tiers; free + enterprise ignore cycle.
-  price: (cycle: BillingCycle) => { label: string; cadence: string; subline?: string };
-  cta: (cycle: BillingCycle) => { label: string; href: string; mailto?: boolean };
+  price: (cycle: BillingCycle, cur: PlanCurrency) => { label: string; cadence: string; subline?: string };
+  cta: (cycle: BillingCycle, cur: PlanCurrency) => { label: string; href: string; mailto?: boolean };
   highlight?: boolean;
-  // Base features always shown. Yearly subscribers also get the YEARLY_PERKS list.
   features: string[];
-  // Paid tiers get yearly-only feature lines appended on top of the base ones.
-  hasYearlyPerks?: boolean;
 }
 
-// Yearly-exclusive perks, appended to paid tier feature lists when the
-// page is in Yearly mode. Caps bonus is the only one wired in the
-// backend; the others are policy commitments we keep.
+const F = DEFAULT_PLAN_CAPS;
+
+const fmtINR = (n: number) => `₹${n.toLocaleString('en-IN')}`;
+const fmtUSD = (n: number) => `$${n.toLocaleString('en-US')}`;
+const fmt = (n: number, cur: PlanCurrency) => (cur === 'inr' ? fmtINR(n) : fmtUSD(n));
+
 function yearlyPerksFor(tier: TierKey): string[] {
   if (!['creator', 'pro', 'agency'].includes(tier)) return [];
   const pct = Math.round(YEARLY_CAP_BONUS * 100);
@@ -47,41 +54,37 @@ function yearlyPerksFor(tier: TierKey): string[] {
   ];
 }
 
-const F = DEFAULT_PLAN_CAPS;
-
-const fmt = (n: number) => `₹${n.toLocaleString('en-IN')}`;
-
 const TIERS: Tier[] = [
   {
     key: 'free',
     name: 'Free',
     pitch: 'For testing the waters or hobby creators.',
-    price: () => ({ label: '₹0', cadence: 'forever' }),
+    price: () => ({ label: 'Free', cadence: 'forever' }),
     cta: () => ({ label: 'Get started free', href: '/signup' }),
     features: [
       `${F.free.daily} DMs/day · ${F.free.hourly} DMs/hour`,
       '1 Instagram account',
       'AI rule drafting in your voice',
       '4-hour follow-up that re-sends your link',
-      'Spam-shield + account warming',
+      'Hinglish + multi-language auto-detect',
     ],
   },
   {
     key: 'creator',
     name: 'Creator',
     pitch: 'For solo creators with one active IG account.',
-    price: (c) => {
-      const p = BILLING_PRICES_INR.creator[c];
+    price: (c, cur) => {
+      const p = BILLING_PRICES[cur].creator[c];
       return c === 'yearly'
-        ? { label: fmt(p), cadence: 'per year', subline: `~${fmt(Math.round(p / 12))}/mo · 2 months free` }
-        : { label: fmt(p), cadence: 'per month' };
+        ? { label: fmt(p, cur), cadence: 'per year', subline: `~${fmt(Math.round(p / 12), cur)}/mo · 2 months free` }
+        : { label: fmt(p, cur), cadence: 'per month' };
     },
-    cta: (c) => ({ label: 'Pick Creator', href: `/dashboard?cycle=${c}&tier=creator` }),
+    cta: (c, cur) => ({ label: 'Pick Creator', href: `/dashboard?cycle=${c}&tier=creator&currency=${cur}` }),
     features: [
       `${F.creator.daily} DMs/day · ${F.creator.hourly} DMs/hour`,
       '1 Instagram + 1 LinkedIn + 1 X account',
-      'Unlimited rules and follow-ups',
       'Click tracking + lightweight CRM',
+      'Auto A/B testing (up to 3 variants)',
       'Email digest of activity',
     ],
   },
@@ -90,38 +93,38 @@ const TIERS: Tier[] = [
     name: 'Pro',
     pitch: 'For full-time creators running several accounts.',
     highlight: true,
-    price: (c) => {
-      const p = BILLING_PRICES_INR.pro[c];
+    price: (c, cur) => {
+      const p = BILLING_PRICES[cur].pro[c];
       return c === 'yearly'
-        ? { label: fmt(p), cadence: 'per year', subline: `~${fmt(Math.round(p / 12))}/mo · 2 months free` }
-        : { label: fmt(p), cadence: 'per month' };
+        ? { label: fmt(p, cur), cadence: 'per year', subline: `~${fmt(Math.round(p / 12), cur)}/mo · 2 months free` }
+        : { label: fmt(p, cur), cadence: 'per month' };
     },
-    cta: (c) => ({ label: 'Pick Pro', href: `/dashboard?cycle=${c}&tier=pro` }),
+    cta: (c, cur) => ({ label: 'Pick Pro', href: `/dashboard?cycle=${c}&tier=pro&currency=${cur}` }),
     features: [
       `${F.pro.daily.toLocaleString('en-IN')} DMs/day · ${F.pro.hourly} DMs/hour`,
       '3 Instagram + 3 LinkedIn + 3 X accounts',
-      'Priority worker (faster reply latency)',
-      'Webhook health alerts',
-      'Priority email support',
+      'Image-aware DMs (AI reads the post)',
+      '5-turn conversational follow-up agent',
+      'Daily AI digest of hot leads',
+      'Spam-shield Pro + webhook health alerts',
     ],
   },
   {
     key: 'agency',
     name: 'Agency',
     pitch: 'For agencies running DMs for many client brands.',
-    price: (c) => {
-      const p = BILLING_PRICES_INR.agency[c];
+    price: (c, cur) => {
+      const p = BILLING_PRICES[cur].agency[c];
       return c === 'yearly'
-        ? { label: fmt(p), cadence: 'per year', subline: `~${fmt(Math.round(p / 12))}/mo · 2 months free` }
-        : { label: fmt(p), cadence: 'per month' };
+        ? { label: fmt(p, cur), cadence: 'per year', subline: `~${fmt(Math.round(p / 12), cur)}/mo · 2 months free` }
+        : { label: fmt(p, cur), cadence: 'per month' };
     },
-    cta: (c) => ({ label: 'Pick Agency', href: `/dashboard?cycle=${c}&tier=agency` }),
+    cta: (c, cur) => ({ label: 'Pick Agency', href: `/dashboard?cycle=${c}&tier=agency&currency=${cur}` }),
     features: [
       `${F.agency.daily.toLocaleString('en-IN')} DMs/day · ${F.agency.hourly} DMs/hour`,
       '25 IG + 25 LinkedIn + 25 X accounts',
-      'White-glove onboarding for your clients',
-      'Dedicated Slack/WhatsApp channel',
-      'Custom rule templates on request',
+      'Manage many accounts under one login',
+      'Everything in Pro',
     ],
   },
   {
@@ -137,15 +140,16 @@ const TIERS: Tier[] = [
     features: [
       'Unlimited DM volume (subject to Meta caps)',
       'Unlimited connected accounts',
-      'Custom SLA + invoiced billing',
-      'Single sign-on (SSO) on request',
-      'Direct line to the founder',
+      'Custom SLA + direct line to the team',
+      'Everything in Agency',
     ],
   },
 ];
 
 export default function AutoDmPricingPage() {
   const [cycle, setCycle] = useState<BillingCycle>('monthly');
+  const { currency, setCurrency, ready } = useCurrency();
+  const cur: PlanCurrency = currency === 'INR' ? 'inr' : 'usd';
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12 md:py-16">
@@ -194,12 +198,39 @@ export default function AutoDmPricingPage() {
         <div className="mt-2 text-[11px] text-accent font-medium">
           Yearly = 2 months free
         </div>
+
+        {/* Currency override — geo defaults but VPN users / Indians on foreign cards can flip */}
+        <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-muted">
+          <span>Showing prices in</span>
+          <div className="inline-flex items-center gap-0.5 p-0.5 rounded-md border border-border bg-surface/40">
+            <button
+              type="button"
+              onClick={() => setCurrency('USD')}
+              disabled={!ready}
+              className={`px-2 py-0.5 rounded text-[11px] font-medium transition ${
+                cur === 'usd' ? 'bg-accent text-bg' : 'text-muted hover:text-text'
+              }`}
+            >
+              $ USD
+            </button>
+            <button
+              type="button"
+              onClick={() => setCurrency('INR')}
+              disabled={!ready}
+              className={`px-2 py-0.5 rounded text-[11px] font-medium transition ${
+                cur === 'inr' ? 'bg-accent text-bg' : 'text-muted hover:text-text'
+              }`}
+            >
+              ₹ INR
+            </button>
+          </div>
+        </div>
       </header>
 
       <div className="grid gap-5 mb-10 md:grid-cols-2 lg:grid-cols-3">
         {TIERS.filter((t) => !(cycle === 'yearly' && t.key === 'free')).map((t) => {
-          const price = t.price(cycle);
-          const cta = t.cta(cycle);
+          const price = t.price(cycle, cur);
+          const cta = t.cta(cycle, cur);
           return (
             <div
               key={t.key}
@@ -273,25 +304,23 @@ export default function AutoDmPricingPage() {
         })}
       </div>
 
-      {/* Trust strip */}
       <div className="rounded-2xl border border-border bg-surface/30 p-6 md:p-8 mb-10">
         <div className="grid sm:grid-cols-3 gap-5 text-sm">
           <div>
             <div className="text-text font-semibold mb-1">No long-term lock-in</div>
-            <div className="text-muted">Cancel from your dashboard any time. Razorpay stops the next auto-debit immediately.</div>
+            <div className="text-muted">Cancel from your dashboard any time. The next auto-debit stops immediately.</div>
           </div>
           <div>
             <div className="text-text font-semibold mb-1">7-day refund window</div>
             <div className="text-muted">If AutoDM isn&apos;t working for you in the first 7 days, email us and we refund — no questions.</div>
           </div>
           <div>
-            <div className="text-text font-semibold mb-1">India-first billing</div>
-            <div className="text-muted">UPI Autopay, eMandate, and cards via Razorpay. GST invoice on request.</div>
+            <div className="text-text font-semibold mb-1">Pay in your currency</div>
+            <div className="text-muted">{cur === 'inr' ? 'UPI Autopay, Indian card, net-banking via Razorpay. GST invoice on request.' : 'International card via Razorpay. Auto-converted at the live rate at each charge.'}</div>
           </div>
         </div>
       </div>
 
-      {/* FAQs */}
       <section className="max-w-3xl mx-auto">
         <h2 className="text-2xl font-bold tracking-tight mb-6 flex items-center gap-2">
           <MessageSquare className="w-5 h-5 text-accent" />
@@ -300,11 +329,11 @@ export default function AutoDmPricingPage() {
         <div className="space-y-4 text-sm">
           <div>
             <div className="text-text font-semibold mb-1">How much do I actually save on yearly?</div>
-            <div className="text-muted">Two months free. Yearly = 10× the monthly price, instead of 12×. Creator goes from ₹5,988/yr (paid monthly) to ₹4,990/yr. Pro from ₹17,988 to ₹14,990. Agency from ₹59,988 to ₹49,990.</div>
+            <div className="text-muted">Two months free. Yearly is 10× the monthly price instead of 12×, plus you get +25% DM caps automatically.</div>
           </div>
           <div>
             <div className="text-text font-semibold mb-1">What counts as a DM?</div>
-            <div className="text-muted">Every outbound message AutoDM sends in response to a comment counts as one DM. Follow-ups count separately. Your daily and hourly caps are above.</div>
+            <div className="text-muted">Every outbound message AutoDM sends in response to a comment counts as one DM. Follow-ups count separately.</div>
           </div>
           <div>
             <div className="text-text font-semibold mb-1">Can I change plans later?</div>

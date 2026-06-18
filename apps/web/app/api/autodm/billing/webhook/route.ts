@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
   // Find the matching autodm_subscriptions row
   const { data: subRow } = await admin
     .from('autodm_subscriptions')
-    .select('tenant_id, plan_tier, billing_cycle')
+    .select('tenant_id, plan_tier, billing_cycle, currency')
     .eq('razorpay_subscription_id', sub.id)
     .single();
   if (!subRow) {

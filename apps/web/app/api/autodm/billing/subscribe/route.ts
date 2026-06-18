@@ -13,13 +13,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { adminClient } from '@stackpicks/core/db';
 import { createSubscription } from '@stackpicks/core/razorpay';
-import { planIdFor, type BillingCycle } from '@stackpicks/core/autodm/billing';
+import { planIdFor, type BillingCycle, type Currency } from '@stackpicks/core/autodm/billing';
 import type { PlanTier } from '@stackpicks/core/autodm/types';
 
 export const runtime = 'nodejs';
 
 const SUPPORTED: Exclude<PlanTier, 'free'>[] = ['creator', 'pro', 'agency'];
 const CYCLES: BillingCycle[] = ['monthly', 'yearly'];
+const CURRENCIES: Currency[] = ['inr', 'usd'];
 
 export async function POST(req: NextRequest) {
   const supa = await getSupabaseServer();
@@ -33,6 +34,8 @@ export async function POST(req: NextRequest) {
   }
   const cycleRaw = (sp.get('cycle') ?? 'monthly') as BillingCycle;
   const cycle: BillingCycle = CYCLES.includes(cycleRaw) ? cycleRaw : 'monthly';
+  const currencyRaw = (sp.get('currency') ?? 'inr').toLowerCase() as Currency;
+  const currency: Currency = CURRENCIES.includes(currencyRaw) ? currencyRaw : 'inr';
 
   const admin = adminClient();
   const { data: tenants } = await admin
@@ -42,7 +45,7 @@ export async function POST(req: NextRequest) {
   if (!tenant) return NextResponse.json({ ok: false, error: 'no_tenant' }, { status: 404 });
 
   let planId: string;
-  try { planId = planIdFor(tier, cycle); }
+  try { planId = planIdFor(tier, cycle, currency); }
   catch (e) { return NextResponse.json({ ok: false, error: (e as Error).message }, { status: 500 }); }
 
   // total_count: monthly → 12 cycles = 1 year of auto-debits.
@@ -62,6 +65,7 @@ export async function POST(req: NextRequest) {
         ig_username: tenant.ig_username as string ?? '',
         plan_tier: tier,
         billing_cycle: cycle,
+        currency,
         product: 'autodm',
       },
     });
@@ -76,6 +80,7 @@ export async function POST(req: NextRequest) {
     razorpay_plan_id: sub.plan_id,
     plan_tier: tier,
     billing_cycle: cycle,
+    currency,
     status: sub.status,
   }, { onConflict: 'razorpay_subscription_id' });
 

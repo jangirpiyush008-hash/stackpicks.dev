@@ -8,7 +8,7 @@ import { CONTACT, ENTITY } from '@stackpicks/core/constants';
 
 export const metadata = {
   title: 'About — StackPicks AutoDM',
-  description: 'Who builds and operates StackPicks AutoDM — and why we built an Instagram comment-to-DM tool for creators in India and beyond.',
+  description: 'Who builds and operates StackPicks AutoDM — and why we built an Instagram comment-to-DM tool for creators worldwide.',
 };
 
 export default function AutoDmAboutPage() {
@@ -76,11 +76,12 @@ export default function AutoDmAboutPage() {
 
         <h2>Why we built this</h2>
         <p>
-          Indian creators with 20k–500k followers were watching genuine leads bounce because
-          they could not reply to every &ldquo;link please&rdquo; comment within an hour. Existing
-          tools were either expensive Western SaaS billed in USD or DM blasters that risked
-          getting accounts banned. AutoDM is the boring middle: small, in INR, Meta-approved,
-          rate-limited to stay on the right side of Instagram&apos;s policies.
+          Creators with 20k–500k followers were watching genuine leads bounce because they
+          could not reply to every &ldquo;link please&rdquo; comment within an hour. Existing
+          tools were either over-priced, billed per contact (so going viral costs more), or
+          DM blasters that risked getting accounts banned. AutoDM is the boring middle: small,
+          flat pricing in your local currency, Meta-approved, rate-limited to stay on the
+          right side of Instagram&apos;s policies.
         </p>
 
         <h2>How we make money</h2>
