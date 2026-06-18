@@ -306,7 +306,14 @@ export default async function DashboardPage({
                         <span className="w-1 h-1 rounded-full bg-rose-400" /> live
                       </span>
                     )}
-                    {l.error && <span className="text-xs text-rose-400/80">· {l.error}</span>}
+                    {l.status === 'skipped' && (
+                      <span className="text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500">
+                        skipped
+                      </span>
+                    )}
+                    {l.error && (
+                      <span className="text-xs text-rose-400/80">· {humanizeSkipReason(l.error)}</span>
+                    )}
                   </div>
                   <span className="text-xs text-muted">{new Date(l.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</span>
                 </div>
@@ -327,6 +334,15 @@ function Stat({ label, value, sub, highlight }: { label: string; value: string; 
       <div className="text-[10px] text-muted mt-0.5">{sub}</div>
     </div>
   );
+}
+
+function humanizeSkipReason(reason: string): string {
+  if (reason === 'daily_cap_per_recipient') return 'already DM\'d today (per-recipient cap)';
+  if (reason.startsWith('hourly_cap')) return reason.replace('hourly_cap', 'account hourly cap reached');
+  if (reason.startsWith('schedule:outside_hours')) return 'outside rule\'s active hours';
+  if (reason.startsWith('schedule:wrong_day')) return 'rule not active on this weekday';
+  if (reason === 'no_original_cta_url') return 'no CTA URL on rule — followup skipped';
+  return reason;
 }
 
 function StatusDot({ status }: { status: string }) {

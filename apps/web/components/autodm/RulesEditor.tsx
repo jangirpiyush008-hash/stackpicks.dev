@@ -239,6 +239,30 @@ export function RulesEditor({
             Append follow nudge for non-followers
           </label>
 
+          <Field label="Daily cap per recipient">
+            <input
+              type="number"
+              min={0}
+              max={20}
+              value={draft.daily_cap_per_recipient ?? ''}
+              onChange={(e) => {
+                const v = e.target.value;
+                setDraft({
+                  ...draft,
+                  daily_cap_per_recipient: v === '' ? null : Math.max(0, Math.min(20, Number(v) || 0)),
+                });
+              }}
+              className="sp-input w-24"
+              placeholder="1"
+            />
+            <p className="text-[10px] text-muted mt-1">
+              Max DMs this rule sends to the same person per day.
+              <strong className="text-text"> 1</strong> = anti-spam default (recommended).
+              <strong className="text-text"> 0 or blank</strong> = no cap.
+              Higher numbers = same person can re-trigger by commenting again.
+            </p>
+          </Field>
+
           <ScheduleEditor
             start={draft.active_hour_start ?? null}
             end={draft.active_hour_end ?? null}
