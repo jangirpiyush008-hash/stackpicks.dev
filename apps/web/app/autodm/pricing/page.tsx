@@ -1,42 +1,46 @@
 // AutoDM pricing page — public, no login required.
 // Lives at autodm.stackpicks.dev/pricing.
 //
-// Five tiers: Free, Creator (₹499), Pro (₹1499), Agency (₹4999), Enterprise (contact).
-// Numbers + caps come from core/autodm/billing + types so a cap change in code
-// auto-reflects here.
+// Monthly/Yearly toggle. Yearly = 2 months free vs paying month-to-month
+// (i.e. 10× monthly). Prices + caps come from core/autodm so a change in
+// code auto-reflects here. The plan_id Razorpay actually charges is
+// resolved server-side in /api/autodm/billing/subscribe — this page only
+// passes the chosen cycle through the dashboard query string.
+
+'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 import { ArrowRight, Check, Sparkles, MessageSquare, Mail } from 'lucide-react';
-import { BILLING_PRICES_INR } from '@stackpicks/core/autodm/billing';
+import { BILLING_PRICES_INR, type BillingCycle } from '@stackpicks/core/autodm/billing';
 import { DEFAULT_PLAN_CAPS } from '@stackpicks/core/autodm/types';
-import { CONTACT } from '@stackpicks/core/constants';
 
-export const metadata = {
-  title: 'Pricing — StackPicks AutoDM',
-  description: 'Instagram comment-to-DM automation. Free to start. Paid plans from ₹499/mo. Cancel anytime, no lock-in.',
-};
+const SUPPORT_EMAIL = 'stackpicks.dev@gmail.com';
 
-type Tier = {
-  key: 'free' | 'creator' | 'pro' | 'agency' | 'enterprise';
+type TierKey = 'free' | 'creator' | 'pro' | 'agency' | 'enterprise';
+
+interface Tier {
+  key: TierKey;
   name: string;
   pitch: string;
-  priceLabel: string;
-  cadence: string;
-  cta: { label: string; href: string };
+  // Pricing differs by cycle for paid tiers; free + enterprise ignore cycle.
+  price: (cycle: BillingCycle) => { label: string; cadence: string; subline?: string };
+  cta: (cycle: BillingCycle) => { label: string; href: string; mailto?: boolean };
   highlight?: boolean;
   features: string[];
-};
+}
 
 const F = DEFAULT_PLAN_CAPS;
+
+const fmt = (n: number) => `₹${n.toLocaleString('en-IN')}`;
 
 const TIERS: Tier[] = [
   {
     key: 'free',
     name: 'Free',
     pitch: 'For testing the waters or hobby creators.',
-    priceLabel: '₹0',
-    cadence: 'forever',
-    cta: { label: 'Get started free', href: '/signup' },
+    price: () => ({ label: '₹0', cadence: 'forever' }),
+    cta: () => ({ label: 'Get started free', href: '/signup' }),
     features: [
       `${F.free.daily} DMs/day · ${F.free.hourly} DMs/hour`,
       '1 Instagram account',
@@ -49,9 +53,13 @@ const TIERS: Tier[] = [
     key: 'creator',
     name: 'Creator',
     pitch: 'For solo creators with one active IG account.',
-    priceLabel: `₹${BILLING_PRICES_INR.creator}`,
-    cadence: 'per month',
-    cta: { label: 'Pick Creator', href: '/dashboard' },
+    price: (c) => {
+      const p = BILLING_PRICES_INR.creator[c];
+      return c === 'yearly'
+        ? { label: fmt(p), cadence: 'per year', subline: `~${fmt(Math.round(p / 12))}/mo · 2 months free` }
+        : { label: fmt(p), cadence: 'per month' };
+    },
+    cta: (c) => ({ label: 'Pick Creator', href: `/dashboard?cycle=${c}&tier=creator` }),
     features: [
       `${F.creator.daily} DMs/day · ${F.creator.hourly} DMs/hour`,
       '1 Instagram + 1 LinkedIn + 1 X account',
@@ -64,10 +72,14 @@ const TIERS: Tier[] = [
     key: 'pro',
     name: 'Pro',
     pitch: 'For full-time creators running several accounts.',
-    priceLabel: `₹${BILLING_PRICES_INR.pro.toLocaleString('en-IN')}`,
-    cadence: 'per month',
     highlight: true,
-    cta: { label: 'Pick Pro', href: '/dashboard' },
+    price: (c) => {
+      const p = BILLING_PRICES_INR.pro[c];
+      return c === 'yearly'
+        ? { label: fmt(p), cadence: 'per year', subline: `~${fmt(Math.round(p / 12))}/mo · 2 months free` }
+        : { label: fmt(p), cadence: 'per month' };
+    },
+    cta: (c) => ({ label: 'Pick Pro', href: `/dashboard?cycle=${c}&tier=pro` }),
     features: [
       `${F.pro.daily.toLocaleString('en-IN')} DMs/day · ${F.pro.hourly} DMs/hour`,
       '3 Instagram + 3 LinkedIn + 3 X accounts',
@@ -80,9 +92,13 @@ const TIERS: Tier[] = [
     key: 'agency',
     name: 'Agency',
     pitch: 'For agencies running DMs for many client brands.',
-    priceLabel: `₹${BILLING_PRICES_INR.agency.toLocaleString('en-IN')}`,
-    cadence: 'per month',
-    cta: { label: 'Pick Agency', href: '/dashboard' },
+    price: (c) => {
+      const p = BILLING_PRICES_INR.agency[c];
+      return c === 'yearly'
+        ? { label: fmt(p), cadence: 'per year', subline: `~${fmt(Math.round(p / 12))}/mo · 2 months free` }
+        : { label: fmt(p), cadence: 'per month' };
+    },
+    cta: (c) => ({ label: 'Pick Agency', href: `/dashboard?cycle=${c}&tier=agency` }),
     features: [
       `${F.agency.daily.toLocaleString('en-IN')} DMs/day · ${F.agency.hourly} DMs/hour`,
       '25 IG + 25 LinkedIn + 25 X accounts',
@@ -95,9 +111,12 @@ const TIERS: Tier[] = [
     key: 'enterprise',
     name: 'Enterprise',
     pitch: 'For platforms, networks, and 100+ account operators.',
-    priceLabel: 'Custom',
-    cadence: 'annual',
-    cta: { label: 'Talk to us', href: `mailto:${CONTACT.email}?subject=AutoDM%20Enterprise%20enquiry` },
+    price: () => ({ label: 'Custom', cadence: 'annual' }),
+    cta: () => ({
+      label: 'Talk to us',
+      href: `mailto:${SUPPORT_EMAIL}?subject=AutoDM%20Enterprise%20enquiry`,
+      mailto: true,
+    }),
     features: [
       'Unlimited DM volume (subject to Meta caps)',
       'Unlimited connected accounts',
@@ -109,6 +128,8 @@ const TIERS: Tier[] = [
 ];
 
 export default function AutoDmPricingPage() {
+  const [cycle, setCycle] = useState<BillingCycle>('monthly');
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-12 md:py-16">
       <header className="text-center mb-10 md:mb-14 relative">
@@ -125,72 +146,114 @@ export default function AutoDmPricingPage() {
             Automatically.
           </span>
         </h1>
-        <p className="text-base md:text-lg text-muted max-w-2xl mx-auto px-4">
+        <p className="text-base md:text-lg text-muted max-w-2xl mx-auto px-4 mb-7">
           Start free. Upgrade when you outgrow the cap. Cancel any time — no
           annual lock-in, no setup fees, no surprise charges.
         </p>
+
+        {/* Monthly / Yearly toggle */}
+        <div className="inline-flex items-center gap-1 p-1 rounded-full border border-border bg-surface/60 backdrop-blur">
+          <button
+            type="button"
+            onClick={() => setCycle('monthly')}
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition ${
+              cycle === 'monthly' ? 'bg-accent text-bg' : 'text-muted hover:text-text'
+            }`}
+            aria-pressed={cycle === 'monthly'}
+          >
+            Monthly
+          </button>
+          <button
+            type="button"
+            onClick={() => setCycle('yearly')}
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition inline-flex items-center gap-1.5 ${
+              cycle === 'yearly' ? 'bg-accent text-bg' : 'text-muted hover:text-text'
+            }`}
+            aria-pressed={cycle === 'yearly'}
+          >
+            Yearly
+            <span
+              className={`text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                cycle === 'yearly'
+                  ? 'bg-bg/20 text-bg'
+                  : 'bg-accent/15 text-accent'
+              }`}
+            >
+              Save 2 mo
+            </span>
+          </button>
+        </div>
       </header>
 
       <div className="grid gap-5 mb-10 md:grid-cols-2 lg:grid-cols-3">
-        {TIERS.map((t) => (
-          <div
-            key={t.key}
-            className={`relative rounded-2xl border p-6 md:p-7 flex flex-col ${
-              t.highlight
-                ? 'border-accent/60 bg-accent/5 shadow-[0_0_60px_-15px_rgba(74,222,128,0.25)]'
-                : 'border-border bg-surface/40'
-            }`}
-          >
-            {t.highlight && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-accent text-bg text-[10px] font-mono uppercase tracking-wider">
-                Most popular
+        {TIERS.map((t) => {
+          const price = t.price(cycle);
+          const cta = t.cta(cycle);
+          return (
+            <div
+              key={t.key}
+              className={`relative rounded-2xl border p-6 md:p-7 flex flex-col ${
+                t.highlight
+                  ? 'border-accent/60 bg-accent/5 shadow-[0_0_60px_-15px_rgba(74,222,128,0.25)]'
+                  : 'border-border bg-surface/40'
+              }`}
+            >
+              {t.highlight && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-accent text-bg text-[10px] font-mono uppercase tracking-wider">
+                  Most popular
+                </div>
+              )}
+              <div className="text-xs font-mono uppercase tracking-wider text-muted mb-2">
+                {t.name}
               </div>
-            )}
-            <div className="text-xs font-mono uppercase tracking-wider text-muted mb-2">
-              {t.name}
+              <h2 className="text-2xl font-bold mb-1 flex items-baseline gap-1.5">
+                <span>{price.label}</span>
+                <span className="text-xs text-muted font-normal">{price.cadence}</span>
+              </h2>
+              {price.subline ? (
+                <div className="text-[11px] text-accent font-medium mb-2">{price.subline}</div>
+              ) : (
+                <div className="h-[16px] mb-2" />
+              )}
+              <p className="text-sm text-muted mb-5 leading-relaxed">{t.pitch}</p>
+
+              <ul className="space-y-2 mb-6 flex-1">
+                {t.features.map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-sm text-muted">
+                    <Check className="w-4 h-4 text-accent shrink-0 mt-0.5" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {cta.mailto ? (
+                <a
+                  href={cta.href}
+                  className={`inline-flex items-center justify-center gap-1.5 w-full px-4 py-2.5 rounded-lg text-sm font-medium transition ${
+                    t.highlight
+                      ? 'bg-accent text-bg hover:opacity-90'
+                      : 'border border-border bg-surface/60 hover:border-accent hover:text-accent'
+                  }`}
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  {cta.label}
+                </a>
+              ) : (
+                <Link
+                  href={cta.href}
+                  className={`inline-flex items-center justify-center gap-1.5 w-full px-4 py-2.5 rounded-lg text-sm font-medium transition ${
+                    t.highlight
+                      ? 'bg-accent text-bg hover:opacity-90'
+                      : 'border border-border bg-surface/60 hover:border-accent hover:text-accent'
+                  }`}
+                >
+                  {cta.label}
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              )}
             </div>
-            <h2 className="text-2xl font-bold mb-2 flex items-baseline gap-1.5">
-              <span>{t.priceLabel}</span>
-              <span className="text-xs text-muted font-normal">{t.cadence}</span>
-            </h2>
-            <p className="text-sm text-muted mb-5 leading-relaxed">{t.pitch}</p>
-
-            <ul className="space-y-2 mb-6 flex-1">
-              {t.features.map((f) => (
-                <li key={f} className="flex items-start gap-2 text-sm text-muted">
-                  <Check className="w-4 h-4 text-accent shrink-0 mt-0.5" />
-                  <span>{f}</span>
-                </li>
-              ))}
-            </ul>
-
-            {t.cta.href.startsWith('mailto:') ? (
-              <a
-                href={t.cta.href}
-                className={`inline-flex items-center justify-center gap-1.5 w-full px-4 py-2.5 rounded-lg text-sm font-medium transition ${
-                  t.highlight
-                    ? 'bg-accent text-bg hover:opacity-90'
-                    : 'border border-border bg-surface/60 hover:border-accent hover:text-accent'
-                }`}
-              >
-                <Mail className="w-3.5 h-3.5" />
-                {t.cta.label}
-              </a>
-            ) : (
-              <Link
-                href={t.cta.href}
-                className={`inline-flex items-center justify-center gap-1.5 w-full px-4 py-2.5 rounded-lg text-sm font-medium transition ${
-                  t.highlight
-                    ? 'bg-accent text-bg hover:opacity-90'
-                    : 'border border-border bg-surface/60 hover:border-accent hover:text-accent'
-                }`}
-              >
-                {t.cta.label}
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Trust strip */}
@@ -211,13 +274,17 @@ export default function AutoDmPricingPage() {
         </div>
       </div>
 
-      {/* FAQs — kept short, link to refund/contact for deep dives */}
+      {/* FAQs */}
       <section className="max-w-3xl mx-auto">
         <h2 className="text-2xl font-bold tracking-tight mb-6 flex items-center gap-2">
           <MessageSquare className="w-5 h-5 text-accent" />
           Quick questions
         </h2>
         <div className="space-y-4 text-sm">
+          <div>
+            <div className="text-text font-semibold mb-1">How much do I actually save on yearly?</div>
+            <div className="text-muted">Two months free. Yearly = 10× the monthly price, instead of 12×. Creator goes from ₹5,988/yr (paid monthly) to ₹4,990/yr. Pro from ₹17,988 to ₹14,990. Agency from ₹59,988 to ₹49,990.</div>
+          </div>
           <div>
             <div className="text-text font-semibold mb-1">What counts as a DM?</div>
             <div className="text-muted">Every outbound message AutoDM sends in response to a comment counts as one DM. Follow-ups count separately. Your daily and hourly caps are above.</div>
@@ -235,7 +302,7 @@ export default function AutoDmPricingPage() {
             <div className="text-muted">
               Full details on the{' '}
               <Link href="/refund" className="text-accent underline underline-offset-2">refund policy page</Link>.
-              For anything else, email <a href={`mailto:${CONTACT.email}`} className="text-accent underline underline-offset-2">{CONTACT.email}</a>.
+              For anything else, email <a href={`mailto:${SUPPORT_EMAIL}`} className="text-accent underline underline-offset-2">{SUPPORT_EMAIL}</a>.
             </div>
           </div>
         </div>

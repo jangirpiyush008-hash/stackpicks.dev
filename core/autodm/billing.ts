@@ -2,21 +2,27 @@
  * AutoDM billing — Razorpay plan mapping + caps.
  *
  * Plans are created once in Razorpay dashboard and their IDs go in env.
- * One plan_id per tier per billing cycle (monthly only for v1).
+ * Two billing cycles per paid tier: monthly and yearly. Yearly = 10× the
+ * monthly price (i.e., 2 months free).
  */
 
 import { DEFAULT_PLAN_CAPS, type PlanTier } from './types';
 
-export const BILLING_PRICES_INR: Record<Exclude<PlanTier, 'free'>, number> = {
-  creator: 499,
-  pro:     1499,
-  agency:  4999,
+export type BillingCycle = 'monthly' | 'yearly';
+
+type PaidTier = Exclude<PlanTier, 'free'>;
+
+export const BILLING_PRICES_INR: Record<PaidTier, Record<BillingCycle, number>> = {
+  creator: { monthly: 499,   yearly: 4_990  },
+  pro:     { monthly: 1_499, yearly: 14_990 },
+  agency:  { monthly: 4_999, yearly: 49_990 },
 };
 
 /** Razorpay plan IDs come from env so creating the plans in the dashboard
- *  doesn't require a code change. */
-export function planIdFor(tier: Exclude<PlanTier, 'free'>): string {
-  const key = `RAZORPAY_AUTODM_PLAN_${tier.toUpperCase()}`;
+ *  doesn't require a code change. Yearly plans use the *_YEARLY suffix. */
+export function planIdFor(tier: PaidTier, cycle: BillingCycle = 'monthly'): string {
+  const suffix = cycle === 'yearly' ? '_YEARLY' : '';
+  const key = `RAZORPAY_AUTODM_PLAN_${tier.toUpperCase()}${suffix}`;
   const id = process.env[key];
   if (!id) throw new Error(`Missing ${key} env (set the Razorpay plan ID)`);
   return id;

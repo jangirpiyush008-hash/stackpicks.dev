@@ -2,19 +2,24 @@
 
 /**
  * Plan upgrade widget on the AutoDM dashboard. Shows current plan,
- * lets the creator upgrade (POST /api/autodm/billing/subscribe?tier=...)
- * and follow the Razorpay short_url. Webhook flips plan_tier afterward.
+ * lets the creator upgrade and follow the Razorpay short_url. Webhook
+ * flips plan_tier afterward.
+ *
+ * Billing cycle (monthly / yearly) is selectable inline. If the user
+ * arrived from the public pricing page via /dashboard?cycle=yearly the
+ * toggle defaults to that selection.
  */
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Loader2, ArrowRight } from 'lucide-react';
+import { BILLING_PRICES_INR, type BillingCycle } from '@stackpicks/core/autodm/billing';
 
 type Tier = 'creator' | 'pro' | 'agency';
 
 interface TierDef {
   id: Tier;
   label: string;
-  price: string;
   accounts: { instagram: number; linkedin: number; x: number };
   perks: string[];
   highlight?: boolean;
@@ -22,30 +27,40 @@ interface TierDef {
 
 const TIERS: TierDef[] = [
   {
-    id: 'creator', label: 'Creator', price: '₹499/mo',
+    id: 'creator', label: 'Creator',
     accounts: { instagram: 1, linkedin: 1, x: 1 },
     perks: ['5,000 DMs/mo', '10 rules', 'No StackPicks branding', 'Daily analytics'],
   },
   {
-    id: 'pro', label: 'Pro', price: '₹1,499/mo', highlight: true,
+    id: 'pro', label: 'Pro', highlight: true,
     accounts: { instagram: 3, linkedin: 3, x: 3 },
     perks: ['Unlimited DMs + rules', 'Voice-cloned bodies', 'Follow-up agent', 'Spam-shield Pro'],
   },
   {
-    id: 'agency', label: 'Agency', price: '₹4,999/mo',
+    id: 'agency', label: 'Agency',
     accounts: { instagram: 25, linkedin: 25, x: 25 },
     perks: ['Everything in Pro', 'White-label', 'Team seats', 'Priority support'],
   },
 ];
 
+const fmt = (n: number) => `₹${n.toLocaleString('en-IN')}`;
+
+function priceLabel(tier: Tier, cycle: BillingCycle) {
+  const p = BILLING_PRICES_INR[tier][cycle];
+  return cycle === 'yearly' ? `${fmt(p)}/yr` : `${fmt(p)}/mo`;
+}
+
 export function PlanUpgrade({ currentTier }: { currentTier: string }) {
+  const params = useSearchParams();
+  const initialCycle: BillingCycle = params?.get('cycle') === 'yearly' ? 'yearly' : 'monthly';
+  const [cycle, setCycle] = useState<BillingCycle>(initialCycle);
   const [busy, setBusy] = useState<Tier | null>(null);
   const [cancelling, setCancelling] = useState(false);
 
   async function upgrade(tier: Tier) {
     setBusy(tier);
     try {
-      const r = await fetch(`/api/autodm/billing/subscribe?tier=${tier}`, { method: 'POST' });
+      const r = await fetch(`/api/autodm/billing/subscribe?tier=${tier}&cycle=${cycle}`, { method: 'POST' });
       const j = (await r.json()) as { ok: boolean; checkout_url?: string; error?: string };
       if (j.ok && j.checkout_url) window.location.href = j.checkout_url;
       else alert(j.error || 'failed to start checkout');
@@ -77,6 +92,37 @@ export function PlanUpgrade({ currentTier }: { currentTier: string }) {
         )}
       </div>
 
+      {/* Monthly / Yearly toggle */}
+      <div className="inline-flex items-center gap-1 p-1 rounded-full border border-border bg-bg-card/60 mb-4">
+        <button
+          type="button"
+          onClick={() => setCycle('monthly')}
+          className={`px-3 py-1 rounded-full text-xs font-medium transition ${
+            cycle === 'monthly' ? 'bg-accent text-bg' : 'text-muted hover:text-text'
+          }`}
+          aria-pressed={cycle === 'monthly'}
+        >
+          Monthly
+        </button>
+        <button
+          type="button"
+          onClick={() => setCycle('yearly')}
+          className={`px-3 py-1 rounded-full text-xs font-medium transition inline-flex items-center gap-1.5 ${
+            cycle === 'yearly' ? 'bg-accent text-bg' : 'text-muted hover:text-text'
+          }`}
+          aria-pressed={cycle === 'yearly'}
+        >
+          Yearly
+          <span
+            className={`text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded ${
+              cycle === 'yearly' ? 'bg-bg/20 text-bg' : 'bg-accent/15 text-accent'
+            }`}
+          >
+            Save 2 mo
+          </span>
+        </button>
+      </div>
+
       <div className="grid sm:grid-cols-3 gap-3">
         {TIERS.map((t) => {
           const isCurrent = currentTier === t.id;
@@ -87,9 +133,13 @@ export function PlanUpgrade({ currentTier }: { currentTier: string }) {
                 <div className="text-xs font-mono uppercase tracking-widest text-muted">{t.label}</div>
                 {isCurrent && <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-accent text-bg font-semibold">Current</span>}
               </div>
-              <div className="text-2xl font-extrabold">{t.price}</div>
+              <div className="text-2xl font-extrabold">{priceLabel(t.id, cycle)}</div>
+              {cycle === 'yearly' && (
+                <div className="text-[10px] text-accent font-medium mt-0.5">
+                  ~{fmt(Math.round(BILLING_PRICES_INR[t.id].yearly / 12))}/mo · 2 months free
+                </div>
+              )}
 
-              {/* Per-platform account quotas. LinkedIn + X land Q3 2026 — disclosed in footer. */}
               <div className="mt-3 grid grid-cols-3 gap-1 text-[10px] font-mono">
                 <div className="rounded bg-bg-card/60 border border-border px-1.5 py-1 text-center">
                   <div className="text-muted uppercase tracking-wide text-[9px]">IG</div>
