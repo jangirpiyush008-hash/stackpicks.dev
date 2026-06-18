@@ -14,8 +14,9 @@ import { useState } from 'react';
 import { ArrowRight, Check, Sparkles, MessageSquare, Mail } from 'lucide-react';
 import { BILLING_PRICES_INR, YEARLY_CAP_BONUS, type BillingCycle } from '@stackpicks/core/autodm/billing';
 import { DEFAULT_PLAN_CAPS } from '@stackpicks/core/autodm/types';
+import { CONTACT } from '@stackpicks/core/constants';
 
-const SUPPORT_EMAIL = 'stackpicks.dev@gmail.com';
+const SUPPORT_EMAIL = CONTACT.email;
 
 type TierKey = 'free' | 'creator' | 'pro' | 'agency' | 'enterprise';
 

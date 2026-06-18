@@ -45,13 +45,31 @@ export async function POST(req: NextRequest) {
     req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
     req.headers.get('x-real-ip') ||
     null;
+  const ipHash = hashIp(ip);
 
   const admin = adminClient();
+
+  // Cheap abuse cap: at most 15 inserts per IP hash per hour. Counts the
+  // existing rows for this ip_hash created in the last hour; rejects if
+  // we're at the ceiling. Skips the check entirely when we can't hash
+  // the IP (e.g. localhost) so dev isn't blocked.
+  if (ipHash) {
+    const sinceIso = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { count } = await admin
+      .from('autodm_waitlist')
+      .select('id', { count: 'exact', head: true })
+      .eq('ip_hash', ipHash)
+      .gte('created_at', sinceIso);
+    if ((count ?? 0) >= 15) {
+      return NextResponse.json({ ok: false, error: 'rate_limited' }, { status: 429 });
+    }
+  }
+
   const { error } = await admin.from('autodm_waitlist').insert({
     email,
     platform,
     user_agent: ua,
-    ip_hash: hashIp(ip),
+    ip_hash: ipHash,
   });
 
   // 23505 = unique_violation. Treat as success — they're already in.

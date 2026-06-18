@@ -92,7 +92,9 @@ function WaitlistDialog({
       });
       const j = (await r.json()) as { ok: boolean; error?: string };
       if (!j.ok) {
-        setError(j.error === 'invalid_email' ? 'That email looks off.' : 'Something went wrong. Try again.');
+        if (j.error === 'invalid_email') setError('That email looks off.');
+        else if (j.error === 'rate_limited') setError('Too many signups from this network. Try again in an hour.');
+        else setError('Something went wrong. Try again.');
       } else {
         setDone(true);
       }
