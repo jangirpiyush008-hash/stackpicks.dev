@@ -27,9 +27,10 @@ export default function AutoDmLanding() {
           Not just sends.
         </h1>
         <p className="mt-6 text-lg text-muted max-w-2xl">
-          ManyChat sends a template. We have a conversation. The first IG auto-DM tool
-          that learns your voice from your past DMs, and stays in the chat after the
-          first message — so you close the sale while you sleep.
+          Templates don&apos;t close. Conversations do. AutoDM clones your voice from your
+          past DMs and stays in the chat for 5+ turns — answering &ldquo;what size?&rdquo;,
+          &ldquo;ship to Delhi?&rdquo;, &ldquo;is it returnable?&rdquo;. The comment you saw at
+          midnight becomes a sale by morning.
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <Link
@@ -69,7 +70,7 @@ export default function AutoDmLanding() {
           <Feature icon={<Bot />} title="Conversational follow-up"
             body="When the recipient replies, our AI agent keeps the conversation going for 5+ turns. Handles 'what size', 'is it returnable', 'do you ship to Delhi'. Pings you only if it can't answer." />
           <Feature icon={<Zap />} title="90-second AI setup"
-            body="Connect Instagram → AI scans your last 30 posts and DMs → generates 5 starter rules in your voice → live. ManyChat needs a YouTube tutorial." />
+            body="Connect Instagram → AI scans your last 30 posts and DMs → generates 5 starter rules in your voice → live. No tutorials, no setup wizard, no config files." />
           <Feature icon={<CheckCircle2 />} title="Works for non-followers"
             body="Most tools use the standard messaging endpoint that blocks non-followers. We use Private Reply API — 7-day window from comment, works for everyone." />
           <Feature icon={<Shield />} title="Spam-shield protection"
@@ -115,7 +116,7 @@ export default function AutoDmLanding() {
       <section className="px-6 py-16 max-w-6xl mx-auto border-t border-border">
         <h2 className="text-3xl font-bold mb-3">Flat pricing. Your bill never grows with your audience.</h2>
         <p className="text-muted mb-10">
-          ManyChat charges by contacts. As you scale, your bill explodes. We charge by tier, period.
+          Most tools charge per contact — so the better your content does, the more you pay. We charge a flat monthly fee. Go viral on us.
         </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <PlanCard tier="Free" price="₹0" dms="100 DMs/mo" rules="1 rule"
