@@ -63,8 +63,8 @@ export default async function AutoDmLayout({ children }: { children: React.React
         <div className="max-w-6xl mx-auto px-4 py-8 text-xs text-muted flex flex-wrap items-center justify-between gap-3">
           <div>
             © {new Date().getFullYear()} StackPicks AutoDM ·{' '}
-            <a href="https://stackpicks.dev/terms" className="hover:text-text">Terms</a> ·{' '}
-            <a href="https://stackpicks.dev/privacy" className="hover:text-text">Privacy</a>
+            <a href="/autodm/terms" className="hover:text-text">Terms</a> ·{' '}
+            <a href="/autodm/privacy" className="hover:text-text">Privacy</a>
           </div>
           <a
             href="https://stackpicks.dev"
