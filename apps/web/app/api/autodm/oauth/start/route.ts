@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
     response_type: 'code',
     scope: SCOPES.join(','),
     state,
-    force_authentication: '1',
+    force_reauth: 'true',   // matches Meta's generated Business Login URL
   });
 
   return NextResponse.redirect(`${IG_AUTHZ_URL}?${params.toString()}`);
