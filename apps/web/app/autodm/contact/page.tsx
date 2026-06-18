@@ -68,7 +68,7 @@ export default function AutoDmContactPage() {
             <MapPin className="w-4 h-4 text-accent" />
             <span className="text-xs font-mono uppercase tracking-wider">Operating entity</span>
           </div>
-          <p className="text-sm text-text">{ENTITY.operator}</p>
+          <p className="text-sm text-text">StackPicks</p>
           <p className="text-xs text-muted mt-1">{ENTITY.form}, based in {ENTITY.jurisdiction}.</p>
         </div>
       </div>

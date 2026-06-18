@@ -42,14 +42,18 @@ export default function AutoDmAboutPage() {
 
         <h2>Who builds it</h2>
         <p>
-          AutoDM is built and operated by <strong>{ENTITY.operator}</strong>, a {ENTITY.form} based
-          in {ENTITY.jurisdiction}. The same operator builds <a href="https://stackpicks.dev">StackPicks</a>,
+          AutoDM is built and operated by <strong>StackPicks</strong>, a {ENTITY.form} based in{' '}
+          {ENTITY.jurisdiction}. The same team builds <a href="https://stackpicks.dev">StackPicks</a>,
           a curated directory of open-source developer tools. AutoDM is a focused product on the
           StackPicks platform aimed at creators and small businesses on Instagram.
         </p>
         <p>
           We are not a marketing agency, not a growth-hack shop, and not a third-party reseller.
           You pay us; we run the service; we answer the email. That&apos;s the whole company.
+        </p>
+        <p className="text-sm">
+          Full operator details (legal entity, grievance officer) are listed on the{' '}
+          <Link href="/contact">contact page</Link> as required by Indian e-commerce rules.
         </p>
 
         <div className="not-prose grid sm:grid-cols-3 gap-3 my-8">
