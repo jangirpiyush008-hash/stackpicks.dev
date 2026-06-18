@@ -95,14 +95,84 @@ export default async function DashboardPage({
   if (!tenant) {
     return (
       <main className="min-h-screen bg-bg text-text">
-        <section className="max-w-2xl mx-auto px-6 py-20 text-center">
-          <h1 className="text-3xl font-extrabold">No Instagram connected yet.</h1>
-          <p className="mt-3 text-muted">Connect your IG to start sending auto-DMs in your voice.</p>
-          <Link href="/autodm/connect"
-            className="mt-6 inline-flex items-center gap-2 bg-accent text-bg font-semibold px-6 py-3 rounded-full hover:bg-accent/90 transition">
-            <Instagram className="w-4 h-4" />
-            Connect Instagram
-          </Link>
+        <section className="max-w-4xl mx-auto px-6 py-16">
+          {/* Hero */}
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-accent/30 bg-accent/10 text-xs font-mono uppercase tracking-widest text-accent mb-5">
+              <Sparkles className="w-3 h-3" />
+              Welcome, {user.email?.split('@')[0]}
+            </div>
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.05]">
+              You&apos;re in. Now connect Instagram
+              <br className="hidden md:inline" />
+              <span className="text-accent"> to bring AutoDM to life.</span>
+            </h1>
+            <p className="mt-5 text-muted text-lg max-w-2xl mx-auto">
+              Connect your IG Business account with one tap. We&apos;ll scan your last 30 posts,
+              learn your voice from past replies, and draft 5 starter rules ready to approve.
+            </p>
+
+            <Link
+              href="/autodm/connect"
+              className="mt-8 inline-flex items-center gap-2 bg-accent text-bg font-semibold px-7 py-3.5 rounded-full hover:bg-accent/90 transition shadow-lg shadow-accent/20"
+            >
+              <Instagram className="w-5 h-5" />
+              Connect Instagram
+            </Link>
+            <p className="mt-3 text-xs text-muted">
+              90-second setup · Encrypted token storage · Revoke any time
+            </p>
+          </div>
+
+          {/* What you get after connect */}
+          <div className="mt-16 grid sm:grid-cols-2 gap-4">
+            <FeatureCard
+              icon={<Sparkles className="w-4 h-4" />}
+              title="AI rules in your voice"
+              body="Claude scans your past replies and drafts 5 starter rules — you approve, activate, done."
+            />
+            <FeatureCard
+              icon={<Instagram className="w-4 h-4" />}
+              title="Comment-to-DM, automatically"
+              body="Someone comments your keyword on a post, Reel or Live → they get a private DM with your link in under 15 seconds."
+            />
+            <FeatureCard
+              icon={<CheckCircle2 className="w-4 h-4" />}
+              title="4-hour follow-up that re-sends the link"
+              body="If a recipient didn't click, the bot bumps the same link with a soft reminder — in your voice."
+            />
+            <FeatureCard
+              icon={<AlertCircle className="w-4 h-4" />}
+              title="Spam-shield built in"
+              body="Account warming (21 days), Meta 429 auto-pause, body variants, per-recipient caps. Your account doesn't get banned."
+            />
+          </div>
+
+          {/* What happens next */}
+          <div className="mt-12 rounded-2xl border border-border bg-bg-card/40 p-6">
+            <div className="text-xs font-mono uppercase tracking-widest text-muted mb-4">
+              // What happens next
+            </div>
+            <ol className="space-y-3 text-sm">
+              <Step n={1} title="Click Connect Instagram">
+                Authorize the StackPicks AutoDM Meta app on your IG Business account. Encrypted token stored at rest (AES-256-GCM).
+              </Step>
+              <Step n={2} title="AI onboarding kicks off">
+                We read your last 30 posts + recent comment replies and draft 5 rules in your voice. ~60 seconds.
+              </Step>
+              <Step n={3} title="Approve a rule + post a test">
+                Activate any rule, comment its keyword from another account, and a DM with your link arrives within 15 sec.
+              </Step>
+              <Step n={4} title="Go live for real">
+                Tell your audience &ldquo;comment LINK&rdquo; on your next Reel. Every commenter gets the link. Sleep through it.
+              </Step>
+            </ol>
+          </div>
+
+          <p className="mt-10 text-center text-xs text-muted">
+            Need help? Email <a href="mailto:stackpicks.dev@gmail.com" className="text-accent hover:underline">stackpicks.dev@gmail.com</a> —
+            response within 48h.
+          </p>
         </section>
       </main>
     );
@@ -333,6 +403,32 @@ function Stat({ label, value, sub, highlight }: { label: string; value: string; 
       <div className="text-2xl font-extrabold mt-1 capitalize">{value}</div>
       <div className="text-[10px] text-muted mt-0.5">{sub}</div>
     </div>
+  );
+}
+
+function FeatureCard({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
+  return (
+    <div className="rounded-2xl border border-border bg-bg-card/40 p-5 text-left">
+      <div className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-accent/15 border border-accent/30 text-accent mb-2">
+        {icon}
+      </div>
+      <div className="font-semibold">{title}</div>
+      <p className="text-sm text-muted mt-1 leading-relaxed">{body}</p>
+    </div>
+  );
+}
+
+function Step({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
+  return (
+    <li className="flex gap-3">
+      <span className="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-accent/15 border border-accent/30 text-accent text-xs font-mono font-semibold mt-0.5">
+        {n}
+      </span>
+      <div>
+        <div className="font-semibold">{title}</div>
+        <p className="text-muted mt-0.5 leading-relaxed">{children}</p>
+      </div>
+    </li>
   );
 }
 
