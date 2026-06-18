@@ -107,20 +107,16 @@ export function PlanUpgrade({ currentTier }: { currentTier: string }) {
         <button
           type="button"
           onClick={() => setCycle('yearly')}
-          className={`px-3 py-1 rounded-full text-xs font-medium transition inline-flex items-center gap-1.5 ${
+          className={`px-3 py-1 rounded-full text-xs font-medium transition ${
             cycle === 'yearly' ? 'bg-accent text-bg' : 'text-muted hover:text-text'
           }`}
           aria-pressed={cycle === 'yearly'}
         >
           Yearly
-          <span
-            className={`text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded ${
-              cycle === 'yearly' ? 'bg-bg/20 text-bg' : 'bg-accent/15 text-accent'
-            }`}
-          >
-            Save 2 mo
-          </span>
         </button>
+        <span className="ml-2 text-[11px] text-accent font-medium">
+          2 months free
+        </span>
       </div>
 
       <div className="grid sm:grid-cols-3 gap-3">

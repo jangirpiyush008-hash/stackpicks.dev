@@ -166,22 +166,16 @@ export default function AutoDmPricingPage() {
           <button
             type="button"
             onClick={() => setCycle('yearly')}
-            className={`px-4 py-1.5 rounded-full text-xs font-medium transition inline-flex items-center gap-1.5 ${
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition ${
               cycle === 'yearly' ? 'bg-accent text-bg' : 'text-muted hover:text-text'
             }`}
             aria-pressed={cycle === 'yearly'}
           >
             Yearly
-            <span
-              className={`text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded ${
-                cycle === 'yearly'
-                  ? 'bg-bg/20 text-bg'
-                  : 'bg-accent/15 text-accent'
-              }`}
-            >
-              Save 2 mo
-            </span>
           </button>
+        </div>
+        <div className="mt-2 text-[11px] text-accent font-medium">
+          Yearly = 2 months free
         </div>
       </header>
 
