@@ -30,6 +30,12 @@ export function AuthForm({ mode }: Props) {
   const searchParams = useSearchParams();
   const next = searchParams.get('next') ?? '/dashboard';
 
+  // Return to the SAME host the user is logging in from (so signing in on
+  // autodm.stackpicks.dev lands back on the subdomain, not the main site).
+  // Falls back to SITE_URL during SSR. Requires this origin's /auth/callback
+  // to be in Supabase's allowed redirect URLs.
+  const authOrigin = typeof window !== 'undefined' ? window.location.origin : SITE_URL;
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -49,7 +55,7 @@ export function AuthForm({ mode }: Props) {
           email,
           password,
           options: {
-            emailRedirectTo: `${SITE_URL}/auth/callback?next=${encodeURIComponent(next)}`,
+            emailRedirectTo: `${authOrigin}/auth/callback?next=${encodeURIComponent(next)}`,
           },
         });
         if (error) throw error;
@@ -74,7 +80,7 @@ export function AuthForm({ mode }: Props) {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${SITE_URL}/auth/callback?next=${encodeURIComponent(next)}`,
+          redirectTo: `${authOrigin}/auth/callback?next=${encodeURIComponent(next)}`,
         },
       });
       if (error) throw error;
