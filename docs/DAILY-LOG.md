@@ -10,6 +10,107 @@ Two daily tracks:
 
 ---
 
+## 2026-06-18 (evening — AutoDM go-live polish: compliance, yearly billing, AI features)
+
+**Theme:** picked up where the morning session ended — finished the
+AutoDM go-live track. Compliance pages, monthly/yearly billing, waitlist
+funnel, two new AI features wired end-to-end, and a security pass.
+
+### What landed (evening)
+
+- **Compliance pages on autodm.stackpicks.dev** — 5 new public pages
+  required by Razorpay + Google Ads policy: `/pricing` (5 tiers incl.
+  Enterprise contact), `/refund`, `/contact` (with grievance officer
+  per IT Rules 2021), `/shipping` (service-delivery policy), `/about`.
+  Footer rebuilt as Product/Company/Legal/Support columns. 404 page
+  is now host-aware (AutoDM destinations on subdomain).
+- **Monthly/Yearly billing toggle** — 3 yearly Razorpay plans created
+  (Creator ₹4,990 / Pro ₹14,990 / Agency ₹49,990, "2 months free").
+  `billing_cycle` column on `autodm_subscriptions` (migration applied).
+  `/api/autodm/billing/subscribe` accepts `?cycle=yearly`; webhook
+  reads `billing_cycle` and applies `YEARLY_CAP_BONUS = 0.25` (+25%
+  DM caps) automatically via `statusToPlanTier`. Toggle on pricing
+  page AND dashboard PlanUpgrade; CTA carries cycle through URL.
+- **Waitlist popup** — clicking "Connect LinkedIn" / "Connect X" on
+  homepage opens a coming-soon page (creative, with WaitlistButton
+  modal). New `autodm_waitlist` table (service-role only, unique on
+  email+platform), `/api/autodm/waitlist` with per-IP rate limit
+  (15/hr). Modal hook: "First 100 creators get 50% off first year."
+- **Real X logo** — replaced lucide-react's old Twitter bird with an
+  inline `<XLogo>` post-rebrand SVG everywhere (homepage CTA +
+  coming-soon hero).
+- **Homepage hero rewrite** — stripped competitor names from
+  marketing copy (Indian Trade Marks Act + ASCI hygiene). Comparison
+  table preserved (factual structured comparison is defensible).
+- **Top-10 comparison table** — 8 differentiators where we ✓ /
+  competitors ✗ (AI rule drafting, image-aware DMs, Hinglish, 4-h
+  follow-up, auto A/B, daily AI digest, yearly +25%, INR billing) +
+  4 shared rows (non-followers, public+private, multi-keyword,
+  schedule/pause) so the comparison reads honest rather than
+  cherry-picked.
+- **Click-to-highlight plan cards** on homepage + "Recommended" badge
+  pinned to Pro. Plan-card icons (IG, LinkedIn, X) added.
+- **AI feature #1 shipped — Image-aware DMs:** `generateFollowupReply`
+  now takes `postImageUrl` + `postCaption`. Webhook looks up the
+  trigger post from `autodm_dm_log`, fetches `media_url` via
+  graph.instagram.com, passes it to Claude as a vision input. Best-
+  effort; video posts use `thumbnail_url`; fetch failures fall back
+  to caption-only context.
+- **AI feature #2 shipped — Daily AI digest cron:** new endpoint
+  `/api/autodm/daily-digest-tick` (Bearer `${CRON_SECRET}`). Paid
+  tiers only, aggregates last-24h dm_log + conversations, asks
+  Claude for a 2-3 sentence honest takeaway, sends a 1-screen HTML
+  email via Resend. Skips zero-activity tenants. Cron-job.org entry
+  added at 9 PM IST; first test returned `{"ok":true,"eligible":0}`
+  as expected (no paid tenants yet).
+- **Security audit pass** (two parallel Explore agents): all 9
+  `autodm_*` tables have RLS enabled (verified via direct pg query).
+  All webhook signature checks verified (Razorpay, Meta IG,
+  data-deletion). Token encryption AES-256-GCM confirmed. Patched
+  waitlist endpoint with per-IP rate-limit. Pricing page hardcoded
+  support email replaced with `CONTACT.email` import. Added missing
+  `RAZORPAY_AUTODM_PLAN_*_YEARLY` vars to `.env.example`.
+- **Founder name** pulled from marketing surfaces (footer, About
+  hero, Operating-entity card) — kept on legal pages where Razorpay
+  + IT Rules 2021 require it (Privacy, Terms, Refund, Grievance).
+
+### Plan tier feature matrix (decided, not yet committed)
+
+- **Free (₹0):** 50 DMs/day, 1 IG, AI starter rules, Hinglish,
+  4-h follow-up, weekly digest, multi-keyword
+- **Creator (₹499):** + 200/day, 1 LinkedIn + 1 X, click tracking +
+  CRM, auto A/B testing
+- **Pro ⭐ (₹1,499):** + 1,000/day, 3 of each, **image-aware DMs**,
+  **5-turn conversational AI**, **daily AI digest**, spam-shield Pro,
+  webhook health, priority support
+- **Agency (₹4,999):** + 5,000/day, 25 of each, manage many accounts
+  under one login
+- **Enterprise:** Custom, unlimited, direct line to team
+- **Yearly bonus on any paid tier:** +25% caps · locked launch
+  pricing · early access to LinkedIn + X
+
+Removed from older copy: branding footer, white-label, team seats,
+SSO, invoiced billing, voice cloning — not built, marketing-only.
+
+### Status of third-party blockers
+
+- **Meta App Review:** in progress (5-14 days)
+- **Meta Business Verification:** in review (3-7 days)
+- **Razorpay Subscriptions activation:** pending support ticket
+  (24-48h after submission)
+
+### Tomorrow / next session
+
+1. When Meta + Razorpay clear, flip the switch and announce.
+2. Optional pre-launch: invite 5-10 creator friends as Meta IG
+   Testers so they can use the live product pre-approval.
+3. Optional: write a launch-day blog post previewing the AI
+   features (image-aware DMs, daily AI digest) so SEO is indexed
+   when Meta approves.
+4. Carry-over from morning entry — see below.
+
+---
+
 ## 2026-06-18 (AutoDM hardening to launch-ready + content refresh)
 
 **Theme:** closed every structural risk in AutoDM and shipped the first
