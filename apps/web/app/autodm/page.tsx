@@ -4,7 +4,7 @@
 // to /autodm so autodm.stackpicks.dev/ → this page.)
 
 import Link from 'next/link';
-import { CheckCircle2, MessageSquare, Sparkles, Shield, Zap, Bot, Radio } from 'lucide-react';
+import { CheckCircle2, MessageSquare, Sparkles, Shield, Zap, Bot, Radio, Instagram, Linkedin, Twitter } from 'lucide-react';
 
 export const metadata = {
   title: 'StackPicks AutoDM — Auto-DM that closes, not just sends',
@@ -33,20 +33,24 @@ export default function AutoDmLanding() {
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <Link
             href="/autodm/connect"
-            className="inline-flex items-center gap-2 bg-accent text-bg font-semibold px-6 py-3 rounded-full hover:bg-accent/90 transition"
+            className="group inline-flex items-center gap-2 bg-accent text-bg font-semibold px-6 py-3 rounded-full hover:bg-accent/90 transition"
           >
-            Connect Instagram <span aria-hidden>→</span>
+            <Instagram className="w-4 h-4" />
+            Connect Instagram
+            <span aria-hidden className="transition-transform group-hover:translate-x-0.5">→</span>
           </Link>
           <Link
             href="/autodm/coming-soon/linkedin"
-            className="inline-flex items-center gap-2 border border-border bg-surface/40 text-text font-medium px-5 py-3 rounded-full hover:border-accent hover:text-accent transition"
+            className="inline-flex items-center gap-2 border border-border bg-surface/40 text-text font-medium px-5 py-3 rounded-full hover:border-[#0a66c2]/60 hover:text-[#4a93e3] transition"
           >
+            <Linkedin className="w-4 h-4" />
             Connect LinkedIn
           </Link>
           <Link
             href="/autodm/coming-soon/x"
-            className="inline-flex items-center gap-2 border border-border bg-surface/40 text-text font-medium px-5 py-3 rounded-full hover:border-accent hover:text-accent transition"
+            className="inline-flex items-center gap-2 border border-border bg-surface/40 text-text font-medium px-5 py-3 rounded-full hover:border-text/40 hover:text-text transition"
           >
+            <Twitter className="w-4 h-4" />
             Connect X
           </Link>
         </div>

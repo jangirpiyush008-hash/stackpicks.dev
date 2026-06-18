@@ -7,7 +7,7 @@
 
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, Linkedin, Twitter, Sparkles, Bell, Check, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Linkedin, Twitter, Sparkles, Check, MessageSquare, Rocket } from 'lucide-react';
 import { CONTACT } from '@stackpicks/core/constants';
 
 type Platform = 'linkedin' | 'x';
@@ -78,8 +78,8 @@ export default async function ComingSoonPage({
   const p = PLATFORMS[platform as Platform];
   const Icon = p.Icon;
 
-  const subject = `Notify me when AutoDM for ${p.name} launches`;
-  const body = `Hi team — please add me to the waitlist for AutoDM ${p.name}. I'll be ready to test as soon as it ships.\n\nMy AutoDM account email: \nMy ${p.name} handle: \nUse case: \n`;
+  const subject = `Join the waitlist — AutoDM for ${p.name}`;
+  const body = `Hi team — add me to the early-access waitlist for AutoDM ${p.name}. I want in the day it goes live.\n\nMy AutoDM account email: \nMy ${p.name} handle: \nUse case: \n`;
   const mailto = `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
   return (
@@ -96,9 +96,9 @@ export default async function ComingSoonPage({
 
         {/* Hero */}
         <header className="relative mb-12 md:mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border bg-surface/60 backdrop-blur text-xs text-muted mb-6">
-            <Sparkles className="w-3.5 h-3.5 text-accent" />
-            <span>Coming Q3 2026 · join the waitlist</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-accent/40 bg-accent/5 backdrop-blur text-xs text-accent mb-6">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Early-access waitlist open · launching Q3 2026</span>
           </div>
 
           <div className="flex items-center gap-4 mb-5">
@@ -120,10 +120,10 @@ export default async function ComingSoonPage({
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <a
               href={mailto}
-              className="inline-flex items-center gap-2 bg-accent text-bg font-semibold px-5 py-3 rounded-full hover:bg-accent/90 transition"
+              className="inline-flex items-center gap-2 bg-accent text-bg font-semibold px-5 py-3 rounded-full hover:bg-accent/90 transition shadow-[0_0_40px_-10px_rgba(74,222,128,0.5)]"
             >
-              <Bell className="w-4 h-4" />
-              Notify me on launch
+              <Rocket className="w-4 h-4" />
+              Join the waitlist for early access
             </a>
             <Link
               href="/autodm"
@@ -133,7 +133,8 @@ export default async function ComingSoonPage({
             </Link>
           </div>
           <p className="mt-3 text-xs text-muted">
-            Instagram is live now — yearly subscribers get <span className="text-accent font-medium">early access</span> to {p.name} the day it ships.
+            We&apos;ll email you the moment {p.name} goes live. Yearly subscribers jump the line —{' '}
+            <span className="text-accent font-medium">early access on day one</span>.
           </p>
         </header>
 
@@ -162,16 +163,29 @@ export default async function ComingSoonPage({
           <p className="text-text leading-relaxed">{p.why}</p>
         </section>
 
-        {/* ETA */}
-        <section className="text-center text-sm text-muted">
-          <span className="inline-flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 text-accent" />
-            {p.eta}
-          </span>
-          <div className="mt-2 text-xs">
-            Or email{' '}
-            <a href={mailto} className="text-accent underline underline-offset-2">{CONTACT.email}</a>{' '}
-            and we&apos;ll DM you when it&apos;s live.
+        {/* CTA repeat + ETA */}
+        <section className="rounded-2xl border border-accent/30 bg-accent/5 p-6 md:p-8 text-center">
+          <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-accent mb-3">
+            <Sparkles className="w-3.5 h-3.5" />
+            On the launch shortlist
+          </div>
+          <h3 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">
+            Want to be one of the first creators on AutoDM × {p.name}?
+          </h3>
+          <p className="text-muted max-w-xl mx-auto mb-5">
+            Drop your email and we&apos;ll ping you the day it ships — plus a personal onboarding
+            session if you&apos;re in the first 50.
+          </p>
+          <a
+            href={mailto}
+            className="inline-flex items-center gap-2 bg-accent text-bg font-semibold px-6 py-3 rounded-full hover:bg-accent/90 transition shadow-[0_0_40px_-10px_rgba(74,222,128,0.5)]"
+          >
+            <Rocket className="w-4 h-4" />
+            Join the waitlist for early access
+          </a>
+          <div className="mt-5 text-xs text-muted">{p.eta}</div>
+          <div className="mt-1 text-xs text-muted">
+            Prefer email? <a href={mailto} className="text-accent underline underline-offset-2">{CONTACT.email}</a>
           </div>
         </section>
       </div>
