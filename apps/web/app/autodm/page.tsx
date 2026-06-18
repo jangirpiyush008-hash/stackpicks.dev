@@ -102,11 +102,20 @@ export default function AutoDmLanding() {
               </tr>
             </thead>
             <tbody>
+              {/* Where we lead — exclusive */}
               <Row a="AI drafts your starter rules from your past 30 posts" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
+              <Row a="Image-aware DMs — AI reads the actual post" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
+              <Row a="Hinglish + multi-language auto-detect" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
               <Row a="Auto follow-up at 4 hours if the link wasn't clicked" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
+              <Row a="Auto A/B testing with AI-picked winner" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
+              <Row a="Daily AI digest — hot leads + escalations" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
               <Row a="Yearly subscribers get +25% DM caps automatically" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
-              <Row a="Free tier with a real daily allowance (50 DMs/day)" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
               <Row a="INR billing — UPI Autopay + GST invoice" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
+              {/* Table stakes — we match everyone */}
+              <Row a="Works for non-followers (Private Reply API)" b={<Tick/>} c={<Tick/>} d={<Tick/>} e={<Tick/>} />
+              <Row a="Public + private reply combo" b={<Tick/>} c={<Tick/>} d={<Tick/>} e={<Tick/>} />
+              <Row a="Multi-keyword per rule" b={<Tick/>} c={<Tick/>} d={<Tick/>} e={<Tick/>} />
+              <Row a="Schedule / pause rules" b={<Tick/>} c={<Tick/>} d={<Tick/>} e={<Tick/>} />
             </tbody>
           </table>
         </div>

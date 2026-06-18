@@ -33,6 +33,14 @@ export interface AgentInput {
   initialDmSent: string;            // what we DM'd them first
   transcript: TranscriptTurn[];     // includes the new incoming message as the last user turn
   ctaUrl?: string;                  // primary CTA in case AI wants to nudge
+  /** Image URL of the post the conversation started on. Passed to Claude
+   *  as a vision input so the reply can reference what's visible ("yes,
+   *  the navy linen in slide 2 is in stock"). Omit for video posts or
+   *  when fetching the URL failed — the agent falls back to caption text. */
+  postImageUrl?: string;
+  /** Short caption excerpt for the originating post, used as backup
+   *  context when postImageUrl isn't available. */
+  postCaption?: string;
 }
 
 export interface AgentOutput {
@@ -77,6 +85,8 @@ ${input.ctaUrl ? `Primary CTA URL: ${input.ctaUrl}` : ''}
 
 # How this conversation started
 Recipient commented on a post: "${input.initialComment}"
+${input.postCaption ? `Post caption: "${input.postCaption.slice(0, 300)}"` : ''}
+${input.postImageUrl ? 'An image of the actual post is attached above — if the recipient asks about something visible (color, size, what\'s in the photo), reference it specifically. Do not invent details that aren\'t in the image.' : ''}
 We DM'd them: "${input.initialDmSent}"
 
 # Conversation so far (newest at bottom):
@@ -87,11 +97,21 @@ Based on the LATEST recipient message, decide: reply (and what to say), escalate
 
 Output JSON only.`;
 
+  // When the originating post has an image, prepend it as a vision block so
+  // Claude can literally see what the recipient is referring to. Image
+  // blocks must come before text blocks in the user turn.
+  const userContent: Anthropic.MessageParam['content'] = input.postImageUrl
+    ? [
+        { type: 'image', source: { type: 'url', url: input.postImageUrl } },
+        { type: 'text', text: userPrompt },
+      ]
+    : userPrompt;
+
   const res = await claude.messages.create({
     model: 'claude-opus-4-5',
     max_tokens: 500,
     system: SYSTEM_PROMPT,
-    messages: [{ role: 'user', content: userPrompt }],
+    messages: [{ role: 'user', content: userContent }],
   });
   const block = res.content[0];
   const raw = block.type === 'text' ? block.text : '';

@@ -430,6 +430,38 @@ export async function POST(req: NextRequest) {
             .eq('id', convRow.initial_rule_id as string).single()
         : { data: null };
 
+      // Image-aware DMs — look up which post triggered the conversation
+      // and fetch its media URL so Claude can literally see it when
+      // crafting the reply. Best-effort; nothing fails if the post is
+      // gone, the post is a video, or the Graph API call errors out.
+      const { data: triggerRow } = await supa
+        .from('autodm_dm_log')
+        .select('trigger_post_id')
+        .eq('tenant_id', tenant.id)
+        .eq('recipient_igsid', senderIgsid)
+        .order('created_at', { ascending: true })
+        .limit(1).maybeSingle();
+      const triggerPostId = (triggerRow as { trigger_post_id?: string } | null)?.trigger_post_id ?? null;
+      let postImageUrl: string | undefined;
+      let postCaption: string | undefined;
+      if (triggerPostId) {
+        try {
+          const r = await fetch(
+            `https://graph.instagram.com/v22.0/${triggerPostId}?fields=media_type,media_url,thumbnail_url,caption&access_token=${encodeURIComponent(tenantToken)}`,
+          );
+          if (r.ok) {
+            const j = (await r.json()) as { media_type?: string; media_url?: string; thumbnail_url?: string; caption?: string };
+            postCaption = j.caption?.slice(0, 400);
+            // Only pass an image URL when we actually have a still to look
+            // at. For VIDEO, prefer thumbnail_url; for IMAGE/CAROUSEL_ALBUM
+            // use media_url. Empty string = skip vision (Claude falls back
+            // to caption + transcript context).
+            if (j.media_type === 'IMAGE' || j.media_type === 'CAROUSEL_ALBUM') postImageUrl = j.media_url;
+            else if (j.media_type === 'VIDEO' && j.thumbnail_url) postImageUrl = j.thumbnail_url;
+          }
+        } catch { /* swallow — image-awareness is best-effort */ }
+      }
+
       let agent;
       try {
         agent = await generateFollowupReply({
@@ -440,6 +472,8 @@ export async function POST(req: NextRequest) {
           initialDmSent: initialBot,
           transcript,
           ctaUrl: (ruleRow?.cta_url as string | undefined) ?? undefined,
+          postImageUrl,
+          postCaption,
         });
       } catch (e) {
         await supa.from('autodm_conversations').update({
