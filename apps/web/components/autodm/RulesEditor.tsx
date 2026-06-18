@@ -13,10 +13,12 @@
 import { useEffect, useState } from 'react';
 import { Sparkles, Plus, Trash2, Save, Loader2, RefreshCw } from 'lucide-react';
 import { LinterPanel } from './LinterPanel';
+import { PostPicker } from './PostPicker';
 
 interface Rule {
   id: string;
   label: string | null;
+  ig_post_id: string | null;
   keyword: string;
   dm_template: string;
   dm_template_variants: string[] | null;
@@ -35,6 +37,7 @@ interface Rule {
 
 const EMPTY: Omit<Rule, 'id'> = {
   label: 'New rule',
+  ig_post_id: null,
   keyword: '',
   dm_template: 'Hey {{username}} — tap the link below.',
   dm_template_variants: null,
@@ -183,6 +186,10 @@ export function RulesEditor({
               onChange={(e) => setDraft({ ...draft, label: e.target.value })}
               className="sp-input" placeholder="Recipe link" />
           </Field>
+          <PostPicker
+            value={draft.ig_post_id ?? null}
+            onChange={(v) => setDraft({ ...draft, ig_post_id: v })}
+          />
           <Field label="Trigger keyword(s) — comma-separate for multiple">
             <input type="text" value={draft.keyword || ''}
               onChange={(e) => setDraft({ ...draft, keyword: e.target.value })}

@@ -243,7 +243,12 @@ export async function POST(req: NextRequest) {
 
       // Follow check branches behavior
       const followerCheck = await checkIsFollower(fromIgsid, tenantToken);
-      const isFollower = followerCheck.isFollower === true;
+      // Trust-first default: only mark as "non-follower" when the IG API
+      // explicitly says so. When the field is unavailable (null), treat as
+      // a follower so we don't append a wrong "PS — follow me" to people
+      // who already follow. Better to miss a growth nudge than to surface
+      // an obvious bot tell.
+      const isFollower = followerCheck.isFollower !== false;
 
       // Pick body variant via epsilon-greedy A/B. Cold-start = uniform
       // random until each variant has data; warm = ~80% pick the leader.

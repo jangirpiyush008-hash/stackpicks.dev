@@ -53,12 +53,21 @@ export async function sendDm(input: {
     return { ok: res.ok, json: j, status: res.status };
   }
 
-  // 1. Plain-text DM (full body visible — no subtitle clipping)
-  const text = await post({ text: body.slice(0, 1000) });
+  // 1. Plain-text DM. If a CTA URL is set, append it on its own line so
+  // the recipient gets a clickable preview in IG chat. The button-card
+  // attempt below is bonus — Private Reply (recipient: {comment_id})
+  // doesn't reliably accept generic templates on Instagram Login, so
+  // the inline URL is what guarantees the link reaches them.
+  const bodyWithUrl = ctaUrl
+    ? `${body.trimEnd()}\n\n${ctaUrl}`.slice(0, 1000)
+    : body.slice(0, 1000);
+  const text = await post({ text: bodyWithUrl });
   if (!text.ok) return { ok: false, error: text.json?.error?.message || `HTTP ${text.status}` };
 
-  // 2. Optional CTA button card — best-effort (text already delivered)
-  if (ctaUrl && ctaLabel) {
+  // 2. Optional CTA button card — best-effort (text already delivered
+  // with the inline URL). Only attempt outside the Private Reply path,
+  // where Standard Messaging supports templates.
+  if (ctaUrl && ctaLabel && !commentId) {
     try {
       await post({
         attachment: {
