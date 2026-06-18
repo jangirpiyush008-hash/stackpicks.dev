@@ -115,7 +115,7 @@ export default async function AutoDmLayout({ children }: { children: React.React
             </div>
           </div>
           <div className="pt-5 border-t border-border flex flex-wrap items-center justify-between gap-2">
-            <div>© {new Date().getFullYear()} StackPicks AutoDM · Built in India</div>
+            <div>© {new Date().getFullYear()} StackPicks AutoDM</div>
             <a
               href="https://stackpicks.dev"
               className="inline-flex items-center gap-1 hover:text-text"

@@ -67,7 +67,7 @@ export default function AutoDmLanding() {
         <h2 className="text-3xl font-bold mb-12">Built on every bug we found in the others.</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <Feature icon={<Sparkles />} title="Voice-cloned DMs"
-            body="AI reads your past 100 DMs, then writes new ones in your tone. Hinglish, emojis, sign-offs — all preserved. Recipients can't tell it's a bot." />
+            body="AI reads your past 100 DMs, then writes new ones in your tone. Language mix, emoji style, sign-offs — all preserved. Recipients can't tell it's a bot." />
           <Feature icon={<Bot />} title="Conversational follow-up"
             body="When the recipient replies, our AI agent keeps the conversation going for 5+ turns. Handles 'what size', 'is it returnable', 'do you ship to Delhi'. Pings you only if it can't answer." />
           <Feature icon={<Zap />} title="90-second AI setup"
@@ -105,7 +105,7 @@ export default function AutoDmLanding() {
               {/* Where we lead — exclusive */}
               <Row a="AI drafts your starter rules from your past 30 posts" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
               <Row a="Image-aware DMs — AI reads the actual post" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
-              <Row a="Hinglish + multi-language auto-detect" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
+              <Row a="Multi-language auto-detect (incl. Hinglish + 40+ more)" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
               <Row a="Auto follow-up at 4 hours if the link wasn't clicked" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
               <Row a="Auto A/B testing with AI-picked winner" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
               <Row a="Daily AI digest — hot leads + escalations" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />

@@ -1,13 +1,12 @@
 // AutoDM pricing page — public, no login required.
 // Lives at autodm.stackpicks.dev/pricing.
 //
-// Geo-aware: Indian visitors see ₹ prices (Razorpay UPI/Indian card),
-// everyone else sees $ prices (Razorpay international card). Detection
-// is VPN-aware via ipapi.co; a [$/₹] toggle lets the visitor override
-// (persisted to localStorage).
+// Geo-aware currency: India IPs see ₹, everyone else sees $. VPN-aware
+// detection via ipapi.co + timezone/locale fallback. No visible toggle —
+// the displayed currency is the source of truth so the price feels native.
 //
-// Monthly/Yearly toggle: yearly = 10× monthly (2 months free).
-// Yearly subscribers also get +25% DM caps automatically.
+// Monthly/Yearly cycle toggle stays visible: yearly = 10× monthly
+// (2 months free). Yearly also unlocks +25% DM caps automatically.
 
 'use client';
 
@@ -66,7 +65,7 @@ const TIERS: Tier[] = [
       '1 Instagram account',
       'AI rule drafting in your voice',
       '4-hour follow-up that re-sends your link',
-      'Hinglish + multi-language auto-detect',
+      'Multi-language auto-detect',
     ],
   },
   {
@@ -148,7 +147,10 @@ const TIERS: Tier[] = [
 
 export default function AutoDmPricingPage() {
   const [cycle, setCycle] = useState<BillingCycle>('monthly');
-  const { currency, setCurrency, ready } = useCurrency();
+  const { currency } = useCurrency();
+  // Until geo resolves, fall back to USD so the page never flashes the
+  // wrong figure for international visitors. Indians see ₹ the moment
+  // ipapi.co returns.
   const cur: PlanCurrency = currency === 'INR' ? 'inr' : 'usd';
 
   return (
@@ -197,33 +199,6 @@ export default function AutoDmPricingPage() {
         </div>
         <div className="mt-2 text-[11px] text-accent font-medium">
           Yearly = 2 months free
-        </div>
-
-        {/* Currency override — geo defaults but VPN users / Indians on foreign cards can flip */}
-        <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-muted">
-          <span>Showing prices in</span>
-          <div className="inline-flex items-center gap-0.5 p-0.5 rounded-md border border-border bg-surface/40">
-            <button
-              type="button"
-              onClick={() => setCurrency('USD')}
-              disabled={!ready}
-              className={`px-2 py-0.5 rounded text-[11px] font-medium transition ${
-                cur === 'usd' ? 'bg-accent text-bg' : 'text-muted hover:text-text'
-              }`}
-            >
-              $ USD
-            </button>
-            <button
-              type="button"
-              onClick={() => setCurrency('INR')}
-              disabled={!ready}
-              className={`px-2 py-0.5 rounded text-[11px] font-medium transition ${
-                cur === 'inr' ? 'bg-accent text-bg' : 'text-muted hover:text-text'
-              }`}
-            >
-              ₹ INR
-            </button>
-          </div>
         </div>
       </header>
 
@@ -315,8 +290,8 @@ export default function AutoDmPricingPage() {
             <div className="text-muted">If AutoDM isn&apos;t working for you in the first 7 days, email us and we refund — no questions.</div>
           </div>
           <div>
-            <div className="text-text font-semibold mb-1">Pay in your currency</div>
-            <div className="text-muted">{cur === 'inr' ? 'UPI Autopay, Indian card, net-banking via Razorpay. GST invoice on request.' : 'International card via Razorpay. Auto-converted at the live rate at each charge.'}</div>
+            <div className="text-text font-semibold mb-1">Secure subscription billing</div>
+            <div className="text-muted">Powered by Razorpay. Card, UPI Autopay, and bank-mandate options where supported.</div>
           </div>
         </div>
       </div>
