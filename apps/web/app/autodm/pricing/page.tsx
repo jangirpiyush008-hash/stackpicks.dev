@@ -180,7 +180,7 @@ export default function AutoDmPricingPage() {
       </header>
 
       <div className="grid gap-5 mb-10 md:grid-cols-2 lg:grid-cols-3">
-        {TIERS.map((t) => {
+        {TIERS.filter((t) => !(cycle === 'yearly' && t.key === 'free')).map((t) => {
           const price = t.price(cycle);
           const cta = t.cta(cycle);
           return (
