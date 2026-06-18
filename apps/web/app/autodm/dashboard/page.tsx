@@ -9,6 +9,7 @@ import { adminClient } from '@stackpicks/core/db';
 import { getActiveTenant, ACTIVE_TENANT_COOKIE } from '@stackpicks/core/autodm/active-tenant';
 import { DEFAULT_PLAN_CAPS, type PlanTier } from '@stackpicks/core/autodm/types';
 import { TenantSwitcher } from '@/components/autodm/TenantSwitcher';
+import { ResyncButton } from '@/components/autodm/ResyncButton';
 import { Instagram, Sparkles, AlertCircle, CheckCircle2, Pause, Inbox, Users, BarChart3 } from 'lucide-react';
 import { RulesEditor } from '@/components/autodm/RulesEditor';
 import { FollowupAgentToggle } from '@/components/autodm/FollowupAgentToggle';
@@ -205,6 +206,7 @@ export default async function DashboardPage({
                 </span>
               )}
             </Link>
+            <ResyncButton />
             {isPaused ? (
               <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-500 text-xs font-semibold">
                 <Pause className="w-3 h-3" /> Paused

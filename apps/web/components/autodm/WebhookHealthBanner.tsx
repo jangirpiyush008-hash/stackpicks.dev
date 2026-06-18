@@ -13,6 +13,7 @@
 
 import Link from 'next/link';
 import { AlertTriangle, Activity, ZapOff } from 'lucide-react';
+import { ResyncButton } from './ResyncButton';
 
 const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
@@ -57,6 +58,7 @@ function StaleBanner({ ageHours }: { ageHours: number }) {
           your token may have expired.{' '}
           <Link href="/autodm/connect" className="text-amber-400 hover:text-amber-300 underline">Re-check connection →</Link>
         </span>
+        <div className="mt-3"><ResyncButton /></div>
       </div>
     </div>
   );
@@ -78,12 +80,15 @@ function CriticalBanner({ ageHours }: { ageHours: number | null }) {
           That means new comments aren&apos;t triggering DMs. Most common cause: your
           Instagram access token expired or was revoked.
         </div>
-        <Link
-          href="/autodm/connect"
-          className="mt-3 inline-flex items-center gap-1.5 bg-rose-500 hover:bg-rose-500/90 text-white text-xs font-semibold px-3.5 py-2 rounded-full"
-        >
-          Reconnect Instagram now
-        </Link>
+        <div className="mt-3 flex items-center gap-2 flex-wrap">
+          <Link
+            href="/autodm/connect"
+            className="inline-flex items-center gap-1.5 bg-rose-500 hover:bg-rose-500/90 text-white text-xs font-semibold px-3.5 py-2 rounded-full"
+          >
+            Reconnect Instagram now
+          </Link>
+          <ResyncButton />
+        </div>
       </div>
     </div>
   );

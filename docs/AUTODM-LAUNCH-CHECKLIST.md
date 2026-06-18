@@ -127,6 +127,17 @@ The JSON response will tell you which tenant has gone silent.
 
 ---
 
+## 6b. If you connected Instagram BEFORE the Live-comments feature
+
+Your test account was connected before `live_comments` subscriptions
+existed. To enable Live without a full reconnect: open the dashboard and
+click **"Re-sync connection"** (in the header, and in the webhook-health
+banner). It re-asserts all webhook fields including `live_comments`.
+New signups get this automatically on first connect — this is only for
+already-connected accounts.
+
+---
+
 ## 7. Optional polish (do AFTER first 5 users)
 
 - StackShare + OpenAlternative submission (task #112)
