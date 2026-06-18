@@ -84,8 +84,11 @@ export default function AutoDmLanding() {
 
       {/* vs the market */}
       <section className="px-6 py-16 max-w-6xl mx-auto border-t border-border">
-        <h2 className="text-3xl font-bold mb-3">Pick the one that doesn't get your account banned.</h2>
-        <p className="text-muted mb-8">Honest comparison. Updated June 2026.</p>
+        <h2 className="text-3xl font-bold mb-3">Why creators in India pick AutoDM.</h2>
+        <p className="text-muted mb-8">
+          Honest comparison. Updated June 2026 — based on each tool&apos;s public pricing
+          page and product docs. Tell us if something changed: <a href="mailto:stackpicks.dev@gmail.com" className="underline underline-offset-4 hover:text-accent">stackpicks.dev@gmail.com</a>.
+        </p>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -98,15 +101,14 @@ export default function AutoDmLanding() {
               </tr>
             </thead>
             <tbody>
-              <Row a="Works for non-followers" b={<Tick/>} c={<Partial/>} d={<Tick/>} e={<Partial/>} />
-              <Row a="Voice cloning from past DMs" b={<Tick/>} c={<X/>} d={<X/>} e={<Partial/>} />
-              <Row a="Conversational follow-up agent" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
-              <Row a="90-second AI onboarding" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
-              <Row a="Auto-pause on Meta 429" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
-              <Row a="Multi-keyword per rule" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
+              <Row a="INR billing + UPI Autopay + GST invoice" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
+              <Row a="AI drafts starter rules from your posts" b={<Tick/>} c={<X/>} d={<X/>} e={<Partial/>} />
+              <Row a="4-hour follow-up that re-sends your link" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
+              <Row a="Flat pricing (no per-contact charges)" b={<Tick/>} c={<X/>} d={<Tick/>} e={<Tick/>} />
+              <Row a="Rate-limit-aware auto-pause" b={<Tick/>} c={<Partial/>} d={<Partial/>} e={<Partial/>} />
+              <Row a="Works for non-followers (Private Reply API)" b={<Tick/>} c={<Tick/>} d={<Tick/>} e={<Tick/>} />
               <Row a="Public + private reply combo" b={<Tick/>} c={<Tick/>} d={<Tick/>} e={<Tick/>} />
-              <Row a="Pricing model" b={<span className="text-accent">Flat</span>} c={<span className="text-rose-400">Per-contact</span>} d={<span>Flat</span>} e={<span>Flat</span>} />
-              <Row a="Free tier" b="100 DMs/mo" c="25 contacts" d="—" e="Trial only" />
+              <Row a="Free tier" b="50 DMs/day" c="1,000 contacts" d="—" e="Trial only" />
             </tbody>
           </table>
         </div>
