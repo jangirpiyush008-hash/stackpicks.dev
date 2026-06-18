@@ -7,15 +7,19 @@
 
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, Linkedin, Twitter, Sparkles, Check, MessageSquare, Rocket } from 'lucide-react';
+import { ArrowLeft, Linkedin, Sparkles, Check, MessageSquare } from 'lucide-react';
 import { CONTACT } from '@stackpicks/core/constants';
+import { XLogo } from '@/components/autodm/XLogo';
+import { WaitlistButton } from '@/components/autodm/WaitlistButton';
+
+type IconCmp = React.ComponentType<{ className?: string }>;
 
 type Platform = 'linkedin' | 'x';
 
 interface PlatformCopy {
   key: Platform;
   name: string;
-  Icon: typeof Linkedin;
+  Icon: IconCmp;
   accentClass: string;          // text + ring color
   bgGlow: string;                // hero glow gradient
   tagline: string;
@@ -47,8 +51,8 @@ const PLATFORMS: Record<Platform, PlatformCopy> = {
   },
   x: {
     key: 'x',
-    name: 'X (Twitter)',
-    Icon: Twitter,
+    name: 'X',
+    Icon: XLogo,
     accentClass: 'text-text',
     bgGlow: 'from-white/15 via-slate-500/10 to-transparent',
     tagline: 'Reply-to-DM for X — coming Q3 2026.',
@@ -77,10 +81,6 @@ export default async function ComingSoonPage({
   if (platform !== 'linkedin' && platform !== 'x') notFound();
   const p = PLATFORMS[platform as Platform];
   const Icon = p.Icon;
-
-  const subject = `Join the waitlist — AutoDM for ${p.name}`;
-  const body = `Hi team — add me to the early-access waitlist for AutoDM ${p.name}. I want in the day it goes live.\n\nMy AutoDM account email: \nMy ${p.name} handle: \nUse case: \n`;
-  const mailto = `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
   return (
     <div className="relative overflow-hidden">
@@ -118,13 +118,7 @@ export default async function ComingSoonPage({
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <a
-              href={mailto}
-              className="inline-flex items-center gap-2 bg-accent text-bg font-semibold px-5 py-3 rounded-full hover:bg-accent/90 transition shadow-[0_0_40px_-10px_rgba(74,222,128,0.5)]"
-            >
-              <Rocket className="w-4 h-4" />
-              Join the waitlist for early access
-            </a>
+            <WaitlistButton platform={p.key} variant="glow" />
             <Link
               href="/autodm"
               className="inline-flex items-center gap-2 border border-border bg-surface/40 text-text font-medium px-5 py-3 rounded-full hover:border-accent hover:text-accent transition"
@@ -133,8 +127,9 @@ export default async function ComingSoonPage({
             </Link>
           </div>
           <p className="mt-3 text-xs text-muted">
-            We&apos;ll email you the moment {p.name} goes live. Yearly subscribers jump the line —{' '}
-            <span className="text-accent font-medium">early access on day one</span>.
+            First <span className="text-accent font-medium">100 creators</span> on the waitlist get{' '}
+            <span className="text-accent font-medium">50% off their first year</span>. We&apos;ll
+            email you the day {p.name} goes live.
           </p>
         </header>
 
@@ -167,25 +162,26 @@ export default async function ComingSoonPage({
         <section className="rounded-2xl border border-accent/30 bg-accent/5 p-6 md:p-8 text-center">
           <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-accent mb-3">
             <Sparkles className="w-3.5 h-3.5" />
-            On the launch shortlist
+            First 100 creators · 50% off
           </div>
           <h3 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">
-            Want to be one of the first creators on AutoDM × {p.name}?
+            Want to be one of the first on AutoDM × {p.name}?
           </h3>
           <p className="text-muted max-w-xl mx-auto mb-5">
-            Drop your email and we&apos;ll ping you the day it ships — plus a personal onboarding
-            session if you&apos;re in the first 50.
+            Drop your email — we&apos;ll ping you the day it ships and send a{' '}
+            <span className="text-accent font-semibold">50% off code</span> if you&apos;re in
+            the first 100. Yearly subscribers jump the line automatically.
           </p>
-          <a
-            href={mailto}
-            className="inline-flex items-center gap-2 bg-accent text-bg font-semibold px-6 py-3 rounded-full hover:bg-accent/90 transition shadow-[0_0_40px_-10px_rgba(74,222,128,0.5)]"
-          >
-            <Rocket className="w-4 h-4" />
-            Join the waitlist for early access
-          </a>
+          <WaitlistButton platform={p.key} variant="glow" />
           <div className="mt-5 text-xs text-muted">{p.eta}</div>
           <div className="mt-1 text-xs text-muted">
-            Prefer email? <a href={mailto} className="text-accent underline underline-offset-2">{CONTACT.email}</a>
+            Prefer email?{' '}
+            <a
+              href={`mailto:${CONTACT.email}?subject=${encodeURIComponent(`AutoDM ${p.name} waitlist`)}`}
+              className="text-accent underline underline-offset-2"
+            >
+              {CONTACT.email}
+            </a>
           </div>
         </section>
       </div>

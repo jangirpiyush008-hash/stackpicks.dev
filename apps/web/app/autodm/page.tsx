@@ -4,7 +4,8 @@
 // to /autodm so autodm.stackpicks.dev/ → this page.)
 
 import Link from 'next/link';
-import { CheckCircle2, MessageSquare, Sparkles, Shield, Zap, Bot, Radio, Instagram, Linkedin, Twitter } from 'lucide-react';
+import { CheckCircle2, MessageSquare, Sparkles, Shield, Zap, Bot, Radio, Instagram, Linkedin } from 'lucide-react';
+import { XLogo } from '@/components/autodm/XLogo';
 
 export const metadata = {
   title: 'StackPicks AutoDM — Auto-DM that closes, not just sends',
@@ -50,7 +51,7 @@ export default function AutoDmLanding() {
             href="/autodm/coming-soon/x"
             className="inline-flex items-center gap-2 border border-border bg-surface/40 text-text font-medium px-5 py-3 rounded-full hover:border-text/40 hover:text-text transition"
           >
-            <Twitter className="w-4 h-4" />
+            <XLogo className="w-3.5 h-3.5" />
             Connect X
           </Link>
         </div>
