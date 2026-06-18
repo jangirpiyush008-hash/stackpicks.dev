@@ -61,7 +61,7 @@ export default async function ConnectPage({
           </div>
 
           <ul className="text-sm text-muted space-y-2 mb-6">
-            <li className="flex gap-2"><span className="text-accent">✓</span> Permissions: read posts, read comments, send DMs, reply to comments</li>
+            <li className="flex gap-2"><span className="text-accent">✓</span> Permissions: read posts, read comments + Live comments, send DMs, reply to comments</li>
             <li className="flex gap-2"><span className="text-accent">✓</span> Token stored encrypted (AES-256-GCM). We never see your password.</li>
             <li className="flex gap-2"><span className="text-accent">✓</span> Revoke any time from Meta Business Settings or your dashboard</li>
           </ul>

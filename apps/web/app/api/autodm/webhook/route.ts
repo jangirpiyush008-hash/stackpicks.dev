@@ -160,7 +160,14 @@ export async function POST(req: NextRequest) {
     if (!rules.length) { processed.push(`skip:no_rules:${tenant.id}`); continue; }
 
     for (const change of entry.changes ?? []) {
-      if (change.field !== 'comments') continue;
+      // Handle both regular post/reel comments AND Instagram Live comments.
+      // live_comments is a SEPARATE webhook field but carries an identical
+      // value shape, so the same matcher + send path works. The Private
+      // Reply API (recipient: {comment_id}) — which sendDm already uses —
+      // is the supported way to DM a live commenter during the broadcast.
+      const isLive = change.field === 'live_comments';
+      if (change.field !== 'comments' && !isLive) continue;
+      const triggerEvent = isLive ? 'live_comment' : 'comment';
       const v = change.value || {};
       const commentText = v.text || '';
       const commentId = v.id || '';
@@ -184,7 +191,7 @@ export async function POST(req: NextRequest) {
       if ((hourly ?? 0) >= tenant.hourly_cap) {
         await supa.from('autodm_dm_log').insert({
           tenant_id: tenant.id, ig_user_id: fromIgsid, ig_username: fromUsername,
-          trigger_event: 'comment', trigger_post_id: postId,
+          trigger_event: triggerEvent, trigger_post_id: postId,
           trigger_text: commentText.slice(0, 500), trigger_comment_id: commentId,
           status: 'skipped', error: `hourly_cap (${tenant.hourly_cap}/hr)`,
         });
@@ -205,7 +212,7 @@ export async function POST(req: NextRequest) {
       if (!sched.active) {
         await supa.from('autodm_dm_log').insert({
           tenant_id: tenant.id, rule_id: rule.id, ig_user_id: fromIgsid, ig_username: fromUsername,
-          trigger_event: 'comment', trigger_post_id: postId,
+          trigger_event: triggerEvent, trigger_post_id: postId,
           trigger_text: commentText.slice(0, 500), trigger_comment_id: commentId,
           status: 'skipped', error: `schedule:${sched.reason}`,
         });
@@ -223,7 +230,7 @@ export async function POST(req: NextRequest) {
         if ((dailyToUser ?? 0) >= rule.daily_cap_per_recipient) {
           await supa.from('autodm_dm_log').insert({
             tenant_id: tenant.id, rule_id: rule.id, ig_user_id: fromIgsid, ig_username: fromUsername,
-            trigger_event: 'comment', trigger_post_id: postId,
+            trigger_event: triggerEvent, trigger_post_id: postId,
             trigger_text: commentText.slice(0, 500), trigger_comment_id: commentId,
             status: 'skipped', error: 'daily_cap_per_recipient',
           });
@@ -318,7 +325,7 @@ export async function POST(req: NextRequest) {
       await supa.from('autodm_dm_log').insert({
         tenant_id: tenant.id, rule_id: rule.id,
         ig_user_id: fromIgsid, ig_username: fromUsername,
-        trigger_event: 'comment', trigger_post_id: postId,
+        trigger_event: triggerEvent, trigger_post_id: postId,
         trigger_text: commentText.slice(0, 500), trigger_comment_id: commentId,
         is_follower: followerCheck.isFollower,
         follow_check_source: followerCheck.source,

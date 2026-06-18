@@ -23,7 +23,9 @@ Go to https://developers.facebook.com/apps → your AutoDM app.
   https://autodm.stackpicks.dev/api/autodm/webhook
   ```
   Verify token: paste the same value as `AUTODM_META_VERIFY_TOKEN` in Railway.
-  Subscribe to: `comments`, `messages`, `mentions`.
+  Subscribe to: `comments`, `live_comments`, `messages`, `mentions`.
+  (`live_comments` is what powers the "comment on my Live → instant DM"
+  flow — it is a separate field from `comments` and must be ticked.)
 - [ ] **App Review** → submit. Expect 5-14 day review.
 
 ---

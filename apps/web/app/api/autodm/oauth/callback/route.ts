@@ -164,14 +164,16 @@ export async function GET(req: NextRequest) {
   }, { onConflict: 'ig_business_id' }).select('id').single();
   if (upsertErr) return fail(req, `tenant_upsert:${upsertErr.message.slice(0, 60)}`);
 
-  // 5. Subscribe this IG account's comments to OUR webhook.
+  // 5. Subscribe this IG account's events to OUR webhook.
   //    Without this, Meta never sends events for this tenant.
-  //    Endpoint: POST /{ig-business-id}/subscribed_apps?subscribed_fields=comments
+  //    live_comments is a SEPARATE field from comments — it must be listed
+  //    explicitly or Instagram Live comments never reach us. That powers
+  //    the "comment on my Live → instant DM" flow.
   //    Failure is non-fatal — the tenant can re-trigger from the dashboard.
   try {
     await fetch(
       `${GRAPH}/${igBusinessId}/subscribed_apps?` + new URLSearchParams({
-        subscribed_fields: 'comments,messages,mentions',
+        subscribed_fields: 'comments,live_comments,messages,mentions',
         access_token: pageToken,
       }),
       { method: 'POST' },

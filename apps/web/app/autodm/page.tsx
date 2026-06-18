@@ -4,7 +4,7 @@
 // to /autodm so autodm.stackpicks.dev/ → this page.)
 
 import Link from 'next/link';
-import { CheckCircle2, MessageSquare, Sparkles, Shield, Zap, Bot } from 'lucide-react';
+import { CheckCircle2, MessageSquare, Sparkles, Shield, Zap, Bot, Radio } from 'lucide-react';
 
 export const metadata = {
   title: 'StackPicks AutoDM — Auto-DM that closes, not just sends',
@@ -57,6 +57,8 @@ export default function AutoDmLanding() {
             body="Account warming, body variants, Meta 429 auto-pause, spam-word linter. Your account doesn't get banned. (Most tools won't tell you when they get yours flagged.)" />
           <Feature icon={<MessageSquare />} title="Public reply + private DM"
             body="One comment triggers a public 'Sent ✓' reply AND a private DM with the link. Other viewers see the proof and comment too. Engagement compounds." />
+          <Feature icon={<Radio />} title="Works live, mid-broadcast"
+            body="Go live, tell viewers to comment a keyword, and every commenter gets your link in their DMs while you're still on air. Posts, Reels, and Lives — same rule, no extra setup." />
         </div>
       </section>
 

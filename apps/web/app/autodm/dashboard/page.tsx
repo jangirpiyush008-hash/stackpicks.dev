@@ -64,6 +64,7 @@ interface LogRow {
   error: string | null;
   clicked_at: string | null;
   click_count: number;
+  trigger_event: string | null;
 }
 
 export default async function DashboardPage({
@@ -110,7 +111,7 @@ export default async function DashboardPage({
 
   const [rulesRes, logRes, convCountRes, subRes] = await Promise.all([
     supa.from('autodm_rules').select('id, label, keyword, dm_template, dm_template_variants, cta_url, cta_label, comment_reply, comment_reply_follower, follow_nudge, daily_cap_per_recipient, is_active, ai_personality_hint, active_hour_start, active_hour_end, active_days').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(50),
-    supa.from('autodm_dm_log').select('ig_username, status, created_at, error, clicked_at, click_count').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(20),
+    supa.from('autodm_dm_log').select('ig_username, status, created_at, error, clicked_at, click_count, trigger_event').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(20),
     supa.from('autodm_conversations').select('id', { count: 'exact', head: true })
         .eq('tenant_id', tenant.id).eq('status', 'creator_escalated'),
     supa.from('autodm_subscriptions')
@@ -297,6 +298,11 @@ export default async function DashboardPage({
                   <div className="flex items-center gap-2">
                     <StatusDot status={l.status} />
                     <span>@{l.ig_username || 'anon'}</span>
+                    {l.trigger_event === 'live_comment' && (
+                      <span className="inline-flex items-center gap-1 text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-rose-500/15 text-rose-400">
+                        <span className="w-1 h-1 rounded-full bg-rose-400" /> live
+                      </span>
+                    )}
                     {l.error && <span className="text-xs text-rose-400/80">· {l.error}</span>}
                   </div>
                   <span className="text-xs text-muted">{new Date(l.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</span>
