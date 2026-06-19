@@ -62,6 +62,31 @@ export function AuthForm({ mode }: Props) {
 
     try {
       if (mode === 'signup') {
+        // Pre-flight: check the email is real (format + non-disposable +
+        // has an MX record). Stops spam-signups against khjdf.com / temp
+        // mailers BEFORE we ask Supabase to send a confirmation email
+        // to nothingness.
+        try {
+          const vRes = await fetch('/api/auth/validate-email', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ email }),
+          });
+          const v = (await vRes.json()) as { ok: boolean; reason?: string; suggestion?: string | null };
+          if (!v.ok) {
+            const msg =
+              v.reason === 'disposable' ? `Disposable email addresses aren't allowed${v.suggestion ? ` — did you mean ${v.suggestion}?` : ''}.`
+              : v.reason === 'no_mx'    ? `That email domain doesn't accept mail${v.suggestion ? ` — did you mean ${v.suggestion}?` : ''}.`
+              : v.reason === 'format'   ? 'That email looks malformed.'
+              : v.reason === 'rate_limited' ? 'Too many attempts. Wait a minute and try again.'
+              : 'We couldn\'t verify that email. Try a different one.';
+            setErrorMsg(msg);
+            setStatus('error');
+            return;
+          }
+        } catch {
+          // Network blip / endpoint down — let Supabase do its own check.
+        }
         const { error } = await supabase.auth.signUp({
           email,
           password,
