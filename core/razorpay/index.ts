@@ -127,18 +127,21 @@ export function verifyPaymentSignature(params: {
 type WebhookSecretWhich = 'directory' | 'autodm' | 'shared';
 
 function pickWebhookSecret(which: WebhookSecretWhich): string {
+  // Read at call-time, not module-load-time, so env updates after process
+  // start are picked up by edge/serverless workers.
+  const legacy = process.env.RAZORPAY_WEBHOOK_SECRET;
   if (which === 'directory') {
-    const v = process.env.RAZORPAY_WEBHOOK_SECRET_DIRECTORY ?? RZP_WEBHOOK_SECRET;
+    const v = process.env.RAZORPAY_WEBHOOK_SECRET_DIRECTORY || legacy;
     if (!v) throw new Error('Missing RAZORPAY_WEBHOOK_SECRET_DIRECTORY (or fallback RAZORPAY_WEBHOOK_SECRET)');
     return v;
   }
   if (which === 'autodm') {
-    const v = process.env.RAZORPAY_WEBHOOK_SECRET_AUTODM ?? RZP_WEBHOOK_SECRET;
+    const v = process.env.RAZORPAY_WEBHOOK_SECRET_AUTODM || legacy;
     if (!v) throw new Error('Missing RAZORPAY_WEBHOOK_SECRET_AUTODM (or fallback RAZORPAY_WEBHOOK_SECRET)');
     return v;
   }
-  if (!RZP_WEBHOOK_SECRET) throw new Error('Missing RAZORPAY_WEBHOOK_SECRET');
-  return RZP_WEBHOOK_SECRET;
+  if (!legacy) throw new Error('Missing RAZORPAY_WEBHOOK_SECRET');
+  return legacy;
 }
 
 export function verifyWebhookSignature(
