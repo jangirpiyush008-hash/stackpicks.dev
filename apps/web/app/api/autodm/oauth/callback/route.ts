@@ -122,6 +122,19 @@ export async function GET(req: NextRequest) {
   // 4. Cap check + tenant upsert — encrypts the token at rest.
   const supa = adminClient();
 
+  // Ownership check: if this IG is already linked to ANOTHER user, refuse
+  // — the unique constraint on ig_business_id would otherwise let the
+  // upsert silently transfer ownership. We bounce with a clear error
+  // instead of letting the second user steal the connection.
+  const { data: existingOwner } = await supa
+    .from('autodm_tenants')
+    .select('owner_user_id')
+    .eq('ig_business_id', igBusinessId)
+    .maybeSingle();
+  if (existingOwner && existingOwner.owner_user_id !== user.id) {
+    return NextResponse.redirect(new URL('/connect?error=ig_already_connected', autodmOrigin()));
+  }
+
   // Inspect the user's existing tenants. We use the highest plan tier
   // across their owned tenants as the "owner plan" — same human, same
   // subscription. We enforce per-platform Instagram quota.

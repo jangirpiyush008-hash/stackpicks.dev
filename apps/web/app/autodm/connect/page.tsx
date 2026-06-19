@@ -54,6 +54,22 @@ export default async function ConnectPage({
           </div>
         )}
 
+        {error === 'ig_already_connected' && (
+          <div className="mt-6 rounded-2xl border-2 border-rose-500/50 bg-rose-500/5 p-5 flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
+            <div className="text-sm">
+              <div className="font-semibold text-rose-300">This Instagram is already connected to another StackPicks account.</div>
+              <div className="text-muted mt-1">
+                Each Instagram Business account can only be linked to one StackPicks AutoDM
+                user at a time. If this is your account, sign in with the email it&apos;s
+                connected to, or disconnect it from that account first (
+                <Link href="/autodm/dashboard" className="underline underline-offset-2 hover:text-text">dashboard → Disconnect IG</Link>
+                ). Need help? Email <a href="mailto:stackpicks.dev@gmail.com" className="underline underline-offset-2 hover:text-text">stackpicks.dev@gmail.com</a>.
+              </div>
+            </div>
+          </div>
+        )}
+
         <h1 className="mt-6 text-4xl font-extrabold tracking-tight leading-[1.05]">
           Connect your accounts.
           <br />
