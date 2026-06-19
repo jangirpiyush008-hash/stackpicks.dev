@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { rateLimit, hashIp, clientIp } from '@/lib/security';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -14,6 +15,10 @@ function isValidEmail(s: string): boolean {
 }
 
 export async function POST(req: NextRequest) {
+  const limKey = `feedback:${hashIp(clientIp(req)) ?? 'unknown'}`;
+  const lim = rateLimit(limKey, { max: 5, windowMs: 60 * 1000 });
+  if (!lim.ok) return NextResponse.json({ ok: false, error: 'rate_limited' }, { status: 429 });
+
   let body: FeedbackPayload;
   try {
     body = (await req.json()) as FeedbackPayload;

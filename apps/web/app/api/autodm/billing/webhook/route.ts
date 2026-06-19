@@ -16,7 +16,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminClient } from '@stackpicks/core/db';
 import { verifyWebhookSignature } from '@stackpicks/core/razorpay';
-import { statusToPlanTier, type BillingCycle } from '@stackpicks/core/autodm/billing';
+import { statusToPlanTier, cycleFromPlanId, type BillingCycle } from '@stackpicks/core/autodm/billing';
 import type { PlanTier } from '@stackpicks/core/autodm/types';
 
 export const runtime = 'nodejs';
@@ -41,7 +41,10 @@ export async function POST(req: NextRequest) {
   const raw = await req.text();
   const sig = req.headers.get('x-razorpay-signature') || '';
   let sigOk = false;
-  try { sigOk = verifyWebhookSignature(raw, sig); }
+  // AutoDM webhook uses its own secret (RAZORPAY_WEBHOOK_SECRET_AUTODM)
+  // with fallback to the shared legacy RAZORPAY_WEBHOOK_SECRET during
+  // migration. Distinct secrets stop cross-product webhook replay.
+  try { sigOk = verifyWebhookSignature(raw, sig, 'autodm'); }
   catch { sigOk = false; }
   if (!sigOk) return NextResponse.json({ ok: false, error: 'bad signature' }, { status: 401 });
 
@@ -69,7 +72,18 @@ export async function POST(req: NextRequest) {
   }
 
   const subscribedTier = (subRow.plan_tier as PlanTier);
-  const cycle: BillingCycle = (subRow.billing_cycle as BillingCycle) ?? 'monthly';
+  // Defense-in-depth: derive billing cycle from the Razorpay plan_id in the
+  // webhook payload, NOT from our own DB column. If the DB column was ever
+  // tampered with (RLS bypass, manual edit), the yearly +25% cap bonus still
+  // only triggers when the user is actually being charged against a *_YEARLY
+  // plan ID registered in our env.
+  const dbCycle: BillingCycle = (subRow.billing_cycle as BillingCycle) ?? 'monthly';
+  const cycle: BillingCycle = cycleFromPlanId(sub.plan_id, dbCycle);
+  if (cycle !== dbCycle) {
+    console.warn('[autodm/webhook] billing_cycle mismatch — using plan_id-derived cycle', {
+      sub_id: sub.id, plan_id: sub.plan_id, db_cycle: dbCycle, derived_cycle: cycle,
+    });
+  }
   const { plan_tier, hourly_cap, daily_cap } = statusToPlanTier(sub.status, subscribedTier, cycle);
   const periodEnd = sub.current_end ? new Date(sub.current_end * 1000).toISOString() : null;
 

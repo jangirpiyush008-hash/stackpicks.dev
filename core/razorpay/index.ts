@@ -120,12 +120,33 @@ export function verifyPaymentSignature(params: {
 
 /**
  * Verify webhook signature. Razorpay sends X-Razorpay-Signature header.
+ * Per-product secrets (recommended): pass `which` = 'directory' or 'autodm'
+ * to pick RAZORPAY_WEBHOOK_SECRET_DIRECTORY / RAZORPAY_WEBHOOK_SECRET_AUTODM
+ * with safe fallback to the legacy shared RAZORPAY_WEBHOOK_SECRET.
  */
-export function verifyWebhookSignature(rawBody: string, signature: string): boolean {
+type WebhookSecretWhich = 'directory' | 'autodm' | 'shared';
+
+function pickWebhookSecret(which: WebhookSecretWhich): string {
+  if (which === 'directory') {
+    const v = process.env.RAZORPAY_WEBHOOK_SECRET_DIRECTORY ?? RZP_WEBHOOK_SECRET;
+    if (!v) throw new Error('Missing RAZORPAY_WEBHOOK_SECRET_DIRECTORY (or fallback RAZORPAY_WEBHOOK_SECRET)');
+    return v;
+  }
+  if (which === 'autodm') {
+    const v = process.env.RAZORPAY_WEBHOOK_SECRET_AUTODM ?? RZP_WEBHOOK_SECRET;
+    if (!v) throw new Error('Missing RAZORPAY_WEBHOOK_SECRET_AUTODM (or fallback RAZORPAY_WEBHOOK_SECRET)');
+    return v;
+  }
   if (!RZP_WEBHOOK_SECRET) throw new Error('Missing RAZORPAY_WEBHOOK_SECRET');
-  const expected = crypto
-    .createHmac('sha256', RZP_WEBHOOK_SECRET)
-    .update(rawBody)
-    .digest('hex');
+  return RZP_WEBHOOK_SECRET;
+}
+
+export function verifyWebhookSignature(
+  rawBody: string,
+  signature: string,
+  which: WebhookSecretWhich = 'shared',
+): boolean {
+  const secret = pickWebhookSecret(which);
+  const expected = crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
   return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature));
 }

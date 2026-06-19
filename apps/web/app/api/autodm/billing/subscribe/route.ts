@@ -15,12 +15,30 @@ import { adminClient } from '@stackpicks/core/db';
 import { createSubscription } from '@stackpicks/core/razorpay';
 import { planIdFor, type BillingCycle, type Currency } from '@stackpicks/core/autodm/billing';
 import type { PlanTier } from '@stackpicks/core/autodm/types';
+import { clientIp, writeAudit } from '@/lib/security';
 
 export const runtime = 'nodejs';
 
 const SUPPORTED: Exclude<PlanTier, 'free'>[] = ['creator', 'pro', 'agency'];
 const CYCLES: BillingCycle[] = ['monthly', 'yearly'];
 const CURRENCIES: Currency[] = ['inr', 'usd'];
+
+// IP-geo cross-check — INR plans are for Indian customers only, USD for
+// everyone else. Server-side enforcement prevents a non-Indian visitor
+// from passing ?currency=inr to grab the cheaper price. Uses ipapi.co
+// (same source the client-side useCurrency() hook checks).
+async function countryFromIp(ip: string | null): Promise<string | null> {
+  if (!ip) return null;
+  try {
+    const r = await Promise.race([
+      fetch(`https://ipapi.co/${ip}/country/`, { cache: 'no-store' }),
+      new Promise<never>((_, rej) => setTimeout(() => rej(new Error('geo timeout')), 2500)),
+    ]);
+    if (!r.ok) return null;
+    const c = (await r.text()).trim().toUpperCase();
+    return c || null;
+  } catch { return null; }
+}
 
 export async function POST(req: NextRequest) {
   const supa = await getSupabaseServer();
@@ -36,6 +54,30 @@ export async function POST(req: NextRequest) {
   const cycle: BillingCycle = CYCLES.includes(cycleRaw) ? cycleRaw : 'monthly';
   const currencyRaw = (sp.get('currency') ?? 'inr').toLowerCase() as Currency;
   const currency: Currency = CURRENCIES.includes(currencyRaw) ? currencyRaw : 'inr';
+
+  // Geo guard. INR ⇔ India only; USD ⇔ everyone else. Mismatch is
+  // rejected with a 400 + audit-log entry so we can spot abuse attempts.
+  // Soft-fail on geo lookup error (network blip): proceed with the
+  // requested currency, since the Razorpay payment-method check will
+  // still block any actual mis-charge.
+  const ip = clientIp(req);
+  const country = await countryFromIp(ip);
+  if (country) {
+    const expected: Currency = country === 'IN' ? 'inr' : 'usd';
+    if (expected !== currency) {
+      void writeAudit({
+        userId: user.id,
+        action: 'currency_mismatch_blocked',
+        ip,
+        userAgent: req.headers.get('user-agent'),
+        meta: { country, requested_currency: currency, expected_currency: expected, tier, cycle },
+      });
+      return NextResponse.json(
+        { ok: false, error: 'currency_mismatch', detail: `Your region (${country}) is billed in ${expected.toUpperCase()}.` },
+        { status: 400 },
+      );
+    }
+  }
 
   const admin = adminClient();
   const { data: tenants } = await admin

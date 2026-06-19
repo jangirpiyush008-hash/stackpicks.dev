@@ -20,7 +20,11 @@ export async function POST(req: NextRequest) {
 
   const rawBody = await req.text();
 
-  if (!verifyWebhookSignature(rawBody, signature)) {
+  // Directory webhook uses its own secret (RAZORPAY_WEBHOOK_SECRET_DIRECTORY),
+  // falling back to the legacy shared RAZORPAY_WEBHOOK_SECRET while migration
+  // is in progress. Once the dedicated secret is set, AutoDM webhook can't
+  // be replayed against this endpoint and vice versa.
+  if (!verifyWebhookSignature(rawBody, signature, 'directory')) {
     console.error('Razorpay webhook signature mismatch');
     return NextResponse.json({ ok: false, error: 'Invalid signature' }, { status: 400 });
   }

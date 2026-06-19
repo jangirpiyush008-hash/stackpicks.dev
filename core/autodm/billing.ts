@@ -67,6 +67,37 @@ export function planIdFor(
  *  base caps. This is a real benefit, wired through the webhook → tenant. */
 export const YEARLY_CAP_BONUS = 0.25;
 
+/** Defense-in-depth: derive billing cycle from the Razorpay plan_id rather
+ *  than trusting our own DB column. The webhook payload carries the real
+ *  plan_id that the user is being charged against — if anyone managed to
+ *  flip our `billing_cycle` column to 'yearly' without paying for yearly,
+ *  this still grants only the monthly tier's caps. Compares against the
+ *  configured RAZORPAY_AUTODM_PLAN_*_YEARLY env values; falls back to the
+ *  reported cycle on any mismatch (so non-prod / unmigrated env still works).
+ */
+export function cycleFromPlanId(planId: string | undefined | null, fallback: BillingCycle = 'monthly'): BillingCycle {
+  if (!planId) return fallback;
+  const yearlyKeys = [
+    'RAZORPAY_AUTODM_PLAN_CREATOR_YEARLY',
+    'RAZORPAY_AUTODM_PLAN_PRO_YEARLY',
+    'RAZORPAY_AUTODM_PLAN_AGENCY_YEARLY',
+    'RAZORPAY_AUTODM_PLAN_CREATOR_USD_YEARLY',
+    'RAZORPAY_AUTODM_PLAN_PRO_USD_YEARLY',
+    'RAZORPAY_AUTODM_PLAN_AGENCY_USD_YEARLY',
+  ];
+  const monthlyKeys = [
+    'RAZORPAY_AUTODM_PLAN_CREATOR',
+    'RAZORPAY_AUTODM_PLAN_PRO',
+    'RAZORPAY_AUTODM_PLAN_AGENCY',
+    'RAZORPAY_AUTODM_PLAN_CREATOR_USD',
+    'RAZORPAY_AUTODM_PLAN_PRO_USD',
+    'RAZORPAY_AUTODM_PLAN_AGENCY_USD',
+  ];
+  for (const k of yearlyKeys) if (process.env[k] === planId) return 'yearly';
+  for (const k of monthlyKeys) if (process.env[k] === planId) return 'monthly';
+  return fallback;
+}
+
 export function capsFor(tier: PlanTier, cycle: BillingCycle = 'monthly') {
   const base = DEFAULT_PLAN_CAPS[tier];
   if (tier === 'free' || cycle !== 'yearly') return base;

@@ -14,6 +14,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { adminClient } from '@stackpicks/core/db';
 import { getRepoUpvoteCount, insertRepoUpvote } from '@stackpicks/core/db/queries';
 import { hashIP, dailySalt } from '@stackpicks/core/utils';
+import { rateLimit, hashIp as hashIpForLimit, clientIp } from '@/lib/security';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -27,6 +28,12 @@ function getIp(req: NextRequest): string {
 }
 
 export async function POST(req: NextRequest) {
+  // Abuse-resistance: 60 upvote POSTs per IP per minute is plenty for any
+  // real user; bots brute-forcing votes against new repos hit this fast.
+  const limKey = `upvote:${hashIpForLimit(clientIp(req)) ?? 'unknown'}`;
+  const lim = rateLimit(limKey, { max: 60, windowMs: 60 * 1000 });
+  if (!lim.ok) return NextResponse.json({ error: 'rate_limited' }, { status: 429 });
+
   let body: unknown;
   try { body = await req.json(); } catch { return NextResponse.json({ error: 'invalid_json' }, { status: 400 }); }
 

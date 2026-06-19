@@ -40,10 +40,22 @@ export async function GET(req: NextRequest) {
   }
 
   // Build the post-auth redirect using the host the request actually arrived on.
-  // This prevents any stale ${origin} from a redirect chain pointing somewhere unexpected.
-  const forwardedHost = req.headers.get('x-forwarded-host');
+  // Validate against an allowlist — x-forwarded-host is attacker-controllable
+  // if our edge isn't strict, so an unvalidated value here is an open-redirect.
+  const ALLOWED_HOSTS = new Set([
+    'stackpicks.dev', 'autodm.stackpicks.dev',
+    'localhost:3000', 'localhost:3001', '127.0.0.1:3000', '127.0.0.1:3001',
+  ]);
+  const rawForwardedHost = req.headers.get('x-forwarded-host')?.toLowerCase();
+  const rawHost = req.headers.get('host')?.toLowerCase();
+  const safeHost =
+    (rawForwardedHost && ALLOWED_HOSTS.has(rawForwardedHost)) ? rawForwardedHost
+    : (rawHost && ALLOWED_HOSTS.has(rawHost))                   ? rawHost
+    : 'stackpicks.dev';   // safe default — never trust an unknown host
   const forwardedProto = req.headers.get('x-forwarded-proto') ?? 'https';
-  const finalOrigin = forwardedHost ? `${forwardedProto}://${forwardedHost}` : url.origin;
+  const finalOrigin = `${forwardedProto}://${safeHost}`;
+  // Keep these for the (dev-only) ?debug=1 dump below.
+  const forwardedHost = rawForwardedHost;
 
   // ?debug=1 exposes internal routing details — never serve it in production.
   // In dev (NODE_ENV !== 'production') it's still available for local OAuth

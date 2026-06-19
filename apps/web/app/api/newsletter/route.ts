@@ -1,10 +1,15 @@
 import { adminClient } from '@stackpicks/core/db';
 import { newsletterSignupSchema } from '@stackpicks/core/validation';
 import { NextRequest, NextResponse } from 'next/server';
+import { rateLimit, hashIp, clientIp } from '@/lib/security';
 
 export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
+  const limKey = `newsletter:${hashIp(clientIp(req)) ?? 'unknown'}`;
+  const lim = rateLimit(limKey, { max: 10, windowMs: 60 * 1000 });
+  if (!lim.ok) return NextResponse.json({ error: 'rate_limited' }, { status: 429 });
+
   try {
     const contentType = req.headers.get('content-type') ?? '';
     let body: { email?: string; source?: string };
