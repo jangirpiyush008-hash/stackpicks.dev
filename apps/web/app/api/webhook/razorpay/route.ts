@@ -24,7 +24,14 @@ export async function POST(req: NextRequest) {
   // falling back to the legacy shared RAZORPAY_WEBHOOK_SECRET while migration
   // is in progress. Once the dedicated secret is set, AutoDM webhook can't
   // be replayed against this endpoint and vice versa.
-  if (!verifyWebhookSignature(rawBody, signature, 'directory')) {
+  // Wrap in try/catch so a missing env var returns a clean 401 rather than 500.
+  let sigOk = false;
+  try { sigOk = verifyWebhookSignature(rawBody, signature, 'directory'); }
+  catch (e) {
+    console.error('Razorpay directory webhook secret missing or misconfigured:', e);
+    return NextResponse.json({ ok: false, error: 'webhook_misconfigured' }, { status: 401 });
+  }
+  if (!sigOk) {
     console.error('Razorpay webhook signature mismatch');
     return NextResponse.json({ ok: false, error: 'Invalid signature' }, { status: 400 });
   }
