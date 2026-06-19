@@ -81,7 +81,7 @@ export default function AutoDmLanding() {
           {/* Big stat tile — voice clone count */}
           <div className="col-span-2 row-span-2 relative overflow-hidden rounded-2xl border border-border bg-surface/40 p-5 flex flex-col">
             <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-accent/15 blur-3xl" aria-hidden />
-            <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted">Voice cloning</div>
+            <div className="text-[11px] font-mono uppercase tracking-[0.18em] text-accent/70">Voice cloning</div>
             <div className="mt-4 text-6xl font-extrabold text-accent leading-none tracking-tighter">100</div>
             <div className="mt-2 text-xs text-muted leading-relaxed">
               past DMs read by AI &mdash;{' '}
@@ -99,7 +99,7 @@ export default function AutoDmLanding() {
           <div className="col-span-2 row-span-1 rounded-2xl border border-border bg-surface/40 p-4">
             <div className="flex items-center gap-2 mb-1.5">
               <Sparkles className="w-3.5 h-3.5 text-accent" />
-              <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted">Image-aware</span>
+              <span className="text-[11px] font-mono uppercase tracking-[0.15em] text-accent/70">Image-aware</span>
             </div>
             <div className="text-sm font-semibold">AI sees the post.</div>
             <div className="text-[11px] text-muted mt-0.5">Replies reference what&apos;s in it.</div>
@@ -109,7 +109,7 @@ export default function AutoDmLanding() {
           <div className="col-span-2 row-span-1 rounded-2xl border border-border bg-surface/40 p-4">
             <div className="flex items-center gap-2 mb-1.5">
               <Bot className="w-3.5 h-3.5 text-accent" />
-              <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted">5-turn agent</span>
+              <span className="text-[11px] font-mono uppercase tracking-[0.15em] text-accent/70">5-turn agent</span>
             </div>
             <div className="text-sm font-semibold">Conversations close.</div>
             <div className="text-[11px] text-muted mt-0.5">Multi-turn replies. Not templates.</div>
@@ -117,7 +117,7 @@ export default function AutoDmLanding() {
 
           {/* Languages — geo-aware pill set */}
           <div className="col-span-2 row-span-1 rounded-2xl border border-border bg-surface/40 p-4">
-            <div className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted mb-2">Languages</div>
+            <div className="text-[11px] font-mono uppercase tracking-[0.15em] text-accent/70 mb-2">Languages</div>
             <div className="flex flex-wrap gap-1">
               <span className="text-[9px] border border-accent/60 text-accent px-1.5 py-0.5 rounded">English</span>
               <GeoText
@@ -142,7 +142,7 @@ export default function AutoDmLanding() {
           {/* Live demo mini chat — spans 2x2, geo-aware content */}
           <div className="col-span-2 row-span-2 rounded-2xl border border-border bg-surface/40 p-4 flex flex-col">
             <div className="flex items-center justify-between mb-3">
-              <div className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted">Live demo</div>
+              <div className="text-[11px] font-mono uppercase tracking-[0.15em] text-accent/70">Live demo</div>
               <div className="flex items-center gap-1 text-[9px] font-mono text-accent">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
                 AI replying
@@ -155,14 +155,14 @@ export default function AutoDmLanding() {
 
           {/* Daily AI digest */}
           <div className="col-span-2 row-span-1 rounded-2xl border border-border bg-surface/40 p-4">
-            <div className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted mb-1.5">Daily AI digest</div>
+            <div className="text-[11px] font-mono uppercase tracking-[0.15em] text-accent/70 mb-1.5">Daily AI digest</div>
             <div className="text-sm font-semibold">9 PM IST · in your inbox.</div>
             <div className="text-[11px] text-muted mt-0.5">Hot leads, escalations, what worked.</div>
           </div>
 
           {/* Auto A/B */}
           <div className="col-span-2 row-span-1 rounded-2xl border border-border bg-surface/40 p-4">
-            <div className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted mb-1.5">Auto A/B</div>
+            <div className="text-[11px] font-mono uppercase tracking-[0.15em] text-accent/70 mb-1.5">Auto A/B</div>
             <div className="text-sm font-semibold">3 variants. AI picks winner.</div>
             <div className="text-[11px] text-muted mt-0.5">No setup. Just better CTR.</div>
           </div>
@@ -171,7 +171,7 @@ export default function AutoDmLanding() {
           <div className="col-span-2 row-span-1 rounded-2xl border border-border bg-surface/40 p-4">
             <div className="flex items-center gap-2 mb-1.5">
               <Shield className="w-3.5 h-3.5 text-accent" />
-              <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted">Spam-shield Pro</span>
+              <span className="text-[11px] font-mono uppercase tracking-[0.15em] text-accent/70">Spam-shield Pro</span>
             </div>
             <div className="text-sm font-semibold">Auto-pause on Meta 429.</div>
             <div className="text-[11px] text-muted mt-0.5">Your account never gets flagged.</div>
@@ -181,7 +181,7 @@ export default function AutoDmLanding() {
           <div className="col-span-2 row-span-1 rounded-2xl border border-border bg-surface/40 p-4">
             <div className="flex items-center gap-2 mb-1.5">
               <Radio className="w-3.5 h-3.5 text-accent" />
-              <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted">Live, mid-broadcast</span>
+              <span className="text-[11px] font-mono uppercase tracking-[0.15em] text-accent/70">Live, mid-broadcast</span>
             </div>
             <div className="text-sm font-semibold">Posts, Reels, Lives.</div>
             <div className="text-[11px] text-muted mt-0.5">Same rule, no extra setup.</div>
@@ -191,7 +191,7 @@ export default function AutoDmLanding() {
           <div className="col-span-2 row-span-1 rounded-2xl border border-border bg-surface/40 p-4">
             <div className="flex items-center gap-2 mb-1.5">
               <Zap className="w-3.5 h-3.5 text-accent" />
-              <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted">Onboarding</span>
+              <span className="text-[11px] font-mono uppercase tracking-[0.15em] text-accent/70">Onboarding</span>
             </div>
             <div className="text-sm font-semibold">90-second AI setup.</div>
             <div className="text-[11px] text-muted mt-0.5">Connect IG → 5 starter rules → live.</div>
