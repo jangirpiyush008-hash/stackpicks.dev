@@ -53,15 +53,40 @@ export function AuthForm({ mode }: Props) {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'sent' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
+  // Password strength: 12+ chars OR (8+ with both letter and digit). Blocks
+  // the obvious "password1" / "12345678" combos without making sane long
+  // passphrases ("correct horse battery staple") require digits.
+  function passwordOk(pw: string): { ok: boolean; reason?: string } {
+    if (pw.length < 8) return { ok: false, reason: 'Use at least 8 characters.' };
+    if (pw.length >= 12) return { ok: true };
+    const hasLetter = /[A-Za-z]/.test(pw);
+    const hasDigit  = /\d/.test(pw);
+    if (!hasLetter || !hasDigit) {
+      return { ok: false, reason: 'Use 12+ characters, or 8+ with both letters and a number.' };
+    }
+    // Reject the most-common leaked passwords. Tiny built-in list — full
+    // 1k-list would bulk the bundle; this catches obvious junk.
+    const common = new Set([
+      'password', 'password1', 'password123', '12345678', 'qwerty123',
+      'letmein123', 'admin1234', 'welcome123', 'iloveyou', 'monkey123',
+    ]);
+    if (common.has(pw.toLowerCase())) return { ok: false, reason: 'That password is on the leaked-list. Pick something else.' };
+    return { ok: true };
+  }
+
   const submitEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('submitting');
     setErrorMsg('');
+    const startedAt = Date.now();
 
     const supabase = getSupabaseBrowser();
 
     try {
       if (mode === 'signup') {
+        const pw = passwordOk(password);
+        if (!pw.ok) { setErrorMsg(pw.reason ?? 'Weak password.'); setStatus('error'); return; }
+
         // Pre-flight: check the email is real (format + non-disposable +
         // has an MX record). Stops spam-signups against khjdf.com / temp
         // mailers BEFORE we ask Supabase to send a confirmation email
@@ -97,13 +122,34 @@ export function AuthForm({ mode }: Props) {
         if (error) throw error;
         setStatus('sent');
       } else {
+        // Sign-in path: equalise response time + uniform error message so
+        // an attacker can't tell from timing or wording whether the email
+        // exists (account-enumeration defence).
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        // Ensure the operation always takes at least ~1.2s, regardless of
+        // outcome — Supabase's failure path is faster than the success
+        // path (no profile lookup) which leaks email existence otherwise.
+        const elapsed = Date.now() - startedAt;
+        if (elapsed < 1200) {
+          await new Promise((r) => setTimeout(r, 1200 - elapsed));
+        }
+        if (error) {
+          // Uniform error — never reveals whether email exists.
+          setErrorMsg('Email or password is incorrect.');
+          setStatus('error');
+          return;
+        }
         router.push(next);
         router.refresh();
       }
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong');
+      // Map Supabase's verbose signup errors to short, non-leaky messages.
+      const raw = err instanceof Error ? err.message : 'Something went wrong';
+      const msg =
+        /already registered/i.test(raw) ? 'If this email is eligible, a sign-up link is on its way. Check your inbox.'
+        : /password/i.test(raw) ? 'Use a stronger password — 12+ chars, or 8+ with letters + a number.'
+        : raw;
+      setErrorMsg(msg);
       setStatus('error');
     }
   };

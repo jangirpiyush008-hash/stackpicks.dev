@@ -17,7 +17,25 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+// URL hardening — drop obviously hostile paths before they hit a route
+// handler. Cheap defence against probing tools that fuzz with control
+// chars, overlong segments, and protocol smuggling.
+const HOSTILE_PATH_RE = /[\x00-\x1f\x7f]|%00|\\\\/;
+
 export function middleware(req: NextRequest) {
+  // Pre-flight URL sanity. Drops anything with null bytes / control
+  // chars / smuggled-protocol slashes / overlong paths before any handler
+  // sees it. Plain 400 response, never echo the path (no reflected-XSS surface).
+  const incoming = req.nextUrl;
+  if (HOSTILE_PATH_RE.test(incoming.pathname) || incoming.pathname.length > 2048) {
+    return new NextResponse('Bad request', { status: 400 });
+  }
+  for (const [, v] of incoming.searchParams) {
+    if (v.length > 4096 || /[\x00-\x1f]/.test(v)) {
+      return new NextResponse('Bad request', { status: 400 });
+    }
+  }
+
   const host = (req.headers.get('host') || '').toLowerCase();
   if (host === 'autodm.stackpicks.dev') {
     const url = req.nextUrl.clone();

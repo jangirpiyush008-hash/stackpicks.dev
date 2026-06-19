@@ -45,7 +45,10 @@ export async function GET(req: NextRequest) {
   const forwardedProto = req.headers.get('x-forwarded-proto') ?? 'https';
   const finalOrigin = forwardedHost ? `${forwardedProto}://${forwardedHost}` : url.origin;
 
-  if (debug) {
+  // ?debug=1 exposes internal routing details — never serve it in production.
+  // In dev (NODE_ENV !== 'production') it's still available for local OAuth
+  // troubleshooting.
+  if (debug && process.env.NODE_ENV !== 'production') {
     return NextResponse.json({
       diagnostic: {
         request_url: req.url,
