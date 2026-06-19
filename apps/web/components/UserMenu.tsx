@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LayoutDashboard, User, Github, LogOut, ChevronDown, Sparkles } from 'lucide-react';
+import { LayoutDashboard, User, Github, LogOut, ChevronDown, Sparkles, ArrowUpRight } from 'lucide-react';
 import { getSupabaseBrowser } from '../lib/supabase-browser';
 import { identifyUser, resetUser } from '../lib/track';
 
@@ -116,8 +116,10 @@ export function UserMenu() {
     await supabase.auth.signOut();
     setUser(null);
     setOpen(false);
-    router.push('/');
-    router.refresh();
+    // Hard navigate so SSR re-reads the empty session cookie. router.push
+    // + refresh sometimes leaves the previous logged-in header cached on
+    // first paint of the next page.
+    window.location.href = '/';
   };
 
   // Loading state — show a subtle placeholder so the layout doesn't jump
@@ -219,6 +221,17 @@ export function UserMenu() {
             <MenuItem href="/submit-repo" icon={<Github className="w-4 h-4" />} onClick={() => setOpen(false)}>
               Submit a repo
             </MenuItem>
+          </div>
+
+          {/* Cross-product switcher — single login, two dashboards */}
+          <div className="border-t border-border py-1">
+            <a
+              href="https://autodm.stackpicks.dev/dashboard"
+              className="flex items-center gap-3 px-4 py-2 text-sm text-text hover:bg-surface/60 transition"
+            >
+              <ArrowUpRight className="w-4 h-4 text-accent" />
+              Switch to AutoDM
+            </a>
           </div>
 
           {/* Sign out */}

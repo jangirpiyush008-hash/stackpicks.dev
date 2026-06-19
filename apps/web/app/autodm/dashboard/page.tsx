@@ -16,6 +16,7 @@ import { FollowupAgentToggle } from '@/components/autodm/FollowupAgentToggle';
 import { PlanUpgrade } from '@/components/autodm/PlanUpgrade';
 import { SubscriptionManager } from '@/components/autodm/SubscriptionManager';
 import { WebhookHealthBanner } from '@/components/autodm/WebhookHealthBanner';
+import { DisconnectIgButton } from '@/components/autodm/DisconnectIgButton';
 import { VoiceMatchCard } from '@/components/autodm/VoiceMatchCard';
 
 export const metadata = {
@@ -240,7 +241,10 @@ export default async function DashboardPage({
         <div className="flex items-start justify-between flex-wrap gap-4 mb-8">
           <div>
             <div className="text-xs font-mono uppercase tracking-widest text-accent mb-2">// dashboard</div>
-            <h1 className="text-3xl font-extrabold">@{tenant.ig_username || 'creator'}</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-extrabold">@{tenant.ig_username || 'creator'}</h1>
+              <DisconnectIgButton />
+            </div>
             <div className="text-sm text-muted mt-1">{tenant.plan_tier.toUpperCase()} · {tenant.hourly_cap}/hr · {tenant.daily_cap}/day</div>
           </div>
           <div className="flex items-center gap-2 flex-wrap">

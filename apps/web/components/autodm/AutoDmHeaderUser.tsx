@@ -4,25 +4,26 @@
  * Auth-aware bit of the AutoDM header.
  *
  *   Logged out → "Sign in" button (lime, primary)
- *   Logged in  → user email dot + dropdown with Dashboard / Inbox / Sign out
+ *   Logged in  → user email dot + dropdown with Dashboard / Inbox /
+ *                Switch to StackPicks / Sign out
  *
- * No other navigation here — autodm is a focused product, not a portal.
+ * Uses getSupabaseBrowser() — the wrapped client that scopes cookies to
+ * `.stackpicks.dev` so logging out clears the session across both
+ * subdomains. The previous version used the raw @supabase/supabase-js
+ * client whose default cookie domain didn't match — sign-out silently
+ * no-op'd and the dropdown re-rendered as if still signed in.
  */
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LayoutDashboard, Inbox, LogOut, ChevronDown } from 'lucide-react';
-import { createClient } from '@supabase/supabase-js';
-
-const supa = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-);
+import { LayoutDashboard, Inbox, LogOut, ChevronDown, ArrowUpRight } from 'lucide-react';
+import { getSupabaseBrowser } from '@/lib/supabase-browser';
 
 export function AutoDmHeaderUser({ isAuthed, email }: { isAuthed: boolean; email: string | null }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,9 +36,17 @@ export function AutoDmHeaderUser({ isAuthed, email }: { isAuthed: boolean; email
   }, [open]);
 
   async function signOut() {
-    await supa.auth.signOut();
-    router.refresh();
-    router.push('/autodm');
+    setBusy(true);
+    try {
+      const supa = getSupabaseBrowser();
+      await supa.auth.signOut();
+      // Hard navigate to /autodm so server-rendered header re-reads the
+      // (now-empty) session cookie. router.refresh() alone leaves stale
+      // SSR auth state on first paint.
+      window.location.href = '/autodm';
+    } catch {
+      setBusy(false);
+    }
   }
 
   if (!isAuthed) {
@@ -64,7 +73,7 @@ export function AutoDmHeaderUser({ isAuthed, email }: { isAuthed: boolean; email
         <ChevronDown className="w-3 h-3 text-muted" />
       </button>
       {open && (
-        <div className="absolute right-0 top-full mt-1.5 bg-bg border border-border rounded-lg shadow-lg z-10 min-w-[200px] py-1">
+        <div className="absolute right-0 top-full mt-1.5 bg-bg border border-border rounded-lg shadow-lg z-10 min-w-[220px] py-1">
           {email && (
             <div className="px-3 py-2 text-[10px] text-muted font-mono border-b border-border/60 truncate">{email}</div>
           )}
@@ -73,7 +82,7 @@ export function AutoDmHeaderUser({ isAuthed, email }: { isAuthed: boolean; email
             onClick={() => setOpen(false)}
             className="flex items-center gap-2 px-3 py-2 text-xs hover:bg-bg-card transition"
           >
-            <LayoutDashboard className="w-3.5 h-3.5 text-muted" /> Dashboard
+            <LayoutDashboard className="w-3.5 h-3.5 text-muted" /> AutoDM dashboard
           </Link>
           <Link
             href="/autodm/inbox"
@@ -83,11 +92,22 @@ export function AutoDmHeaderUser({ isAuthed, email }: { isAuthed: boolean; email
             <Inbox className="w-3.5 h-3.5 text-muted" /> Inbox
           </Link>
           <div className="my-1 border-t border-border/60" />
+          {/* Cross-product switcher — single login, two dashboards */}
+          <a
+            href="https://stackpicks.dev/dashboard"
+            className="flex items-center gap-2 px-3 py-2 text-xs hover:bg-bg-card transition"
+          >
+            <ArrowUpRight className="w-3.5 h-3.5 text-accent" />
+            <span>Switch to StackPicks</span>
+          </a>
+          <div className="my-1 border-t border-border/60" />
           <button
             onClick={signOut}
-            className="w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-bg-card transition text-left"
+            disabled={busy}
+            className="w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-bg-card transition text-left disabled:opacity-60"
           >
-            <LogOut className="w-3.5 h-3.5 text-muted" /> Sign out
+            <LogOut className="w-3.5 h-3.5 text-muted" />
+            {busy ? 'Signing out…' : 'Sign out'}
           </button>
         </div>
       )}
