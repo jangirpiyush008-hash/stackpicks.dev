@@ -151,5 +151,10 @@ export function verifyWebhookSignature(
 ): boolean {
   const secret = pickWebhookSecret(which);
   const expected = crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
-  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature));
+  const expectedBuf = Buffer.from(expected);
+  const sigBuf = Buffer.from(signature);
+  // timingSafeEqual throws if lengths differ — any malformed/short signature
+  // is just an invalid one, not a server-side misconfiguration.
+  if (expectedBuf.length !== sigBuf.length) return false;
+  return crypto.timingSafeEqual(expectedBuf, sigBuf);
 }
