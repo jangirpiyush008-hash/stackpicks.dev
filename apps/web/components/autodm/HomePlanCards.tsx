@@ -86,15 +86,15 @@ export function HomePlanCards() {
           <div
             key={p.id}
             onClick={() => setSelected(p.id)}
-            className={`relative text-left rounded-2xl border p-6 flex flex-col cursor-pointer transition ${
+            className={`relative text-left rounded-r-xl border border-l-[3px] p-6 flex flex-col cursor-pointer transition overflow-hidden ${
               isSelected
-                ? 'border-accent bg-accent/5 shadow-[0_0_60px_-15px_rgba(74,222,128,0.25)]'
-                : 'border-border bg-bg-card/50 hover:border-accent/40'
+                ? 'border-accent border-l-accent bg-accent/5 shadow-[0_0_60px_-15px_rgba(198,255,0,0.25)]'
+                : 'border-border border-l-border/80 bg-bg-card/50 hover:border-l-accent/70'
             }`}
           >
             {isRecommended && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-accent text-bg text-[10px] font-mono uppercase tracking-wider whitespace-nowrap">
-                Recommended
+              <div className="absolute top-3 -right-9 rotate-45 bg-accent text-bg text-[9px] font-mono uppercase tracking-widest font-bold py-1 px-10 whitespace-nowrap">
+                Popular
               </div>
             )}
             <div className="text-xs font-mono uppercase tracking-widest text-muted">{p.tier}</div>

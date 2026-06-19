@@ -5,9 +5,13 @@ import { listRepos, listCategories, getActiveSponsoredSlots } from '@stackpicks/
 import { formatStars, timeAgo } from '@stackpicks/core/utils';
 import { SITE } from '@stackpicks/core/constants';
 import {
-  Star, GitFork, ExternalLink, Sparkles,
+  Star, GitFork, ExternalLink, Sparkles, ArrowUpRight,
   Rocket, Smartphone, Brain, Globe, LayoutDashboard, Chrome, Workflow,
-  Megaphone, Handshake, ShoppingBag, Terminal, PenLine, type LucideIcon,
+  Megaphone, Handshake, ShoppingBag, Terminal, PenLine,
+  LayoutGrid, Palette, Star as StarIcon, Lock, Database,
+  CreditCard, Bot, FileCheck, ListTree, GitBranch, FlaskConical,
+  PackageOpen, BarChart3, Mail, FileText, Search as SearchIcon,
+  LineChart, FileCode2, AppWindow, type LucideIcon,
 } from 'lucide-react';
 import { USE_CASE_BUNDLES } from '../lib/use-case-bundles';
 import { UnlockCTA, FREE_TRENDING_LIMIT } from '../components/UnlockCTA';
@@ -22,6 +26,17 @@ const BUNDLE_ICONS: Record<string, LucideIcon> = {
   'layout-dashboard': LayoutDashboard, chrome: Chrome, workflow: Workflow,
   megaphone: Megaphone, handshake: Handshake, 'shopping-bag': ShoppingBag,
   terminal: Terminal, 'pen-line': PenLine,
+};
+
+// Map category.icon strings (from supabase seed) → Lucide icons. Fallback is Package.
+const CATEGORY_ICONS: Record<string, LucideIcon> = {
+  'layout-grid': LayoutGrid, palette: Palette, sparkles: Sparkles, star: StarIcon,
+  lock: Lock, database: Database, 'credit-card': CreditCard, bot: Bot,
+  smartphone: Smartphone, 'file-check': FileCheck, 'list-tree': ListTree,
+  'git-branch': GitBranch, 'flask-conical': FlaskConical, 'package-open': PackageOpen,
+  rocket: Rocket, 'bar-chart-3': BarChart3, mail: Mail, 'file-text': FileText,
+  search: SearchIcon, 'line-chart': LineChart, 'file-code-2': FileCode2,
+  'app-window': AppWindow, terminal: Terminal,
 };
 
 export const revalidate = 3600; // ISR: rebuild hourly
@@ -111,20 +126,45 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Categories grid */}
+      {/* Categories grid — redesigned: lime icon tile + left stripe + arrow on hover */}
       <section className="mb-16">
-        <h2 className="text-2xl font-bold mb-6">Browse by category</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {categories.map((cat) => (
-            <a
-              key={cat.id}
-              href={`/category/${cat.slug}`}
-              className="p-4 rounded border border-border hover:border-accent transition group"
-            >
-              <div className="font-semibold group-hover:text-accent transition">{cat.name}</div>
-              <div className="text-xs text-muted mt-1 line-clamp-2">{cat.description}</div>
-            </a>
-          ))}
+        <div className="flex items-baseline justify-between mb-6">
+          <div>
+            <div className="flex items-baseline gap-3 mb-1">
+              <span className="text-[11px] font-mono text-accent font-semibold tracking-[0.18em]">02</span>
+              <span className="text-[11px] font-mono text-muted tracking-[0.18em] uppercase">Categories</span>
+            </div>
+            <h2 className="text-2xl font-bold tracking-tight">Browse by category</h2>
+          </div>
+          <span className="text-xs text-muted font-mono">{categories.length} total</span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {categories.map((cat) => {
+            const Icon = (cat.icon && CATEGORY_ICONS[cat.icon as string]) || LayoutGrid;
+            return (
+              <a
+                key={cat.id}
+                href={`/category/${cat.slug}`}
+                className="group relative overflow-hidden rounded-r-xl border border-l-[3px] border-border border-l-accent/40 bg-surface/30 hover:border-accent hover:border-l-accent hover:bg-surface/50 transition p-4 flex items-start gap-3"
+              >
+                {/* Icon tile */}
+                <div className="shrink-0 w-9 h-9 rounded-lg bg-accent/10 border border-accent/30 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-bg transition">
+                  <Icon className="w-4 h-4" />
+                </div>
+
+                {/* Content */}
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold text-text group-hover:text-accent transition flex items-center gap-1.5">
+                    {cat.name}
+                  </div>
+                  <div className="text-xs text-muted mt-0.5 line-clamp-2 leading-snug">{cat.description}</div>
+                </div>
+
+                {/* Arrow */}
+                <ArrowUpRight className="w-4 h-4 text-muted group-hover:text-accent group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition shrink-0 mt-0.5" />
+              </a>
+            );
+          })}
         </div>
       </section>
 

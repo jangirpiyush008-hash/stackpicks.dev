@@ -32,7 +32,7 @@ export function WaitlistButton({
 
   const baseClass =
     'inline-flex items-center gap-2 bg-accent text-bg font-semibold px-5 py-3 rounded-full hover:bg-accent/90 transition';
-  const glow = variant === 'glow' ? ' shadow-[0_0_40px_-10px_rgba(74,222,128,0.5)]' : '';
+  const glow = variant === 'glow' ? ' shadow-[0_0_40px_-10px_rgba(198,255,0,0.5)]' : '';
 
   return (
     <>

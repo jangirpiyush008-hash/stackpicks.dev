@@ -12,7 +12,8 @@
     background: theme('colors.accent');
     color: theme('colors.bg');
   }
-  /* Subtle radial backdrop so dark mode doesn't feel flat */
+  /* Subtle radial backdrop so dark mode doesn't feel flat. Electric lime
+     glow up top, soft indigo accent bottom-right. */
   body {
     background-image:
       radial-gradient(ellipse 800px 600px at top, rgba(198,255,0,0.04), transparent 70%),

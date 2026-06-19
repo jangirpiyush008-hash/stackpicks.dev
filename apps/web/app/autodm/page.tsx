@@ -8,6 +8,7 @@ import { CheckCircle2, MessageSquare, Sparkles, Shield, Zap, Bot, Radio, Instagr
 import { XLogo } from '@/components/autodm/XLogo';
 import { HomePlanCards } from '@/components/autodm/HomePlanCards';
 import { GeoText } from '@/components/autodm/GeoText';
+import { LiveDemoChat } from '@/components/autodm/LiveDemoChat';
 
 export const metadata = {
   title: 'StackPicks AutoDM — Auto-DM that closes, not just sends',
@@ -18,16 +19,19 @@ export const metadata = {
 export default function AutoDmLanding() {
   return (
     <main className="min-h-screen bg-bg text-text">
-      {/* Hero */}
+      {/* Hero — left-aligned editorial layout with red dot eyebrow */}
       <section className="px-6 pt-20 pb-16 max-w-6xl mx-auto">
-        <div className="text-xs font-mono uppercase tracking-widest text-accent mb-4">
-          // STACKPICKS AUTODM · beta
+        <div className="inline-flex items-center gap-2 mb-5 text-[11px] font-mono uppercase tracking-[0.18em] text-muted">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent inline-block" aria-hidden />
+          STACKPICKS AUTODM &nbsp;·&nbsp; BETA
         </div>
-        <h1 className="text-5xl sm:text-6xl font-extrabold leading-[0.95] tracking-tight max-w-4xl">
-          Auto-DM that <span className="text-accent">closes</span>.
+        <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold leading-[0.98] tracking-[-0.03em] max-w-5xl">
+          Auto-DM that <span className="text-accent">closes.</span>
           <br />
           Not just sends.
         </h1>
+        {/* Short red rule under the hero */}
+        <div className="mt-6 w-14 h-[3px] bg-accent rounded-full" aria-hidden />
         <p className="mt-6 text-lg text-muted max-w-2xl">
           Templates don&apos;t close. Conversations do. AutoDM clones your voice from your
           past DMs and stays in the chat for 5+ turns — answering &ldquo;what size?&rdquo;,
@@ -65,33 +69,144 @@ export default function AutoDmLanding() {
 
       {/* Why we're different */}
       <section className="px-6 py-16 max-w-6xl mx-auto border-t border-border">
-        <h2 className="text-3xl font-bold mb-12">Built on every bug we found in the others.</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Feature icon={<Sparkles />} title="Voice-cloned DMs"
-            body={
+        <div className="flex items-baseline gap-3 mb-2">
+          <span className="text-[11px] font-mono text-accent font-semibold tracking-[0.18em]">01</span>
+          <span className="text-[11px] font-mono text-muted tracking-[0.18em] uppercase">Why we&apos;re different</span>
+        </div>
+        <h2 className="text-3xl font-bold mb-10 tracking-tight">Built different from the bento up.</h2>
+
+        {/* Bento grid — 6 columns of varied tile sizes (mobile collapses to single column) */}
+        <div className="grid grid-cols-2 md:grid-cols-6 auto-rows-[110px] gap-3">
+
+          {/* Big stat tile — voice clone count */}
+          <div className="col-span-2 row-span-2 relative overflow-hidden rounded-2xl border border-border bg-surface/40 p-5 flex flex-col">
+            <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-accent/15 blur-3xl" aria-hidden />
+            <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted">Voice cloning</div>
+            <div className="mt-4 text-6xl font-extrabold text-accent leading-none tracking-tighter">100</div>
+            <div className="mt-2 text-xs text-muted leading-relaxed">
+              past DMs read by AI &mdash;{' '}
               <GeoText
-                india="AI reads your past 100 DMs, then writes new ones in your tone. Hinglish, emojis, sign-offs — all preserved. Recipients can't tell it's a bot."
-                world="AI reads your past 100 DMs, then writes new ones in your tone. Language mix, emoji style, sign-offs — all preserved. Recipients can't tell it's a bot."
+                india="your tone, Hinglish, emojis, sign-offs preserved"
+                world="your tone, emoji style, sign-offs preserved"
               />
-            } />
-          <Feature icon={<Bot />} title="Conversational follow-up"
-            body="When the recipient replies, our AI agent keeps the conversation going for 5+ turns. Handles 'what size', 'is it returnable', 'do you ship to Delhi'. Pings you only if it can't answer." />
-          <Feature icon={<Zap />} title="90-second AI setup"
-            body="Connect Instagram → AI scans your last 30 posts and DMs → generates 5 starter rules in your voice → live. No tutorials, no setup wizard, no config files." />
-          <Feature icon={<CheckCircle2 />} title="Works for non-followers"
-            body="Most tools use the standard messaging endpoint that blocks non-followers. We use Private Reply API — 7-day window from comment, works for everyone." />
-          <Feature icon={<Shield />} title="Spam-shield protection"
-            body="Account warming, body variants, Meta 429 auto-pause, spam-word linter. Your account doesn't get banned. (Most tools won't tell you when they get yours flagged.)" />
-          <Feature icon={<MessageSquare />} title="Public reply + private DM"
-            body="One comment triggers a public 'Sent ✓' reply AND a private DM with the link. Other viewers see the proof and comment too. Engagement compounds." />
-          <Feature icon={<Radio />} title="Works live, mid-broadcast"
-            body="Go live, tell viewers to comment a keyword, and every commenter gets your link in their DMs while you're still on air. Posts, Reels, and Lives — same rule, no extra setup." />
+            </div>
+            <div className="mt-auto pt-3 inline-flex items-center gap-1.5 text-[10px] text-accent font-mono">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent" /> trained on your voice
+            </div>
+          </div>
+
+          {/* Image-aware */}
+          <div className="col-span-2 row-span-1 rounded-2xl border border-border bg-surface/40 p-4">
+            <div className="flex items-center gap-2 mb-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-accent" />
+              <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted">Image-aware</span>
+            </div>
+            <div className="text-sm font-semibold">AI sees the post.</div>
+            <div className="text-[11px] text-muted mt-0.5">Replies reference what&apos;s in it.</div>
+          </div>
+
+          {/* 5-turn agent */}
+          <div className="col-span-2 row-span-1 rounded-2xl border border-border bg-surface/40 p-4">
+            <div className="flex items-center gap-2 mb-1.5">
+              <Bot className="w-3.5 h-3.5 text-accent" />
+              <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted">5-turn agent</span>
+            </div>
+            <div className="text-sm font-semibold">Conversations close.</div>
+            <div className="text-[11px] text-muted mt-0.5">Multi-turn replies. Not templates.</div>
+          </div>
+
+          {/* Languages — geo-aware pill set */}
+          <div className="col-span-2 row-span-1 rounded-2xl border border-border bg-surface/40 p-4">
+            <div className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted mb-2">Languages</div>
+            <div className="flex flex-wrap gap-1">
+              <span className="text-[9px] border border-accent/60 text-accent px-1.5 py-0.5 rounded">English</span>
+              <GeoText
+                india={
+                  <>
+                    <span className="text-[9px] border border-accent/60 text-accent px-1.5 py-0.5 rounded">Hinglish</span>
+                    <span className="text-[9px] border border-accent/60 text-accent px-1.5 py-0.5 rounded">हिन्दी</span>
+                  </>
+                }
+                world={
+                  <>
+                    <span className="text-[9px] border border-accent/60 text-accent px-1.5 py-0.5 rounded">Español</span>
+                    <span className="text-[9px] border border-accent/60 text-accent px-1.5 py-0.5 rounded">Français</span>
+                  </>
+                }
+              />
+              <span className="text-[9px] border border-border px-1.5 py-0.5 rounded text-muted">+40</span>
+            </div>
+            <div className="text-[11px] text-muted mt-2">Auto-detect &amp; match.</div>
+          </div>
+
+          {/* Live demo mini chat — spans 2x2, geo-aware content */}
+          <div className="col-span-2 row-span-2 rounded-2xl border border-border bg-surface/40 p-4 flex flex-col">
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted">Live demo</div>
+              <div className="flex items-center gap-1 text-[9px] font-mono text-accent">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                AI replying
+              </div>
+            </div>
+            <div className="mt-auto">
+              <LiveDemoChat />
+            </div>
+          </div>
+
+          {/* Daily AI digest */}
+          <div className="col-span-2 row-span-1 rounded-2xl border border-border bg-surface/40 p-4">
+            <div className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted mb-1.5">Daily AI digest</div>
+            <div className="text-sm font-semibold">9 PM IST · in your inbox.</div>
+            <div className="text-[11px] text-muted mt-0.5">Hot leads, escalations, what worked.</div>
+          </div>
+
+          {/* Auto A/B */}
+          <div className="col-span-2 row-span-1 rounded-2xl border border-border bg-surface/40 p-4">
+            <div className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted mb-1.5">Auto A/B</div>
+            <div className="text-sm font-semibold">3 variants. AI picks winner.</div>
+            <div className="text-[11px] text-muted mt-0.5">No setup. Just better CTR.</div>
+          </div>
+
+          {/* Spam-shield + live */}
+          <div className="col-span-2 row-span-1 rounded-2xl border border-border bg-surface/40 p-4">
+            <div className="flex items-center gap-2 mb-1.5">
+              <Shield className="w-3.5 h-3.5 text-accent" />
+              <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted">Spam-shield Pro</span>
+            </div>
+            <div className="text-sm font-semibold">Auto-pause on Meta 429.</div>
+            <div className="text-[11px] text-muted mt-0.5">Your account never gets flagged.</div>
+          </div>
+
+          {/* Works live mid-broadcast */}
+          <div className="col-span-2 row-span-1 rounded-2xl border border-border bg-surface/40 p-4">
+            <div className="flex items-center gap-2 mb-1.5">
+              <Radio className="w-3.5 h-3.5 text-accent" />
+              <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted">Live, mid-broadcast</span>
+            </div>
+            <div className="text-sm font-semibold">Posts, Reels, Lives.</div>
+            <div className="text-[11px] text-muted mt-0.5">Same rule, no extra setup.</div>
+          </div>
+
+          {/* 90-second setup */}
+          <div className="col-span-2 row-span-1 rounded-2xl border border-border bg-surface/40 p-4">
+            <div className="flex items-center gap-2 mb-1.5">
+              <Zap className="w-3.5 h-3.5 text-accent" />
+              <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-muted">Onboarding</span>
+            </div>
+            <div className="text-sm font-semibold">90-second AI setup.</div>
+            <div className="text-[11px] text-muted mt-0.5">Connect IG → 5 starter rules → live.</div>
+          </div>
+
         </div>
       </section>
 
       {/* vs the market */}
       <section className="px-6 py-16 max-w-6xl mx-auto border-t border-border">
-        <h2 className="text-3xl font-bold mb-3">Why creators pick AutoDM.</h2>
+        <div className="flex items-baseline gap-3 mb-2">
+          <span className="text-[11px] font-mono text-accent font-semibold tracking-[0.18em]">02</span>
+          <span className="text-[11px] font-mono text-muted tracking-[0.18em] uppercase">vs the market</span>
+        </div>
+        <h2 className="text-3xl font-bold mb-3 tracking-tight">Why creators pick AutoDM.</h2>
         <p className="text-muted mb-8">
           Honest comparison. Updated June 2026 — based on each tool&apos;s public pricing
           page and product docs. Tell us if something changed: <a href="mailto:stackpicks.dev@gmail.com" className="underline underline-offset-4 hover:text-accent">stackpicks.dev@gmail.com</a>.
@@ -129,7 +244,11 @@ export default function AutoDmLanding() {
 
       {/* Pricing */}
       <section className="px-6 py-16 max-w-6xl mx-auto border-t border-border">
-        <h2 className="text-3xl font-bold mb-3">Flat pricing. Your bill never grows with your audience.</h2>
+        <div className="flex items-baseline gap-3 mb-2">
+          <span className="text-[11px] font-mono text-accent font-semibold tracking-[0.18em]">03</span>
+          <span className="text-[11px] font-mono text-muted tracking-[0.18em] uppercase">Pricing</span>
+        </div>
+        <h2 className="text-3xl font-bold mb-3 tracking-tight">Flat pricing. Your bill never grows with your audience.</h2>
         <p className="text-muted mb-10">
           Most tools charge per contact — so the better your content does, the more you pay. We charge a flat monthly fee. Go viral on us.
         </p>

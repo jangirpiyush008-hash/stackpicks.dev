@@ -211,7 +211,7 @@ export default function AutoDmPricingPage() {
               key={t.key}
               className={`relative rounded-2xl border p-6 md:p-7 flex flex-col ${
                 t.highlight
-                  ? 'border-accent/60 bg-accent/5 shadow-[0_0_60px_-15px_rgba(74,222,128,0.25)]'
+                  ? 'border-accent/60 bg-accent/5 shadow-[0_0_60px_-15px_rgba(198,255,0,0.25)]'
                   : 'border-border bg-surface/40'
               }`}
             >

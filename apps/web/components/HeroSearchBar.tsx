@@ -91,8 +91,9 @@ export function HeroSearchBar() {
             key={chip}
             type="button"
             onClick={() => submitPreset(chip)}
-            className="text-xs px-3 py-1 rounded-full border border-border bg-surface/60 hover:border-accent hover:text-accent transition"
+            className="group text-xs pl-2.5 pr-3 py-1 rounded-full border border-border bg-surface/60 hover:border-accent hover:text-accent transition inline-flex items-center gap-1.5"
           >
+            <span className="w-1 h-1 rounded-full bg-accent inline-block group-hover:w-2 transition-all" aria-hidden />
             {chip}
           </button>
         ))}

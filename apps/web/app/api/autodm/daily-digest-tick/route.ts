@@ -211,9 +211,9 @@ function buildHtml(s: DailySummary): string {
     <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.6;">${hotList}</ul>
     <h2 style="font-size:15px;margin:20px 0 8px;">⚠️ Escalations</h2>
     <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.6;">${escList}</ul>
-    ${s.aiTakeaway ? `<div style="margin-top:24px;padding:14px 16px;background:#fff4eb;border-left:3px solid #FF6B35;border-radius:0 8px 8px 0;font-size:14px;line-height:1.5;">${escape(s.aiTakeaway)}</div>` : ''}
+    ${s.aiTakeaway ? `<div style="margin-top:24px;padding:14px 16px;background:#fff4eb;border-left:3px solid #c6ff00;border-radius:0 8px 8px 0;font-size:14px;line-height:1.5;">${escape(s.aiTakeaway)}</div>` : ''}
     <p style="margin-top:28px;font-size:12px;color:#888;">
-      <a href="${url}/dashboard" style="color:#FF6B35;">Open dashboard →</a>
+      <a href="${url}/dashboard" style="color:#c6ff00;">Open dashboard →</a>
     </p>
   </div>`;
 }
