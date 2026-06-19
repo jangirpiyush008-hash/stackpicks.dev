@@ -11,19 +11,21 @@
  *   - instagram_business_manage_messages (send DMs, reply to comments)
  *   - instagram_business_manage_comments (read + reply to comments)
  *
- * State is a signed CSRF token bound to the current auth.user. On callback
- * we verify state, exchange code → long-lived token, encrypt + persist as
- * an autodm_tenants row.
+ * State is a signed CSRF token bound to the current auth.user with a
+ * 10-minute TTL — verified on callback by lib/security.verifyState.
+ *
+ * Rate limit: 10 starts per IP per 5 min. Blocks brute-force OAuth replay
+ * attempts and accidental client-side loops.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createHmac, randomBytes } from 'node:crypto';
+import { createHmac } from 'node:crypto';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { autodmOrigin } from '@stackpicks/core/autodm/origin';
+import { rateLimit, clientIp, hashIp, signState } from '@/lib/security';
 
 export const runtime = 'nodejs';
 
-// Business Login for Instagram authorization endpoint.
 const IG_AUTHZ_URL = 'https://www.instagram.com/oauth/authorize';
 const SCOPES = [
   'instagram_business_basic',
@@ -31,21 +33,29 @@ const SCOPES = [
   'instagram_business_manage_comments',
 ];
 
-function sign(value: string, secret: string): string {
-  return createHmac('sha256', secret).update(value).digest('hex');
-}
-
 export async function GET(req: NextRequest) {
+  // Rate limit BEFORE touching auth — avoids leaking session timing.
+  const ipKey = `oauth-start:${hashIp(clientIp(req)) ?? 'unknown'}`;
+  const limited = rateLimit(ipKey, { max: 10, windowMs: 5 * 60 * 1000 });
+  if (!limited.ok) {
+    return NextResponse.json(
+      { ok: false, error: 'rate_limited', retry_after_ms: limited.resetAt - Date.now() },
+      { status: 429 },
+    );
+  }
+
   const supa = await getSupabaseServer();
   const { data: { user } } = await supa.auth.getUser();
   if (!user) {
-    // Build from the public origin — req.url resolves to the internal
-    // Railway host (localhost:PORT) behind the proxy, which the browser
-    // can't reach. Login runs on the same host so the session cookie is
-    // visible to this OAuth flow afterward.
     const next = new URL('/login', autodmOrigin());
     next.searchParams.set('next', '/connect');
     return NextResponse.redirect(next);
+  }
+
+  // Email-verification gate — Meta connect requires a real recoverable
+  // identity behind the StackPicks account. Unverified email = no IG.
+  if (!user.email_confirmed_at) {
+    return NextResponse.redirect(new URL('/connect/verify-email', autodmOrigin()));
   }
 
   const appId = process.env.AUTODM_META_APP_ID;
@@ -54,19 +64,22 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: false, error: 'autodm meta app not configured' }, { status: 500 });
   }
 
-  // CSRF: nonce + signature bound to user id. Verified on callback.
-  const nonce = randomBytes(16).toString('hex');
-  const state = `${user.id}:${nonce}:${sign(`${user.id}:${nonce}`, appSecret)}`;
+  // Signed state with a 10-min TTL. Payload binds to user id so the
+  // callback can verify the same user finished the flow they started.
+  // The "appSecret-tail" suffix preserves the legacy verification path
+  // (back-compat with /callback's existing parser) — verifyState() also
+  // double-checks the freshness.
+  const legacyTail = createHmac('sha256', appSecret).update(`${user.id}`).digest('hex').slice(0, 16);
+  const state = signState(`${user.id}:${legacyTail}`);
 
-  // MUST match the Valid OAuth Redirect URI whitelisted in the Meta App console.
   const redirectUri = `${autodmOrigin()}/api/autodm/oauth/callback`;
   const params = new URLSearchParams({
-    client_id: appId,                 // Instagram app ID
+    client_id: appId,
     redirect_uri: redirectUri,
     response_type: 'code',
     scope: SCOPES.join(','),
     state,
-    force_reauth: 'true',   // matches Meta's generated Business Login URL
+    force_reauth: 'true',
   });
 
   return NextResponse.redirect(`${IG_AUTHZ_URL}?${params.toString()}`);

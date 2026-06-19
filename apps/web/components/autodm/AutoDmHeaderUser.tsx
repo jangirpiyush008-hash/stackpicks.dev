@@ -17,7 +17,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LayoutDashboard, Inbox, LogOut, ChevronDown, ArrowUpRight } from 'lucide-react';
+import { LayoutDashboard, Inbox, LogOut, ChevronDown, ArrowUpRight, Shield } from 'lucide-react';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
 
 export function AutoDmHeaderUser({ isAuthed, email }: { isAuthed: boolean; email: string | null }) {
@@ -91,6 +91,12 @@ export function AutoDmHeaderUser({ isAuthed, email }: { isAuthed: boolean; email
           >
             <Inbox className="w-3.5 h-3.5 text-muted" /> Inbox
           </Link>
+          <a
+            href="https://stackpicks.dev/profile/security"
+            className="flex items-center gap-2 px-3 py-2 text-xs hover:bg-bg-card transition"
+          >
+            <Shield className="w-3.5 h-3.5 text-muted" /> Security &amp; 2FA
+          </a>
           <div className="my-1 border-t border-border/60" />
           {/* Cross-product switcher — single login, two dashboards */}
           <a

@@ -20,6 +20,13 @@ import { encryptToken } from '@stackpicks/core/autodm/crypto';
 import { autodmOrigin } from '@stackpicks/core/autodm/origin';
 import { DEFAULT_PLAN_CAPS, type PlanTier } from '@stackpicks/core/autodm/types';
 import { ACTIVE_TENANT_COOKIE, ACTIVE_TENANT_COOKIE_MAX_AGE } from '@stackpicks/core/autodm/active-tenant';
+import { verifyState, writeAudit, clientIp } from '@/lib/security';
+
+// Hard ceiling on tenants per StackPicks user, regardless of plan tier.
+// Stops a single account spawning unlimited Free-tier IG slots by
+// repeatedly connecting/disconnecting. Pro/Agency caps are still enforced
+// separately via DEFAULT_PLAN_CAPS.instagram_accounts.
+const ABSOLUTE_TENANT_CEILING = 25;
 
 export const runtime = 'nodejs';
 
@@ -48,15 +55,27 @@ export async function GET(req: NextRequest) {
   const appSecret = process.env.AUTODM_META_APP_SECRET;
   if (!appId || !appSecret) return fail(req, 'app_not_configured');
 
-  // Verify state CSRF — format: userId:nonce:sig
-  const [stateUserId, nonce, sig] = state.split(':');
-  if (!stateUserId || !nonce || !sig) return fail(req, 'bad_state');
-  const expectedSig = sign(`${stateUserId}:${nonce}`, appSecret);
-  try {
-    if (!timingSafeEqual(Buffer.from(sig, 'hex'), Buffer.from(expectedSig, 'hex'))) {
-      return fail(req, 'state_mismatch');
+  // Verify state — signed by /oauth/start with a 10-min TTL (security.ts).
+  // Falls back to the legacy `userId:nonce:sig` format only for inflight
+  // OAuth attempts started before this deploy; that path is removed in the
+  // next release once any stale tabs expire.
+  let stateUserId: string | null = null;
+  const verified = verifyState(state);
+  if (verified) {
+    stateUserId = verified.split(':')[0] || null;
+  } else {
+    // Legacy path: userId:nonce:hmac(`userId:nonce`)
+    const [u, nonce, sig] = state.split(':');
+    if (u && nonce && sig) {
+      const expectedSig = sign(`${u}:${nonce}`, appSecret);
+      try {
+        if (timingSafeEqual(Buffer.from(sig, 'hex'), Buffer.from(expectedSig, 'hex'))) {
+          stateUserId = u;
+        }
+      } catch { /* fall through */ }
     }
-  } catch { return fail(req, 'state_decode'); }
+  }
+  if (!stateUserId) return fail(req, 'bad_or_expired_state');
 
   // Bind callback to logged-in user
   const supaRoute = await getSupabaseServer();
@@ -151,8 +170,15 @@ export async function GET(req: NextRequest) {
     .map((t) => (t.plan_tier as PlanTier))
     .sort((a, b) => tierRank[b] - tierRank[a])[0]) ?? 'free';
 
-  // For NEW connects (not reconnect), check Instagram quota for owner plan.
+  // For NEW connects (not reconnect), check Instagram quota for owner plan
+  // AND the absolute per-user ceiling that defends against churn-abuse.
   if (!isReconnect) {
+    if (existingTenants.length >= ABSOLUTE_TENANT_CEILING) {
+      return NextResponse.redirect(new URL(
+        `/connect?error=cap_reached&plan=ceiling&allowed=${ABSOLUTE_TENANT_CEILING}`,
+        autodmOrigin(),
+      ));
+    }
     const allowed = DEFAULT_PLAN_CAPS[ownerPlan].instagram_accounts;
     const igCount = existingTenants.length;
     if (igCount >= allowed) {
@@ -184,6 +210,16 @@ export async function GET(req: NextRequest) {
     paused_reason: null,
   }, { onConflict: 'ig_business_id' }).select('id').single();
   if (upsertErr) return fail(req, `tenant_upsert:${upsertErr.message.slice(0, 60)}`);
+
+  // Audit trail — fire-and-forget; never blocks the OAuth redirect.
+  void writeAudit({
+    userId: user.id,
+    action: isReconnect ? 'ig_reconnected' : 'ig_connected',
+    targetId: igBusinessId,
+    ip: clientIp(req),
+    userAgent: req.headers.get('user-agent'),
+    meta: { ig_username: igUsername, plan_tier: ownerPlan },
+  });
 
   // 5. Subscribe this IG account's events to OUR webhook.
   //    Without this, Meta never sends events for this tenant.

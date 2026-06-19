@@ -27,6 +27,11 @@ export default async function ConnectPage({
   if (!user) {
     redirect('/login?next=' + encodeURIComponent('/autodm/connect'));
   }
+  // Email-verification gate — IG can't be connected without a confirmed
+  // recovery address on file.
+  if (!user.email_confirmed_at) {
+    redirect('/autodm/connect/verify-email');
+  }
 
   return (
     <main className="min-h-screen bg-bg text-text">

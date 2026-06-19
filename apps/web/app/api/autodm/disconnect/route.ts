@@ -16,16 +16,17 @@
  * user). 401 otherwise.
  */
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { adminClient } from '@stackpicks/core/db';
 import { getActiveTenant, ACTIVE_TENANT_COOKIE } from '@stackpicks/core/autodm/active-tenant';
+import { writeAudit, clientIp } from '@/lib/security';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function POST() {
+export async function POST(req: NextRequest) {
   const supa = await getSupabaseServer();
   const { data: { user } } = await supa.auth.getUser();
   if (!user) return NextResponse.json({ ok: false, error: 'auth' }, { status: 401 });
@@ -35,6 +36,13 @@ export async function POST() {
   const preferredId = cookieStore.get(ACTIVE_TENANT_COOKIE)?.value ?? null;
   const { tenant } = await getActiveTenant(admin, user.id, preferredId);
   if (!tenant) return NextResponse.json({ ok: false, error: 'no_tenant' }, { status: 404 });
+
+  // Capture the IG business id BEFORE clearing it for the audit row.
+  const { data: snapshot } = await admin
+    .from('autodm_tenants')
+    .select('ig_business_id, ig_username')
+    .eq('id', tenant.id)
+    .single();
 
   await admin
     .from('autodm_tenants')
@@ -46,6 +54,15 @@ export async function POST() {
       paused_reason: null,
     })
     .eq('id', tenant.id);
+
+  void writeAudit({
+    userId: user.id,
+    action: 'ig_disconnected',
+    targetId: (snapshot as { ig_business_id?: string } | null)?.ig_business_id ?? tenant.id,
+    ip: clientIp(req),
+    userAgent: req.headers.get('user-agent'),
+    meta: { ig_username: (snapshot as { ig_username?: string } | null)?.ig_username ?? null },
+  });
 
   return NextResponse.json({ ok: true });
 }

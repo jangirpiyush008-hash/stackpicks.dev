@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LayoutDashboard, User, Github, LogOut, ChevronDown, Sparkles, ArrowUpRight } from 'lucide-react';
+import { LayoutDashboard, User, Github, LogOut, ChevronDown, Sparkles, ArrowUpRight, Shield } from 'lucide-react';
 import { getSupabaseBrowser } from '../lib/supabase-browser';
 import { identifyUser, resetUser } from '../lib/track';
 
@@ -220,6 +220,9 @@ export function UserMenu() {
             </MenuItem>
             <MenuItem href="/submit-repo" icon={<Github className="w-4 h-4" />} onClick={() => setOpen(false)}>
               Submit a repo
+            </MenuItem>
+            <MenuItem href="/profile/security" icon={<Shield className="w-4 h-4" />} onClick={() => setOpen(false)}>
+              Security &amp; 2FA
             </MenuItem>
           </div>
 

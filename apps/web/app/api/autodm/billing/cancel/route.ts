@@ -5,14 +5,15 @@
  *   POST /api/autodm/billing/cancel
  */
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { adminClient } from '@stackpicks/core/db';
+import { writeAudit, clientIp } from '@/lib/security';
 
 export const runtime = 'nodejs';
 const RZP_BASE = 'https://api.razorpay.com/v1';
 
-export async function POST() {
+export async function POST(req: NextRequest) {
   const supa = await getSupabaseServer();
   const { data: { user } } = await supa.auth.getUser();
   if (!user) return NextResponse.json({ ok: false, error: 'auth' }, { status: 401 });
@@ -52,5 +53,15 @@ export async function POST() {
   if (!res.ok) {
     return NextResponse.json({ ok: false, error: `razorpay:${res.status}` }, { status: 500 });
   }
+
+  void writeAudit({
+    userId: user.id,
+    action: 'subscription_cancel_requested',
+    targetId: subRow.razorpay_subscription_id as string,
+    ip: clientIp(req),
+    userAgent: req.headers.get('user-agent'),
+    meta: { cancel_at_cycle_end: true, tenant_id: tenant.id },
+  });
+
   return NextResponse.json({ ok: true });
 }

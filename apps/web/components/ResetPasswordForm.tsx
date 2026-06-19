@@ -40,6 +40,11 @@ export function ResetPasswordForm() {
       const supabase = getSupabaseBrowser();
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
+      // Kill any other live sessions (stolen laptop, old phone). Failure
+      // is non-fatal — the password change itself still succeeded.
+      try {
+        await fetch('/api/auth/invalidate-other-sessions', { method: 'POST' });
+      } catch { /* swallow */ }
       setStatus('done');
       setTimeout(() => {
         router.push('/dashboard');

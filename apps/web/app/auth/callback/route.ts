@@ -9,7 +9,16 @@ import { getSupabaseServer } from '../../../lib/supabase-server';
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
   const code = url.searchParams.get('code');
-  const next = url.searchParams.get('next') ?? '/dashboard';
+  const rawNext = url.searchParams.get('next');
+  // Open-redirect defence — only allow same-origin paths through.
+  // Anything else (//evil.com, https://..., javascript:, control chars,
+  // overlong) falls back to /dashboard. Mirrors lib/security.safeNext.
+  const next = (() => {
+    if (!rawNext || rawNext.length > 1024 || !rawNext.startsWith('/')) return '/dashboard';
+    if (rawNext.startsWith('//') || rawNext.startsWith('/\\')) return '/dashboard';
+    if (/[\x00-\x1f]/.test(rawNext)) return '/dashboard';
+    return rawNext;
+  })();
   const debug = url.searchParams.get('debug') === '1';
 
   // Log for Railway debugging — visible in Railway logs.

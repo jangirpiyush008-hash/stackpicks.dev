@@ -25,10 +25,21 @@ const GoogleG = () => (
   </svg>
 );
 
+// Same-origin safety check — accept only relative paths starting with a
+// single forward slash. Rejects protocol-relative URLs (//evil.com),
+// absolute URLs (https://...), and control-character smuggling. Mirrors
+// lib/security.isSafeNextPath() server-side.
+function safeNextClient(raw: string | null): string {
+  if (!raw || typeof raw !== 'string' || raw.length > 1024) return '/dashboard';
+  if (!raw.startsWith('/') || raw.startsWith('//') || raw.startsWith('/\\')) return '/dashboard';
+  if (/[\x00-\x1f]/.test(raw)) return '/dashboard';
+  return raw;
+}
+
 export function AuthForm({ mode }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get('next') ?? '/dashboard';
+  const next = safeNextClient(searchParams.get('next'));
 
   // Return to the SAME host the user is logging in from (so signing in on
   // autodm.stackpicks.dev lands back on the subdomain, not the main site).
