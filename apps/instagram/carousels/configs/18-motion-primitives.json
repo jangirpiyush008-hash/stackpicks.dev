@@ -1,0 +1,48 @@
+{
+  "slug": "18-motion-primitives",
+  "category": "ui · components",
+  "hook": {
+    "eyebrow": "2026 component libs",
+    "headline": "Two new libs that make <em>shadcn feel static</em>.",
+    "sub": "motion-primitives · eldora ui"
+  },
+  "cards": [
+    {
+      "label": "01 · meet",
+      "title": "Motion-Primitives = Framer Motion patterns, dropped in.",
+      "body": "It's a collection of pre-built React + Framer Motion components — text reveals, scroll-triggered transitions, hover micro-interactions. Copy-paste, no install ceremony. shadcn-compatible.",
+      "metric": "→ MIT · React + Tailwind"
+    },
+    {
+      "label": "02 · meet",
+      "title": "Eldora UI = pure CSS animations, zero JS.",
+      "body": "Same energy, different stack: Eldora ships motion as CSS keyframes + Tailwind. No Framer dependency, no JS bundle hit. Use when you need animation but can't afford the runtime.",
+      "metric": "→ MIT · Tailwind only"
+    },
+    {
+      "label": "03 · how",
+      "title": "Both drop straight onto shadcn.",
+      "body": "Neither replaces shadcn — both extend it. Your buttons, dialogs, dropdowns stay shadcn. The hero text, the card hover, the section reveals — those become Motion-Primitives or Eldora."
+    },
+    {
+      "label": "04 · pick",
+      "title": "When to pick which.",
+      "body": "Need rich gesture + spring physics → Motion-Primitives. Need lightweight CSS-only animations that work without React → Eldora. Need both → use both. They don't fight."
+    },
+    {
+      "label": "05 · install",
+      "title": "Install in one command.",
+      "body": "Motion-Primitives: `npx motion-primitives@latest add text-reveal`. Eldora: pure copy-paste from the site. Both work alongside your existing shadcn registry.",
+      "metric": "$ npx motion-primitives add text-reveal"
+    }
+  ],
+  "take": {
+    "use_if": "Your landing pages feel flat and you want motion without rebuilding your component system.",
+    "skip_if": "You're already deep in Framer Motion or GSAP with custom variants — adding another layer won't pay off."
+  },
+  "cta": {
+    "keyword": "MOTION",
+    "link_text": "stackpicks.dev/category/animation",
+    "sub": "20+ animation libs · curated"
+  }
+}

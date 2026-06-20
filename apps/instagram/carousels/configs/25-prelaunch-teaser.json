@@ -1,0 +1,49 @@
+{
+  "slug": "25-prelaunch-teaser",
+  "category": "·",
+  "hook": {
+    "eyebrow": "tomorrow.",
+    "headline": "the thing we've been quietly building <em>ships in 24 hours</em>.",
+    "sub": "01 · 07 · 2026 · 09:30 IST"
+  },
+  "cards": [
+    {
+      "label": "01 · why",
+      "title": "Because manual DMs don't scale.",
+      "body": "Every creator we talked to had the same problem: people comment on a post asking for a link, but only 20% ever get a DM back. The other 80% silently churn.",
+      "metric": "→ 80% of warm interest is being lost"
+    },
+    {
+      "label": "02 · what",
+      "title": "Built it. Quietly.",
+      "body": "We've been shipping it in the background for the last 8 weeks while you watched the dev-tool carousels go out. It's ready. Tomorrow you get to see it.",
+      "metric": "→ T-minus 24 hours"
+    },
+    {
+      "label": "03 · who",
+      "title": "Built by creators, for creators.",
+      "body": "Not enterprise. Not for big agencies. Built for the solo creator and small team who lives in their DMs and watches comments stack up faster than they can reply.",
+      "metric": "→ INR-first · global-friendly"
+    },
+    {
+      "label": "04 · when",
+      "title": "01 · 07 · 2026 · 09:30 IST.",
+      "body": "Same time, tomorrow. The reveal post drops here. No email list, no waitlist, no \"join the beta\" friction. Just open this profile tomorrow morning.",
+      "metric": "→ Wednesday · save the date"
+    },
+    {
+      "label": "05 · hint",
+      "title": "One word: automation.",
+      "body": "If you've ever wished your Instagram DMs could reply themselves to the easy stuff — so you could focus on the actual conversations — you're going to want this."
+    }
+  ],
+  "take": {
+    "use_if": "You're a creator who gets more DMs than they can reply to and you've started losing warm leads.",
+    "skip_if": "You're not on Instagram in any serious way — this won't be for you."
+  },
+  "cta": {
+    "keyword": "TOMORROW",
+    "link_text": "drops 01 · 07 · 2026 · 09:30 IST",
+    "sub": "just open this profile tomorrow"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "slug": "19-v0-vs-lovable",
+  "category": "ai · builders",
+  "hook": {
+    "eyebrow": "head-to-head",
+    "headline": "<em>v0</em> = Vercel polish. <em>Lovable</em> = full-stack speed.",
+    "sub": "we tested both for 7 days"
+  },
+  "cards": [
+    {
+      "label": "01 · v0",
+      "title": "v0 ships shadcn out of the box.",
+      "body": "Every v0 output is Next.js + Tailwind + shadcn. The code is clean enough to copy into a real Vercel project without rework. Best for individual components and polished landing pages.",
+      "metric": "→ pure frontend · production-grade"
+    },
+    {
+      "label": "02 · lovable",
+      "title": "Lovable wires auth + DB in the same prompt.",
+      "body": "Tell Lovable \"build me a Twitter clone with login.\" 10 min later: Supabase auth, Postgres schema, deployed URL, working signup. Frontend ships, backend ships, infra ships — all together.",
+      "metric": "→ full-stack · zero glue work"
+    },
+    {
+      "label": "03 · pick",
+      "title": "Pick v0 for components.",
+      "body": "If your existing app is already on Vercel + Next.js + shadcn — and you just need a fresh landing section, hero, or feature page — v0 outputs slot in cleanly. Lovable is overkill."
+    },
+    {
+      "label": "04 · pick",
+      "title": "Pick Lovable for whole apps.",
+      "body": "Zero-to-MVP in one session: idea → working web app with auth + DB + deploy. Trade: the output is harder to port out cleanly if you want to leave the platform later."
+    },
+    {
+      "label": "05 · oss",
+      "title": "Open-source alt: Bolt.new + Bolt.diy.",
+      "body": "Both v0 and Lovable have OSS-spirit alternatives. Bolt.new (hosted, generous free tier) and Bolt.diy (fully self-hosted, BYO API key) cover the same ground if you want zero subscription lock-in."
+    }
+  ],
+  "take": {
+    "use_if": "You're picking between v0 and Lovable for a NEW project today — match the tool to whether you need components or a whole app.",
+    "skip_if": "You already have an opinionated workflow with Cursor / Claude Code — adding a generator on top usually adds friction."
+  },
+  "cta": {
+    "keyword": "BUILDERS",
+    "link_text": "stackpicks.dev/alternatives/lovable",
+    "sub": "OSS alternatives · self-host"
+  }
+}

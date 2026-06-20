@@ -1,0 +1,49 @@
+{
+  "slug": "launch-autodm",
+  "category": "launch · autodm",
+  "hook": {
+    "eyebrow": "shipping today",
+    "headline": "Your <em>IG comments → DMs</em>, on autopilot.",
+    "sub": "we made stackpicks autodm · live now"
+  },
+  "cards": [
+    {
+      "label": "01 · what",
+      "title": "Comments become DMs. Automatically.",
+      "body": "Someone comments LINK on your post. Within 60 seconds they get a real DM from you with the link. No tabs open, no copy-paste, no losing warm interest.",
+      "metric": "→ 60s avg · 24/7 · zero touch"
+    },
+    {
+      "label": "02 · why",
+      "title": "80% of warm interest dies in your inbox.",
+      "body": "Every creator we talked to was losing 4 in 5 people who commented for a link. AutoDM closes the loop before the person scrolls away. The same posts, but 5× the conversions.",
+      "metric": "→ same content · 5× the conversions"
+    },
+    {
+      "label": "03 · setup",
+      "title": "60-second setup.",
+      "body": "1) Connect your IG account (Meta OAuth, official). 2) Tell it the keyword + the DM to send. 3) Done. Works on existing posts, new posts, reels. No code.",
+      "metric": "1 connect · 2 rules · 3 ship"
+    },
+    {
+      "label": "04 · safe",
+      "title": "Built on Meta's official API.",
+      "body": "AutoDM uses Instagram's official Private Reply API — same as ManyChat, Chatfuel, the big names. Your account is safe. No bots. No scraping. No risk of getting banned.",
+      "metric": "→ Meta-approved · creator-safe"
+    },
+    {
+      "label": "05 · price",
+      "title": "Starts at ₹499 · or $15.",
+      "body": "Creator tier ₹499/mo (~2,000 DMs). Pro ₹1,499/mo. Agency ₹4,999/mo. Yearly = 10× monthly (2 months free) + 25% DM cap bonus. Free trial · cancel anytime."
+    }
+  ],
+  "take": {
+    "use_if": "You're a creator or small team losing warm leads in your DMs and want them back without hiring a VA.",
+    "skip_if": "You're not on Instagram in any serious way, or you reply to every DM personally and want to keep it that way."
+  },
+  "cta": {
+    "keyword": "AUTODM",
+    "link_text": "autodm.stackpicks.dev",
+    "sub": "free trial · no card · INR or USD"
+  }
+}

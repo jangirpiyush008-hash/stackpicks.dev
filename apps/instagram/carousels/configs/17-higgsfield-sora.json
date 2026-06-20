@@ -1,0 +1,49 @@
+{
+  "slug": "17-higgsfield-sora",
+  "category": "ai · video",
+  "hook": {
+    "eyebrow": "prompt patterns that work",
+    "headline": "Sora 2 prompts that don't suck — start in <em>Higgsfield</em>, finish in Sora.",
+    "sub": "camera first · prose second"
+  },
+  "cards": [
+    {
+      "label": "01 · pattern",
+      "title": "Pick the shot before the scene.",
+      "body": "Most Sora prompts fail because they describe what's happening, not how the camera sees it. Pick the camera move first: dolly, orbit, push-in, crash-zoom. Then describe what's in frame.",
+      "metric": "→ \"slow orbit around\" > \"a person near\""
+    },
+    {
+      "label": "02 · tool",
+      "title": "Higgsfield has the shot library.",
+      "body": "Higgsfield lets you pick the camera move from a preset library — dolly, drone, handheld, whip-pan — before you write the prompt. Use it to storyboard. Then re-generate the final in Sora for cinema quality.",
+      "metric": "→ free tier: ~5 clips/day"
+    },
+    {
+      "label": "03 · prompt",
+      "title": "The 3-part formula.",
+      "body": "1) Camera move ('slow dolly-in on...'). 2) Subject + action ('a barista pulling an espresso shot'). 3) Lighting + mood ('warm morning window light, shallow focus').",
+      "metric": "→ keep it under 50 words"
+    },
+    {
+      "label": "04 · price",
+      "title": "Sora is $20 to start, $200 to live in.",
+      "body": "ChatGPT Plus ($20/mo) gives ~50 short Sora clips. ChatGPT Pro ($200/mo) gives ~500 clips at 1080p, 20-sec. Most creators waste credits on bad prompts — get them right in Higgsfield first.",
+      "metric": "Plus 50/mo · Pro 500/mo · 1080p · 20s"
+    },
+    {
+      "label": "05 · stack",
+      "title": "The cheap stack: Kling + Hailuo.",
+      "body": "If $20/mo is too much, Kling 2.5 (~$10/mo) and Hailuo (~$10/mo) deliver 80% of Sora quality at 5-10× lower cost. Pair with Higgsfield for camera control. Best price-to-quality combo in 2026."
+    }
+  ],
+  "take": {
+    "use_if": "You're making short-form video and tired of getting random outputs from prose prompts.",
+    "skip_if": "You're doing single one-off generations — the storyboard step isn't worth it for a one-shot."
+  },
+  "cta": {
+    "keyword": "SORA",
+    "link_text": "stackpicks.dev/tools/ai-for-video",
+    "sub": "every model · every price · every limit"
+  }
+}

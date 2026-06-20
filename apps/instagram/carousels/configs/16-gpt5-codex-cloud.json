@@ -1,0 +1,49 @@
+{
+  "slug": "16-gpt5-codex-cloud",
+  "category": "ai · coding",
+  "hook": {
+    "eyebrow": "shipped recently",
+    "headline": "GPT-5 Pro + <em>Codex Cloud</em> = your coding agent now runs without your laptop.",
+    "sub": "delegate · close laptop · come back to a PR"
+  },
+  "cards": [
+    {
+      "label": "01 · what",
+      "title": "Codex Cloud spins up a VM for every task.",
+      "body": "You say \"fix this race condition\" or \"add these tests\". Codex Cloud clones the repo into a sandboxed VM, runs the work, and sends back a PR. Your machine never has to be on.",
+      "metric": "→ parallel · sandboxed · no local setup"
+    },
+    {
+      "label": "02 · why",
+      "title": "You can run 5 tasks at once.",
+      "body": "Local agents are bound to one terminal, one model, one process. Cloud agents stack — kick off 5 bugs in 5 different VMs, go to lunch, review the PRs that came back.",
+      "metric": "→ async coding · the real unlock"
+    },
+    {
+      "label": "03 · model",
+      "title": "GPT-5 Pro is the default brain.",
+      "body": "Codex Cloud runs against GPT-5 Pro by default — strongest OpenAI model for code reasoning. Multi-file edits, test generation, refactors. Pairs with Codex CLI for local dev.",
+      "metric": "→ same engine, two surfaces"
+    },
+    {
+      "label": "04 · cost",
+      "title": "$20 to try. $200 to live in it.",
+      "body": "ChatGPT Plus ($20/mo) gets you limited Codex Cloud tasks. ChatGPT Pro ($200/mo) gets you generous quota + GPT-5 Pro included. Teams ($25/seat) for shared pools.",
+      "metric": "Plus $20 · Pro $200 · Team $25/seat"
+    },
+    {
+      "label": "05 · vs",
+      "title": "vs Claude Code / Cursor agent.",
+      "body": "Claude Code + Cursor agent run locally — fast iteration, you watch every step. Codex Cloud runs remotely — slower per task, but you can run 5 in parallel and walk away. Use both."
+    }
+  ],
+  "take": {
+    "use_if": "Your bottleneck is reviewing PRs, not writing code — Codex Cloud parallelises the writing.",
+    "skip_if": "You're a tight-loop interactive coder — local agents (Cursor / Claude Code) give faster feedback per edit."
+  },
+  "cta": {
+    "keyword": "GPT5",
+    "link_text": "stackpicks.dev/tools/ai-for-coding",
+    "sub": "pricing · rate-limits · honest take"
+  }
+}

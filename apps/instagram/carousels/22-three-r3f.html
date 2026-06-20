@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<title>StackPicks Carousel — 22-three-r3f</title>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --ink: #ffffff;
+    --muted: #9a9a9a;
+    --lime: #c6ff00;
+    --lime-glow: rgba(198,255,0,0.18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #1a1a1a; color: var(--ink);
+    font-family: 'Inter','Helvetica Neue',-apple-system,system-ui,sans-serif;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  .page { display: flex; flex-direction: column; align-items: center; padding: 32px 16px 80px; gap: 12px; }
+  .meta { color: #888; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 8px; font-weight: 500; }
+  .deck { display: flex; flex-direction: column; gap: 32px; align-items: center; }
+  .slide-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .slide-label { color: #999; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  .slide {
+    width: 540px; height: 540px; background: var(--bg); position: relative;
+    overflow: hidden; border-radius: 12px;
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.7);
+  }
+  .corners::before, .corners::after,
+  .corners > .tl, .corners > .tr {
+    content: ''; position: absolute; width: 18px; height: 18px;
+    border-color: rgba(255,255,255,0.18); border-style: solid;
+  }
+  .corners::before { top: 20px; left: 20px;   border-width: 1px 0 0 1px; }
+  .corners::after  { bottom: 20px; right: 20px; border-width: 0 1px 1px 0; }
+  .corners > .tl   { top: 20px; right: 20px; border-width: 1px 1px 0 0; }
+  .corners > .tr   { bottom: 20px; left: 20px;  border-width: 0 0 1px 1px; }
+  .topmeta {
+    position: absolute; top: 36px; left: 36px; right: 36px;
+    display: flex; justify-content: space-between;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.24em; color: rgba(255,255,255,0.45);
+    text-transform: uppercase; font-weight: 600;
+  }
+  .topmeta.dark { color: rgba(10,10,10,0.55); }
+  .bottommeta {
+    position: absolute; bottom: 36px; left: 36px; right: 36px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.24em; color: rgba(255,255,255,0.45);
+    text-transform: uppercase; font-weight: 600;
+  }
+  .bottommeta.dark { color: rgba(10,10,10,0.55); }
+
+  /* HOOK slide */
+  .hook {
+    background: radial-gradient(ellipse at 50% 38%, rgba(198,255,0,0.10) 0%, transparent 55%), var(--bg);
+  }
+  .hook .body {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    text-align: center; width: 86%;
+  }
+  .hook .eyebrow {
+    color: var(--lime); font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; margin-bottom: 18px; font-weight: 700;
+  }
+  .hook .head {
+    font-size: 44px; font-weight: 900; letter-spacing: -0.035em; line-height: 1.05; color: var(--ink);
+  }
+  .hook .head em { color: var(--lime); font-style: normal; text-shadow: 0 0 40px var(--lime-glow); }
+  .hook .sub {
+    margin-top: 22px; font-size: 14px; color: rgba(255,255,255,0.6);
+    font-family: 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.18em; text-transform: uppercase;
+  }
+
+  /* CARD slide */
+  .card {
+    background: var(--bg);
+  }
+  .card .lbl {
+    position: absolute; top: 76px; left: 48px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px; letter-spacing: 0.28em; color: var(--lime);
+    text-transform: uppercase; font-weight: 700;
+  }
+  .card .body { position: absolute; top: 130px; left: 48px; right: 48px; bottom: 88px; display: flex; flex-direction: column; }
+  .card .ttl {
+    font-size: 32px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; color: var(--ink); margin-bottom: 20px;
+  }
+  .card .ttl em { color: var(--lime); font-style: normal; }
+  .card .desc {
+    font-size: 16px; color: rgba(255,255,255,0.72); line-height: 1.5;
+  }
+  .card .metric {
+    margin-top: auto; padding: 14px 16px;
+    background: rgba(198,255,0,0.08);
+    border-left: 3px solid var(--lime);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px; color: var(--lime); letter-spacing: 0.04em;
+  }
+
+  /* TAKE slide */
+  .take { background: var(--bg); }
+  .take .lbl {
+    position: absolute; top: 76px; left: 48px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px; letter-spacing: 0.28em; color: var(--lime);
+    text-transform: uppercase; font-weight: 700;
+  }
+  .take .row { position: absolute; left: 48px; right: 48px; }
+  .take .row.r1 { top: 132px; }
+  .take .row.r2 { top: 312px; }
+  .take .row .tag {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--lime); font-weight: 700; margin-bottom: 12px;
+  }
+  .take .row .tag.skip { color: #ff5a5a; }
+  .take .row .txt {
+    font-size: 22px; font-weight: 700; line-height: 1.25; color: var(--ink); letter-spacing: -0.015em;
+  }
+
+  /* CTA slide */
+  .cta { background: var(--lime); color: #0a0a0a; }
+  .cta .hint {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    text-align: center; width: 86%;
+  }
+  .cta .hint .word1 {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px; letter-spacing: 0.36em; text-transform: uppercase; color: rgba(10,10,10,0.7);
+    font-weight: 700; margin-bottom: 18px;
+  }
+  .cta .hint .kw {
+    display: inline-block; padding: 14px 28px;
+    background: #0a0a0a; color: var(--lime);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 28px; font-weight: 800; letter-spacing: 0.06em;
+    margin-bottom: 26px;
+  }
+  .cta .hint .head {
+    font-size: 28px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.2; color: #0a0a0a;
+  }
+  .cta .hint .link {
+    margin-top: 20px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px; color: rgba(10,10,10,0.75); letter-spacing: 0.06em;
+  }
+  .cta .hint .sub {
+    margin-top: 14px; font-size: 12px; color: rgba(10,10,10,0.55);
+    font-family: 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.18em; text-transform: uppercase;
+  }
+
+  /* dev wrapper */
+  .caption {
+    margin-top: 40px; max-width: 540px; color: #d8d8d8;
+    font-size: 14px; line-height: 1.55; background: #232323;
+    padding: 18px 20px; border-radius: 10px; border: 1px solid #2f2f2f; width: 540px;
+  }
+  .caption .lbl {
+    color: var(--lime); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 8px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 600;
+  }
+</style>
+</head><body>
+<div class="page">
+  <div class="meta">22-three-r3f · v2 movie-poster · 8 slides</div>
+  <div class="deck">
+    <div class="slide-wrap">
+      <div class="slide-label">01 / 08 — hook</div>
+      <div class="slide hook corners">
+        <span class="tl"></span><span class="tr"></span>
+        <div class="topmeta"><span>post · 22</span><span>3d · web</span></div>
+        <div class="body">
+          <div class="eyebrow">the new 3D web stack</div>
+          <div class="head">Three.js + R3F just made <em>GLSL feel old</em>.</div>
+          <div class="sub">TSL · postprocessing · WebGPU</div>
+        </div>
+        <div class="bottommeta"><span>01 · 08</span><span>swipe →</span></div>
+      </div>
+    </div>
+    <div class="slide-wrap">
+      <div class="slide-label">02 / 08 — 01 · tsl</div>
+      <div class="slide card corners">
+        <span class="tl"></span><span class="tr"></span>
+        <div class="topmeta"><span>post · 22</span><span>3d · web</span></div>
+        <div class="lbl">01 · tsl</div>
+        <div class="body">
+          <div class="ttl">Three Shading Language is what GLSL should've been.</div>
+          <div class="desc">TSL lets you write shaders in JS — same expressiveness as GLSL, but typed, composable, and transpiled to both WebGL and WebGPU automatically. No more separate .glsl files.</div>
+          <div class="metric">→ JS in · WebGL+WebGPU out</div>
+        </div>
+        <div class="bottommeta"><span>02 · 08</span><span>swipe →</span></div>
+      </div>
+    </div>
+    <div class="slide-wrap">
+      <div class="slide-label">03 / 08 — 02 · r3f</div>
+      <div class="slide card corners">
+        <span class="tl"></span><span class="tr"></span>
+        <div class="topmeta"><span>post · 22</span><span>3d · web</span></div>
+        <div class="lbl">02 · r3f</div>
+        <div class="body">
+          <div class="ttl">R3F has first-class TSL hooks.</div>
+          <div class="desc">React Three Fiber added TSL support natively — useTslShader, MeshTslMaterial, the whole pipeline. Same React-component-mental-model you already use, just with shader nodes.</div>
+          <div class="metric">→ <MeshTslMaterial colorNode={...} /></div>
+        </div>
+        <div class="bottommeta"><span>03 · 08</span><span>swipe →</span></div>
+      </div>
+    </div>
+    <div class="slide-wrap">
+      <div class="slide-label">04 / 08 — 03 · post</div>
+      <div class="slide card corners">
+        <span class="tl"></span><span class="tr"></span>
+        <div class="topmeta"><span>post · 22</span><span>3d · web</span></div>
+        <div class="lbl">03 · post</div>
+        <div class="body">
+          <div class="ttl">postprocessing v7 = effect chains made composable.</div>
+          <div class="desc">Bloom + chromatic aberration + film grain + custom shader, in a single declarative React tree. Effects are now functions — pipe them together, animate any prop, hot-reload everything.</div>
+          <div class="metric">→ Bloom · ChromaticAberration · Film</div>
+        </div>
+        <div class="bottommeta"><span>04 · 08</span><span>swipe →</span></div>
+      </div>
+    </div>
+    <div class="slide-wrap">
+      <div class="slide-label">05 / 08 — 04 · webgpu</div>
+      <div class="slide card corners">
+        <span class="tl"></span><span class="tr"></span>
+        <div class="topmeta"><span>post · 22</span><span>3d · web</span></div>
+        <div class="lbl">04 · webgpu</div>
+        <div class="body">
+          <div class="ttl">WebGPU is finally everywhere.</div>
+          <div class="desc">Safari shipped WebGPU in 2025. Chrome and Edge have had it for years. Three.js + R3F let you write once → run on the new GPU backend automatically. ~2× faster on compute-heavy scenes.</div>
+          <div class="metric">→ 2× faster on heavy scenes</div>
+        </div>
+        <div class="bottommeta"><span>05 · 08</span><span>swipe →</span></div>
+      </div>
+    </div>
+    <div class="slide-wrap">
+      <div class="slide-label">06 / 08 — 05 · start</div>
+      <div class="slide card corners">
+        <span class="tl"></span><span class="tr"></span>
+        <div class="topmeta"><span>post · 22</span><span>3d · web</span></div>
+        <div class="lbl">05 · start</div>
+        <div class="body">
+          <div class="ttl">Start here.</div>
+          <div class="desc">1) `npx create-r3f@latest`. 2) Read drei docs (200+ helpers). 3) Steal from poimandres.github.io. 4) When you're ready, swap MeshStandardMaterial → MeshTslMaterial and start writing nodes.</div>
+          
+        </div>
+        <div class="bottommeta"><span>06 · 08</span><span>swipe →</span></div>
+      </div>
+    </div>
+    <div class="slide-wrap">
+      <div class="slide-label">07 / 08 — our take</div>
+      <div class="slide take corners">
+        <span class="tl"></span><span class="tr"></span>
+        <div class="topmeta"><span>post · 22</span><span>3d · web</span></div>
+        <div class="lbl">07 · honest take</div>
+        <div class="row r1">
+          <div class="tag">use this if</div>
+          <div class="txt">You're building anything with 3D on the web — TSL + postprocessing is the modern stack worth learning.</div>
+        </div>
+        <div class="row r2">
+          <div class="tag skip">skip if</div>
+          <div class="txt">You're shipping a content site with one hero animation — Lottie or Rive is lighter and easier.</div>
+        </div>
+        <div class="bottommeta"><span>07 · 08</span><span>one more →</span></div>
+      </div>
+    </div>
+    <div class="slide-wrap">
+      <div class="slide-label">08 / 08 — CTA</div>
+      <div class="slide cta corners">
+        <span class="tl"></span><span class="tr"></span>
+        <div class="topmeta dark"><span>post · 22</span><span>3d · web</span></div>
+        <div class="hint">
+          <div class="word1">comment this word</div>
+          <div class="kw">THREE</div>
+          <div class="head">i'll DM you the link.</div>
+          <div class="link">stackpicks.dev/category/three-d</div>
+          <div class="sub">every 3D lib · curated</div>
+        </div>
+        <div class="bottommeta dark"><span>08 · 08</span><span>stackpicks</span></div>
+      </div>
+    </div></div>
+  <div class="caption"><div class="lbl">cta keyword</div>THREE → DM stackpicks.dev/category/three-d</div>
+</div>
+</body></html>

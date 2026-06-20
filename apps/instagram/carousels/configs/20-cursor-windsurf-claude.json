@@ -1,0 +1,49 @@
+{
+  "slug": "20-cursor-windsurf-claude",
+  "category": "ai · ide",
+  "hook": {
+    "eyebrow": "the IDE wars · mid 2026",
+    "headline": "Three AI IDEs that <em>actually matter</em> in July 2026.",
+    "sub": "cursor 2 · windsurf · claude code"
+  },
+  "cards": [
+    {
+      "label": "01 · cursor",
+      "title": "Cursor 2 = the polished default.",
+      "body": "Strongest agent + chat hybrid. Biggest community of shared rules and workflows. If you switch nothing else for the rest of 2026, switch to Cursor 2 and don't look back.",
+      "metric": "$20/mo · Claude Sonnet 4 + GPT-5"
+    },
+    {
+      "label": "02 · windsurf",
+      "title": "Windsurf = the gentler ramp.",
+      "body": "Cascade agent asks before doing anything. Cleaner UI than Cursor. $5/mo cheaper. Best pick if you're new to AI-assisted coding and don't want the AI making moves you didn't approve.",
+      "metric": "$15/mo · same models · calmer"
+    },
+    {
+      "label": "03 · claude-code",
+      "title": "Claude Code = pure terminal.",
+      "body": "No GUI, no extensions, no electron. Open a terminal, type `claude`, talk to your repo. For devs who already live in tmux + vim and don't want a third VS Code instance eating their RAM.",
+      "metric": "BYO API · Opus + Sonnet · CLI"
+    },
+    {
+      "label": "04 · pick",
+      "title": "When to pick which.",
+      "body": "Daily heavy use → Cursor 2. New to AI coding → Windsurf. Terminal native + want to script agents into CI → Claude Code. All three use the same underlying models — the difference is workflow ergonomics."
+    },
+    {
+      "label": "05 · india",
+      "title": "Cheapest for solo devs in India.",
+      "body": "Claude Code: BYO key, ~₹2-4k/mo for typical use. Cursor Pro: ₹1,700/mo flat. Windsurf Pro: ₹1,250/mo. Windsurf wins on predictable cost. Claude Code wins on pay-as-you-go.",
+      "metric": "Windsurf ₹1,250 · Cursor ₹1,700 · Claude ~₹2-4k"
+    }
+  ],
+  "take": {
+    "use_if": "You're picking your first (or next) AI IDE in mid-2026 — go Cursor 2 unless you have a specific reason.",
+    "skip_if": "You've already got an opinionated setup that works — switching IDEs costs 2 weeks of ergonomic relearning."
+  },
+  "cta": {
+    "keyword": "IDE",
+    "link_text": "stackpicks.dev/blog/cursor-2-vs-windsurf-vs-claude-code-2026",
+    "sub": "full benchmark + side-by-side table"
+  }
+}

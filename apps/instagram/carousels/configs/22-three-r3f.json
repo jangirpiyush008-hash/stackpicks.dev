@@ -1,0 +1,49 @@
+{
+  "slug": "22-three-r3f",
+  "category": "3d · web",
+  "hook": {
+    "eyebrow": "the new 3D web stack",
+    "headline": "Three.js + R3F just made <em>GLSL feel old</em>.",
+    "sub": "TSL · postprocessing · WebGPU"
+  },
+  "cards": [
+    {
+      "label": "01 · tsl",
+      "title": "Three Shading Language is what GLSL should've been.",
+      "body": "TSL lets you write shaders in JS — same expressiveness as GLSL, but typed, composable, and transpiled to both WebGL and WebGPU automatically. No more separate .glsl files.",
+      "metric": "→ JS in · WebGL+WebGPU out"
+    },
+    {
+      "label": "02 · r3f",
+      "title": "R3F has first-class TSL hooks.",
+      "body": "React Three Fiber added TSL support natively — useTslShader, MeshTslMaterial, the whole pipeline. Same React-component-mental-model you already use, just with shader nodes.",
+      "metric": "→ <MeshTslMaterial colorNode={...} />"
+    },
+    {
+      "label": "03 · post",
+      "title": "postprocessing v7 = effect chains made composable.",
+      "body": "Bloom + chromatic aberration + film grain + custom shader, in a single declarative React tree. Effects are now functions — pipe them together, animate any prop, hot-reload everything.",
+      "metric": "→ Bloom · ChromaticAberration · Film"
+    },
+    {
+      "label": "04 · webgpu",
+      "title": "WebGPU is finally everywhere.",
+      "body": "Safari shipped WebGPU in 2025. Chrome and Edge have had it for years. Three.js + R3F let you write once → run on the new GPU backend automatically. ~2× faster on compute-heavy scenes.",
+      "metric": "→ 2× faster on heavy scenes"
+    },
+    {
+      "label": "05 · start",
+      "title": "Start here.",
+      "body": "1) `npx create-r3f@latest`. 2) Read drei docs (200+ helpers). 3) Steal from poimandres.github.io. 4) When you're ready, swap MeshStandardMaterial → MeshTslMaterial and start writing nodes."
+    }
+  ],
+  "take": {
+    "use_if": "You're building anything with 3D on the web — TSL + postprocessing is the modern stack worth learning.",
+    "skip_if": "You're shipping a content site with one hero animation — Lottie or Rive is lighter and easier."
+  },
+  "cta": {
+    "keyword": "THREE",
+    "link_text": "stackpicks.dev/category/three-d",
+    "sub": "every 3D lib · curated"
+  }
+}

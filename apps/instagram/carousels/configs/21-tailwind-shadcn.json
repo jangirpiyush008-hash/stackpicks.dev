@@ -1,0 +1,49 @@
+{
+  "slug": "21-tailwind-shadcn",
+  "category": "ui · design systems",
+  "hook": {
+    "eyebrow": "shipped in 2026",
+    "headline": "Tailwind v4 + <em>shadcn registry</em> = shippable design systems in 5 lines.",
+    "sub": "bring your own components"
+  },
+  "cards": [
+    {
+      "label": "01 · tailwind",
+      "title": "Tailwind v4 is native CSS now.",
+      "body": "v4 dropped the JS config — everything is CSS variables, processed at build time. Smaller runtime, faster Vite/Next builds, easier to theme. If you're still on v3 you're already behind.",
+      "metric": "→ 5× faster builds · zero JS at runtime"
+    },
+    {
+      "label": "02 · registry",
+      "title": "shadcn registry = npm for components.",
+      "body": "Publish your own component registry (or use a team's), then anyone runs `npx shadcn add @yourcompany/button` and gets your version of Button — code dropped into their repo, not a dep.",
+      "metric": "npx shadcn add @yourcompany/button"
+    },
+    {
+      "label": "03 · why",
+      "title": "Bring-your-own design system.",
+      "body": "Old way: build a component library, publish to npm, version-lock all consumers. New way: publish a registry, consumers copy the code, own it, modify it. No version hell.",
+      "metric": "→ code over deps · always"
+    },
+    {
+      "label": "04 · setup",
+      "title": "Set up your own in 10 minutes.",
+      "body": "Create a registry.json with your component manifests, host it on Vercel (or any static), point shadcn CLI at it. Done. Your whole team can `shadcn add` from your URL."
+    },
+    {
+      "label": "05 · examples",
+      "title": "Three registries worth stealing from.",
+      "body": "1) Tremor (charts). 2) Aceternity (animated heroes). 3) Magic UI (gradients + glows). All shadcn-compatible. Mix and match — they all use the same Button under the hood.",
+      "metric": "→ Tremor · Aceternity · Magic UI"
+    }
+  ],
+  "take": {
+    "use_if": "Your team rebuilds the same 5 components in every project — package them as a registry once.",
+    "skip_if": "You're a solo dev with 1 active project — copy-paste from shadcn docs is still faster than maintaining a registry."
+  },
+  "cta": {
+    "keyword": "SHADCN",
+    "link_text": "stackpicks.dev/category/ui",
+    "sub": "20+ UI libs · curated for 2026"
+  }
+}

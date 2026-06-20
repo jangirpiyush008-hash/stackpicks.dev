@@ -1,0 +1,49 @@
+{
+  "slug": "23-notion-claude-chatgpt",
+  "category": "ai · workspace",
+  "hook": {
+    "eyebrow": "the connector wars",
+    "headline": "Notion AI 3 · Claude Connectors · <em>ChatGPT Apps</em>.",
+    "sub": "your tools, inside your AI"
+  },
+  "cards": [
+    {
+      "label": "01 · notion",
+      "title": "Notion AI 3 = workspace as the agent.",
+      "body": "Notion AI now talks to your databases, your pages, your Slack, your Gmail — all from one chat box inside Notion. It plans, drafts, updates pages, sends DMs. Workspace-native agent.",
+      "metric": "→ in Business+ plans · $24/user/mo"
+    },
+    {
+      "label": "02 · claude",
+      "title": "Claude Connectors = MCP, but consumer-ready.",
+      "body": "Connectors let Claude (web + desktop + mobile) talk to Google Drive, Slack, Notion, Linear, Gmail — without you running an MCP server. One-click OAuth, zero infra. MCP under the hood.",
+      "metric": "→ free on Claude Pro · 1-click OAuth"
+    },
+    {
+      "label": "03 · chatgpt",
+      "title": "ChatGPT Apps = mini-apps inside chat.",
+      "body": "Third parties (Spotify, Canva, Zillow, Booking) ship interactive UIs that render inside the ChatGPT chat. Pick a song, browse a listing, design a card — without leaving the conversation.",
+      "metric": "→ free on ChatGPT · launching in waves"
+    },
+    {
+      "label": "04 · pick",
+      "title": "When to pick which.",
+      "body": "Lives in Notion daily → Notion AI 3. Wants Claude smart + tools-everywhere → Connectors. Lives in ChatGPT + wants third-party UI → Apps. The three are converging — same idea, different surface."
+    },
+    {
+      "label": "05 · build",
+      "title": "Want to build for these?",
+      "body": "All three speak MCP. Build one MCP server, expose it as a Claude Connector + a ChatGPT App + a Notion integration. One protocol, three distribution channels. Massive leverage.",
+      "metric": "→ build once · ship to 3 platforms"
+    }
+  ],
+  "take": {
+    "use_if": "You're picking which AI surface to invest in — pick the one that matches where your actual work happens.",
+    "skip_if": "You jump between AIs constantly — none of these will save you, you need a meta-layer (which is the StackPicks Connect bet)."
+  },
+  "cta": {
+    "keyword": "MCP",
+    "link_text": "stackpicks.dev/mcp",
+    "sub": "50+ MCP servers · one place"
+  }
+}

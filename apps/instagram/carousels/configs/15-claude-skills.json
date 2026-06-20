@@ -1,0 +1,49 @@
+{
+  "slug": "15-claude-skills",
+  "category": "ai · agents",
+  "hook": {
+    "eyebrow": "what's new in 2026",
+    "headline": "Claude <em>Skills</em> turn one good prompt into a real, reusable agent.",
+    "sub": "no SDK · no infra · no glue code"
+  },
+  "cards": [
+    {
+      "label": "01 · what",
+      "title": "A Skill is a folder.",
+      "body": "A skill is just a directory with a SKILL.md, supporting files, and optional scripts. Claude reads the SKILL.md, follows the instructions, calls the scripts when it needs them. That's it.",
+      "metric": "→ git-versioned · shareable · diff-able"
+    },
+    {
+      "label": "02 · why",
+      "title": "Prompts evaporate. Skills compound.",
+      "body": "Your best 800-word prompt only lives in your chat history. The same workflow as a Skill is a file you commit, reuse, share with your team, and improve over time.",
+      "metric": "→ one Skill = one repeatable workflow forever"
+    },
+    {
+      "label": "03 · stack",
+      "title": "Composes with MCP.",
+      "body": "A Skill can call MCP tools the same way Claude does — your CRM, your repo, your Notion. Skills are the recipe; MCP servers are the ingredients.",
+      "metric": "→ skill + MCP = full agent in <50 LOC"
+    },
+    {
+      "label": "04 · how",
+      "title": "Install in 30 seconds.",
+      "body": "Drop a folder into ~/.claude/skills/, restart Claude Code or the desktop app, and Claude can use it. No build step, no install command, no auth dance.",
+      "metric": "$ mkdir ~/.claude/skills/my-skill"
+    },
+    {
+      "label": "05 · example",
+      "title": "Real one: weekly LinkedIn post.",
+      "body": "SKILL.md tells Claude: pull last week's commits via the git MCP, draft a post in my voice, save to drafts/. Run /skill linkedin every Friday. That's a 3-step automation, zero framework."
+    }
+  ],
+  "take": {
+    "use_if": "You repeat the same long prompt more than 3 times — a Skill replaces it forever.",
+    "skip_if": "You're a one-shot prompter and don't have repeatable workflows yet — start with MCP first."
+  },
+  "cta": {
+    "keyword": "SKILLS",
+    "link_text": "stackpicks.dev/blog/claude-skills",
+    "sub": "free deep dive · no signup"
+  }
+}
