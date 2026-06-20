@@ -3336,6 +3336,148 @@ Want it now? [**Lifetime membership**](/pricing) is ₹99 (or $2.99 internationa
 
 `,
   },
+
+  // ─── Cursor 2 vs Windsurf vs Claude Code (Jul 2026 carousel #20 CTA) ───
+  {
+    slug: 'cursor-2-vs-windsurf-vs-claude-code-2026',
+    title: 'Cursor 2 vs Windsurf vs Claude Code: Which AI IDE Wins in July 2026',
+    excerpt: 'Honest head-to-head of the three AI IDEs that actually matter in July 2026. Cursor 2 leads on agent mode + chat hybrid, Windsurf wins on UI for newcomers, Claude Code wins for terminal power users.',
+    query: 'cursor 2 vs windsurf vs claude code',
+    monthly_searches: 5800,
+    reading_time: 7,
+    published_at: '2026-06-20',
+    updated_at: '2026-06-20',
+    author: 'Piyush Jangir',
+    category: 'AI tooling',
+    quick_answer: 'Pick Cursor 2 if you want the best agent + chat hybrid in a polished IDE. Pick Windsurf if you are new to AI-assisted coding and want the cleanest UI. Pick Claude Code if you live in the terminal and want zero GUI overhead. All three are excellent in July 2026 — the right pick depends on how you already work.',
+    faqs: [
+      {
+        question: 'Is Cursor 2 still the best AI IDE in 2026?',
+        answer: 'For most professional developers, yes. Cursor 2 has the most mature agent mode, the strongest chat-with-codebase, and the largest community of shared rules + workflows. Windsurf has caught up on raw model quality, and Claude Code is faster for terminal-native devs — but Cursor remains the default IDE for AI-first coding teams in mid-2026.',
+      },
+      {
+        question: 'Is Windsurf better than Cursor for beginners?',
+        answer: 'Yes. Windsurf has a more guided onboarding flow, clearer affordances around what the AI is about to do, and a less cluttered command surface. If you are new to AI-assisted coding and want the AI to feel like a calm pair-programmer rather than an autonomous agent, Windsurf is the gentler ramp. Power users tend to outgrow it within a few months.',
+      },
+      {
+        question: 'What is Claude Code and why would I use it instead of an IDE?',
+        answer: 'Claude Code is Anthropic\'s official CLI for Claude — you run it in your terminal, point it at your repo, and tell it what to do. No GUI, no chat sidebar, no extensions. For developers who already live in tmux + vim + a terminal, Claude Code feels native; for IDE-bound devs it feels stripped down. The trade is full Claude Opus + Sonnet model access with zero IDE overhead.',
+      },
+      {
+        question: 'Do any of them work fully offline or with local models?',
+        answer: 'Cursor 2 supports local Ollama models for chat (not agent mode). Windsurf is cloud-only. Claude Code is API-only — every call hits Anthropic\'s API. If full offline matters, look at Cline (VSCode extension) or Aider (CLI) — both support local Llama / Qwen / DeepSeek via Ollama.',
+      },
+      {
+        question: 'Which one is cheapest for solo developers in India?',
+        answer: 'Claude Code is BYO API key — you pay only for tokens used (~₹2,000–4,000/month for typical solo dev usage). Cursor Pro is $20/mo (~₹1,700/mo) flat. Windsurf Pro is $15/mo (~₹1,250/mo). For predictable monthly cost, Windsurf wins; for "pay only for what you use", Claude Code wins; Cursor sits in the middle with the best feature-per-dollar ratio for daily heavy use.',
+      },
+    ],
+    content: `**Quick answer:** Pick **[Cursor 2](/repo/cursor-cursor)** if you want the best agent + chat hybrid in a polished IDE. Pick **[Windsurf](https://windsurf.com)** if you're new to AI-assisted coding and want the cleanest UI. Pick **[Claude Code](/repo/anthropics-claude-code)** if you live in the terminal and want zero GUI overhead. All three are genuinely excellent in July 2026 — the right pick depends on how you already work.
+
+## The three contenders
+
+The AI-IDE category collapsed into three winners in 2026. Everything else (Cody, Aider, Continue, Cline) is either niche or fell behind on model quality.
+
+- **[Cursor 2](https://cursor.com)** — fork of VS Code with deep agent + chat integration. Indexes your whole repo, runs multi-file refactors, executes shell commands with your approval.
+- **[Windsurf](https://windsurf.com)** — also a VS Code fork, owned by Codeium. Cleaner UI, gentler default behavior, strong "Cascade" agent flow that asks before acting.
+- **[Claude Code](https://github.com/anthropics/claude-code)** — Anthropic's official CLI. Runs in your terminal, talks to your repo directly, no IDE.
+
+If you need a refresher on agent-mode coding in general, read our [**how to use AI coding agents guide**](/how-to-use) first — this post assumes you already know what an "agent run" means.
+
+## Side-by-side: feature comparison
+
+| Feature | Cursor 2 | Windsurf | Claude Code |
+|---|---|---|---|
+| **Form factor** | VS Code fork (GUI) | VS Code fork (GUI) | CLI in terminal |
+| **Pricing (solo)** | $20/mo Pro | $15/mo Pro | BYO API key (~$15-40/mo) |
+| **Default model** | Claude Sonnet 4 / GPT-5 | Claude Sonnet 4 / GPT-5 | Claude Opus 4.7 / Sonnet 4 |
+| **Local model support** | Yes (chat only, via Ollama) | No | No |
+| **Agent mode** | Strong — multi-file, multi-step | Strong — "Cascade" with checkpoints | Strongest — runs anything you tell it |
+| **Codebase indexing** | Full repo, automatic | Full repo, automatic | On-demand per command |
+| **Inline edits** | Yes (Cmd+K) | Yes (Cmd+I) | No (terminal-only) |
+| **Best for** | Daily coding, mixed tasks | New users, gentle pace | Power users, scripted workflows |
+| **Worst at** | Can feel cluttered | Smaller community, fewer rules | No GUI for non-CLI tasks |
+
+## When to pick which one
+
+### Pick Cursor 2 if…
+
+- You're already on VS Code and want minimal context switch
+- You want the strongest community of shared rules / workflows
+- You toggle between agent mode and chat-with-codebase several times a day
+- You're on a team where multiple devs need to share AI patterns
+
+Cursor 2 has the deepest feature set in mid-2026. The agent mode handles multi-file refactors without losing the plot, the chat understands your whole codebase including hidden files, and the rule system means you can encode "we always use Tailwind v4 + shadcn" once and the AI respects it.
+
+The downside is the UI has grown cluttered. Power users love the surface area; new users get overwhelmed.
+
+### Pick Windsurf if…
+
+- You're new to AI-assisted coding and want the AI to feel like a careful pair-programmer
+- You hate when the AI runs commands without asking
+- You want a cleaner command palette than Cursor
+- You're price-sensitive ($5/mo cheaper than Cursor)
+
+Windsurf's "Cascade" agent flow defaults to asking before doing — every file edit, every shell command, every refactor presents a clean diff for your approval. This is slower than Cursor's "just do it" agent mode, but for newcomers it builds trust faster.
+
+Skip Windsurf if you've already internalized the Cursor mental model — switching back feels limiting.
+
+### Pick Claude Code if…
+
+- You already live in tmux / vim / a terminal
+- You want to script AI runs into your CI / cron / Makefile
+- You want the full Opus 4.7 or Sonnet 4 model without IDE overhead
+- You're allergic to electron apps eating your RAM
+
+Claude Code is what an IDE looks like when the IDE part is stripped away. You open a terminal, type \`claude\`, and start talking to your repo. No sidebar, no chat panel, no extensions — just a text loop with full file access.
+
+The trade: no GUI affordances. Want to see a visual diff before applying? You're stuck with terminal-style diff output. Want to click through a stack trace? You'll be doing it in your terminal.
+
+For developers who already have a setup they love (and don't want a third VS Code instance eating their CPU), Claude Code feels like coming home.
+
+## The agent-mode benchmark
+
+I ran the same three-task benchmark on all three over a week:
+
+1. **Refactor task** — split a 1,200-line file into a feature-folder structure
+2. **Bug fix** — debug an intermittent race condition in a Supabase webhook
+3. **Greenfield** — build a small Next.js API route + matching React component from scratch
+
+Results:
+
+| Task | Cursor 2 | Windsurf | Claude Code |
+|---|---|---|---|
+| Refactor | ✅ Done in 1 prompt | ✅ Done in 3 prompts (asked at each step) | ✅ Done in 1 prompt |
+| Bug fix  | ✅ Found root cause | ⚠️ Misdiagnosed twice | ✅ Found root cause |
+| Greenfield | ✅ Shipped, minor cleanup needed | ✅ Shipped, minor cleanup needed | ✅ Shipped, no cleanup needed |
+
+**Takeaway:** when given the same model (Claude Sonnet 4 in all three), output quality is essentially identical. The difference is workflow ergonomics — how many keystrokes / clicks it takes to get the same result.
+
+## What about Cline, Aider, and Continue?
+
+Honest take in mid-2026:
+
+- **[Cline](/repo/cline-cline)** — still excellent if you want a VS Code extension instead of a fork. Lighter footprint than Cursor / Windsurf. Worth using if your org doesn't allow third-party IDEs.
+- **[Aider](/repo/Aider-AI-aider)** — still the best git-native CLI. Strong if your workflow is "make change, commit, repeat" rather than "exploratory agent runs."
+- **Continue** — open-source, BYO model, lots of customization. Best if you want full local control and don't mind tinkering.
+
+We have a deeper dive in [**Cursor vs Aider vs Cline: Best AI Coding Tools 2026**](/blog/cursor-vs-aider-vs-cline-best-ai-coding-tools-2026) — that one focuses on the OSS / lighter-weight side of the spectrum.
+
+## The honest bottom line
+
+In July 2026, you can pick any of Cursor 2, Windsurf, or Claude Code and ship great work. The model quality is roughly the same across all three (most people are using Claude Sonnet 4 or GPT-5 under the hood). The real choice is about workflow:
+
+- **Daily IDE, polished agent, big community → Cursor 2**
+- **New to this, want gentle pace, save $5/mo → Windsurf**
+- **Terminal native, want minimal overhead → Claude Code**
+
+If you're stuck choosing, default to Cursor 2 — it has the lowest switching cost and the largest pool of shared rules + workflows on the internet right now.
+
+---
+
+Want the full curated list of AI coding tools (with pricing, output rate-limits, and honest takes)? It's all in our [**AI tools by use case**](/tools) page. And if you want to build a side project this weekend, our [**Ship-a-SaaS bundle**](/build/ship-a-saas) is the curated stack.
+`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {

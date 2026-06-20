@@ -122,6 +122,19 @@ export const TOOLS_BY_USE_CASE: UseCaseSection[] = [
           { name: 'ChatGPT Plus', price: '$20/mo',  limit: '~150 requests / 5 hr (codex)', reset: '5 hours', output: 'Light coding tasks. Better used in chat for plans, Codex for execution.' },
         ],
       },
+      {
+        name: 'Codex Cloud',
+        url: 'https://openai.com/codex',
+        license: 'paid',
+        vendor: 'OpenAI',
+        take: 'Cloud-hosted Codex agent — spins up its own sandboxed VM per task. You delegate "fix this bug", "write these tests", "refactor this folder" and get a PR back. No local setup, no laptop required.',
+        best_for: 'Anyone who wants delegated coding work running in parallel while they do other things.',
+        tiers: [
+          { name: 'ChatGPT Plus',  price: '$20/mo',  limit: 'Limited Codex Cloud tasks / mo',           reset: 'monthly', output: 'Try the workflow. A few small bugfix PRs per day.' },
+          { name: 'ChatGPT Pro',   price: '$200/mo', limit: 'Generous Codex Cloud + GPT-5 Pro included', reset: 'monthly', output: 'Heavy parallel delegation. Multiple long-running tasks at once.' },
+          { name: 'Business / Edu', price: '$25/user/mo', limit: 'Shared Codex Cloud pool',            reset: 'monthly', output: 'Team setup. Per-seat pricing scales with usage.' },
+        ],
+      },
     ],
   },
 
@@ -195,6 +208,19 @@ export const TOOLS_BY_USE_CASE: UseCaseSection[] = [
           { name: 'Free',         price: '$0',     limit: '~3 videos/day',           reset: 'daily',   output: 'Casual experimentation. Quick test ideas.' },
           { name: 'Standard',     price: '$10/mo', limit: '~1,000 credits/mo',       reset: 'monthly', output: 'Solid solo-creator tier.' },
           { name: 'Unlimited',    price: '$95/mo', limit: 'Unlimited generation queue', reset: 'none', output: 'High-volume daily production.' },
+        ],
+      },
+      {
+        name: 'Higgsfield',
+        url: 'https://higgsfield.ai',
+        license: 'paid',
+        vendor: 'Higgsfield AI',
+        take: 'Camera-control first. Dolly, orbit, push-in, crash-zoom — Higgsfield lets you pick a real cinematography move from a preset library instead of fighting prose prompts. Best paired with Sora / Veo by storyboarding here then re-generating finals there.',
+        best_for: 'Creators who want film-grade camera language without writing 200-word prompts.',
+        tiers: [
+          { name: 'Free',     price: '$0',     limit: '~5 credits/day (Lite tier)',     reset: 'daily',   output: '1–2 short clips/day with watermark. Enough to learn the camera presets.' },
+          { name: 'Basic',    price: '$9/mo',  limit: '~150 credits/mo, no watermark',  reset: 'monthly', output: '~30 short clips/month. Side-project volume.' },
+          { name: 'Pro',      price: '$29/mo', limit: '~600 credits/mo, priority queue', reset: 'monthly', output: 'Full-time creator volume. Daily camera-driven shots.' },
         ],
       },
       {

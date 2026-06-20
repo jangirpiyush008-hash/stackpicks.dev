@@ -946,6 +946,62 @@ export const ALTERNATIVES: AlternativePage[] = [
       },
     ],
   },
+
+  // ─── AI app builders — Lovable ────────────────────────────────────
+  {
+    slug: 'lovable',
+    saas_name: 'Lovable',
+    query: 'open source alternative to lovable',
+    monthly_searches: 4400,
+    category: 'AI builders',
+    saas_blurb: 'Lovable is the AI full-stack builder that ships an entire app — frontend, auth, database, deploy — from a single prompt. People want open-source alternatives that run locally, BYO their own LLM keys, and let them fully own the generated code.',
+    picks: [
+      {
+        full_name: 'stackblitz/bolt.new',
+        short_name: 'Bolt.new',
+        curator_take: 'Bolt.new is the closest hosted Lovable competitor that\'s also generous with the free tier. Live in-browser preview powered by Stackblitz WebContainers, ships full Next.js / Vite / Remix / SvelteKit apps end-to-end. Less polished than Lovable on auth/DB scaffolding, but the free tier is wider and the open-source CLI version (bolt.diy) gives you full self-host control.',
+        use_this_if: 'You want Lovable-style "describe an app, get a full repo" but with a real free tier and an OSS escape hatch.',
+        skip_if: 'You depend on Lovable\'s one-click Supabase + Stripe wiring — Bolt asks you to plug those in yourself.',
+        homepage: 'https://bolt.new',
+        license: 'MIT',
+        stars_approx: 14000,
+        self_hosted: false,
+      },
+      {
+        full_name: 'stackblitz/bolt.diy',
+        short_name: 'Bolt.diy',
+        curator_take: 'The fully open-source version of Bolt.new — run locally, BYO API key (Claude, GPT, DeepSeek, Ollama, Gemini, Mistral). No subscription, no usage caps. The most flexible alternative if you want full control over the model + generation pipeline. Slower than the hosted version because preview runs on your machine, but you own everything.',
+        use_this_if: 'You want zero recurring cost, model choice freedom, or you\'re building inside an environment where data can\'t leave your network.',
+        skip_if: 'You want one-click deploy / share — hosted Bolt or Lovable is much faster to ship.',
+        homepage: 'https://github.com/stackblitz/bolt.diy',
+        license: 'MIT',
+        stars_approx: 14000,
+        self_hosted: true,
+      },
+      {
+        full_name: 'cline/cline',
+        short_name: 'Cline',
+        curator_take: 'Cline runs as a VSCode extension and can plan + execute multi-file app changes against any model (Claude Sonnet, GPT-5, local). Not a Lovable clone exactly — it doesn\'t do live-preview hosting — but for the "describe a full app, watch it build" workflow inside your real editor, it is the strongest free alternative.',
+        use_this_if: 'You live in VSCode and want Lovable-like agentic generation without leaving your editor.',
+        skip_if: 'You want the chat + live web preview UX Lovable offers — Cline is purely editor-side.',
+        homepage: 'https://cline.bot',
+        license: 'Apache-2.0',
+        stars_approx: 28000,
+        self_hosted: true,
+      },
+      {
+        full_name: 'All-Hands-AI/OpenHands',
+        short_name: 'OpenHands',
+        curator_take: 'OpenHands (formerly OpenDevin) gives you an autonomous coding agent in a sandboxed container — it can clone repos, edit files, run tests, deploy. Closest open-source spirit to what Lovable does behind the scenes. Heavier to set up than a SaaS, but the agent loop is genuinely impressive once running.',
+        use_this_if: 'You want an autonomous agent that owns the whole build loop end-to-end and you\'re OK running Docker locally.',
+        skip_if: 'You want a polished UI for non-engineers — OpenHands is built for developers comfortable with logs and Docker.',
+        homepage: 'https://github.com/All-Hands-AI/OpenHands',
+        license: 'MIT',
+        stars_approx: 40000,
+        self_hosted: true,
+      },
+    ],
+  },
 ];
 
 export function getAlternativePageBySlug(slug: string): AlternativePage | undefined {
