@@ -38,16 +38,24 @@ interface Args {
   at?: string;
   cta?: string;
   cover?: string;
+  caption?: string;      // override the auto-generated caption
+  noHashtags?: boolean;  // skip hashtags entirely (teasers, brand drops)
 }
 
 function parseArgs(): Args {
   const argv = process.argv.slice(2);
   const files: string[] = [];
   const flags: Record<string, string> = {};
+  const BOOL_FLAGS = new Set(['no-hashtags']);
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a.startsWith('--')) {
-      flags[a.slice(2)] = argv[++i];
+      const name = a.slice(2);
+      if (BOOL_FLAGS.has(name)) {
+        flags[name] = '1';
+      } else {
+        flags[name] = argv[++i];
+      }
     } else {
       files.push(a);
     }
@@ -63,6 +71,8 @@ function parseArgs(): Args {
     at: flags.at,
     cta: flags.cta,
     cover: flags.cover,
+    caption: flags.caption,
+    noHashtags: 'no-hashtags' in flags,
   };
 }
 
@@ -178,11 +188,20 @@ async function main() {
   if (coverUrl) console.log(`  ✓ cover → ${coverUrl}`);
 
   const scheduledAt = args.at ? new Date(args.at) : await nextOpenSlot(args.type);
-  const { caption, hashtags } = generateCaption({
-    topic: args.topic,
-    postType: args.type,
-    cta: args.cta,
-  });
+  // Caption / hashtags resolution:
+  //   --caption "..."   → use as-is (teasers, brand drops, custom moments)
+  //   --no-hashtags     → leave hashtags empty (algorithm-neutral, less spammy)
+  //   default           → auto-generate from topic + type via core/instagram/captions
+  let caption: string;
+  let hashtags: string;
+  if (args.caption) {
+    caption = args.caption;
+    hashtags = args.noHashtags ? '' : generateCaption({ topic: args.topic, postType: args.type, cta: args.cta }).hashtags;
+  } else {
+    const gen = generateCaption({ topic: args.topic, postType: args.type, cta: args.cta });
+    caption = gen.caption;
+    hashtags = args.noHashtags ? '' : gen.hashtags;
+  }
 
   const { data, error } = await supa.from('ig_queue').insert({
     post_type: args.type,

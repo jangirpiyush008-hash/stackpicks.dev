@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>StackPicks Carousel — Teaser (post #14) — movie poster</title>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --ink: #ffffff;
+    --muted: #9a9a9a;
+    --lime: #c6ff00;
+    --lime-soft: #daff5e;
+    --lime-glow: rgba(198, 255, 0, 0.18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #1a1a1a;
+    color: var(--ink);
+    font-family: 'Inter', 'Helvetica Neue', -apple-system, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  .page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 80px;
+    gap: 12px;
+  }
+  .meta {
+    color: #888;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .deck {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    align-items: center;
+  }
+  .slide-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .slide-label {
+    color: #999;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  .slide {
+    width: 540px;
+    height: 540px;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.7);
+  }
+
+  /* shared poster frame — corner ticks */
+  .corners::before, .corners::after,
+  .corners > .tl, .corners > .tr {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-color: rgba(255,255,255,0.18);
+    border-style: solid;
+  }
+  .corners::before { top: 20px; left: 20px;   border-width: 1px 0 0 1px; }
+  .corners::after  { bottom: 20px; right: 20px; border-width: 0 1px 1px 0; }
+  .corners > .tl   { top: 20px; right: 20px; border-width: 1px 1px 0 0; }
+  .corners > .tr   { bottom: 20px; left: 20px;  border-width: 0 0 1px 1px; }
+
+  .topmeta {
+    position: absolute;
+    top: 36px; left: 36px; right: 36px;
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .topmeta.dark { color: rgba(10,10,10,0.55); }
+  .bottommeta {
+    position: absolute;
+    bottom: 36px; left: 36px; right: 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .bottommeta.dark { color: rgba(10,10,10,0.55); }
+
+  /* ============ SLIDE 1 — "ssshh." ============ */
+  .s1 {
+    background:
+      radial-gradient(ellipse at 50% 38%, rgba(198,255,0,0.10) 0%, transparent 55%),
+      var(--bg);
+  }
+  .s1 .center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .s1 .word {
+    font-family: 'Inter', 'Helvetica Neue', sans-serif;
+    font-size: 144px;
+    font-weight: 900;
+    letter-spacing: -0.06em;
+    color: var(--lime);
+    line-height: 0.9;
+    text-shadow: 0 0 60px var(--lime-glow);
+  }
+  .s1 .sub {
+    margin-top: 18px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.36em;
+    text-transform: uppercase;
+  }
+  /* sound-wave rings emanating from text */
+  .s1 .ring {
+    position: absolute;
+    top: 50%; left: 50%;
+    border: 1px solid rgba(198,255,0,0.12);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .s1 .r1 { width: 220px;  height: 220px; }
+  .s1 .r2 { width: 340px;  height: 340px; }
+  .s1 .r3 { width: 460px;  height: 460px; border-color: rgba(198,255,0,0.07); }
+
+  /* ============ SLIDE 2 — "we made something." ============ */
+  .s2 {
+    background:
+      radial-gradient(circle at 80% 20%, rgba(198,255,0,0.08) 0%, transparent 40%),
+      radial-gradient(circle at 20% 80%, rgba(198,255,0,0.06) 0%, transparent 40%),
+      var(--bg);
+  }
+  .s2 .stack {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+  }
+  .s2 .line {
+    font-family: 'Inter', sans-serif;
+    font-size: 56px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.0;
+    color: var(--ink);
+  }
+  .s2 .line.lime {
+    color: var(--lime);
+    margin-top: 12px;
+    text-shadow: 0 0 40px var(--lime-glow);
+  }
+  .s2 .line.small {
+    margin-top: 24px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.32em;
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  /* drifting particles */
+  .s2 .dot {
+    position: absolute;
+    width: 4px; height: 4px;
+    background: var(--lime);
+    border-radius: 50%;
+    opacity: 0.6;
+    box-shadow: 0 0 8px var(--lime);
+  }
+  .s2 .d1 { top: 18%; left: 22%; }
+  .s2 .d2 { top: 28%; right: 18%; width: 6px; height: 6px; }
+  .s2 .d3 { bottom: 22%; left: 18%; width: 3px; height: 3px; }
+  .s2 .d4 { bottom: 30%; right: 24%; }
+  .s2 .d5 { top: 50%; left: 8%; width: 3px; height: 3px; opacity: 0.4; }
+  .s2 .d6 { bottom: 14%; right: 12%; width: 5px; height: 5px; }
+
+  /* ============ SLIDE 3 — date reveal ============ */
+  .s3 {
+    background: var(--lime);
+    color: #0a0a0a;
+  }
+  /* date stack */
+  .s3 .center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+  }
+  .s3 .day-label {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 14px;
+    letter-spacing: 0.42em;
+    color: rgba(10,10,10,0.55);
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .s3 .month-row {
+    font-family: 'Inter', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(10,10,10,0.85);
+    margin-bottom: 4px;
+  }
+  .s3 .big {
+    font-family: 'Inter', sans-serif;
+    font-size: 220px;
+    font-weight: 900;
+    letter-spacing: -0.08em;
+    color: #0a0a0a;
+    line-height: 0.85;
+  }
+  .s3 .year {
+    margin-top: 12px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 18px;
+    letter-spacing: 0.48em;
+    color: rgba(10,10,10,0.7);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .s3 .stripe {
+    position: absolute;
+    bottom: 78px;
+    left: 0; right: 0;
+    text-align: center;
+  }
+  .s3 .stripe .badge {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #0a0a0a;
+    color: var(--lime);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  /* caption + notes */
+  .caption {
+    margin-top: 40px;
+    max-width: 540px;
+    color: #d8d8d8;
+    font-size: 14px;
+    line-height: 1.55;
+    background: #232323;
+    padding: 18px 20px;
+    border-radius: 10px;
+    border: 1px solid #2f2f2f;
+    width: 540px;
+  }
+  .caption .lbl {
+    color: var(--lime);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="meta">post #14 · teaser · movie-poster style · launches 01 jul 2026</div>
+
+    <div class="deck">
+
+      <!-- SLIDE 1 — ssshh. -->
+      <div class="slide-wrap">
+        <div class="slide-label">01 / 03 — hook</div>
+        <div class="slide s1 corners">
+          <span class="tl"></span><span class="tr"></span>
+          <div class="topmeta">
+            <span>stackpicks · 2026</span>
+            <span>vol · 01</span>
+          </div>
+          <div class="ring r3"></div>
+          <div class="ring r2"></div>
+          <div class="ring r1"></div>
+          <div class="center">
+            <div class="word">ssshh.</div>
+            <div class="sub">don&apos;t · tell · anyone · yet</div>
+          </div>
+          <div class="bottommeta">
+            <span>01 · 03</span>
+            <span>swipe →</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2 — we made something. -->
+      <div class="slide-wrap">
+        <div class="slide-label">02 / 03 — promise</div>
+        <div class="slide s2 corners">
+          <span class="tl"></span><span class="tr"></span>
+          <div class="topmeta">
+            <span>stackpicks · 2026</span>
+            <span>vol · 01</span>
+          </div>
+          <span class="dot d1"></span>
+          <span class="dot d2"></span>
+          <span class="dot d3"></span>
+          <span class="dot d4"></span>
+          <span class="dot d5"></span>
+          <span class="dot d6"></span>
+          <div class="stack">
+            <div class="line">we made</div>
+            <div class="line lime">something.</div>
+            <div class="line small">you · are · going · to · want · this</div>
+          </div>
+          <div class="bottommeta">
+            <span>02 · 03</span>
+            <span>swipe →</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3 — date reveal -->
+      <div class="slide-wrap">
+        <div class="slide-label">03 / 03 — date drop</div>
+        <div class="slide s3 corners">
+          <span class="tl"></span><span class="tr"></span>
+          <div class="topmeta dark">
+            <span>save · the · date</span>
+            <span>09:30 · ist</span>
+          </div>
+          <div class="center">
+            <div class="day-label">july · 1 · tuesday</div>
+            <div class="month-row">JULY</div>
+            <div class="big">01</div>
+            <div class="year">twenty · twenty · six</div>
+          </div>
+          <div class="stripe">
+            <span class="badge">10 · days · to · go</span>
+          </div>
+          <div class="bottommeta dark">
+            <span>03 · 03</span>
+            <span>stackpicks</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="caption">
+      <div class="lbl">caption</div>
+      <div>we made something. you&apos;re going to want this. 01 · 07 · 2026. 🟢</div>
+    </div>
+
+    <div class="caption">
+      <div class="lbl">notes</div>
+      <div>
+        no link · no CTA · no hashtags · no brand mention<br>
+        bio link stays as-is<br>
+        "10 · days · to · go" assumes drop on sun 21 jun — adjust if different day<br>
+        wednesday 01 jul 2026 is actually a tuesday — corrected on slide 3
+      </div>
+    </div>
+  </div>
+</body>
+</html>
