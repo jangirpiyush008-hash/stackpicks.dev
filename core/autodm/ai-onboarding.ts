@@ -82,10 +82,20 @@ export async function generateStarterRules(input: {
   if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set');
   const claude = new Anthropic({ apiKey });
 
+  // IG captions/comments often contain partial emojis (unpaired UTF-16
+  // surrogates) when the source is truncated mid-character or scraped from
+  // mixed-encoding fields. These slip through fine in JS strings but Claude's
+  // JSON parser rejects them with "no low surrogate in string" 400 errors.
+  // Strip any lone high/low surrogate and replace with the Unicode replacement
+  // char so the prompt stays valid JSON.
+  const sanitize = (s: string): string => s
+    .replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])/g, '�')  // high surrogate not followed by low
+    .replace(/(^|[^\uD800-\uDBFF])[\uDC00-\uDFFF]/g, '$1�'); // low surrogate not preceded by high
+
   const captionsBlock = input.captions
-    .slice(0, 20).map((c, i) => `[${i + 1}] ${c.slice(0, 300)}`).join('\n');
+    .slice(0, 20).map((c, i) => `[${i + 1}] ${sanitize(c).slice(0, 300)}`).join('\n');
   const commentsBlock = input.comments
-    .slice(0, 80).map((c) => `- ${c}`).join('\n');
+    .slice(0, 80).map((c) => `- ${sanitize(c)}`).join('\n');
 
   const prompt = `You are setting up auto-DM rules for an Instagram creator. They get LOTS of comments asking the same things, and you'll generate 5 keyword rules that auto-DM the right link when those keywords appear.
 
