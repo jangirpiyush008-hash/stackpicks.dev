@@ -212,17 +212,43 @@ export function RulesEditor({
           {/* Live linter — calls /api/autodm/lint as you type */}
           <LinterPanel draft={draft} />
           <div className="grid grid-cols-2 gap-3">
-            <Field label="CTA URL">
+            <Field label="Link URL">
               <input type="url" value={draft.cta_url || ''}
                 onChange={(e) => setDraft({ ...draft, cta_url: e.target.value })}
-                className="sp-input" placeholder="https://yourlink.com" />
+                onBlur={(e) => {
+                  // Auto-derive a friendly button title from the URL hostname
+                  // when the user pastes a URL but hasn't typed a title yet.
+                  const url = e.target.value.trim();
+                  if (url && !draft.cta_label) {
+                    try {
+                      const host = new URL(url).hostname.replace(/^www\./, '').slice(0, 20);
+                      setDraft({ ...draft, cta_url: url, cta_label: host });
+                    } catch { /* invalid URL — leave empty */ }
+                  }
+                }}
+                className="sp-input" placeholder="https://yourlink.com/long/path" />
             </Field>
-            <Field label="CTA button label">
+            <Field label="Button title (shown in DM)">
               <input type="text" maxLength={20} value={draft.cta_label || ''}
                 onChange={(e) => setDraft({ ...draft, cta_label: e.target.value })}
-                className="sp-input" placeholder="Open" />
+                className="sp-input" placeholder="Get the recipe" />
             </Field>
           </div>
+          <p className="text-[10px] text-muted -mt-1">
+            The DM shows a clickable button — recipients tap the title, never the raw URL.
+            Keep titles short and specific ("Get the recipe", "Watch the demo") so people know what they'll land on.
+          </p>
+          {draft.cta_url && (
+            <div className="rounded-md border border-accent/30 bg-accent/5 p-3 flex items-center justify-between gap-3">
+              <div className="text-[11px] text-muted shrink-0">DM button preview →</div>
+              <div className="flex-1 max-w-[260px]">
+                <div className="rounded-md bg-white text-black px-3 py-2 text-sm font-medium flex items-center justify-between gap-2 shadow-sm">
+                  <span className="truncate">{draft.cta_label || 'Open link'}</span>
+                  <span className="text-[10px] text-gray-500 shrink-0">↗</span>
+                </div>
+              </div>
+            </div>
+          )}
           <Field label="Public reply — non-followers">
             <input type="text" maxLength={280} value={draft.comment_reply || ''}
               onChange={(e) => setDraft({ ...draft, comment_reply: e.target.value })}

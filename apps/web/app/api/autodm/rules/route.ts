@@ -39,10 +39,23 @@ export async function GET() {
   return NextResponse.json({ ok: true, rules: data });
 }
 
+/** Friendly button label derived from a URL when the user didn't set one.
+ *  Long URLs in DMs look spammy and Meta's button-card requires a title —
+ *  fall back to the hostname (e.g. "blog.stackpicks.dev" → "stackpicks.dev")
+ *  so the DM always renders a clean clickable button. */
+function defaultCtaLabel(url: string | null): string | null {
+  if (!url) return null;
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, '');
+    return host.slice(0, 20);
+  } catch { return 'Open link'; }
+}
+
 export async function POST(req: NextRequest) {
   const ctx = await getTenantForUser();
   if (!ctx.ok) return NextResponse.json({ ok: false, error: ctx.error }, { status: 401 });
   const body = (await req.json()) as Record<string, unknown>;
+  const ctaUrl = (body.cta_url as string) || null;
   const payload = {
     tenant_id: ctx.tenantId,
     label:          (body.label as string) || null,
@@ -50,8 +63,8 @@ export async function POST(req: NextRequest) {
     keyword:        (body.keyword as string) || '',
     dm_template:    (body.dm_template as string) || '',
     dm_template_variants: Array.isArray(body.dm_template_variants) ? body.dm_template_variants : null,
-    cta_url:        (body.cta_url as string) || null,
-    cta_label:      (body.cta_label as string) || null,
+    cta_url:        ctaUrl,
+    cta_label:      (body.cta_label as string) || defaultCtaLabel(ctaUrl),
     comment_reply:  (body.comment_reply as string) || null,
     comment_reply_follower: (body.comment_reply_follower as string) || null,
     follow_nudge:   body.follow_nudge === true,
@@ -105,6 +118,11 @@ export async function PATCH(req: NextRequest) {
   if ('active_hour_start' in body) updates.active_hour_start = normHour(body.active_hour_start);
   if ('active_hour_end' in body)   updates.active_hour_end   = normHour(body.active_hour_end);
   if ('active_days' in body)       updates.active_days       = normDays(body.active_days);
+  // If URL is being set/changed but no label was passed (or label is empty),
+  // auto-derive from URL hostname so the DM button always renders.
+  if ('cta_url' in updates && updates.cta_url && (!('cta_label' in updates) || !updates.cta_label)) {
+    updates.cta_label = defaultCtaLabel(updates.cta_url as string);
+  }
   const { data, error } = await ctx.admin.from('autodm_rules')
     .update(updates).eq('id', id).eq('tenant_id', ctx.tenantId).select().single();
   if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
