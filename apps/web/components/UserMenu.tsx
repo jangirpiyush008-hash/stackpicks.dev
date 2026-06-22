@@ -122,9 +122,16 @@ export function UserMenu() {
     window.location.href = '/';
   };
 
-  // Loading state — show a subtle placeholder so the layout doesn't jump
+  // Loading state — show a visible placeholder so the layout doesn't jump
+  // AND so the visitor can tell something is loading vs. a missing element.
+  // The previous bg-surface/50 was invisible against dark backgrounds.
   if (loading) {
-    return <div className="w-20 h-8 rounded-full bg-surface/50 animate-pulse" />;
+    return (
+      <div
+        className="w-24 h-9 rounded-full border border-border bg-surface animate-pulse"
+        aria-label="Loading user menu"
+      />
+    );
   }
 
   // Signed out — show the green Sign in CTA
