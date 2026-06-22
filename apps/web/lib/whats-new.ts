@@ -41,6 +41,33 @@ export interface WhatsNewItem {
 /** Newest first. The popup picks the top 1-2 items the visitor hasn't seen. */
 export const UPDATES: WhatsNewItem[] = [
   {
+    id: 'razorpay-subscription-setup-guide',
+    date: '2026-06-22',
+    title: 'New guide: Razorpay subscription setup for Indian SaaS',
+    summary: 'Step-by-step Razorpay + Next.js + Supabase walkthrough — Plans, e-mandates, webhook signatures, and the gotchas nobody warns you about.',
+    category: 'blog',
+    href: '/blog/razorpay-subscription-setup-indian-saas-2026',
+    cta: 'Read the guide',
+  },
+  {
+    id: 'supabase-vs-firebase-2026',
+    date: '2026-06-22',
+    title: 'New comparison: Supabase vs Firebase in 2026',
+    summary: 'Which backend wins for indie devs — honest tradeoffs, real cost numbers, India region notes, and when each still wins.',
+    category: 'blog',
+    href: '/blog/supabase-vs-firebase-2026',
+    cta: 'Read the comparison',
+  },
+  {
+    id: 'razorpay-vs-stripe-indian-saas',
+    date: '2026-06-22',
+    title: 'New comparison: Razorpay vs Stripe for Indian SaaS',
+    summary: 'Why Razorpay is the default for INR subscriptions in 2026, why Stripe still wins for global-first products, and how to pick in 30 seconds.',
+    category: 'blog',
+    href: '/blog/razorpay-vs-stripe-indian-saas-2026',
+    cta: 'Read the comparison',
+  },
+  {
     id: 'whats-new-launched',
     date: '2026-06-22',
     title: '"What\'s new" page is live',

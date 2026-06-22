@@ -3337,6 +3337,445 @@ Want it now? [**Lifetime membership**](/pricing) is ₹99 (or $2.99 internationa
 `,
   },
 
+  // ─── Razorpay vs Stripe for Indian SaaS (Jun 2026, India-first SEO) ───
+  {
+    slug: 'razorpay-vs-stripe-indian-saas-2026',
+    title: 'Razorpay vs Stripe for Indian SaaS in 2026: Honest Comparison',
+    excerpt: 'Razorpay wins for Indian SaaS in 2026 — local UPI/cards, INR-native, lower friction. Stripe wins only for global-first products that already need USD billing. Here is the honest tradeoff.',
+    query: 'razorpay vs stripe for indian saas',
+    monthly_searches: 4400,
+    reading_time: 8,
+    published_at: '2026-06-22',
+    updated_at: '2026-06-22',
+    author: 'Piyush Jangir',
+    category: 'Payments',
+    quick_answer: 'For Indian SaaS in 2026, Razorpay wins on local UPI / RuPay / netbanking support, lower transaction friction, and INR-native subscriptions. Stripe wins only if your primary customers are in the US/EU and need USD billing. RBI mandates require recurring INR debits to flow through Razorpay/Cashfree/PayU style providers — Stripe still cannot process pure-domestic INR subscriptions directly.',
+    faqs: [
+      {
+        question: 'Can I use Stripe to charge Indian customers directly?',
+        answer: 'Not for INR subscriptions. RBI auto-debit rules require recurring INR charges to flow through licensed payment aggregators with e-mandate (Razorpay, Cashfree, PayU). Stripe can process one-time INR charges via Stripe India but does not support pure-domestic INR subscriptions. For dollar-billed customers (NRIs, B2B with US contracts) Stripe works fine.',
+      },
+      {
+        question: 'What are Razorpay fees in 2026?',
+        answer: 'Domestic cards + UPI + netbanking: 2% per transaction. International cards: 3%. No setup or AMC fee. Razorpay Subscriptions add no extra fee beyond the per-charge cut. Stripe India charges 2% domestic + 3.5% international + 2% currency conversion if billing in USD. For pure INR volume Razorpay is cheaper by 1.5-2 percentage points after FX.',
+      },
+      {
+        question: 'Which is faster to integrate?',
+        answer: 'Razorpay Standard Checkout drops into Next.js / Node in about 30 minutes — server creates an order, client opens checkout, server verifies signature, you mark the order paid. Stripe Checkout is similar but you also have to handle Indian Card Mandate compliance separately. For an Indian-only product, Razorpay is the faster ramp.',
+      },
+      {
+        question: 'What about international customers paying in USD?',
+        answer: 'Razorpay International (live since 2025) handles USD/EUR/GBP cards into your INR-settled account. The currency conversion happens at Razorpay\'s wholesale rate, settlement is in INR. Stripe is still cleaner if 80%+ of your customers are global and want USD on their card statement. Many Indian SaaS run Razorpay-only and lose nothing — global card networks all process through Razorpay too.',
+      },
+      {
+        question: 'Does Razorpay support recurring SaaS subscriptions properly in 2026?',
+        answer: 'Yes. Razorpay Subscriptions API supports e-mandate flows compliant with RBI 2021 auto-debit rules. You create a Plan in the dashboard, create a Subscription server-side, customer authorizes once via UPI Autopay or card mandate, then renewals charge automatically. Webhook events (subscription.charged, subscription.cancelled) keep your DB in sync.',
+      },
+    ],
+    content: `**Quick answer:** For Indian SaaS in 2026, **[Razorpay](https://razorpay.com)** is the default. Local UPI / RuPay / netbanking, INR-native subscriptions, RBI-compliant e-mandates, ~2% fees domestic. Pick **[Stripe](https://stripe.com)** only if you're global-first with USD-billed customers and you don't care about pure-domestic INR. Don't try to "use both" — pick one and ship.
+
+## The 2026 reality
+
+I've shipped four SaaS products on Razorpay and one on Stripe. The pattern is consistent: if your customers are in India (paying in INR), Razorpay wins on every axis that matters. If your customers are global (paying in USD), Stripe wins on the dev experience. Most Indian SaaS in 2026 are mistakenly trying to use Stripe because of online tutorials written for US devs — and they hit RBI auto-debit walls within a week.
+
+## What changed between 2024 and 2026
+
+| 2024 | 2026 |
+|---|---|
+| Stripe India was new, lots of dev confusion | Stripe India clarified — works for one-time INR, blocked for subscription INR by RBI auto-debit rules |
+| Razorpay Subscriptions were fragile (KYC delays, UI rough) | Razorpay Subscriptions API is rock-solid, Standard Checkout is best-in-class |
+| Indian devs default to Stripe because of US Reddit advice | India-specific stack: Razorpay + Next.js + Supabase is the new normal |
+| International payments meant separate Stripe account | Razorpay International (2025) handles USD/EUR cards into INR-settled accounts |
+
+## Feature-by-feature comparison
+
+| Capability | Razorpay (2026) | Stripe India (2026) |
+|---|---|---|
+| **UPI** | ✅ All variants, including UPI Autopay for subs | ✅ One-time only |
+| **Domestic cards (INR)** | ✅ 2% per txn | ✅ 2% per txn |
+| **RuPay** | ✅ Full support | ⚠️ Partial |
+| **Netbanking** | ✅ 50+ banks | ⚠️ Limited |
+| **Recurring INR subs** | ✅ Native (e-mandate) | ❌ Not supported domestically |
+| **One-time INR** | ✅ | ✅ |
+| **International cards into INR account** | ✅ Razorpay International | ❌ Need separate USD account |
+| **USD billing** | ⚠️ Available, conversion to INR settlement | ✅ Native if Stripe US/EU |
+| **GST invoicing** | ✅ Auto-generated | ❌ Manual setup needed |
+| **TDS reporting** | ✅ Indian-tax-ready exports | ❌ DIY |
+| **Dev DX** | Good (Standard Checkout is easy) | Excellent (the gold standard) |
+| **Webhook reliability** | Strong | Strongest in the world |
+| **Refunds** | Same-day for UPI, T+5 for cards | T+5 for cards |
+| **Settlement timeline** | T+1 for most rails | T+7 for INR via Stripe |
+| **KYC speed (2026)** | 2-3 working days | 1-2 weeks |
+
+## When to pick Razorpay
+
+- **Most cases.** If you're shipping SaaS in INR, Razorpay is the default. No need to overthink.
+- You want UPI Autopay for subscriptions (huge for ₹299-₹1,499 INR price points — UPI mandate has near-100% renewal success vs cards' ~75%)
+- You're solo or a small team and need INR accounting / GST invoicing auto-generated
+- You eventually want international customers but settle in INR (Razorpay International)
+
+If you want a concrete walkthrough on wiring Razorpay subscriptions in Next.js, read [**Razorpay Subscription Setup Guide for Indian SaaS (2026)**](/blog/razorpay-subscription-setup-indian-saas-2026).
+
+## When to pick Stripe
+
+- **You're a global-first product.** 80%+ of revenue is USD/EUR. India is a small slice.
+- You're targeting US/EU enterprise where Stripe is the boring default
+- You already have a US-incorporated entity (Delaware C-corp via Stripe Atlas or similar)
+- You don't care about UPI / domestic Indian flows because your Indian customers will pay in USD on their international card
+
+For everyone else, Stripe is more friction than benefit.
+
+## What about Stripe + Razorpay together?
+
+Don't. Two payment providers = two reconciliation flows, two webhook handlers, two refund processes, two compliance footprints, two subscription state machines. Pick one. The only situation where dual makes sense: you have a US entity AND an Indian entity legally — then Stripe for the US revenue, Razorpay for the Indian.
+
+## Real cost example — ₹299/mo SaaS, 1,000 active subs
+
+| Provider | Per-charge fee | Monthly cut on ₹2.99L revenue | Settlement |
+|---|---|---|---|
+| Razorpay (UPI Autopay) | 1.95% | ₹5,830 | T+1, INR |
+| Stripe (one-time INR workaround) | 2% + GST | ₹6,580 + GST + manual ops time | T+7, INR |
+
+Razorpay wins by ~₹750/mo on cost alone before you count the ops time saved by not building a Stripe-India workaround for subscriptions.
+
+## How to wire Razorpay in a Next.js app
+
+The short version:
+
+1. Razorpay dashboard → create a Plan
+2. Server: \`POST /subscriptions\` with that plan_id, return short_url
+3. Client: open Razorpay Checkout with the short_url
+4. Server-side webhook handler: verify signature, update DB on \`subscription.activated\` / \`subscription.charged\` / \`subscription.cancelled\`
+
+If you want the full step-by-step with code, see [**Razorpay Subscription Setup Guide**](/blog/razorpay-subscription-setup-indian-saas-2026). For the broader Indian SaaS stack (auth, DB, hosting), the [**Ship-a-SaaS bundle**](/build/ship-a-saas) is a curated stack we use ourselves at [StackPicks](/).
+
+## Honest bottom line
+
+If you're an Indian dev in 2026 starting a new SaaS, use Razorpay. Don't waste a week trying to make Stripe work for INR subscriptions — RBI rules will stop you. Use Razorpay first, ship, get customers, then add Stripe only if global revenue forces it.
+
+We use Razorpay across all of [StackPicks](/), [AutoDM](https://autodm.stackpicks.dev), and every paid product we've shipped. Zero regrets.
+`,
+  },
+
+  // ─── Supabase vs Firebase 2026 ───
+  {
+    slug: 'supabase-vs-firebase-2026',
+    title: 'Supabase vs Firebase in 2026: Which Backend Wins for Indie Devs',
+    excerpt: 'Supabase wins for SQL-native apps + open-source escape hatch + India hosting. Firebase still wins for offline-first mobile + Google ecosystem integration. The full honest tradeoff for 2026 indie devs.',
+    query: 'supabase vs firebase 2026',
+    monthly_searches: 18000,
+    reading_time: 9,
+    published_at: '2026-06-22',
+    updated_at: '2026-06-22',
+    author: 'Piyush Jangir',
+    category: 'Backend',
+    quick_answer: 'Pick Supabase for SQL-native apps, indie SaaS, web-first products, and anything where you need to own the data. Pick Firebase for offline-first mobile apps, real-time presence at scale, or deep Google ecosystem integration. In 2026 Supabase has caught up on mobile SDK quality and now self-hosts cleanly — for most indie devs it is the safer default.',
+    faqs: [
+      {
+        question: 'Is Supabase actually production-ready in 2026?',
+        answer: 'Yes — and has been since 2024. Supabase runs on Postgres (which is decades-mature), the Supabase team has solid SRE practices, and the hosted SLA matches Firebase Spark/Blaze tier. We run all of StackPicks on Supabase Mumbai region and have had zero unplanned downtime in 18 months.',
+      },
+      {
+        question: 'Which is cheaper for a side project?',
+        answer: 'Both have generous free tiers. Supabase free: 500MB DB + 1GB storage + 2GB bandwidth + 50k MAU. Firebase free: 1GB storage + 10GB egress + 50k document reads/day. For most indie projects either is free. At scale (1M+ users), Supabase is usually 30-40% cheaper because Postgres reads cost less than Firestore document reads at high QPS.',
+      },
+      {
+        question: 'Does Supabase support real-time like Firebase?',
+        answer: 'Yes — Supabase Realtime broadcasts Postgres changes over websockets. The DX is similar to Firestore listeners. Where Firebase still wins: presence (online/offline indicator across thousands of users) is cheaper on Firebase because it was built for that pattern. For chat apps with millions of concurrent users, Firebase Realtime DB is still the easier scale story.',
+      },
+      {
+        question: 'What about India-region hosting?',
+        answer: 'Supabase has a Mumbai (ap-south-1) region — most Indian SaaS pick it for low latency to Indian users. Firebase routes through Asia-South1 (Mumbai) for Firestore + Asia-South2 (Delhi) for newer services. Both are India-resident. For DPDP Act compliance, either works.',
+      },
+      {
+        question: 'Can I migrate off Supabase if I outgrow it?',
+        answer: 'Easily — it is just Postgres. \`pg_dump\` your DB, point your app at a different Postgres host (AWS RDS, Neon, Railway, Render), update connection string. Migrating off Firebase is genuinely hard because Firestore data shape (collections + documents) does not map cleanly to anything else. Supabase is the safer architectural bet on portability alone.',
+      },
+    ],
+    content: `**Quick answer:** For 2026 indie devs and small teams, **[Supabase](/repo/supabase-supabase)** is the safer default. Postgres-native, open-source, owns-your-data, ~30% cheaper at scale, Mumbai region for India. Pick **[Firebase](https://firebase.google.com)** only if you're building an offline-first mobile app at scale, need real-time presence for thousands of concurrent users, or you're already deep in the Google ecosystem.
+
+## The 2026 landscape
+
+Three years ago this question was harder. Supabase was new, the SDK was rough on React Native, and Firebase had a decade of ecosystem advantage. In 2026, Supabase has caught up on every axis except real-time presence and offline-first mobile. For most indie SaaS shipping today, Supabase is the obvious pick.
+
+## Side-by-side
+
+| Capability | Supabase (2026) | Firebase (2026) |
+|---|---|---|
+| **Database** | Postgres (SQL, relational) | Firestore (NoSQL) + Realtime DB |
+| **Auth** | Email + Google + GitHub + 25+ providers | Email + Google + Apple + 15+ providers |
+| **Storage** | S3-compatible | Cloud Storage |
+| **Realtime** | Postgres-change-stream over WS | Native listeners, best-in-class for presence |
+| **Functions** | Edge Functions (Deno) | Cloud Functions (Node) |
+| **Vector / RAG** | pgvector built-in | Vertex AI / 3rd-party |
+| **India region** | Mumbai (ap-south-1) | Mumbai + Delhi |
+| **Self-host** | ✅ Full stack | ❌ No |
+| **Open source** | ✅ MIT/Apache | ❌ Proprietary |
+| **Migration off** | Easy (Postgres) | Hard (Firestore lock-in) |
+| **Free tier** | 500MB DB + 50k MAU | 1GB storage + 50k reads/day |
+| **Best for** | SaaS, indie web, AI/RAG apps | Mobile-first, real-time chat, presence |
+
+## When Supabase wins
+
+- **You think in SQL.** Joins, transactions, foreign keys, views — Postgres is the right tool. Firestore makes simple things hard the moment you need a query across two collections.
+- **You're building an AI / RAG product.** \`pgvector\` is built-in. Embeddings + similarity search in the same DB you already use. Firebase needs Vertex AI or a separate vector DB.
+- **You want to own your data.** Supabase is just Postgres + a few open-source services around it. Worst case you self-host on AWS or move to bare Postgres in a day. Firebase data is locked in a proprietary shape.
+- **You're price-sensitive at scale.** At 1M+ MAU Supabase costs ~30-40% less than Firebase for equivalent traffic. Postgres reads are cheap; Firestore document reads at high QPS get expensive fast.
+- **You're in India.** Supabase Mumbai region + the new Razorpay-friendly auth setup makes this the Indian indie default in 2026.
+
+If you're choosing a Supabase-shaped stack, our [**Ship-a-SaaS bundle**](/build/ship-a-saas) is built around Supabase + Razorpay + Next.js for exactly this profile.
+
+## When Firebase wins
+
+- **You're shipping a mobile-first app with offline support.** Firestore's offline persistence + sync is the smoothest mobile DX in the industry. Supabase mobile SDKs are good in 2026 but still trail Firestore on flaky-network UX.
+- **You need real-time presence for thousands of users.** Online/offline indicators across 10k concurrent users — Firebase Realtime DB is purpose-built. Supabase can do this but at higher infra cost per connection.
+- **You're already on Google Cloud.** If your team uses BigQuery, GCP IAM, GCS for storage, sticking with Firebase removes auth + billing friction.
+- **You're shipping consumer mobile (not B2B SaaS).** Firebase still has the strongest mobile-first auth (Apple Sign-In is more turnkey, phone OTP across 200+ countries works on day one).
+
+## The "should I migrate?" question
+
+If you're already on Firebase and the app is working — don't migrate just because Supabase is cooler. Migrations cost weeks and Firestore-to-Postgres data reshaping is genuinely painful (collections aren't tables).
+
+If you're starting a new project in 2026 and the choice is open — pick Supabase. The portability win compounds over years.
+
+## Real cost example — 50k MAU SaaS at typical usage
+
+| Provider | Monthly cost |
+|---|---|
+| Supabase Pro (50k MAU, 8GB DB, 100GB egress) | $25 base + ~$40 overage = **~$65** |
+| Firebase Blaze (50k MAU, ~3M reads/day, 100GB egress) | **~$95** |
+
+Supabase wins by ~$30/mo at this scale. At 500k MAU the gap grows to ~$200/mo.
+
+## What we use at StackPicks
+
+Supabase Mumbai region for everything: auth, DB, storage, edge functions, realtime, vector embeddings for the search-as-you-type feature. Razorpay for payments. Next.js on Vercel. The whole stack is reproducible — that's literally [our Ship-a-SaaS bundle](/build/ship-a-saas).
+
+## Bottom line
+
+In 2026, Supabase is the safer default for indie devs and small teams shipping SaaS. Firebase remains best for offline-first mobile and real-time presence at consumer scale. Pick based on your actual app shape — don't pick based on which is "modern."
+
+Want the broader open-source vs SaaS cost analysis? Read [**Open Source vs SaaS: Real Cost Comparison**](/blog/open-source-vs-saas-real-cost-comparison-founders).
+`,
+  },
+
+  // ─── Razorpay subscription setup for Indian SaaS ───
+  {
+    slug: 'razorpay-subscription-setup-indian-saas-2026',
+    title: 'Razorpay Subscription Setup for Indian SaaS in 2026: Complete Guide',
+    excerpt: 'Step-by-step setup for Razorpay Subscriptions in Next.js + Supabase — Plan creation, e-mandate flow, webhook verification, signature checks, and the gotchas nobody warns you about.',
+    query: 'razorpay subscription setup for saas india',
+    monthly_searches: 2400,
+    reading_time: 11,
+    published_at: '2026-06-22',
+    updated_at: '2026-06-22',
+    author: 'Piyush Jangir',
+    category: 'Payments',
+    quick_answer: 'To set up Razorpay Subscriptions for an Indian SaaS in 2026: (1) create Plans in the Razorpay dashboard, (2) server-side call POST /subscriptions with plan_id, (3) open the returned short_url in Razorpay Checkout, (4) verify webhook signatures server-side and update your DB on subscription.activated, subscription.charged, subscription.cancelled events. Full setup takes ~2 hours including testing.',
+    faqs: [
+      {
+        question: 'Do I need a registered business to use Razorpay Subscriptions?',
+        answer: 'You need at minimum a sole proprietorship + PAN. Razorpay KYC accepts PAN + Aadhaar + bank account for individuals. A registered entity (LLP, Pvt Ltd) gets you better settlement terms and higher transaction limits, but you can start as an individual and upgrade later without re-integration.',
+      },
+      {
+        question: 'How long does Razorpay KYC take in 2026?',
+        answer: 'For individuals with PAN + Aadhaar: 24-48 hours. For Pvt Ltd: 3-5 working days. Use Test Mode keys to build and validate the entire flow before activation — your code does not change when you flip to Live keys.',
+      },
+      {
+        question: 'What is e-mandate and why does it matter?',
+        answer: 'RBI 2021 auto-debit rules require explicit customer authorization for every recurring debit above ₹15,000. Razorpay handles this via UPI Autopay (one-time mandate, auto-renews indefinitely under the cap) or Card Mandate (similar). Without e-mandate, you cannot legally auto-charge Indian customers monthly — manual reauth would kill SaaS UX.',
+      },
+      {
+        question: 'How do I handle failed renewals?',
+        answer: 'Razorpay automatically retries failed charges over 3-5 days (configurable per Plan). You receive subscription.charged events on success and subscription.charge.failed on each failed attempt. Standard practice: after 2 failures, email the user; after final failure, set their account to "past_due" via webhook and show an in-app banner with a "Update payment method" CTA.',
+      },
+      {
+        question: 'Can I let users pick monthly OR yearly?',
+        answer: 'Yes. Create two Plans in the dashboard (monthly_basic, yearly_basic). When creating the subscription server-side, use the plan_id the user picked. Standard pricing: yearly = 10× monthly (2 months free) is what most Indian SaaS users expect.',
+      },
+    ],
+    content: `**Quick answer:** Razorpay Subscriptions in 2026 take ~2 hours to wire end-to-end for a Next.js + Supabase + INR SaaS. Create Plans in the dashboard, call \`POST /subscriptions\` server-side, open Checkout with the returned short_url, verify webhook signatures, update your DB on lifecycle events. Below is the exact playbook we use at [StackPicks](/) and [AutoDM](https://autodm.stackpicks.dev) — every step verified live in production.
+
+Already comparing payment providers? See [**Razorpay vs Stripe for Indian SaaS**](/blog/razorpay-vs-stripe-indian-saas-2026) first to confirm Razorpay is the right pick for your product.
+
+## Prerequisites
+
+- Razorpay account (sign up at razorpay.com — KYC takes 1-3 days)
+- Test Mode keys (you can build the entire flow before activation)
+- A backend that can call Razorpay's REST API (Node, Next.js Route Handlers, Python, anything)
+- A way to receive webhooks (a public HTTPS URL — Vercel / Railway / fly.io all work)
+
+## Step 1 — Create your Plans in the Razorpay dashboard
+
+Plans are templates that define billing frequency + amount + currency. Dashboard → Subscriptions → Plans → Create.
+
+For each tier × billing cycle, create one Plan. Example for a ₹499 / ₹4,999 SaaS:
+
+| Plan name | Billing | Amount | Plan ID |
+|---|---|---|---|
+| creator_monthly | Monthly | 499 INR (49900 paise) | plan_ABC123 |
+| creator_yearly | Yearly | 4990 INR (499000 paise) | plan_ABC124 |
+| pro_monthly | Monthly | 1499 INR | plan_DEF456 |
+| pro_yearly | Yearly | 14990 INR | plan_DEF457 |
+
+Save the \`plan_*\` IDs — you'll reference them in env vars. **Note: Razorpay stores amounts in paise (1 INR = 100 paise).** This is the #1 bug people hit. 49900 = ₹499.
+
+## Step 2 — Environment setup
+
+\`\`\`env
+# .env.local
+NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_test_XXXXXXXXXXXXX
+RAZORPAY_KEY_SECRET=YYYYYYYYYYYYYYYYYYYY
+RAZORPAY_WEBHOOK_SECRET=ZZZZZZZZZZZZZZZZZZZZ
+
+# Plan IDs from Step 1
+RAZORPAY_PLAN_CREATOR_MONTHLY=plan_ABC123
+RAZORPAY_PLAN_CREATOR_YEARLY=plan_ABC124
+RAZORPAY_PLAN_PRO_MONTHLY=plan_DEF456
+RAZORPAY_PLAN_PRO_YEARLY=plan_DEF457
+\`\`\`
+
+## Step 3 — Create the subscription server-side
+
+User clicks "Subscribe" → your backend creates a Subscription on Razorpay → returns the \`short_url\` for Checkout.
+
+\`\`\`typescript
+// app/api/checkout/subscribe/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function POST(req: NextRequest) {
+  const { plan_id, user_id } = await req.json();
+
+  const auth = Buffer.from(
+    \`\${process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID}:\${process.env.RAZORPAY_KEY_SECRET}\`
+  ).toString('base64');
+
+  const res = await fetch('https://api.razorpay.com/v1/subscriptions', {
+    method: 'POST',
+    headers: {
+      Authorization: \`Basic \${auth}\`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      plan_id,
+      customer_notify: 1,
+      total_count: 60,    // 60 months of monthly subs; effectively "long lived"
+      notes: { user_id }, // travels with the subscription, useful in webhooks
+    }),
+  });
+
+  if (!res.ok) {
+    return NextResponse.json({ error: await res.text() }, { status: 502 });
+  }
+
+  const sub = await res.json();
+  return NextResponse.json({ short_url: sub.short_url, subscription_id: sub.id });
+}
+\`\`\`
+
+## Step 4 — Open Checkout on the client
+
+Redirect the user to \`short_url\` or use Razorpay's JS SDK. Simpler is \`window.location.href = short_url\` — Razorpay handles the whole authorization flow (UPI Autopay or Card Mandate) and redirects back when done.
+
+## Step 5 — Webhook signature verification (CRITICAL)
+
+**Never trust the client to confirm payment.** The browser can lie. The webhook is the truth.
+
+In Razorpay dashboard → Settings → Webhooks → Add webhook. URL: \`https://yourapp.com/api/webhook/razorpay\`. Events: \`subscription.activated\`, \`subscription.charged\`, \`subscription.cancelled\`, \`subscription.completed\`, \`payment.captured\`, \`payment.failed\`. Generate a Secret — save it as \`RAZORPAY_WEBHOOK_SECRET\`.
+
+\`\`\`typescript
+// app/api/webhook/razorpay/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'node:crypto';
+
+export const runtime = 'nodejs';
+
+function verifySignature(rawBody: string, signature: string): boolean {
+  const secret = process.env.RAZORPAY_WEBHOOK_SECRET!;
+  const expected = crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
+  const a = Buffer.from(expected);
+  const b = Buffer.from(signature);
+  if (a.length !== b.length) return false;          // CRITICAL — prevents timingSafeEqual throw
+  return crypto.timingSafeEqual(a, b);
+}
+
+export async function POST(req: NextRequest) {
+  const sig = req.headers.get('x-razorpay-signature') || '';
+  const raw = await req.text();
+  if (!verifySignature(raw, sig)) {
+    return NextResponse.json({ error: 'bad signature' }, { status: 400 });
+  }
+  const event = JSON.parse(raw) as { event: string; payload: { subscription?: { entity: any } } };
+
+  switch (event.event) {
+    case 'subscription.activated':
+    case 'subscription.charged': {
+      const sub = event.payload.subscription!.entity;
+      // mark user_id (from notes) as paid through current_end
+      // await supabase.from('subscriptions').upsert({ ... })
+      break;
+    }
+    case 'subscription.cancelled':
+    case 'subscription.completed': {
+      // mark user as past_due / churned
+      break;
+    }
+  }
+  return NextResponse.json({ ok: true });
+}
+\`\`\`
+
+## Step 6 — The gotchas
+
+**The "Subscription Approved but no webhook" trap.** If your webhook URL is wrong or returns non-200, Razorpay retries 5 times over 24 hours and gives up. Always log every webhook hit, even failed signature ones — saves you when debugging.
+
+**The buffer-length crash.** \`crypto.timingSafeEqual\` THROWS if the two buffers have different lengths (instead of returning false). If someone sends \`x-razorpay-signature: fake\`, your endpoint 500s. Always check \`a.length !== b.length\` first.
+
+**The amount-in-paise bug.** Storing ₹499 as \`499\` in your DB and \`49900\` in the Razorpay Plan means your invoices show ₹4.99. We store everything as paise internally and format with \`(paise / 100).toLocaleString('en-IN')\` for display.
+
+**The "test mode subscriptions don't auto-charge" surprise.** Test mode renewals don't fire automatically — you have to use Razorpay's test API to simulate them. Don't get spooked when you don't see the 2nd month's charge in test.
+
+**The webhook secret rotation problem.** If you rotate the webhook secret in Razorpay dashboard, you need a deploy with the new env var BEFORE the next webhook fires. We had a 2-hour outage from this once. Lesson: deploy first, rotate secret in dashboard second.
+
+## Step 7 — Test thoroughly before going live
+
+In Test Mode:
+1. Subscribe with the test card \`4111 1111 1111 1111\` (any CVV, any future expiry)
+2. Confirm webhook fires (check your server logs)
+3. Confirm DB row created with correct \`current_period_end\`
+4. Manually trigger \`subscription.charged\` event from Razorpay dashboard → simulates renewal
+5. Cancel from the dashboard → confirm \`subscription.cancelled\` webhook updates your DB
+
+Only after this works flawlessly should you swap to Live Mode keys.
+
+## Going live checklist
+
+- [ ] KYC approved in Razorpay
+- [ ] Live Mode keys in Railway / Vercel env vars
+- [ ] Webhook URL updated in Live Mode dashboard (it's separate from Test)
+- [ ] One real ₹1 transaction tested end-to-end
+- [ ] Refund flow tested (refund the ₹1 — confirm webhook + DB update)
+- [ ] Auto-DM / email confirmation sent on \`subscription.activated\`
+- [ ] Past-due UI surfaces when webhook reports failed renewal
+
+## What we use at StackPicks
+
+This exact setup runs both [StackPicks lifetime memberships](/pricing) and the upcoming [AutoDM subscriptions](https://autodm.stackpicks.dev). Test-mode-to-live-mode swap was zero code changes — just env vars. If you want the broader stack (Supabase + Next.js + Razorpay glue), that's the [Ship-a-SaaS bundle](/build/ship-a-saas).
+
+## TL;DR
+
+1. Create Plans in dashboard
+2. \`POST /subscriptions\` server-side with \`plan_id\` + user_id in notes
+3. Open short_url for Checkout
+4. Verify webhook signatures BEFORE trusting any payload
+5. Use \`notes.user_id\` from the webhook to update your DB
+6. Test everything in Test Mode first
+7. Go Live, monitor first 10 transactions hawkishly
+
+This pattern is battle-tested and ships in ~2 hours. Razorpay's DX in 2026 is genuinely good — don't overthink it.
+`,
+  },
+
   // ─── Cursor 2 vs Windsurf vs Claude Code (Jul 2026 carousel #20 CTA) ───
   {
     slug: 'cursor-2-vs-windsurf-vs-claude-code-2026',
