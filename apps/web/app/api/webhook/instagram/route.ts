@@ -194,7 +194,7 @@ export async function POST(req: NextRequest) {
             ig_username: fromUsername,
             trigger_event: 'comment',
             trigger_post_id: postId,
-            trigger_text: commentText.slice(0, 500),
+            trigger_text: commentText.slice(0, 80),
             status: 'skipped',
             error: 'daily_cap reached',
           });
@@ -218,7 +218,7 @@ export async function POST(req: NextRequest) {
         await supa.from('ig_dm_log').insert({
           rule_id: rule.id, ig_user_id: fromIgsid, ig_username: fromUsername,
           trigger_event: 'comment', trigger_post_id: postId,
-          trigger_text: commentText.slice(0, 500),
+          trigger_text: commentText.slice(0, 80),
           status: 'skipped', error: `account_hourly_cap (${ACCOUNT_HOURLY_CAP}/hr)`,
         });
         processed.push(`skip:rate_limited`);
@@ -303,7 +303,7 @@ export async function POST(req: NextRequest) {
         ig_username: fromUsername,
         trigger_event: 'comment',
         trigger_post_id: postId,
-        trigger_text: commentText.slice(0, 500),
+        trigger_text: commentText.slice(0, 80),
         status: send.ok ? 'sent' : 'error',
         ig_message_id: send.ok ? send.message_id : undefined,
         error: send.ok ? replyError : send.error,

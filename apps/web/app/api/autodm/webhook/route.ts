@@ -192,7 +192,7 @@ export async function POST(req: NextRequest) {
         await supa.from('autodm_dm_log').insert({
           tenant_id: tenant.id, ig_user_id: fromIgsid, ig_username: fromUsername,
           trigger_event: triggerEvent, trigger_post_id: postId,
-          trigger_text: commentText.slice(0, 500), trigger_comment_id: commentId,
+          trigger_text: commentText.slice(0, 80), trigger_comment_id: commentId,
           status: 'skipped', error: `hourly_cap (${tenant.hourly_cap}/hr)`,
         });
         processed.push(`skip:hourly_cap:${tenant.id}`); continue;
@@ -213,7 +213,7 @@ export async function POST(req: NextRequest) {
         await supa.from('autodm_dm_log').insert({
           tenant_id: tenant.id, rule_id: rule.id, ig_user_id: fromIgsid, ig_username: fromUsername,
           trigger_event: triggerEvent, trigger_post_id: postId,
-          trigger_text: commentText.slice(0, 500), trigger_comment_id: commentId,
+          trigger_text: commentText.slice(0, 80), trigger_comment_id: commentId,
           status: 'skipped', error: `schedule:${sched.reason}`,
         });
         processed.push(`skip:schedule:${rule.id}:${sched.reason}`); continue;
@@ -231,7 +231,7 @@ export async function POST(req: NextRequest) {
           await supa.from('autodm_dm_log').insert({
             tenant_id: tenant.id, rule_id: rule.id, ig_user_id: fromIgsid, ig_username: fromUsername,
             trigger_event: triggerEvent, trigger_post_id: postId,
-            trigger_text: commentText.slice(0, 500), trigger_comment_id: commentId,
+            trigger_text: commentText.slice(0, 80), trigger_comment_id: commentId,
             status: 'skipped', error: 'daily_cap_per_recipient',
           });
           processed.push(`skip:per_recipient:${rule.id}`); continue;
@@ -340,7 +340,7 @@ export async function POST(req: NextRequest) {
         tenant_id: tenant.id, rule_id: rule.id,
         ig_user_id: fromIgsid, ig_username: fromUsername,
         trigger_event: triggerEvent, trigger_post_id: postId,
-        trigger_text: commentText.slice(0, 500), trigger_comment_id: commentId,
+        trigger_text: commentText.slice(0, 80), trigger_comment_id: commentId,
         is_follower: followerCheck.isFollower,
         follow_check_source: followerCheck.source,
         follow_check_error: followerCheck.rawError,
@@ -370,7 +370,7 @@ export async function POST(req: NextRequest) {
           recipient_igsid: fromIgsid,
           recipient_username: fromUsername,
           initial_rule_id: rule.id,
-          initial_comment_text: commentText.slice(0, 500),
+          initial_comment_text: commentText.slice(0, 80),
           turn_count: 1,
           last_message_sent_id: send.message_id,
           last_turn_at: new Date().toISOString(),
@@ -514,7 +514,7 @@ export async function POST(req: NextRequest) {
         await supa.from('autodm_dm_log').insert({
           tenant_id: tenant.id, rule_id: convRow.initial_rule_id as string | null,
           ig_user_id: senderIgsid, trigger_event: 'message',
-          trigger_text: text.slice(0, 500),
+          trigger_text: text.slice(0, 80),
           status: send.ok ? 'sent' : 'error',
           ig_message_id: send.ok ? send.message_id : undefined,
           error: send.ok ? undefined : send.error,
