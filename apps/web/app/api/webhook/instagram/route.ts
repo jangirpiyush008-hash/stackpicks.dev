@@ -128,6 +128,22 @@ export async function POST(req: NextRequest) {
 
   const processed: string[] = [];
 
+  // Health-beat: this legacy handler is also the URL Meta still pings for
+  // many tenants (the autodm webhook handler at /api/autodm/webhook is the
+  // newer multi-tenant one but Meta only delivers to ONE URL per app).
+  // Bump last_webhook_received_at on any matching tenant so the dashboard
+  // banner clears even if events come through the legacy route. Fire and
+  // forget — DM dispatch must not wait on telemetry.
+  for (const entry of payload.entry ?? []) {
+    if (entry.id) {
+      void supa.from('autodm_tenants').update({
+        last_webhook_received_at: new Date().toISOString(),
+        last_webhook_event: entry.changes?.[0]?.field || 'unknown',
+        last_webhook_alert_sent_at: null,
+      }).eq('ig_business_id', entry.id);
+    }
+  }
+
   for (const entry of payload.entry ?? []) {
     for (const change of entry.changes ?? []) {
       // Only comment-trigger DMs for v1. Messages + mentions: future.
