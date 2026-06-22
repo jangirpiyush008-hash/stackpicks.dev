@@ -7,7 +7,7 @@ import { AdminCoupons } from '../../components/AdminCoupons';
 import { LogoutButton } from '../../components/LogoutButton';
 import { AdminLaunchPanel } from '../../components/AdminLaunchPanel';
 import Link from 'next/link';
-import { Shield, Users, Sparkles, IndianRupee, LogOut, Tag, Rocket, Flame, ArrowRight } from 'lucide-react';
+import { Shield, Users, Sparkles, IndianRupee, LogOut, Tag, Rocket, Flame, ArrowRight, Instagram } from 'lucide-react';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -49,13 +49,22 @@ export default async function AdminPage({
 
   const admin = adminClient();
 
-  // 2) Pull auth users + subscriptions in parallel
-  const [usersRes, subsRes, couponsRes] = await Promise.all([
+  // 2) Pull auth users + subscriptions + AutoDM tenants/logs in parallel
+  const dms24hCutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const [usersRes, subsRes, couponsRes, igTenantsRes, igDms24hRes] = await Promise.all([
     admin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
     admin
       .from('premium_subscriptions')
       .select('user_id, plan_id, status, razorpay_customer_id, amount_inr, current_period_start'),
     admin.from('coupons').select('*').order('created_at', { ascending: false }),
+    admin
+      .from('autodm_tenants')
+      .select('id, ig_username, plan_tier, is_active, last_webhook_received_at', { count: 'exact' }),
+    admin
+      .from('autodm_dm_log')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'sent')
+      .gte('created_at', dms24hCutoff),
   ]);
   if (usersRes.error) console.error('[admin] listUsers failed:', usersRes.error);
 
@@ -90,6 +99,20 @@ export default async function AdminPage({
   const activeSubs = (subsRes.data ?? []).filter((s) => s.status === 'active');
   const totalRevenuePaise = activeSubs.reduce((sum, s) => sum + ((s.amount_inr as number) || 0), 0);
   const totalRevenueINR = Math.round(totalRevenuePaise / 100);
+
+  // ─── Instagram / AutoDM stats ──────────────────────────────────────
+  const igTenants = (igTenantsRes.data ?? []) as Array<{
+    id: string; ig_username: string | null; plan_tier: string; is_active: boolean;
+    last_webhook_received_at: string | null;
+  }>;
+  const igCreatorsTotal = igTenantsRes.count ?? igTenants.length;
+  const igCreatorsActive = igTenants.filter((t) => t.is_active).length;
+  // "Healthy" = received a webhook in the last 24h (Meta is talking to us)
+  const igCreatorsHealthy = igTenants.filter(
+    (t) => t.last_webhook_received_at && t.last_webhook_received_at >= dms24hCutoff,
+  ).length;
+  const igDmsSent24h = igDms24hRes.count ?? 0;
+  const igPaidCreators = igTenants.filter((t) => t.plan_tier && t.plan_tier !== 'free').length;
 
   // ─── Launch metrics: time-bucketed counts ───────────────────────────
   const now = new Date();
@@ -197,6 +220,30 @@ export default async function AdminPage({
               <div className="min-w-0">
                 <div className="font-bold text-base">Connect wiring roadmap</div>
                 <div className="text-xs text-muted">Wire 5 apps/day · opens to public at 50 live</div>
+              </div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-muted group-hover:text-accent group-hover:translate-x-0.5 transition shrink-0" />
+          </Link>
+        </section>
+
+        {/* INSTAGRAM / AUTODM — creators, rules, sends, webhook health */}
+        <section className="mb-8">
+          <Link
+            href="/admin/autodm"
+            className="flex items-center justify-between gap-3 p-5 rounded-2xl border-2 border-accent/40 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent hover:border-accent/70 transition group"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <Instagram className="w-5 h-5 text-accent shrink-0" />
+              <div className="min-w-0">
+                <div className="font-bold text-base flex items-center gap-2 flex-wrap">
+                  Instagram · AutoDM
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-accent bg-accent/10 border border-accent/30 px-2 py-0.5 rounded-full">
+                    {igCreatorsTotal} creator{igCreatorsTotal === 1 ? '' : 's'}
+                  </span>
+                </div>
+                <div className="text-xs text-muted">
+                  {igCreatorsActive} active · {igCreatorsHealthy} healthy · {igDmsSent24h} DMs sent last 24h · {igPaidCreators} paid
+                </div>
               </div>
             </div>
             <ArrowRight className="w-4 h-4 text-muted group-hover:text-accent group-hover:translate-x-0.5 transition shrink-0" />
