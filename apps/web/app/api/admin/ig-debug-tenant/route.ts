@@ -37,10 +37,28 @@ export async function GET(req: NextRequest) {
   const q = admin.from('autodm_tenants').select(
     'id, ig_username, ig_business_id, ig_user_token_encrypted, last_webhook_at, webhook_subscribed_at, webhook_subscribe_error, created_at, is_active'
   );
-  const { data: row } = tenantId
-    ? await q.eq('id', tenantId).single()
-    : await q.eq('ig_username', username!).single();
-  if (!row) return NextResponse.json({ ok: false, error: 'tenant_not_found' }, { status: 404 });
+  // Lookup is forgiving — ilike + match on normalized handle (strip
+  // underscores and dots) so the URL works regardless of whether the
+  // admin types the Instagram display handle or our canonical storage.
+  let row;
+  if (tenantId) {
+    ({ data: row } = await q.eq('id', tenantId).maybeSingle());
+  } else {
+    const u = username!.trim();
+    ({ data: row } = await q.ilike('ig_username', u).maybeSingle());
+    if (!row) {
+      const norm = u.replace(/[_.]/g, '');
+      const { data: all } = await admin.from('autodm_tenants').select('id, ig_username');
+      const match = (all ?? []).find((r) =>
+        (r.ig_username ?? '').replace(/[_.]/g, '').toLowerCase() === norm.toLowerCase()
+      );
+      if (match) {
+        const { data: full } = await q.eq('id', match.id).maybeSingle();
+        row = full;
+      }
+    }
+  }
+  if (!row) return NextResponse.json({ ok: false, error: 'tenant_not_found', hint: 'try ?ig_username=bulklootdeals (no underscore) or ?tenant_id=<uuid>' }, { status: 404 });
 
   const t = row as {
     id: string; ig_username: string | null; ig_business_id: string;
