@@ -293,7 +293,13 @@ export async function POST(req: NextRequest) {
         : null;
 
       // Send DM. Button URL = the user's actual destination, title = the
-      // friendly label they saved in the rule editor.
+      // friendly label they saved in the rule editor. Subtitle = "Powered
+      // by @<handle>" — having a subtitle field is what hides the URL
+      // hostname from the IG mobile card (the HYPD pattern). Without
+      // this, IG falls back to showing the URL itself as the subtitle.
+      const ctaSubtitle = tenant.ig_username
+        ? `Powered by @${tenant.ig_username}`
+        : 'Powered by AutoDM';
       let send;
       try {
         send = await sendDm({
@@ -301,6 +307,7 @@ export async function POST(req: NextRequest) {
           recipientIgsid: fromIgsid, commentId: commentId || undefined,
           body,
           ctaUrl: rule.cta_url ?? undefined, ctaLabel: rule.cta_label ?? undefined,
+          ctaSubtitle,
         });
       } catch (e) { send = { ok: false, error: (e as Error).message }; }
 

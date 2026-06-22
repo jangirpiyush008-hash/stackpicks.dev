@@ -32,8 +32,14 @@ export async function sendDm(input: {
   body: string;
   ctaUrl?: string;
   ctaLabel?: string;
+  /** Branding line shown under title. Setting this makes IG render this
+   *  INSTEAD of the URL hostname under the title — the key to a clean
+   *  shop-style card (HYPD / Burger Bae pattern) with zero URL visible. */
+  ctaSubtitle?: string;
+  /** Image at top of the card. Use post permalink image or creator avatar. */
+  ctaImageUrl?: string;
 }): Promise<SendDmResult> {
-  const { igBusinessId, tenantToken, recipientIgsid, commentId, body, ctaUrl, ctaLabel } = input;
+  const { igBusinessId, tenantToken, recipientIgsid, commentId, body, ctaUrl, ctaLabel, ctaSubtitle, ctaImageUrl } = input;
 
   const recipient = commentId ? { comment_id: commentId } : { id: recipientIgsid };
   const baseUrl = GRAPH_IG;
@@ -53,35 +59,39 @@ export async function sendDm(input: {
     return { ok: res.ok, json: j, status: res.status };
   }
 
-  // 1. Plain-text DM. If a CTA URL is set, append it on its own line so
-  // the recipient gets a clickable preview in IG chat. The button-card
-  // attempt below is bonus — Private Reply (recipient: {comment_id})
-  // doesn't reliably accept generic templates on Instagram Login, so
-  // the inline URL is what guarantees the link reaches them.
-  const bodyWithUrl = ctaUrl
-    ? `${body.trimEnd()}\n\n${ctaUrl}`.slice(0, 1000)
-    : body.slice(0, 1000);
-  const text = await post({ text: bodyWithUrl });
+  // 1. Plain-text DM with the body ONLY. The URL no longer rides inline
+  // because the button-card below carries it — and we never want the
+  // recipient to see a raw URL in their chat (HYPD / Burger Bae style:
+  // body bubble + clean shop card with title + brand + tap button).
+  const text = await post({ text: body.slice(0, 1000) });
   if (!text.ok) return { ok: false, error: text.json?.error?.message || `HTTP ${text.status}` };
 
-  // 2. Optional CTA button card — best-effort (text already delivered
-  // with the inline URL). Only attempt outside the Private Reply path,
-  // where Standard Messaging supports templates.
-  if (ctaUrl && ctaLabel && !commentId) {
-    try {
-      await post({
-        attachment: {
-          type: 'template',
-          payload: {
-            template_type: 'generic',
-            elements: [{
-              title: ctaLabel.slice(0, 80),
-              buttons: [{ type: 'web_url', url: ctaUrl, title: ctaLabel.slice(0, 20) }],
-            }],
-          },
-        },
-      });
-    } catch { /* card-failure non-fatal */ }
+  // 2. CTA button card. Setting `subtitle` is what swaps the URL hostname
+  // for a brand line in the IG UI — without it, IG auto-shows the URL.
+  // We attempt the card on both Private Reply AND Standard Messaging
+  // paths now; if Private Reply rejects the template (older Instagram
+  // Login behavior) we fall back to a second plain-text DM with the URL.
+  if (ctaUrl && ctaLabel) {
+    const element: Record<string, unknown> = {
+      title: ctaLabel.slice(0, 80),
+      buttons: [{ type: 'web_url', url: ctaUrl, title: ctaLabel.slice(0, 20) }],
+    };
+    if (ctaSubtitle) element.subtitle = ctaSubtitle.slice(0, 80);
+    if (ctaImageUrl) element.image_url = ctaImageUrl;
+
+    const cardRes = await post({
+      attachment: {
+        type: 'template',
+        payload: { template_type: 'generic', elements: [element] },
+      },
+    }).catch(() => ({ ok: false, json: {} as { error?: { message?: string } }, status: 0 }));
+
+    if (!cardRes.ok) {
+      // Private Reply / older IG Login can reject generic templates. Fall
+      // back to sending the URL as a second text message so the link
+      // actually reaches the recipient — the body bubble already landed.
+      await post({ text: ctaUrl.slice(0, 1000) }).catch(() => undefined);
+    }
   }
 
   return { ok: true, message_id: text.json?.message_id };

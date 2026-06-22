@@ -217,8 +217,18 @@ export async function sendDm(input: {
   body: string;
   ctaUrl?: string;
   ctaLabel?: string;
+  /** Branding line shown under the title. CRUCIAL — when subtitle is set,
+   *  IG renders this INSTEAD of the URL hostname under the title. Without
+   *  it, IG auto-displays the URL ("chat.whatsapp.com" or
+   *  "autodm.stackpicks.dev/c/abc") to recipients. Pass something like
+   *  "Powered by @<tenant_handle>" or the creator's brand line. */
+  ctaSubtitle?: string;
+  /** Image shown at the top of the card (square or 1.91:1 ratio). When
+   *  set, IG renders the richer "shop-style" card you see on HYPD /
+   *  Burger Bae DMs. Use the post permalink image or creator avatar. */
+  ctaImageUrl?: string;
 }): Promise<SendDmResult> {
-  const { recipientIgsid, commentId, body, ctaUrl, ctaLabel } = input;
+  const { recipientIgsid, commentId, body, ctaUrl, ctaLabel, ctaSubtitle, ctaImageUrl } = input;
 
   // Private Reply path: address by comment_id, NOT user_id. Meta uses the
   // comment as the messaging anchor and grants a 7-day window from the
@@ -270,21 +280,28 @@ export async function sendDm(input: {
 
   // 2. Optional: follow-up button card. Best-effort — text DM already
   //    landed, so a card failure is non-fatal.
+  //
+  // Setting `subtitle` is the key to NOT showing the URL hostname. Meta's
+  // IG mobile client falls back to displaying the URL only when subtitle
+  // is absent. With a "Powered by @creator" subtitle the recipient sees
+  // a clean shop-style card (HYPD / Burger Bae pattern) — title +
+  // brand line + tap button, zero URL visible.
   if (ctaUrl && ctaLabel) {
+    const element: Record<string, unknown> = {
+      title: ctaLabel.slice(0, 80),
+      buttons: [
+        { type: 'web_url', url: ctaUrl, title: ctaLabel.slice(0, 20) },
+      ],
+    };
+    if (ctaSubtitle) element.subtitle = ctaSubtitle.slice(0, 80);
+    if (ctaImageUrl) element.image_url = ctaImageUrl;
     try {
       await postMessage({
         attachment: {
           type: 'template',
           payload: {
             template_type: 'generic',
-            elements: [
-              {
-                title: ctaLabel.slice(0, 80),       // button label as title — short + clean
-                buttons: [
-                  { type: 'web_url', url: ctaUrl, title: ctaLabel.slice(0, 20) },
-                ],
-              },
-            ],
+            elements: [element],
           },
         },
       });
