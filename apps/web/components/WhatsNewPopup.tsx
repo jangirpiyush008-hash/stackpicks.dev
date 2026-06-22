@@ -1,114 +1,144 @@
 'use client';
 
 /**
- * WhatsNewPopup — surfaces the latest refresh/changelog to homepage visitors.
+ * What's New popup — bottom-left toast that auto-fires when we ship updates.
  *
- * Behavior:
- * - Bumps via REFRESH_ID — change the ID when shipping a new refresh and
- *   every visitor sees the toast once, even if they dismissed the previous one.
- * - Toast slides in bottom-right after 2.5s on /, /mcp, /connect.
- * - Dismiss persists per-REFRESH_ID in localStorage. ESC also closes.
- * - Links to the changelog blog post.
+ * Source of truth: apps/web/lib/whats-new.ts (UPDATES array). Every entry
+ * gets shown ONCE per visitor (dismissal stored per-id in localStorage),
+ * except pinned entries which always show until that browser dismisses.
+ *
+ * Lifecycle on each page load:
+ *   1. Pick the newest UPDATES item the visitor hasn't dismissed.
+ *   2. After 2.5s, slide in from bottom-left.
+ *   3. Auto-hide after 8s. Hover pauses the timer.
+ *   4. Dismiss / click / Esc → permanent for that id.
+ *
+ * Surfaces: only top-level discovery pages (/, /mcp, /connect, /tools,
+ * /skills). Not shown on dashboard, admin, auth flows, or per-repo
+ * pages — those need their own focus.
  */
 
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Sparkles, X, ArrowRight } from 'lucide-react';
+import { getLatestUpdates, type WhatsNewItem } from '@/lib/whats-new';
 
-const REFRESH_ID = 'jun-2026-02';
-const STORAGE_KEY = `sp_whatsnew_dismissed_${REFRESH_ID}`;
-const SHOW_DELAY_MS = 2_500;
+const SEEN_KEY_PREFIX = 'sp_whatsnew_dismissed_';
+const APPEAR_AFTER_MS = 2_500;
+const AUTO_HIDE_AFTER_MS = 8_000;
 
-const CHANGELOG_HREF = '/blog/mcp-stateless-protocol-2026';
+// Only fire on top-level discovery surfaces. Adding /whats-new explicitly
+// excluded — the user is already AT the changelog, no need to nag them.
+const ALLOWED_PATHS = new Set(['/', '/mcp', '/connect', '/tools', '/skills', '/blog']);
 
 export function WhatsNewPopup() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
+  const [item, setItem] = useState<WhatsNewItem | null>(null);
+  const [visible, setVisible] = useState(false);
+  const [paused, setPaused] = useState(false);
 
+  // Pick the freshest item the visitor hasn't seen yet.
   useEffect(() => {
-    // Only show on top-level discovery surfaces.
-    const allowed = pathname === '/' || pathname === '/mcp' || pathname === '/connect';
-    if (!allowed) return;
-
-    try {
-      if (localStorage.getItem(STORAGE_KEY)) return;
-    } catch { /* ignore */ }
-
-    const t = setTimeout(() => setOpen(true), SHOW_DELAY_MS);
-    return () => clearTimeout(t);
+    if (typeof window === 'undefined') return;
+    if (!ALLOWED_PATHS.has(pathname ?? '')) return;
+    for (const c of getLatestUpdates(8)) {
+      let seen: string | null = null;
+      try { seen = localStorage.getItem(SEEN_KEY_PREFIX + c.id); } catch { /* ignore */ }
+      // Pinned entries shadow the seen flag for one show per session — major
+      // launches shouldn't be missed by repeat visitors.
+      if (!seen) { setItem(c); break; }
+    }
   }, [pathname]);
 
+  // Slide in after a beat so we don't compete with first paint.
   useEffect(() => {
-    if (!open) return;
+    if (!item) return;
+    const t = setTimeout(() => setVisible(true), APPEAR_AFTER_MS);
+    return () => clearTimeout(t);
+  }, [item]);
+
+  // Auto-hide after AUTO_HIDE_AFTER_MS unless the visitor is hovering.
+  useEffect(() => {
+    if (!visible || paused) return;
+    const t = setTimeout(() => setVisible(false), AUTO_HIDE_AFTER_MS);
+    return () => clearTimeout(t);
+  }, [visible, paused]);
+
+  // Esc closes too.
+  useEffect(() => {
+    if (!visible) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') dismiss(); };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [open]);
+  }, [visible]);
 
-  function dismiss() {
-    try { localStorage.setItem(STORAGE_KEY, String(Date.now())); } catch { /* ignore */ }
-    setOpen(false);
+  function dismiss(): void {
+    if (item) {
+      try { localStorage.setItem(SEEN_KEY_PREFIX + item.id, String(Date.now())); } catch { /* ignore */ }
+    }
+    setVisible(false);
   }
 
-  if (!open) return null;
+  if (!item) return null;
 
   return (
     <div
       role="status"
       aria-live="polite"
-      className="fixed z-50 bottom-4 right-4 left-4 md:left-auto md:bottom-6 md:right-6 max-w-sm
-                 rounded-2xl border border-accent/30 bg-surface/95 backdrop-blur-md
-                 shadow-2xl shadow-accent/20
-                 animate-sp-slide-in"
+      aria-hidden={!visible}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      className={`
+        fixed z-40 bottom-4 left-4
+        max-w-[320px] sm:max-w-[360px]
+        transition-all duration-300 ease-out
+        ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3 pointer-events-none'}
+      `}
     >
-      <button
-        onClick={dismiss}
-        aria-label="Dismiss"
-        className="absolute top-2 right-2 p-1.5 rounded-md text-muted hover:text-text hover:bg-bg/50 transition"
-      >
-        <X className="w-4 h-4" />
-      </button>
+      <div className="rounded-2xl border border-accent/40 bg-surface/95 backdrop-blur-md shadow-2xl shadow-accent/10 p-4 relative">
+        <button
+          type="button"
+          onClick={dismiss}
+          aria-label="Dismiss"
+          className="absolute top-2 right-2 p-1.5 rounded-md text-muted hover:text-text hover:bg-bg/50 transition"
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
 
-      <div className="p-4 md:p-5">
         <div className="flex items-center gap-2 mb-2">
           <span className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-accent/15 border border-accent/30">
             <Sparkles className="w-4 h-4 text-accent" />
           </span>
           <div className="flex flex-col">
-            <span className="text-xs font-mono uppercase tracking-wider text-accent">Fresh on the blog</span>
-            <span className="text-[10px] text-muted">June 18, 2026</span>
+            <span className="text-[10px] font-mono uppercase tracking-widest text-accent">What's new</span>
+            <span className="text-[10px] text-muted">
+              {new Date(item.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' })}
+            </span>
           </div>
         </div>
 
-        <h3 className="text-sm font-semibold text-text mb-2 leading-snug">
-          MCP just went stateless — the 2026 spec, explained
-        </h3>
+        <Link href={item.href} onClick={dismiss} className="block group">
+          <h3 className="text-sm font-bold leading-snug text-text group-hover:text-accent transition pr-4">
+            {item.title}
+          </h3>
+          <p className="text-xs text-muted mt-1.5 leading-relaxed line-clamp-3">
+            {item.summary}
+          </p>
+          <div className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-mono text-accent">
+            {item.cta ?? 'See what changed'}
+            <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition" />
+          </div>
+        </Link>
 
-        <p className="text-xs text-muted mb-4 leading-relaxed">
-          No more session IDs or sticky load balancers. Plus June&apos;s launches —
-          Claude Fable 5, GLM-5.2, Copilot usage billing — in one breakdown.
-        </p>
-
-        <div className="flex items-center justify-between gap-2">
-          <Link
-            href={CHANGELOG_HREF}
-            onClick={dismiss}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-medium
-                       px-3 py-2 rounded-md bg-accent text-bg hover:bg-accent/90 transition"
-          >
-            Read the breakdown
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-          <button
-            onClick={dismiss}
-            className="text-xs text-muted hover:text-text px-2 py-2 transition"
-          >
-            Dismiss
-          </button>
-        </div>
+        <Link
+          href="/whats-new"
+          onClick={dismiss}
+          className="block mt-2 pt-2 border-t border-border/30 text-[10px] font-mono uppercase tracking-widest text-muted hover:text-accent transition"
+        >
+          See all updates →
+        </Link>
       </div>
-
     </div>
   );
 }
