@@ -151,14 +151,15 @@ export async function GET(req: NextRequest) {
     }
     const nudgeText = renderTemplate(nudgeTpl, { username: r.ig_username || undefined });
 
-    // Generate a NEW short_id for the followup so we can attribute its
-    // clicks separately. Same destination URL as the original.
+    // Per-follow-up short_id for attribution if/when we route through a
+    // branded redirect domain. For now the body inlines the user's actual
+    // destination URL (cleaner — recipients see chat.whatsapp.com /
+    // youtube.com / similar familiar hostname instead of our tracker).
     const followupShortId = Math.random().toString(36).slice(2, 12);
-    const trackerUrl = `${autodmOrigin()}/c/${followupShortId}`;
 
-    // Final body = nudge text + link on its own line. Apparent in IG chat
-    // as a normal message preview with the URL as the second line.
-    const body = `${nudgeText}\n\n${trackerUrl}`;
+    // Final body = nudge text + link on its own line. IG renders the URL
+    // as an inline link preview.
+    const body = `${nudgeText}\n\n${r.original_cta_url}`;
 
     // Send via standard messaging — conversation window from the original
     // DM is still open if the recipient hasn't replied. If outside the

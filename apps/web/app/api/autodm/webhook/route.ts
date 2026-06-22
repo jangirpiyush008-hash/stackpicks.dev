@@ -281,24 +281,26 @@ export async function POST(req: NextRequest) {
       const ownHandle = tenant.ig_username ? `@${tenant.ig_username}` : '@yourcreator';
       const body = applyFollowNudge(rawBody, rule, isFollower, ownHandle);
 
-      // Generate a per-send short link for click tracking. The CTA button
-      // in the DM card uses this URL; we 302-redirect to the real cta_url
-      // on click and record the timestamp + counter on autodm_dm_log.
-      // 10 random base36 chars → ~6.0e15 keyspace. Collisions practically
-      // impossible at our scale; unique index handles the edge.
+      // Generate a per-send short_id for our internal click logging. We
+      // still write it to autodm_dm_log so we can attribute clicks later
+      // if/when we route through a branded short domain. But the BUTTON
+      // CARD URL is now the user's raw cta_url — IG mobile renders the
+      // URL hostname as a visible subtitle under the card title, and a
+      // recognizable destination (chat.whatsapp.com, youtube.com, our
+      // own blog) reads cleaner than autodm.stackpicks.dev/c/xxxx.
       const shortId = rule.cta_url
         ? Math.random().toString(36).slice(2, 12)
         : null;
-      const trackerUrl = shortId ? `${autodmOrigin()}/c/${shortId}` : undefined;
 
-      // Send DM (CTA button uses the tracker URL, not the original)
+      // Send DM. Button URL = the user's actual destination, title = the
+      // friendly label they saved in the rule editor.
       let send;
       try {
         send = await sendDm({
           igBusinessId: tenant.ig_business_id, tenantToken,
           recipientIgsid: fromIgsid, commentId: commentId || undefined,
           body,
-          ctaUrl: trackerUrl ?? undefined, ctaLabel: rule.cta_label ?? undefined,
+          ctaUrl: rule.cta_url ?? undefined, ctaLabel: rule.cta_label ?? undefined,
         });
       } catch (e) { send = { ok: false, error: (e as Error).message }; }
 
