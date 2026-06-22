@@ -13,7 +13,8 @@
  */
 
 import { useMemo, useState } from 'react';
-import { Search, Pause, Play, Settings2, RefreshCcw, Loader2, AlertTriangle, Bot } from 'lucide-react';
+import Link from 'next/link';
+import { Search, Pause, Play, Settings2, RefreshCcw, Loader2, AlertTriangle, Bot, ChevronRight } from 'lucide-react';
 
 interface TenantSummary {
   id: string;
@@ -123,15 +124,23 @@ export function AutodmAdminClient({ tenants: initial }: { tenants: TenantSummary
                 : warming ? 'border-border bg-bg-card/40'
                 : 'border-border bg-bg-card/50'
             }`}>
-              <div className="flex items-start justify-between gap-3 flex-wrap">
+              {/* Identity row is a Link to the per-tenant detail report.
+                  Action buttons below stay non-link so they don't navigate
+                  away on click — admins can pause/resume without losing
+                  their scroll position. */}
+              <Link
+                href={`/admin/autodm/${t.id}`}
+                className="flex items-start justify-between gap-3 flex-wrap rounded-lg -m-1 p-1 hover:bg-fg/[0.03] transition group"
+              >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span className="font-semibold text-sm">@{t.ig_username || 'no-username'}</span>
+                    <span className="font-semibold text-sm group-hover:text-accent transition">@{t.ig_username || 'no-username'}</span>
                     <TierBadge tier={t.plan_tier as Tier} />
                     {isPaused && <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-500 font-semibold">Paused</span>}
                     {warming && <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-muted/15 text-muted">Warming</span>}
                     {t.ai_followup_agent && <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-accent/10 text-accent"><Bot className="w-2.5 h-2.5" /> agent</span>}
                     {t.escalated_count > 0 && <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-500"><AlertTriangle className="w-2.5 h-2.5" /> {t.escalated_count} esc</span>}
+                    <ChevronRight className="w-3 h-3 text-muted group-hover:text-accent group-hover:translate-x-0.5 transition ml-auto sm:ml-0" />
                   </div>
                   <div className="text-xs text-muted font-mono break-all">{t.id} · ig:{t.ig_business_id}</div>
                   {isPaused && <div className="text-xs text-amber-500/80 mt-1">{t.paused_reason}</div>}
@@ -141,7 +150,7 @@ export function AutodmAdminClient({ tenants: initial }: { tenants: TenantSummary
                   <div>rules: {t.active_rule_count}/{t.rule_count} · sent: {t.sent_24h}/24h · {t.sent_7d}/7d</div>
                   <div>joined {new Date(t.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short' })}</div>
                 </div>
-              </div>
+              </Link>
 
               {/* Actions */}
               <div className="flex gap-1.5 mt-3 flex-wrap">
