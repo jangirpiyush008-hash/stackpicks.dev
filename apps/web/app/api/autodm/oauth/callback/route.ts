@@ -224,18 +224,38 @@ export async function GET(req: NextRequest) {
   // 5. Subscribe this IG account's events to OUR webhook.
   //    Without this, Meta never sends events for this tenant.
   //    live_comments is a SEPARATE field from comments — it must be listed
-  //    explicitly or Instagram Live comments never reach us. That powers
-  //    the "comment on my Live → instant DM" flow.
-  //    Failure is non-fatal — the tenant can re-trigger from the dashboard.
+  //    explicitly or Instagram Live comments never reach us.
+  //
+  //    Failure is non-fatal for the connect flow (we still redirect into the
+  //    dashboard) but we record the result so the dashboard banner can
+  //    distinguish "subscribe attempted + succeeded" from "subscribe failed
+  //    silently" — previously the empty catch swallowed real Meta errors
+  //    and the tenant would sit in zombie state forever.
+  let subscribeError: string | null = null;
+  let subscribedAt: string | null = null;
   try {
-    await fetch(
+    const subRes = await fetch(
       `${GRAPH_IG}/${igBusinessId}/subscribed_apps?` + new URLSearchParams({
         subscribed_fields: 'comments,live_comments,messages,mentions',
         access_token: pageToken,
       }),
       { method: 'POST' },
     );
-  } catch { /* best-effort */ }
+    if (subRes.ok) {
+      subscribedAt = new Date().toISOString();
+    } else {
+      const body = await subRes.text().catch(() => '');
+      subscribeError = `meta:${subRes.status}:${body.slice(0, 200)}`;
+    }
+  } catch (e) {
+    subscribeError = `network:${(e as Error).message}`.slice(0, 200);
+  }
+  if (upserted?.id) {
+    await supa.from('autodm_tenants').update({
+      webhook_subscribed_at: subscribedAt,
+      webhook_subscribe_error: subscribeError,
+    }).eq('id', upserted.id);
+  }
 
   // 6. Redirect into the dashboard — AI onboarding kicks off on first view.
   // Also set the active-tenant cookie to the just-connected account so the

@@ -60,8 +60,23 @@ export async function POST() {
   );
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    return NextResponse.json({ ok: false, error: `meta:${res.status}:${body.slice(0, 160)}` }, { status: 502 });
+    const err = `meta:${res.status}:${body.slice(0, 160)}`;
+    // Persist the failure so the banner can show a real reason instead of
+    // the generic "we've never received a webhook" message.
+    await admin.from('autodm_tenants').update({
+      webhook_subscribe_error: err,
+    }).eq('id', tlite.id);
+    return NextResponse.json({ ok: false, error: err }, { status: 502 });
   }
+
+  // Mark the subscribe attempt as successful so the banner can clear once
+  // the first webhook arrives. webhook_subscribed_at is independent of
+  // last_webhook_at — the former says "we asked Meta to deliver", the
+  // latter says "Meta actually delivered".
+  await admin.from('autodm_tenants').update({
+    webhook_subscribed_at: new Date().toISOString(),
+    webhook_subscribe_error: null,
+  }).eq('id', tlite.id);
 
   return NextResponse.json({ ok: true, subscribed_fields: FIELDS });
 }
