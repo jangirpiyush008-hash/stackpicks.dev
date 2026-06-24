@@ -328,6 +328,13 @@ Read first: takes are the entire moat. Anyone can scrape GitHub. Nobody can clon
 - JSON-LD helpers in `core/seo/index.ts` (softwareJsonLd, categoryJsonLd, collectionJsonLd)
 - For OG images: dynamic generation via `apps/web/app/api/og/route.ts` (not yet built — phase 2)
 
+### Always use images in blog posts (Bing + Google ranking signal)
+- Every new blog post in `apps/web/lib/blog.ts` must include at least 2-3 inline images via markdown `![alt text](/blog/<slug>/<img>.jpg)`.
+- Store images in `apps/web/public/blog/<slug>/` so they ship with the site and are crawled by Bing/Google image indexes.
+- Alt text MUST be descriptive (not "image" or the slug) — Bing reads alt text heavily for image-search ranking and Google AI Overviews use it as caption context.
+- Hero image auto-generated via `[slug]/opengraph-image.tsx` is already there — don't duplicate it, add CONTENT images (charts, screenshots, posters, diagrams) that illustrate the body.
+- Compress to ≤500KB via `sips -s format jpeg -s formatOptions 80 -Z 1200 in.jpg --out out.jpg` before committing.
+
 ---
 
 ## Common Pitfalls (don't repeat these)

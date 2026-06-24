@@ -3819,7 +3819,9 @@ This pattern is battle-tested and ships in ~2 hours. Razorpay's DX in 2026 is ge
         answer: 'Pre-orders are available at the official Rockstar Games store (rockstargames.com/VI), PlayStation Store, Microsoft Store / Xbox, and major Indian retailers including Games The Shop, Amazon India, and Flipkart. Standard edition is $69.99 USD globally; Indian pricing typically lands at ₹4,999-5,499 for digital. Collector\'s editions and Deluxe physical editions are available through Rockstar Warehouse and select retailers.',
       },
     ],
-    content: `**Quick answer:** [**Grand Theft Auto VI**](https://www.rockstargames.com/VI) launches **November 19, 2026** on PlayStation 5 and Xbox Series X|S. **Pre-orders open globally on 25 June 2026** at [rockstargames.com/VI](https://www.rockstargames.com/VI) and on PlayStation / Xbox stores. Rumored development cost: **$1-2 billion** — the most expensive game ever made. Built on Rockstar's proprietary RAGE engine with Euphoria physics. If you want to start building your own game today, you don't need that budget — the 2026 open-source stack (Godot, Unreal, Blender, Three.js) gets you a playable prototype in weeks.
+    content: `![Grand Theft Auto VI promotional poster — Lucia and Jason on a car against the Vice City skyline, palm trees, sunset gradient. Coming 19 November 2026.](/blog/gta-vi/poster.jpg)
+
+**Quick answer:** [**Grand Theft Auto VI**](https://www.rockstargames.com/VI) launches **November 19, 2026** on PlayStation 5 and Xbox Series X|S. **Pre-orders open globally on 25 June 2026** at [rockstargames.com/VI](https://www.rockstargames.com/VI) and on PlayStation / Xbox stores. Rumored development cost: **$1-2 billion** — the most expensive game ever made. Built on Rockstar's proprietary RAGE engine with Euphoria physics. If you want to start building your own game today, you don't need that budget — the 2026 open-source stack (Godot, Unreal, Blender, Three.js) gets you a playable prototype in weeks.
 
 This post covers the GTA VI launch details, the staggering tech and budget behind the game, and a complete builder's guide to making your own game using open-source tools you can find in [our 3D category](/category/three-d) and [game dev bundle](/build).
 
@@ -3852,6 +3854,8 @@ Industry estimates put GTA VI's development budget between **$1 billion and $2 b
 | GTA V | ~$265M | 2013 |
 | Hogwarts Legacy | ~$150M | 2023 |
 
+![GTA VI development budget chart — $1-2 billion comparison with Red Dead Redemption 2, Cyberpunk 2077, GTA V](/blog/gta-vi/budget.png)
+
 Where the GTA VI budget goes:
 - **7+ years of development** across 5+ Rockstar studios (Edinburgh, Toronto, San Diego, Lincoln, India, Carlsbad)
 - **2,000+ full-time staff** at peak
@@ -3877,6 +3881,8 @@ The bigger lesson: AAA game budgets have doubled every console generation. GTA V
 | **AI / NPC behavior** | RAGE AI (proprietary) | Behavior Designer, ConVai, Inworld AI |
 
 You don't need any of Rockstar's proprietary tools to ship something great. The open-source equivalents listed above are what indie devs use to ship games that pull in real revenue.
+
+![Open source game development stack 2026 — Godot, Unreal Engine 5, Unity, Blender, Three.js, ConVai AI NPCs](/blog/gta-vi/diy.png)
 
 ## How to start building your own game — the 2026 open-source stack
 
