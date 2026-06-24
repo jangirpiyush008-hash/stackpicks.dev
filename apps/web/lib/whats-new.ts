@@ -41,6 +41,15 @@ export interface WhatsNewItem {
 /** Newest first. The popup picks the top 1-2 items the visitor hasn't seen. */
 export const UPDATES: WhatsNewItem[] = [
   {
+    id: 'mcp-security-checklist-2026',
+    date: '2026-06-24',
+    title: '492 MCP servers exposed — the security checklist',
+    summary: 'Trend Micro found 492 public MCP servers with zero auth. The 7 mistakes most made, and the 7-step checklist so your server isn\'t number 493.',
+    category: 'blog',
+    href: '/blog/mcp-server-security-checklist-2026',
+    cta: 'Read the checklist',
+  },
+  {
     id: 'gta-vi-launch-2026',
     date: '2026-06-22',
     title: 'GTA VI launches 19 Nov 2026 — pre-book 25 June',

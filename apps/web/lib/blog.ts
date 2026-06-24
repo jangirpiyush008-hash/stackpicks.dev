@@ -3776,6 +3776,147 @@ This pattern is battle-tested and ships in ~2 hours. Razorpay's DX in 2026 is ge
 `,
   },
 
+  // ─── MCP security checklist — riding the Trend Micro 492-exposed finding (Jun 2026) ───
+  {
+    slug: 'mcp-server-security-checklist-2026',
+    title: 'MCP Server Security Checklist 2026: Don\'t Be One of the 492 Exposed Servers',
+    excerpt: 'Trend Micro found 492 MCP servers on the public internet with zero authentication. Here are the 7 security mistakes most of them made — and the 7-step checklist to make sure your MCP server isn\'t next.',
+    query: 'mcp server security 2026',
+    monthly_searches: 1800,
+    reading_time: 7,
+    published_at: '2026-06-24',
+    updated_at: '2026-06-24',
+    author: 'StackPicks',
+    category: 'Security',
+    quick_answer: 'In June 2026 Trend Micro researchers found 492 MCP servers on the public internet with zero authentication, exposing everything from production databases to internal Slack workspaces to anyone who knew the URL. The fix is a 7-step checklist: enforce OAuth or signed tokens, never expose the SSE / Streamable HTTP endpoint without auth, scope tools to the minimum required, rate-limit per token, log every tool call, rotate credentials, and never trust the client. StackPicks Connect handles all of this for you out of the box.',
+    faqs: [
+      {
+        question: 'What is an MCP server and why does it need auth?',
+        answer: 'An MCP (Model Context Protocol) server exposes tools to AI clients like Claude, Cursor, and ChatGPT — it can read files, query databases, post to Slack, fetch CRM records. Anyone who can reach a public MCP URL with no auth gets the same access the AI agent gets. That\'s why authenticated MCP transport (OAuth 2.1, signed bearer tokens, or mTLS) is non-negotiable for production deployments.',
+      },
+      {
+        question: 'How did Trend Micro find 492 exposed servers?',
+        answer: 'Standard internet-scanning techniques. MCP servers using the SSE or Streamable HTTP transport publish predictable endpoints (/sse, /messages, /mcp), advertise themselves with the X-MCP-Version header, and respond to the JSON-RPC initialize method without auth if no middleware is wired. Shodan-style scans surface them in minutes. The 492 number is the floor — actual count is likely higher.',
+      },
+      {
+        question: 'I run a local MCP server only — am I safe?',
+        answer: 'Probably yes, but check three things: (1) your firewall isn\'t exposing the port (lsof -i :3000 should show only loopback bindings), (2) you\'re not behind a reverse proxy or tunneling service (ngrok, Cloudflare Tunnel) that\'s accidentally publishing it, and (3) your MCP client config uses the stdio transport, not HTTP. Local stdio MCP is the safest deployment model.',
+      },
+      {
+        question: 'Does StackPicks Connect solve this?',
+        answer: 'Yes — every MCP connection on StackPicks Connect goes through OAuth 2.1 (or signed bearer tokens for API-key apps), all credentials are AES-256 encrypted at rest with versioned key rotation, every tool call is audited, and per-app scopes are enforced. You connect Slack, Notion, Linear, Stripe, GitHub etc. once via browser OAuth and Claude/Cursor talks to them through our gateway — no public unauthenticated endpoints anywhere.',
+      },
+      {
+        question: 'What\'s the minimum auth setup for a self-hosted MCP server?',
+        answer: 'At minimum: an Authorization header check on every JSON-RPC request before processing tool calls, a 401 response for missing/invalid tokens, and tokens stored hashed (not plaintext) in your DB. Better: OAuth 2.1 with PKCE and short-lived access tokens. Best: mTLS or signed JWTs with audience scoping per tool. Don\'t ship to production with "we\'ll add auth later" — that\'s how the 492 ended up exposed.',
+      },
+    ],
+    content: `![MCP server security checklist — 492 servers exposed with zero auth, the 7 mistakes most made](/blog/mcp-security/hero.png)
+
+**Quick answer:** In June 2026, Trend Micro researchers found **492 MCP servers on the public internet with zero authentication** — exposing production databases, internal Slack workspaces, GitHub repos, and proprietary docs to anyone who knew the URL. The fix is a 7-step checklist below. If you don't want to wire all this yourself, [**StackPicks Connect**](/connect) handles MCP auth + audit + encryption out of the box.
+
+If you've shipped or are about to ship an MCP server in 2026, **read this before your next deploy.**
+
+## The 492 exposed servers — what actually happened
+
+MCP (Model Context Protocol) is Anthropic's open standard for AI agents to talk to your tools — your Slack, your Postgres, your CRM, your GitHub repos. Each MCP server exposes a JSON-RPC endpoint that an AI client can call.
+
+Trend Micro researchers ran internet scans in early June 2026 and found:
+
+- **492 publicly reachable MCP servers** with no authentication of any kind
+- Many running on default ports (3000, 8080) with the standard \`/sse\` or \`/messages\` transport endpoint
+- **Exposed data included**: production database read access, private GitHub repos, internal Slack messages, Notion workspaces, Stripe customer records, full filesystem access
+- Most were running on cloud VMs (AWS, DigitalOcean, Hetzner) — accidentally exposed via misconfigured security groups or reverse proxies
+
+This is the early-2010s "MongoDB-with-no-password" moment for MCP. Every indie dev shipping an MCP server is potentially adding to the count.
+
+## The 7 mistakes most of them made
+
+### 1. No authentication middleware at all
+
+The most common failure: a developer copy-pasted an MCP SDK example, ran \`uvicorn server:app --host 0.0.0.0\`, and forgot that "host 0.0.0.0" means "the entire internet". The MCP SDK examples are bare-bones — they assume you add auth before deploying.
+
+**Fix:** every JSON-RPC request must hit an auth middleware **before** the tool router. 401 on missing header. No exceptions for the \`initialize\` method.
+
+### 2. Predictable endpoint paths advertise the server
+
+The SSE / Streamable HTTP transport conventions publish at predictable paths (\`/sse\`, \`/messages\`, \`/mcp\`). Combined with the \`X-MCP-Version\` response header, a single targeted Shodan query finds every exposed server in minutes.
+
+**Fix:** Don't rely on path obscurity. Auth is the only real barrier — but you can additionally serve the MCP endpoint on a non-standard path (\`/internal/<random-string>/mcp\`) as a soft second layer.
+
+### 3. Hardcoded credentials inside the MCP server code
+
+The MCP server has access to your real backend tokens (Slack bot tokens, GitHub PATs, Stripe secret keys, DB connection strings). Several of the 492 exposed servers had these checked into Git via \`.env\` files that landed in public repos.
+
+**Fix:** Store backend credentials in a secrets manager (Doppler, Infisical, AWS Secrets Manager, Railway env vars). Never in the MCP server's filesystem or code.
+
+### 4. Over-broad tool scopes
+
+If your MCP server exposes a \`read_file\` tool that accepts any path, an attacker (or a hallucinating AI) can read \`/etc/passwd\`, your Postgres password file, your SSH keys.
+
+**Fix:** Every tool input must be validated against an allowlist. \`read_file({ path: string })\` should refuse anything outside a configured base directory. Same logic for DB queries (parameterised only), file writes (scoped subdirectory), shell commands (allowlist of approved binaries).
+
+### 5. No rate limiting per token
+
+Even with auth wired, a leaked token gives an attacker (or an enthusiastic AI) infinite calls. Several exposed servers had auth but no per-token rate limits — an attacker could exhaust your DB connection pool or hit Stripe's API limits at full speed.
+
+**Fix:** Rate-limit per token. 60 tool calls/minute per token is generous for legit use. Spike alerts on 10× normal volume.
+
+### 6. No audit log of tool calls
+
+If something goes wrong, you need to know which token called which tool with what arguments and when. Most of the 492 had no logs at all — the operators didn't know they were compromised.
+
+**Fix:** Log every tool call with: timestamp, token hash, tool name, arguments hash (not plaintext if sensitive), response status. Ship to an external sink (Logflare, Axiom, BetterStack) — not just stdout that the host can lose on restart.
+
+### 7. "We'll add auth before going live" — and then going live
+
+The single most common comment from the operators of the exposed servers when contacted: "I was going to add auth before going live." Then they forgot. Then six months passed.
+
+**Fix:** Production = auth, period. If you can't wire auth in the same PR as the deploy, don't deploy.
+
+## The 7-step MCP security checklist
+
+Copy-paste this into your repo as \`SECURITY.md\`. Before every MCP deploy:
+
+| ✓ | Step | What it means |
+|---|---|---|
+| ☐ | **1. Auth middleware on every request** | OAuth 2.1, signed bearer tokens, or mTLS. 401 on missing/invalid. No method-level bypasses. |
+| ☐ | **2. Tools restricted to allowlists** | No arbitrary paths, no arbitrary SQL, no arbitrary shell. Every input validated. |
+| ☐ | **3. Secrets in a vault** | Backend creds (Slack tokens, DB strings, API keys) in Doppler / Infisical / Railway env vars — never on disk in the MCP server. |
+| ☐ | **4. Rate limits per token** | 60 calls/min per token by default. Tighter for write tools. |
+| ☐ | **5. Audit log to external sink** | Every tool call logged with timestamp + token hash + tool + args hash + status. Ship to Axiom / Logflare / BetterStack. |
+| ☐ | **6. Token rotation** | Tokens expire ≤90 days. Rotate immediately if any infra is touched. |
+| ☐ | **7. Network controls** | Bind to 127.0.0.1 by default. Public access via authenticated reverse proxy only. \`lsof -i\` before every deploy. |
+
+## The shortcut: use a managed MCP gateway
+
+If wiring all 7 yourself feels like a tax, that's because it is. We built [**StackPicks Connect**](/connect) so indie devs don't have to:
+
+- Every app connection is OAuth 2.1 or signed bearer token — no raw MCP endpoints exposed to the internet
+- All credentials encrypted at rest with AES-256-GCM and versioned key rotation
+- Per-tool scopes enforced server-side
+- Every tool call audited to our log pipeline
+- Rate limits per API key
+- Slack, Notion, Linear, Stripe, GitHub, Razorpay, Meta Ads, Google Ads + 40 more apps wired
+
+You connect once via browser OAuth, paste one URL (\`https://stackpicks.dev/api/mcp\`) into Claude or Cursor, and you're talking to all your apps through an authenticated gateway. No public MCP endpoints anywhere.
+
+## Honest bottom line
+
+If you can wire 7 security layers correctly yourself, self-hosting MCP servers is fine. If you can't — or you don't want to spend a week on auth + audit + rotation — use a managed gateway. The 492 exposed servers happened because shipping fast beats shipping secure, and the MCP ecosystem hasn't caught up with secure defaults yet.
+
+Don't be number 493.
+
+## More from StackPicks
+
+- [What is MCP (Model Context Protocol)? Plain-English guide](/blog/mcp-explained)
+- [MCP Goes Stateless: 2026 Spec RC explained](/blog/mcp-stateless-protocol-2026)
+- [MCP 2.0 in 2026: what's new](/blog/mcp-2-0-explained-2026)
+- [One MCP for all apps — Composio alternative](/blog/one-mcp-for-all-apps-composio-alternative-2026)
+- [Connect 50+ apps via one MCP URL → /connect](/connect)
+`,
+  },
+
   // ─── GTA VI launch + how-to-build-a-game (Jun 2026, tied to trailer/pre-order) ───
   {
     slug: 'gta-vi-launch-2026-how-to-build-a-game',
