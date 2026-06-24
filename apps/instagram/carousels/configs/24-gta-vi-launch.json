@@ -1,0 +1,56 @@
+{
+  "slug": "24-gta-vi-launch",
+  "category": "gaming · launch",
+  "hook": {
+    "eyebrow": "pre-orders open 25 jun · launch 19 nov",
+    "headline": "<em>GTA VI</em> pre-book opens this Wednesday.",
+    "sub": "save the date · rockstargames.com/VI"
+  },
+  "cards": [
+    {
+      "label": "01 · pre-book",
+      "title": "25 June 2026 — set an alarm.",
+      "body": "Pre-orders open globally on Wednesday 25 June at rockstargames.com/VI plus PlayStation Store and Xbox Store. India retailers (Amazon India, Flipkart, Games The Shop) typically follow within 24-48 hours. Collector's editions sold out in under 6 hours at Rockstar's last pre-order — set an alarm.",
+      "metric": "→ standard $69.99 · approx ₹4,999"
+    },
+    {
+      "label": "02 · launch",
+      "title": "November 19, 2026 — PS5 + Xbox Series.",
+      "body": "Rockstar Games confirmed the launch date. PC release expected 2027 (Rockstar's usual ~12-month delay pattern). No paid early access — the game ships on Day 1 for everyone, everywhere.",
+      "metric": "→ 5 months from pre-book to play"
+    },
+    {
+      "label": "02 · world",
+      "title": "Vice City returns. Two protagonists.",
+      "body": "Set in Leonida, a fictional Florida state. Two playable leads — Lucia (first female lead in the series) and Jason. Largest GTA map ever. Bonnie-and-Clyde-style narrative confirmed in the December 2023 trailer.",
+      "metric": "→ 250M trailer views in week one"
+    },
+    {
+      "label": "03 · budget",
+      "title": "Rumored $1B-$2B development cost.",
+      "body": "Most expensive game ever made. Spread across 7+ years, 2,000+ Rockstar employees across 6 studios, motion capture, voice acting, music licensing, pre-launch marketing.",
+      "metric": "GTA V $265M · RDR2 $540M · GTA VI $1-2B"
+    },
+    {
+      "label": "04 · tech",
+      "title": "Built on RAGE + Euphoria.",
+      "body": "Rockstar Advanced Game Engine — proprietary, rebuilt for GTA VI with new lighting, weather, water physics, NPC behavior. Euphoria layer handles procedural character animation. None of it is open-source.",
+      "metric": "→ proprietary stack at AAA scale"
+    },
+    {
+      "label": "05 · diy",
+      "title": "Want to build a game without $2B?",
+      "body": "The 2026 open-source stack gets a solo dev to a playable prototype in weeks: Godot 4.5 (free, lightweight), Unreal Engine 5 (free until $1M revenue), Blender for 3D assets, Three.js for browser games, ConVai or Inworld for AI NPCs.",
+      "metric": "→ Stardew Valley · Balatro · solo-dev $1M+ hits"
+    }
+  ],
+  "take": {
+    "use_if": "You're excited for GTA VI AND curious how the tech behind games at this scale works — we cover both in the full blog.",
+    "skip_if": "You're not into gaming. The technical breakdown won't be useful unless you're a builder."
+  },
+  "cta": {
+    "keyword": "GTA",
+    "link_text": "stackpicks.dev/blog/gta-vi-launch-2026",
+    "sub": "rockstargames.com/VI · pre-order"
+  }
+}

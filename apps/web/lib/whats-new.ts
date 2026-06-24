@@ -41,6 +41,16 @@ export interface WhatsNewItem {
 /** Newest first. The popup picks the top 1-2 items the visitor hasn't seen. */
 export const UPDATES: WhatsNewItem[] = [
   {
+    id: 'gta-vi-launch-2026',
+    date: '2026-06-22',
+    title: 'GTA VI launches 19 Nov 2026 — pre-book 25 June',
+    summary: 'Full breakdown — $2B build, RAGE engine, Vice City returns. Plus: the open-source stack to start building your own game today.',
+    category: 'blog',
+    href: '/blog/gta-vi-launch-2026-how-to-build-a-game',
+    cta: 'Read the breakdown',
+    pinned: true,
+  },
+  {
     id: 'razorpay-subscription-setup-guide',
     date: '2026-06-22',
     title: 'New guide: Razorpay subscription setup for Indian SaaS',
