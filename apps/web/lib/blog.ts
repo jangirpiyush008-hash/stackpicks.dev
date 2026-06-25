@@ -2199,7 +2199,7 @@ Each bundle has 30-50 curated repos with use-this-if / skip-if takes — the kin
   {
     slug: 'open-source-ai-agent-frameworks-compared',
     title: 'Open-Source AI Agent Frameworks Compared — LangChain vs LlamaIndex vs CrewAI vs AutoGen',
-    excerpt: 'Honest comparison of the four major open-source AI agent frameworks in 2026. Architecture, tradeoffs, when to use each, and what to skip.',
+    excerpt: 'Honest 2026 comparison of LangChain, LlamaIndex, CrewAI, and AutoGen — architecture, tradeoffs, real performance, when to use each, and what to skip when picking an open-source AI agent framework.',
     query: 'open source ai agent frameworks',
     monthly_searches: 900,
     reading_time: 8,

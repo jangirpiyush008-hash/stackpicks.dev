@@ -21,10 +21,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const repo = await getRepoBySlug(supabase, slug);
   if (!repo) return {};
   const lang = repo.language ? ` (${repo.language})` : '';
-  const take = (repo.curator_take ?? repo.description ?? '').slice(0, 140).trim();
+  // Bing + Google reward 140-170 char meta descriptions. Always pad short
+  // curator takes with stars + use-case context so we never ship a sub-120
+  // char description, which Bing flags as "too short to provide context".
+  const take = (repo.curator_take ?? repo.description ?? '').trim();
+  const stars = formatStars(repo.stars);
+  const suffix = ` Curator take, install guide, alternatives, license details${repo.stars ? ` — ${stars} stars on GitHub.` : '.'}`;
+  let description = take.length >= 130 ? take.slice(0, 158).trim() : `${take}${take ? '.' : ''}${suffix}`.trim();
+  if (description.length > 170) description = description.slice(0, 167).trim() + '…';
+  if (description.length < 130) description = `${repo.full_name} on GitHub${lang}: curator take, install guide, open-source alternatives, and honest "use this if / skip if" clauses. ${stars} GitHub stars.`;
   return buildMeta({
     title: `${repo.full_name} — GitHub repo review${lang} · pros, cons, alternatives`,
-    description: take || `${repo.full_name} on GitHub: curator take, install guide, open-source alternatives, and honest "use this if / skip if" clauses. ${formatStars(repo.stars)} GitHub stars.`,
+    description,
     path: `/repo/${slug}`,
   });
 }

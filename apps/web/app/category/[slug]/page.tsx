@@ -22,11 +22,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const supabase = adminClient();
   const category = await getCategoryBySlug(supabase, slug);
   if (!category) return {};
+  // Bing flags <120 char meta descriptions. Most DB-stored category
+  // descriptions are 30-60 chars (designed as in-app subtitles, not SEO
+  // meta). Pad short ones with the SEO-flavored fallback so every category
+  // ships a 140-170 char description.
+  const dbDesc = category.description?.trim() ?? '';
+  const fallback = `The best open-source GitHub repos for ${category.name.toLowerCase()}, ranked by builders for builders. Curator takes, install guides, honest pros & cons — not auto-generated star-count listicles.`;
+  let description: string;
+  if (dbDesc && dbDesc.length >= 130) {
+    description = dbDesc.length > 170 ? dbDesc.slice(0, 167).trim() + '…' : dbDesc;
+  } else if (dbDesc) {
+    description = `${dbDesc}${dbDesc.endsWith('.') ? '' : '.'} ${fallback}`.slice(0, 168).trim();
+  } else {
+    description = fallback;
+  }
   return buildMeta({
     title: `Best ${category.name} — Open-Source GitHub Repos, Curated (2026)`,
-    description:
-      category.description ??
-      `The best open-source GitHub repos for ${category.name.toLowerCase()}, ranked by builders for builders. Curator takes, install guides, honest pros & cons — not auto-generated star-count listicles.`,
+    description,
     path: `/category/${slug}`,
   });
 }
