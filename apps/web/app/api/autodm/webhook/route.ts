@@ -121,7 +121,13 @@ export async function POST(req: NextRequest) {
     // Webhook-health beat. Bumped on EVERY delivery (even inactive /
     // paused tenants) — proof that Meta is still talking to us. The
     // dashboard renders a red banner if this stops being fresh.
-    // Fire-and-forget; webhook processing must not wait on telemetry.
+    // MUST be awaited: fire-and-forget gets torn down by the Vercel
+    // serverless runtime before the network round-trip completes
+    // (happens often on low-volume tenants where only 1 webhook fires
+    // per invocation). The torn-down write leaves last_webhook_received_at
+    // stale, which then triggers the auto-pause cron's "webhook silence"
+    // false positive — tenant gets paused for 24h even though events
+    // are actively arriving.
     const eventName =
       entry.changes?.[0]?.field ||
       (entry.messaging?.length ? 'messages' : 'unknown');
@@ -138,7 +144,7 @@ export async function POST(req: NextRequest) {
       healthUpdate.paused_until = null;
       healthUpdate.paused_reason = null;
     }
-    void supa.from('autodm_tenants').update(healthUpdate).eq('id', tenant.id);
+    await supa.from('autodm_tenants').update(healthUpdate).eq('id', tenant.id);
 
     if (!tenant.is_active) { processed.push(`skip:inactive:${tenant.id}`); continue; }
     if (tenant.paused_until && new Date(tenant.paused_until) > new Date()) {
