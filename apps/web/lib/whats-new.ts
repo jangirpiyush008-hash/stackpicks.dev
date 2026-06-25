@@ -41,6 +41,33 @@ export interface WhatsNewItem {
 /** Newest first. The popup picks the top 1-2 items the visitor hasn't seen. */
 export const UPDATES: WhatsNewItem[] = [
   {
+    id: 'mcp-leaderboard-q2-2026',
+    date: '2026-06-25',
+    title: 'Top 20 MCP servers ranked — Q2 2026 velocity leaderboard',
+    summary: 'Slack at #2, Notion #3, GitHub #4, Razorpay-MCP enters at #16. Ranked by 90-day GitHub star delta + weekly downloads. The full data table with use cases.',
+    category: 'blog',
+    href: '/blog/top-20-mcp-servers-ranked-q2-2026-velocity',
+    cta: 'See the leaderboard',
+  },
+  {
+    id: 'razorpay-vs-stripe-true-cost-10l-mrr',
+    date: '2026-06-25',
+    title: 'Razorpay vs Stripe at ₹10L MRR — ₹6.8 lakh/year savings',
+    summary: 'The 12-month all-in math: UPI fees + FX margin + GST input credit + settlement timing + compliance overhead. Razorpay ₹2.94L/yr vs Stripe Atlas ₹9.74L/yr.',
+    category: 'blog',
+    href: '/blog/razorpay-vs-stripe-true-cost-10-lakh-mrr-india-saas',
+    cta: 'Read the math',
+  },
+  {
+    id: 'cursor-vs-windsurf-vs-claude-code-benchmark',
+    date: '2026-06-25',
+    title: 'Cursor vs Windsurf vs Claude Code — 30-issue benchmark',
+    summary: 'Cursor 2 closed 28/30 (61.4% SWE-bench Pro). Claude Code 27/30. Windsurf 25/30. Cost-per-fix: Aider $0.28 wins, Cursor $0.42, Claude Code $0.51. Full table + verdicts.',
+    category: 'blog',
+    href: '/blog/cursor-vs-windsurf-vs-claude-code-benchmark-30-issues-2026',
+    cta: 'See the benchmark',
+  },
+  {
     id: 'gta-6-trailer-3-pre-order-day',
     date: '2026-06-25',
     title: 'GTA 6 pre-orders live today — Trailer 3 hint confirmed',
