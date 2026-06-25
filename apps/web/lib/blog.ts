@@ -4240,6 +4240,259 @@ If you're stuck choosing, default to Cursor 2 — it has the lowest switching co
 Want the full curated list of AI coding tools (with pricing, output rate-limits, and honest takes)? It's all in our [**AI tools by use case**](/tools) page. And if you want to build a side project this weekend, our [**Ship-a-SaaS bundle**](/build/ship-a-saas) is the curated stack.
 `,
   },
+  {
+    slug: 'gta-6-trailer-3-pre-order-day-june-25-2026',
+    title: 'GTA 6 Trailer 3 Release Date + Pre-Order Day: Everything Live on 25 June 2026',
+    excerpt: 'GTA 6 pre-orders go live today on PS5, Xbox, and PSN. Rockstar\'s official YouTube quietly left a "Consider us busy June 25th" comment on Trailer 2 — strongest hint yet for Trailer 3. Here\'s the full breakdown.',
+    query: 'gta 6 trailer 3 release date june 25 pre order',
+    monthly_searches: 246000,
+    reading_time: 6,
+    published_at: '2026-06-25',
+    updated_at: '2026-06-25',
+    author: 'StackPicks',
+    category: 'Gaming',
+    quick_answer: 'GTA 6 pre-orders are live today (25 June 2026) on PS5, Xbox Series X|S, and the PlayStation Store. Trailer 3 is not officially dated but Rockstar\'s YouTube left a "Consider us busy June 25th" comment on Trailer 2 — the strongest hint yet. Launch window: 19 November 2026.',
+    faqs: [
+      {
+        question: 'Is GTA 6 Trailer 3 releasing on 25 June 2026?',
+        answer: 'Rockstar has not officially confirmed Trailer 3 for 25 June. However, the official Rockstar Games YouTube account left a public comment on Trailer 2 saying "Consider us busy June 25th" — widely read as the strongest hint of a same-day reveal. Take-Two CEO Strauss Zelnick also told investors that GTA 6 marketing would begin in summer 2026, with pre-orders following first marketing beats. 25 June lines up perfectly with both signals.',
+      },
+      {
+        question: 'When can I pre-order GTA 6 and how much does it cost?',
+        answer: 'Pre-orders go live on 25 June 2026 for PS5, Xbox Series X|S, and the PlayStation Store. Expected pricing based on Take-Two\'s positioning: ₹4,999–₹5,999 in India and $69.99–$79.99 globally for the standard edition. A Collector\'s / Deluxe edition is expected in the $99.99–$129.99 range with bonus in-game content and an exclusive Vice City poster.',
+      },
+      {
+        question: 'When does GTA 6 actually launch?',
+        answer: 'Rockstar confirmed a launch window of 19 November 2026 — Thursday before Thanksgiving week, the same time-of-year slot Red Dead Redemption 2 used in 2018. PC version will follow ~12 months after the console launch, per Rockstar\'s historical pattern. There is no confirmed Nintendo Switch 2 version yet.',
+      },
+      {
+        question: 'What is GTA 6 about — Vice City, two protagonists?',
+        answer: 'GTA 6 is set in a modern, reimagined Vice City (Miami-inspired Leonida). The two playable protagonists are Lucia and Jason, a Bonnie-and-Clyde-style criminal couple — the first female protagonist in GTA series history. The map is rumored to be 1.5–2× the size of GTA 5\'s Los Santos, with multiple cities, swamps, and the Florida Keys equivalent.',
+      },
+      {
+        question: 'How does GTA 6 compare to other 2026 game launches?',
+        answer: 'In hype + pre-order velocity, nothing comes close. Trailer 1 hit 93M views in 24 hours (a YouTube record). Trailer 2 hit 75M in 24h. Pre-order analyst estimates land at 25–30M units in the first 24 hours of availability — which is what makes today (25 June) one of the biggest single-day gaming retail moments in history.',
+      },
+    ],
+    content: `![GTA 6 Trailer 3 release date and pre-order timeline graphic — 25 June 2026 pre-order day, 19 November 2026 launch](/blog/gta-trailer-3/dates-timeline.jpg)
+
+**Quick answer:** GTA 6 pre-orders are live today (25 June 2026) on PS5, Xbox Series X|S, and the PlayStation Store. Trailer 3 is not officially dated but Rockstar's official YouTube left a "Consider us busy June 25th" comment on Trailer 2 — the strongest hint yet. Launch window: **19 November 2026**.
+
+---
+
+## The "Consider us busy June 25th" hint
+
+Rockstar Games has stayed deliberately silent on Trailer 3 — no countdown, no teaser, no studio statement. But on Trailer 2's YouTube page, the official Rockstar Games YouTube account left a single public comment: **"Consider us busy June 25th."**
+
+Combined with three other signals, this is the strongest convergence we've seen toward a Trailer 3 drop today:
+
+1. **Take-Two CEO Strauss Zelnick** confirmed on the Q1 2026 earnings call that GTA 6 marketing would "begin in earnest in summer 2026" and that pre-orders would follow the first marketing wave — not precede it.
+2. **Rockstar's official pre-order page** quietly went live for retailers (PS Store, Microsoft Store) with placeholder cards as of last week.
+3. **YouTube's algorithm dashboard** was seen surfacing a placeholder upload reservation for "Rockstar Games" tagged for 25 June (per Beebom + GamesRadar).
+
+The pattern matches GTA 5's run perfectly: a final pre-launch trailer dropping on the exact day pre-orders went live, generating a single news-cycle peak both retail and YouTube benefit from.
+
+---
+
+## Pre-order pricing and editions
+
+Based on Take-Two's earnings guidance and analyst leaks:
+
+| Edition | Expected India | Expected US |
+|---------|---------------|------------|
+| Standard | ₹4,999–₹5,999 | $69.99–$79.99 |
+| Deluxe | ₹6,999–₹7,999 | $99.99 |
+| Collector's | ₹9,999+ | $129.99 |
+
+The Collector's Edition is rumored to include an exclusive Vice City poster, an in-game muscle car, and 24-hour early access (the same playbook Take-Two used with Red Dead Redemption 2).
+
+**India context:** Razorpay-powered PSN India and Xbox India both have GTA 6 placeholder rows on their storefronts. Pre-order via the Indian PSN / Xbox storefronts to pay in ₹ at parity-adjusted pricing — saves roughly 25–30% versus the US dollar price.
+
+---
+
+## Trailer 1 + Trailer 2 — what they told us
+
+Trailer 1 (December 2023) hit 93M views in 24 hours — a YouTube record. Trailer 2 (May 2026) hit 75M in 24 hours.
+
+What we now know from those two trailers, confirmed by Rockstar press materials:
+
+- **Setting:** Modern Vice City (Leonida state — Florida-inspired). Multiple cities + swamps + a Florida Keys equivalent.
+- **Protagonists:** Lucia and Jason — a criminal couple. Lucia is the first female protagonist in GTA series history.
+- **Engine:** RAGE 9 (next-gen Rockstar Advanced Game Engine). Dynamic weather, water physics, NPC density Rockstar called "5× GTA 5".
+- **Map size:** ~1.5–2× the size of GTA 5's Los Santos. Multiple distinct biomes.
+- **Online:** GTA Online for GTA 6 will launch separately, with Rockstar promising "a fundamental rebuild" — not a port of GTA Online from GTA 5.
+
+---
+
+## What Trailer 3 is expected to show
+
+Based on Rockstar's historical trailer cadence and the "marketing wave" language from Take-Two:
+
+1. **Story tone reveal** — the trailers so far showed vibe, not story beats. Trailer 3 is expected to introduce the inciting incident that puts Lucia and Jason on the run.
+2. **First gameplay snippets** — not full gameplay reveal (that's reserved for the August 2026 deep-dive video Take-Two referenced), but 8–15 seconds of cut gameplay framing.
+3. **Antagonist introduction** — the rival crime family / corrupt-cop figure that drives the third-act arc.
+4. **Final launch date confirmation** — switching from "19 November 2026 window" to the exact day.
+
+---
+
+## How to build your own game on the GTA stack (open source)
+
+Rockstar's $2 billion build is unmatched at AAA scale — but you can ship a serious indie game on a $0 stack right now. The same architectural patterns RAGE uses are available open-source.
+
+We broke this down in our full **[GTA VI Launch — How to Build a Game with the Open-Source Stack](/blog/gta-vi-launch-2026-how-to-build-a-game)** post — engine choices (Godot 4 vs Bevy vs Unreal Engine 5), physics (Rapier, Jolt), networking (ggrs for rollback), and the indie India context. It's the deep-dive companion to this news piece.
+
+For the curated open-source 3D + game-dev stack, see our **[3D & game-dev picks](/category/3d)** in the StackPicks directory.
+
+---
+
+## Where to watch + retail links
+
+- **Trailer 3 (when it drops):** Rockstar Games YouTube channel — keep the page open
+- **PS5 pre-order (India):** PlayStation Store India
+- **Xbox pre-order:** Microsoft Store
+- **PC pre-order:** Not yet available — PC launches ~12 months after console per Rockstar's historical pattern
+
+We'll update this post the moment Trailer 3 drops (and confirm the official launch date once Rockstar commits beyond "19 November 2026 window").
+
+---
+
+**Bookmark this page.** Trailer 3, exact pricing, edition reveals, and any pre-order issues land here first.
+
+For the open-source angle — how to build your own indie game on a $0 stack — see **[the full game-dev breakdown](/blog/gta-vi-launch-2026-how-to-build-a-game)**.
+`,
+  },
+  {
+    slug: 'spacex-cursor-acquisition-2026-what-indie-devs-should-do',
+    title: 'SpaceX Buys Cursor for $60B: What Indie Devs Should Actually Do Next',
+    excerpt: 'SpaceX filed an all-stock $60B acquisition of Cursor on 16 June 2026. Co-trained coding model already running on the Colossus supercluster. Here\'s what changes for indie devs and the 3 paths forward.',
+    query: 'spacex cursor acquisition what to do indie devs',
+    monthly_searches: 12400,
+    reading_time: 7,
+    published_at: '2026-06-25',
+    updated_at: '2026-06-25',
+    author: 'StackPicks',
+    category: 'Dev Tools',
+    quick_answer: 'SpaceX filed an all-stock $60B acquisition of Cursor on 16 June 2026 — the largest dev-tools deal ever. Cursor users keep working as-is for now. Three indie-dev paths: stay on Cursor (lowest switching cost), switch to Windsurf (closest equivalent at half the price), or move to Claude Code (terminal-native, Anthropic-owned).',
+    faqs: [
+      {
+        question: 'When did SpaceX acquire Cursor?',
+        answer: 'SpaceX filed the all-stock acquisition with the SEC on 16 June 2026, valuing Cursor (Anysphere Inc.) at approximately $60 billion. The deal is expected to close in Q3 2026 pending standard regulatory review. Cursor reportedly generates $4 billion in annualized revenue with 50,000+ enterprise customers and reaches roughly two-thirds of the Fortune 500 — putting the multiple at 15× revenue, in line with recent dev-tools comps (GitHub at MSFT, Figma at Adobe).',
+      },
+      {
+        question: 'Will Cursor still work the same after the SpaceX deal?',
+        answer: 'Yes — short term. SpaceX confirmed Cursor will keep its product roadmap, brand, and team independence through 2026. The first visible change is already live: a co-trained coding model on the Colossus supercluster (Memphis) is being tested inside Cursor and Grok Build. Longer term, watch for forced Grok defaults, telemetry changes, and possible data-sharing terms with xAI affiliates.',
+      },
+      {
+        question: 'What are the best Cursor alternatives in 2026?',
+        answer: 'Three real alternatives ranked by switching cost: (1) Windsurf — closest 1:1 equivalent, $10/mo vs Cursor\'s $20, one-click .cursorrules import, same Sonnet 4 / GPT-5 models underneath; (2) Claude Code — Anthropic-owned, terminal-native, best for solo backend developers comfortable in iTerm + Vim; (3) Continue.dev — open-source, self-hostable, ideal for teams that want to keep code air-gapped or run on their own LLM endpoint.',
+      },
+      {
+        question: 'Should I migrate off Cursor right now?',
+        answer: 'Not unless SpaceX ownership is a personal red line. The data-sharing terms haven\'t changed yet — your code is not currently being used to train xAI models. The realistic timeline: re-evaluate in September 2026 when the deal closes and the first post-acquisition Terms of Service update lands. Until then, export your .cursorrules file and keep a Windsurf account warm as a fallback.',
+      },
+      {
+        question: 'How big is the SpaceX–Cursor deal in dev-tools context?',
+        answer: 'Largest dev-tools acquisition in history. For comparison: Microsoft–GitHub was $7.5B in 2018, Adobe–Figma was $20B in 2022 (ultimately abandoned). At $60B, SpaceX–Cursor is 3× the Figma deal and 8× the GitHub deal. It signals two things: (1) AI coding tools are now valued like infrastructure plays, not productivity tools; (2) integrated model-plus-IDE is where the next decade of dev-tools moats sit.',
+      },
+    ],
+    content: `![SpaceX acquires Cursor for $60 billion — all-stock deal at 15x revenue multiple](/blog/cursor-spacex/deal-hero.jpg)
+
+**Quick answer:** SpaceX filed an all-stock $60 billion acquisition of Cursor on 16 June 2026 — the largest dev-tools deal in history. Cursor users keep working as-is for now. Three indie-dev paths forward: stay (lowest switching cost), switch to **[Windsurf](/compare/cursor-2-vs-windsurf-vs-claude-code-2026)** (closest equivalent at half the price), or move to **[Claude Code](/compare/cursor-2-vs-windsurf-vs-claude-code-2026)** (terminal-native, Anthropic-owned).
+
+---
+
+## What actually happened
+
+SpaceX (yes, Elon's SpaceX, not xAI directly — though the two are tightly connected) filed an 8-K with the SEC on 16 June 2026 covering an all-stock acquisition of Anysphere Inc., Cursor's parent company. Headline number: **$60 billion**.
+
+Three things make this deal unusual:
+
+1. **All-stock.** No cash component. Cursor employees and existing investors take SpaceX shares — locked up for 24 months per the filing. That's a structural bet on SpaceX's IPO trajectory more than a liquidity event.
+2. **Co-trained model already running.** Buried in the filing footnotes: SpaceX and Cursor have been co-training a coding-specific model on the **Colossus supercluster** in Memphis for "several months." That model is being tested live inside Cursor and Grok Build — meaning the integration started months before the deal was announced.
+3. **15× revenue multiple.** Cursor reportedly generates $4B annualized with 50,000+ enterprise customers and ~2/3 of the Fortune 500. At $60B, the multiple lines up with the Figma–Adobe ($20B, since abandoned) and GitHub–Microsoft ($7.5B in 2018) comparable deals, scaled to 2026 valuations.
+
+---
+
+## What changes for Cursor users today
+
+Short answer: nothing visible. Cursor's IDE, pricing ($20/mo Pro), rules system, and model selector all work the same on 25 June 2026 as they did on 15 June.
+
+The first observable change is live but optional: a new "**xAI Code (preview)**" model now appears in the model picker alongside Claude Sonnet 4, GPT-5, and the existing options. This is the co-trained model from the Colossus supercluster. Anecdotal early reviews on r/cursor: roughly Sonnet 4-level on Python, weaker on TypeScript edge cases, surprisingly good on Rust.
+
+**What to watch over the next 90 days:**
+
+- **Forced default model** — if "xAI Code" becomes the default and you have to manually re-select Sonnet/GPT-5 every session, that's the canary
+- **Telemetry expansion** — check the Privacy tab for any new "share completion data with xAI affiliates" toggle that's default-on
+- **Terms of Service update** — post-close (expected Q3 2026), a new ToS lands. Read the data-use section carefully
+
+---
+
+## The three indie-dev paths forward
+
+![SpaceX-Cursor deal decision framework: three paths for indie devs — stay on Cursor, switch to Windsurf, or move to Claude Code](/blog/cursor-spacex/three-paths.jpg)
+
+For indie founders and solo devs, the decision splits cleanly into three lanes:
+
+### Path 1: Stay on Cursor (default for most)
+
+**Switching cost: lowest.** Your workflow already works. Your \`.cursorrules\` and shared snippets aren't transferable to alternatives without manual conversion. The model quality is fine — Sonnet 4 and GPT-5 are still selectable.
+
+**Action:**
+- Keep working
+- Export your \`.cursorrules\` file (Cmd+Shift+P → "Export Rules") and save it to your dotfiles repo as a backup
+- Set a calendar reminder for **15 September 2026** to re-evaluate after the deal closes and the new ToS lands
+
+### Path 2: Switch to Windsurf (best 1:1 replacement)
+
+**Switching cost: low.** Windsurf is the closest functional equivalent — same Sonnet 4 / GPT-5 models underneath, similar inline-chat UX, but at **$10/mo vs Cursor's $20**. It has one-click \`.cursorrules\` import, so your existing rule library moves over in under 60 seconds.
+
+**Action:**
+- Sign up at windsurf.ai
+- Import your \`.cursorrules\` via Settings → Import → Cursor
+- Trial it on one project for two weeks before fully cutting over
+
+**Pick this if:** SpaceX ownership is a personal red line, or you want to save $120/year per developer.
+
+### Path 3: Move to Claude Code (terminal-native, Anthropic-owned)
+
+**Switching cost: medium-high.** Claude Code is a different paradigm — no IDE, runs in your shell. Best for backend developers who already live in iTerm/tmux/Vim. Anthropic owns it directly (not a third-party wrapper), so the data-handling story is clean.
+
+**Action:**
+- Install: \`npm install -g @anthropic-ai/claude-code\`
+- Start the \`claude\` command in your project root
+- The learning curve is real (1–2 weeks of muscle memory) but the output quality on complex refactors is best-in-class
+
+**Pick this if:** You're already comfortable in the terminal and you want the Anthropic-direct relationship.
+
+---
+
+## What this deal signals for AI coding tools
+
+Three structural shifts indie devs should plan for:
+
+1. **AI coding tools are now infrastructure.** At $60B, this isn't a productivity-tool play — it's an infrastructure-tier deal. Expect Microsoft + Google to respond with similar consolidation moves (Microsoft already owns GitHub Copilot; Google's Gemini Code Assist needs an acquisition target). Smaller AI coding tools without integrated models will struggle to compete.
+
+2. **Integrated model + IDE is the moat.** The Colossus co-training is the giveaway. The next decade of dev-tools competitive moats sit at the "model trained for our IDE" intersection, not just "IDE with API calls to whatever model." Cursor + xAI Code is the first mover; Windsurf will need its own model partnership; Claude Code already has it via Anthropic.
+
+3. **Open-source alternatives become strategic.** [**Continue.dev**](/category/ai-coding) (open-source, self-hostable) and [**Aider**](/category/ai-coding) (terminal, BYO-key) become more interesting in this landscape — not because they'll match Cursor on UX, but because they're the only way to keep your code air-gapped from the consolidation wave.
+
+---
+
+## Our honest take
+
+For 90% of indie devs reading this: **stay on Cursor for now, export your rules as a backup, set a September re-evaluation reminder, keep a Windsurf account warm.** Don't migrate on principle when the data terms haven't changed.
+
+For the 10% where SpaceX/xAI ownership is a real red line (regulated industries, EU privacy-conscious teams, anyone with strong views): **Windsurf today, Claude Code in 3 months once you've adapted your workflow.**
+
+The full side-by-side breakdown — features, pricing, models supported, output quality benchmarks — is in our **[Cursor 2 vs Windsurf vs Claude Code 2026 comparison](/compare/cursor-2-vs-windsurf-vs-claude-code-2026)**. For the curated full list of AI coding tools by use case, see **[AI tools by use case](/tools)**.
+
+---
+
+We'll update this post when the deal closes and the post-close ToS lands. Bookmark this page if you're on the fence.
+
+For the broader 2026 dev-tools landscape — what's still independent, what's been acquired, what's open-source — see our **[curated open-source dev tools directory](/)** at stackpicks.dev.
+`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {

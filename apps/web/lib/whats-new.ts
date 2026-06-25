@@ -41,6 +41,25 @@ export interface WhatsNewItem {
 /** Newest first. The popup picks the top 1-2 items the visitor hasn't seen. */
 export const UPDATES: WhatsNewItem[] = [
   {
+    id: 'gta-6-trailer-3-pre-order-day',
+    date: '2026-06-25',
+    title: 'GTA 6 pre-orders live today — Trailer 3 hint confirmed',
+    summary: 'Pre-orders live 25 June on PS5, Xbox, PSN. Rockstar\'s YouTube left a "Consider us busy June 25th" comment on Trailer 2. Full breakdown with prices, editions, and the indie game-dev stack.',
+    category: 'blog',
+    href: '/blog/gta-6-trailer-3-pre-order-day-june-25-2026',
+    cta: 'Read the breakdown',
+    pinned: true,
+  },
+  {
+    id: 'spacex-cursor-acquisition-2026',
+    date: '2026-06-25',
+    title: 'SpaceX buys Cursor for $60B — what indie devs should do',
+    summary: 'All-stock $60B deal, co-trained model on Colossus already running. Three paths for indie devs: stay, switch to Windsurf, or move to Claude Code. Our honest take + decision framework.',
+    category: 'blog',
+    href: '/blog/spacex-cursor-acquisition-2026-what-indie-devs-should-do',
+    cta: 'Read the framework',
+  },
+  {
     id: 'mcp-security-checklist-2026',
     date: '2026-06-24',
     title: '492 MCP servers exposed — the security checklist',
