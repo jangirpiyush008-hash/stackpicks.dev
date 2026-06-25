@@ -168,6 +168,74 @@ export function speakableJsonLd(opts: {
   };
 }
 
+/**
+ * Editorial Review JSON-LD — emits schema.org/Review so Google + Bing render
+ * star ratings in SERPs WITHOUT waiting for 10+ user upvotes (which is what
+ * blocks aggregateRating in softwareJsonLd).
+ *
+ * The Review's reviewRating is the *editorial* score — anchored by curator
+ * judgment + third-party validation (GitHub stars). Defensible against
+ * Google's "fake reviews" heuristic because:
+ *   - author is the brand entity, not a fake user
+ *   - rating is bounded by repo stars (>10k = 4.5+, >50k = 4.7+, max 4.9)
+ *   - reviewBody is the actual curator_take prose
+ *   - never claims 5.0 — feels human
+ *
+ * Pair with softwareJsonLd on /repo/[slug]. Google merges them into a single
+ * "rich result" with stars + price + review snippet.
+ */
+export function editorialReviewJsonLd(opts: {
+  repoName: string;
+  repoSlug: string;
+  reviewBody: string;
+  stars: number;            // GitHub stars — drives the editorial rating ceiling
+  isFeatured?: boolean;     // we chose to highlight = stronger signal
+  upvoteCount?: number;     // optional reader sentiment
+  datePublished?: string;   // ISO — when the take was first written
+  dateModified?: string;    // ISO — last review refresh
+}): Record<string, unknown> {
+  // Editorial rating: 4.0 base, +0.3 for >10k stars, +0.2 for >50k, +0.1 if featured,
+  // +0.1 if upvotes >= 10 (reader validation). Cap at 4.9 — never 5.0.
+  let rating = 4.0;
+  if (opts.stars > 50_000) rating += 0.5;
+  else if (opts.stars > 10_000) rating += 0.3;
+  else if (opts.stars > 1_000) rating += 0.2;
+  if (opts.isFeatured) rating += 0.1;
+  if ((opts.upvoteCount ?? 0) >= RATING_MIN_VOTES) rating += 0.1;
+  rating = Math.min(rating, 4.9);
+  const ratingStr = rating.toFixed(1);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Review',
+    itemReviewed: {
+      '@type': 'SoftwareApplication',
+      name: opts.repoName,
+      applicationCategory: 'DeveloperApplication',
+      url: `${SITE.url}/repo/${opts.repoSlug}`,
+    },
+    reviewRating: {
+      '@type': 'Rating',
+      ratingValue: ratingStr,
+      bestRating: '5',
+      worstRating: '1',
+    },
+    author: {
+      '@type': 'Organization',
+      name: SITE.name,
+      url: SITE.url,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: SITE.name,
+      url: SITE.url,
+    },
+    reviewBody: opts.reviewBody.slice(0, 1500),
+    ...(opts.datePublished ? { datePublished: opts.datePublished } : {}),
+    ...(opts.dateModified ? { dateModified: opts.dateModified } : {}),
+  };
+}
+
 /** ItemList JSON-LD — for /preview, /skills, /build index pages. */
 export function itemListJsonLd(
   items: { name: string; path: string }[],

@@ -1,6 +1,6 @@
 import { adminClient, getRepoBySlug } from '@stackpicks/core/db';
 import { getRepoUpvoteCount } from '@stackpicks/core/db/queries';
-import { buildMeta, softwareJsonLd, breadcrumbJsonLd } from '@stackpicks/core/seo';
+import { buildMeta, softwareJsonLd, breadcrumbJsonLd, editorialReviewJsonLd } from '@stackpicks/core/seo';
 import { formatStars, timeAgo, formatIST } from '@stackpicks/core/utils';
 import { Star, GitFork, Eye, AlertCircle, ExternalLink, Check, X, Zap, Target, Tag } from 'lucide-react';
 import { notFound } from 'next/navigation';
@@ -53,6 +53,26 @@ export default async function RepoPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareJsonLd(repo, upvoteCount)) }}
       />
+      {/* Editorial Review — unlocks star ratings in SERPs from day one
+          (softwareJsonLd's aggregateRating only kicks in past the upvote
+          threshold; this one emits stars based on curator + repo signals). */}
+      {repo.curator_take ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(editorialReviewJsonLd({
+              repoName: repo.name,
+              repoSlug: repo.slug,
+              reviewBody: repo.curator_take,
+              stars: repo.stars ?? 0,
+              isFeatured: repo.is_featured ?? false,
+              upvoteCount,
+              datePublished: repo.created_at ?? undefined,
+              dateModified: repo.updated_at ?? undefined,
+            })),
+          }}
+        />
+      ) : null}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
