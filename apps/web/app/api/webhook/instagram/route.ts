@@ -235,14 +235,18 @@ export async function POST(req: NextRequest) {
       // Follow check — branches behavior:
       //   follower     → DM body without PS nudge + concise "Link sent ✓" public reply
       //   non-follower → DM body WITH PS follow nudge + friendly "here's the link" public reply
-      // Defaults to non-follower behavior when the API can't tell us (safer:
-      // we don't drop the nudge for someone who actually isn't following).
+      // Trust-first default: when the IG API can't tell us (returns null),
+      // treat as a follower so we never append "PS — follow @us" to someone
+      // who actually follows. Nudging a real follower reads as an obvious
+      // bot tell. (graph.instagram.com tokens don't expose
+      // is_user_follow_business at all — null is the common case.)
       const followerCheck = await checkIsFollower(fromIgsid);
-      const isFollower = followerCheck.isFollower === true;
+      const isFollower = followerCheck.isFollower !== false;
 
       // Send DM
       const rawBody = renderTemplate(rule.dm_template, { username: fromUsername, keyword: rule.keyword });
-      const body = isFollower ? rawBody : applyFollowNudge(rawBody, rule);
+      const body = applyFollowNudge(rawBody, rule, isFollower);
+      const cardHandle = ownHandle.replace(/^@/, '');
       let send;
       try {
         send = await sendDm({
@@ -251,6 +255,11 @@ export async function POST(req: NextRequest) {
           body,
           ctaUrl: rule.cta_url ?? undefined,
           ctaLabel: rule.cta_label ?? undefined,
+          // Card title — first line of the DM (trimmed). Stops IG from
+          // rendering the same string twice when title == button label.
+          ctaTitle: rawBody.split('\n')[0]?.replace(/^\s*[—-]+\s*/, '').slice(0, 80),
+          // Subtitle hides the URL hostname and brands the card.
+          ctaSubtitle: `by @${cardHandle}`,
         });
       } catch (e) {
         send = { ok: false, error: (e as Error).message };

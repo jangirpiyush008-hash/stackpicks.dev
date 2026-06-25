@@ -137,13 +137,17 @@ export async function replyToComment(input: {
 const FOLLOW_HANDLE = '@stackpicks_official';
 
 /**
- * If a rule has follow_nudge=true, append a short "follow for more" line to
- * the DM body. Pure string transform — no API call, no follow-status check.
- * Non-followers AND followers see the same nudge; followers ignore it,
- * non-followers convert from it.
+ * Append a short "follow for more" line — but ONLY for non-followers.
+ * Called after the follower-status check. Trust-first default: when the IG
+ * API can't tell (returns null), treat as a follower and skip the nudge,
+ * because nudging an existing follower reads as an obvious bot tell.
  */
-export function applyFollowNudge(body: string, rule: { follow_nudge?: boolean | null }): string {
-  if (!rule.follow_nudge) return body;
+export function applyFollowNudge(
+  body: string,
+  rule: { follow_nudge?: boolean | null },
+  isFollower: boolean,
+): string {
+  if (!rule.follow_nudge || isFollower) return body;
   return `${body.trimEnd()}\n\nPS — follow ${FOLLOW_HANDLE} for more picks like this.`;
 }
 
@@ -217,6 +221,12 @@ export async function sendDm(input: {
   body: string;
   ctaUrl?: string;
   ctaLabel?: string;
+  /** Title shown above the button. Defaults to ctaLabel when omitted, which
+   *  causes IG to render the same text twice (title and button look like
+   *  duplicate "Open X" bubbles). Pass something distinct from ctaLabel —
+   *  e.g. a short teaser like "Sora 2 prompt formula" — so the card reads
+   *  cleanly. */
+  ctaTitle?: string;
   /** Branding line shown under the title. CRUCIAL — when subtitle is set,
    *  IG renders this INSTEAD of the URL hostname under the title. Without
    *  it, IG auto-displays the URL ("chat.whatsapp.com" or
@@ -228,7 +238,7 @@ export async function sendDm(input: {
    *  Burger Bae DMs. Use the post permalink image or creator avatar. */
   ctaImageUrl?: string;
 }): Promise<SendDmResult> {
-  const { recipientIgsid, commentId, body, ctaUrl, ctaLabel, ctaSubtitle, ctaImageUrl } = input;
+  const { recipientIgsid, commentId, body, ctaUrl, ctaLabel, ctaTitle, ctaSubtitle, ctaImageUrl } = input;
 
   // Private Reply path: address by comment_id, NOT user_id. Meta uses the
   // comment as the messaging anchor and grants a 7-day window from the
@@ -288,7 +298,7 @@ export async function sendDm(input: {
   // brand line + tap button, zero URL visible.
   if (ctaUrl && ctaLabel) {
     const element: Record<string, unknown> = {
-      title: ctaLabel.slice(0, 80),
+      title: (ctaTitle || ctaLabel).slice(0, 80),
       buttons: [
         { type: 'web_url', url: ctaUrl, title: ctaLabel.slice(0, 20) },
       ],
