@@ -12,7 +12,7 @@
  */
 
 import { useMemo, useState } from 'react';
-import { Bot, User, ExternalLink, CheckCircle2, AlertTriangle, MessageSquare, ChevronDown, ChevronRight } from 'lucide-react';
+import { Bot, User, ExternalLink, CheckCircle2, AlertTriangle, MessageSquare, ChevronDown, ChevronRight, Send, UserCheck } from 'lucide-react';
 
 interface Conv {
   id: string;
@@ -23,7 +23,7 @@ interface Conv {
   turn_count: number;
   last_turn_at: string;
   status: 'active' | 'creator_escalated' | 'closed' | 'expired';
-  full_transcript: { role: 'user' | 'creator_bot'; text: string; at: string }[] | null;
+  full_transcript: { role: 'user' | 'creator_bot' | 'creator_human'; text: string; at: string }[] | null;
   created_at: string;
 }
 
@@ -65,6 +65,27 @@ export function InboxClient({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status }),
     });
+  }
+
+  // Called by ReplyComposer after a successful HUMAN_AGENT-tagged send.
+  // Optimistically appends the new turn to the transcript and bumps the
+  // status from creator_escalated → active (the backend does the same).
+  function onReplySent(id: string, text: string) {
+    setConvs((prev) => prev.map((c) => {
+      if (c.id !== id) return c;
+      const transcript = [...(c.full_transcript ?? []), {
+        role: 'creator_human' as const,
+        text,
+        at: new Date().toISOString(),
+      }];
+      return {
+        ...c,
+        full_transcript: transcript,
+        turn_count: c.turn_count + 1,
+        last_turn_at: new Date().toISOString(),
+        status: c.status === 'creator_escalated' ? 'active' : c.status,
+      };
+    }));
   }
 
   return (
@@ -148,14 +169,30 @@ export function InboxClient({
               {isOpen && (
                 <div className="border-t border-border/60 px-4 pb-4 pt-3">
                   <Transcript turns={c.full_transcript || []} tenantUsername={tenantUsername} />
+
+                  {/* Human-agent manual reply composer — visible for active +
+                      escalated conversations within the 7-day Human Agent
+                      window. This is what justifies our Human Agent Meta
+                      permission: a real creator reviews and composes the
+                      reply, then sends via /api/autodm/conversations/[id]/reply
+                      with messaging_type=MESSAGE_TAG + tag=HUMAN_AGENT. */}
+                  {(c.status === 'active' || c.status === 'creator_escalated') && (
+                    <ReplyComposer
+                      conversationId={c.id}
+                      lastTurnAt={c.last_turn_at}
+                      onSent={(text) => onReplySent(c.id, text)}
+                    />
+                  )}
+
                   <div className="mt-3 flex gap-2 flex-wrap">
                     {c.status === 'creator_escalated' && (
                       <a
                         href={igDeepLink}
                         target="_blank" rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md bg-accent text-bg hover:bg-accent/90"
+                        className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border border-border hover:border-muted"
+                        title="Open the IG app to reply manually (fallback if the in-app reply fails)"
                       >
-                        <ExternalLink className="w-3 h-3" /> Reply on Instagram
+                        <ExternalLink className="w-3 h-3" /> Open in Instagram
                       </a>
                     )}
                     {c.status !== 'closed' && (
@@ -187,27 +224,124 @@ export function InboxClient({
 
 function Transcript({
   turns, tenantUsername,
-}: { turns: { role: 'user' | 'creator_bot'; text: string; at: string }[]; tenantUsername: string }) {
+}: { turns: { role: 'user' | 'creator_bot' | 'creator_human'; text: string; at: string }[]; tenantUsername: string }) {
   if (turns.length === 0) return <p className="text-xs text-muted italic">No messages yet.</p>;
   return (
     <div className="space-y-2.5">
       {turns.map((t, i) => {
-        const isBot = t.role === 'creator_bot';
+        const isHuman = t.role === 'creator_human';
+        const isCreator = isHuman || t.role === 'creator_bot';
         return (
-          <div key={i} className={`flex gap-2 ${isBot ? 'justify-end' : 'justify-start'}`}>
-            {!isBot && <User className="w-4 h-4 text-muted mt-1.5 flex-shrink-0" />}
+          <div key={i} className={`flex gap-2 ${isCreator ? 'justify-end' : 'justify-start'}`}>
+            {!isCreator && <User className="w-4 h-4 text-muted mt-1.5 flex-shrink-0" />}
             <div className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${
-              isBot ? 'bg-accent/10 text-text' : 'bg-bg-card border border-border text-text'
+              isHuman
+                ? 'bg-amber-500/10 border border-amber-500/30 text-text'
+                : isCreator
+                  ? 'bg-accent/10 text-text'
+                  : 'bg-bg-card border border-border text-text'
             }`}>
               <div className="text-[10px] uppercase tracking-widest text-muted font-mono mb-0.5">
-                {isBot ? `@${tenantUsername} (bot)` : 'recipient'}
+                {isHuman ? `@${tenantUsername} (you)` : isCreator ? `@${tenantUsername} (bot)` : 'recipient'}
               </div>
               <div className="whitespace-pre-wrap leading-relaxed">{t.text}</div>
             </div>
-            {isBot && <Bot className="w-4 h-4 text-accent mt-1.5 flex-shrink-0" />}
+            {isHuman && <UserCheck className="w-4 h-4 text-amber-500 mt-1.5 flex-shrink-0" />}
+            {isCreator && !isHuman && <Bot className="w-4 h-4 text-accent mt-1.5 flex-shrink-0" />}
           </div>
         );
       })}
+    </div>
+  );
+}
+
+/**
+ * Manual-reply composer rendered inside the expanded conversation card.
+ * Sends via the human-agent endpoint which tags the message MESSAGE_TAG +
+ * HUMAN_AGENT — the Meta-supported path for human-reviewed support replies
+ * up to 7 days after the recipient's last message. Disables itself when
+ * the 7-day Human Agent window has elapsed (we can't deliver past that).
+ */
+function ReplyComposer({
+  conversationId, lastTurnAt, onSent,
+}: {
+  conversationId: string;
+  lastTurnAt: string;
+  onSent: (text: string) => void;
+}) {
+  const [draft, setDraft] = useState('');
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const HUMAN_AGENT_MS = 7 * 24 * 60 * 60 * 1000;
+  const ageMs = Date.now() - new Date(lastTurnAt).getTime();
+  const expired = ageMs > HUMAN_AGENT_MS;
+  const hoursLeft = Math.max(0, Math.floor((HUMAN_AGENT_MS - ageMs) / (60 * 60 * 1000)));
+
+  async function send() {
+    const message = draft.trim();
+    if (!message || sending) return;
+    setSending(true); setError(null);
+    try {
+      const res = await fetch(`/api/autodm/conversations/${conversationId}/reply`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message }),
+      });
+      const j = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string; hint?: string };
+      if (!res.ok || !j.ok) {
+        setError(j.hint || j.error || `HTTP ${res.status}`);
+      } else {
+        onSent(message);
+        setDraft('');
+      }
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setSending(false);
+    }
+  }
+
+  if (expired) {
+    return (
+      <div className="mt-3 rounded-lg border border-border bg-bg-card/50 p-3 text-xs text-muted">
+        <UserCheck className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
+        Human Agent window expired (7 days from recipient&apos;s last message). Use &ldquo;Open in Instagram&rdquo; below to reply manually.
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/[0.04] p-3">
+      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-amber-500 font-semibold mb-2">
+        <UserCheck className="w-3 h-3" />
+        Your manual reply
+        <span className="text-muted font-normal ml-auto normal-case tracking-normal">
+          {hoursLeft}h left in 7-day window
+        </span>
+      </div>
+      <textarea
+        value={draft}
+        onChange={(e) => setDraft(e.target.value.slice(0, 1000))}
+        placeholder="Write a reply — sent via your IG account with Human Agent tag (you composed this, not the AI)…"
+        rows={3}
+        className="w-full text-sm bg-bg/80 border border-border rounded-md px-3 py-2 text-text placeholder:text-muted focus:outline-none focus:border-accent resize-none"
+        disabled={sending}
+      />
+      <div className="flex items-center justify-between mt-2">
+        <div className="text-[11px] text-muted">
+          {draft.length}/1000
+          {error && <span className="text-red-400 ml-2">· {error}</span>}
+        </div>
+        <button
+          onClick={send}
+          disabled={!draft.trim() || sending}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-md bg-accent text-bg hover:bg-accent/90 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          <Send className="w-3 h-3" />
+          {sending ? 'Sending…' : 'Send reply'}
+        </button>
+      </div>
     </div>
   );
 }

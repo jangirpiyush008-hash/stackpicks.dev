@@ -38,8 +38,14 @@ export async function sendDm(input: {
   ctaSubtitle?: string;
   /** Image at top of the card. Use post permalink image or creator avatar. */
   ctaImageUrl?: string;
+  /** Meta message tag — required when sending OUTSIDE the 24-hour
+   *  standard messaging window. `HUMAN_AGENT` is for human-reviewed
+   *  manual replies sent within the 7-day Human Agent window (gated by
+   *  the `Human Agent` permission). Other valid tags: POST_PURCHASE_UPDATE,
+   *  ACCOUNT_UPDATE. Leave unset for replies inside the 24h window. */
+  messagingTag?: 'HUMAN_AGENT' | 'POST_PURCHASE_UPDATE' | 'ACCOUNT_UPDATE';
 }): Promise<SendDmResult> {
-  const { igBusinessId, tenantToken, recipientIgsid, commentId, body, ctaUrl, ctaLabel, ctaSubtitle, ctaImageUrl } = input;
+  const { igBusinessId, tenantToken, recipientIgsid, commentId, body, ctaUrl, ctaLabel, ctaSubtitle, ctaImageUrl, messagingTag } = input;
 
   const recipient = commentId ? { comment_id: commentId } : { id: recipientIgsid };
   const baseUrl = GRAPH_IG;
@@ -47,7 +53,15 @@ export async function sendDm(input: {
   async function post(messagePayload: unknown) {
     const url = `${baseUrl}/${igBusinessId}/messages?access_token=${encodeURIComponent(tenantToken)}`;
     const payload: Record<string, unknown> = { recipient, message: messagePayload };
-    if (!commentId) payload.messaging_type = 'RESPONSE';
+    if (messagingTag) {
+      // MESSAGE_TAG path — unlocks 24h+ replies for the specific tag.
+      // HUMAN_AGENT requires the Human Agent permission and a creator-in-the-loop
+      // review (handled in /api/autodm/conversations/[id]/reply).
+      payload.messaging_type = 'MESSAGE_TAG';
+      payload.tag = messagingTag;
+    } else if (!commentId) {
+      payload.messaging_type = 'RESPONSE';
+    }
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
