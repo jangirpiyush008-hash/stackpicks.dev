@@ -12,7 +12,7 @@ import { Users, ArrowLeft, MousePointerClick, MessageSquare, ExternalLink, Downl
 
 export const metadata = {
   title: 'Contacts — StackPicks AutoDM',
-  description: 'Every recipient your auto-DM bot has reached, with click + followup status.',
+  description: 'Every recipient your auto-DM bot has reached, with click + engagement status.',
 };
 
 interface LogRow {
@@ -115,7 +115,7 @@ export default async function ContactsPage({
         <div>
           <h1 className="text-3xl font-extrabold leading-tight">Contacts</h1>
           <p className="text-sm text-muted mt-1">
-            Every recipient your bot has DM&apos;d. Clicked = hot. No click + no followup = give them a nudge.
+            Every recipient your bot has DM&apos;d. Clicked = hot lead. Reach out manually via Instagram if you want to follow up (Meta doesn&apos;t allow automated cold follow-ups).
           </p>
         </div>
       </div>
@@ -198,7 +198,7 @@ export default async function ContactsPage({
 
       <p className="text-[11px] text-muted mt-4">
         Click counts are tracked via short-link redirect through autodm.stackpicks.dev/c/&lt;id&gt;.
-        Followups fire automatically when a recipient hasn&apos;t clicked within 4 hours.
+        The &quot;followed up&quot; column is historical — automated proactive follow-ups were removed to stay strictly Meta Private Reply-compliant. Reach out to hot leads manually via Instagram.
       </p>
     </main>
   );

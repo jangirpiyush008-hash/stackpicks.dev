@@ -138,7 +138,7 @@ export default async function AutoDmBlogPost({
           <div className="font-semibold">Stop debugging Meta's API. Start sending.</div>
           <p className="text-sm text-muted mt-2">
             StackPicks AutoDM ships with Private Reply, follower-aware bodies, account warming,
-            and an AI follow-up agent built in. 90-second setup. No browser bots.
+            and an AI conversation agent that replies to inbound DMs in your voice. 90-second setup. No browser bots.
           </p>
           <Link
             href="/autodm/connect"

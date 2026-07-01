@@ -54,7 +54,7 @@ export default function AutoDmPrivacyPage() {
           <li>To detect comments matching the keyword rules you create and send the DM you configured.</li>
           <li>To post the public comment reply you configured.</li>
           <li>To show you analytics (sent, clicked, click-through rate) and a contacts list of who you reached.</li>
-          <li>To send an optional 4-hour follow-up to recipients who did not click your link.</li>
+          <li>To run our AI conversation agent that replies to recipients who message you back — strictly within Meta&apos;s 24-hour messaging window that opens when the recipient replies to your DM.</li>
           <li>To keep your account safe (rate limits, spam-pattern checks, Meta error handling).</li>
         </ul>
 

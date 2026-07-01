@@ -139,8 +139,8 @@ export default async function DashboardPage({
             />
             <FeatureCard
               icon={<CheckCircle2 className="w-4 h-4" />}
-              title="4-hour follow-up that re-sends the link"
-              body="If a recipient didn't click, the bot bumps the same link with a soft reminder — in your voice."
+              title="AI conversation agent replies in your voice"
+              body="When a recipient DMs you back, our AI agent continues the chat in your voice inside Meta's 24-hour messaging window. Escalates to your inbox when it hits a question it shouldn't answer."
             />
             <FeatureCard
               icon={<AlertCircle className="w-4 h-4" />}

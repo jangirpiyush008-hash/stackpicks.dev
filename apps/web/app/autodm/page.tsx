@@ -13,7 +13,7 @@ import { LiveDemoChat } from '@/components/autodm/LiveDemoChat';
 export const metadata = {
   title: 'StackPicks AutoDM — Auto-DM that closes, not just sends',
   description:
-    'The only Instagram auto-DM tool that talks back. 90-second AI setup. Image-aware DMs that read the post. 5-turn AI follow-up agent. For creators worldwide.',
+    'The only Instagram auto-DM tool that talks back. 90-second AI setup. Image-aware DMs that read the post. AI conversation agent that replies to inbound DMs in your voice. For creators worldwide.',
 };
 
 export default function AutoDmLanding() {
@@ -227,7 +227,7 @@ export default function AutoDmLanding() {
               <Row a="AI drafts your starter rules from your past 30 posts" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
               <Row a="Image-aware DMs — AI reads the actual post" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
               <Row a="Multi-language auto-detect (incl. Hinglish + 40+ more)" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
-              <Row a="Auto follow-up at 4 hours if the link wasn't clicked" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
+              <Row a="AI conversation agent — replies to inbound DMs in your voice" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
               <Row a="Auto A/B testing with AI-picked winner" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
               <Row a="Daily AI digest — hot leads + escalations" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />
               <Row a="Yearly subscribers get +25% DM caps automatically" b={<Tick/>} c={<X/>} d={<X/>} e={<X/>} />

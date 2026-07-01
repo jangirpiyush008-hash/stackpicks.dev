@@ -30,9 +30,11 @@ export default function AutoDmAboutPage() {
         <p>
           AutoDM listens for comments on your Instagram posts, Reels, and Lives. When a
           comment matches a rule you set (a keyword, a question, an intent), AutoDM
-          replies in your voice — first as a comment reply, then as a direct message
-          with the link or resource you promised. Four hours later, if the lead
-          hasn&apos;t clicked, AutoDM sends one polite follow-up.
+          replies in your voice — first as a public comment reply, then as a single
+          direct message via the Meta Private Reply API with the link or resource you
+          promised. If the recipient replies to your DM, our AI conversation agent
+          continues the chat in your voice, strictly within Meta&apos;s 24-hour
+          messaging window.
         </p>
         <p>
           Everything happens through Meta&apos;s official Instagram Graph API and the

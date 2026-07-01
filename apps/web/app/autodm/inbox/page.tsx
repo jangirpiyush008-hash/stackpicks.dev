@@ -1,4 +1,5 @@
-// AutoDM conversations inbox — visible value of the Pro-tier follow-up agent.
+// AutoDM conversations inbox — visible value of the Pro-tier AI conversation agent
+// that replies to inbound DMs inside Meta's 24h messaging window.
 // Server component: fetches the tenant + initial conversations + counts.
 // Client component (InboxClient) handles filter tabs + transcript expansion + actions.
 
@@ -73,16 +74,16 @@ export default async function InboxPage() {
           <div>
             <h1 className="text-3xl font-extrabold leading-tight">Inbox</h1>
             <p className="text-sm text-muted mt-1">
-              Every conversation the AI follow-up agent handled. Take over the ones it escalated to you.
+              Every conversation the AI agent handled after your recipient replied. Take over the ones it escalated to you — send manual replies with the Human Agent tag.
             </p>
           </div>
         </div>
 
         {!tenant.ai_followup_agent && (
           <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 my-6 text-sm">
-            <strong>Follow-up agent is off.</strong>{' '}
+            <strong>AI conversation agent is off.</strong>{' '}
             <span className="text-muted">
-              New replies to your DMs won&apos;t be auto-answered. Toggle ON in the dashboard
+              Inbound DM replies from your recipients won&apos;t be auto-answered inside Meta&apos;s 24h messaging window. Toggle ON in the dashboard
               {tenant.plan_tier !== 'pro' && tenant.plan_tier !== 'agency' ? ' (Pro tier feature).' : '.'}
             </span>
           </div>
