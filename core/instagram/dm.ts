@@ -278,7 +278,27 @@ export async function sendDm(input: {
     return { ok: res.ok, json: j, status: res.status };
   }
 
-  // 1. Plain-text DM with full body (incl. follow nudge, no truncation).
+  // Meta compliance: Private Reply path (commentId set) is capped at ONE
+  // message per commenter — see Meta's Private Reply doc:
+  // https://developers.facebook.com/documentation/business-messaging/instagram-messaging/features/private-replies
+  // "Only one message can be sent to the Instagram user who commented"
+  //
+  // On this path we inline the CTA URL into the body text so the link
+  // still reaches the recipient in that single send. The template-card
+  // UX is reserved for the Standard messaging path (24h window after
+  // the user has replied to us), where multi-message flows are allowed.
+  if (commentId) {
+    const parts = [body.trim()];
+    if (ctaUrl) parts.push('', ctaUrl);
+    const one = await postMessage({ text: parts.join('\n').slice(0, 1000) });
+    if (!one.ok) {
+      return { ok: false, error: one.json?.error?.message || `HTTP ${one.status}` };
+    }
+    return { ok: true, message_id: one.json?.message_id };
+  }
+
+  // Standard messaging path — user has already replied to us so multi-
+  // message is allowed. Send body first, then the branded CTA card.
   const textRes = await postMessage({ text: body.slice(0, 1000) });
   if (!textRes.ok) {
     return {
@@ -288,14 +308,6 @@ export async function sendDm(input: {
   }
   const primaryId = textRes.json?.message_id;
 
-  // 2. Optional: follow-up button card. Best-effort — text DM already
-  //    landed, so a card failure is non-fatal.
-  //
-  // Setting `subtitle` is the key to NOT showing the URL hostname. Meta's
-  // IG mobile client falls back to displaying the URL only when subtitle
-  // is absent. With a "Powered by @creator" subtitle the recipient sees
-  // a clean shop-style card (HYPD / Burger Bae pattern) — title +
-  // brand line + tap button, zero URL visible.
   if (ctaUrl && ctaLabel) {
     const element: Record<string, unknown> = {
       title: (ctaTitle || ctaLabel).slice(0, 80),

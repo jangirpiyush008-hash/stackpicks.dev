@@ -188,6 +188,22 @@ export async function POST(req: NextRequest) {
         processed.push(`skip:self:${tenant.id}`); continue;
       }
 
+      // Duplicate-webhook dedupe. Meta docs explicitly warn:
+      // "Commenting on a boosted or ads post may result in duplicate
+      // webhook notifications." We key on (tenant, comment_id) — if we've
+      // already ATTEMPTED a send for this comment (any status), skip so
+      // the recipient never gets the same DM twice.
+      if (commentId) {
+        const { data: dupe } = await supa
+          .from('autodm_dm_log')
+          .select('id')
+          .eq('tenant_id', tenant.id)
+          .eq('trigger_comment_id', commentId)
+          .limit(1)
+          .maybeSingle();
+        if (dupe) { processed.push(`skip:dupe:${commentId}`); continue; }
+      }
+
       // Account-hourly cap (tenant-scoped)
       const hourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
       const { count: hourly } = await supa
@@ -342,6 +358,18 @@ export async function POST(req: NextRequest) {
         }).eq('id', tenant.id);
       }
 
+      // Classify live-comment sends where the broadcast has already ended.
+      // Per Meta docs: "private reply can only be sent during the live
+      // broadcast" — replies become unavailable once the broadcast ends.
+      // Meta returns generic "outside allowed window" / "no messaging
+      // permission" errors in this case; we surface a clean status so
+      // the creator's dashboard doesn't flag these as real failures.
+      const isLiveEndedError =
+        isLive && !send.ok && !!send.error &&
+        /outside|allowed window|no messaging|not eligible|window has expired|does not have permission to reply/i.test(send.error);
+      const finalStatus = send.ok ? 'sent' : (isLiveEndedError ? 'skipped' : 'error');
+      const finalError = send.ok ? replyError : (isLiveEndedError ? 'live_ended' : send.error);
+
       await supa.from('autodm_dm_log').insert({
         tenant_id: tenant.id, rule_id: rule.id,
         ig_user_id: fromIgsid, ig_username: fromUsername,
@@ -350,9 +378,9 @@ export async function POST(req: NextRequest) {
         is_follower: followerCheck.isFollower,
         follow_check_source: followerCheck.source,
         follow_check_error: followerCheck.rawError,
-        status: send.ok ? 'sent' : 'error',
+        status: finalStatus,
         ig_message_id: send.ok ? send.message_id : undefined,
-        error: send.ok ? replyError : send.error,
+        error: finalError,
         reply_status: replyStatus, reply_id: replyId,
         ai_generated: false, body_variant_index: variantIdx,
         // Voice-clone eval reads this to score sent DMs against the

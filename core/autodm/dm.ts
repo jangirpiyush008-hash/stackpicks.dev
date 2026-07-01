@@ -73,18 +73,39 @@ export async function sendDm(input: {
     return { ok: res.ok, json: j, status: res.status };
   }
 
-  // 1. Plain-text DM with the body ONLY. The URL no longer rides inline
-  // because the button-card below carries it — and we never want the
-  // recipient to see a raw URL in their chat (HYPD / Burger Bae style:
-  // body bubble + clean shop card with title + brand + tap button).
+  // Meta compliance: the Private Reply path (commentId set) explicitly
+  // limits us to ONE message per commenter per Meta docs
+  // (https://developers.facebook.com/documentation/business-messaging/instagram-messaging/features/private-replies —
+  // "Only one message can be sent to the Instagram user who commented").
+  // On this path we combine body + URL into a single text send.
+  //
+  // Standard messaging path (no commentId — user has replied to us, 24h
+  // window is open) can still use the template-card UX. Same for the
+  // MESSAGE_TAG paths (HUMAN_AGENT etc.) where multi-message flows are
+  // supported.
+  const isPrivateReply = !!commentId && !messagingTag;
+
+  if (isPrivateReply) {
+    // Single-message compliance: append the URL to the body on a new line
+    // if a CTA was configured. Cap at IG's 1000-char limit. This keeps us
+    // strictly inside Meta's "one message" rule while still delivering
+    // the link to the recipient in the first (and only) send.
+    const parts = [body.trim()];
+    if (ctaUrl) parts.push('', ctaUrl); // blank line then URL
+    const combined = parts.join('\n').slice(0, 1000);
+    const one = await post({ text: combined });
+    if (!one.ok) return { ok: false, error: one.json?.error?.message || `HTTP ${one.status}` };
+    return { ok: true, message_id: one.json?.message_id };
+  }
+
+  // Standard-messaging + MESSAGE_TAG paths — multi-message allowed.
+  // 1. Body text.
   const text = await post({ text: body.slice(0, 1000) });
   if (!text.ok) return { ok: false, error: text.json?.error?.message || `HTTP ${text.status}` };
 
-  // 2. CTA button card. Setting `subtitle` is what swaps the URL hostname
-  // for a brand line in the IG UI — without it, IG auto-shows the URL.
-  // We attempt the card on both Private Reply AND Standard Messaging
-  // paths now; if Private Reply rejects the template (older Instagram
-  // Login behavior) we fall back to a second plain-text DM with the URL.
+  // 2. Optional CTA card. Only fires on non-Private-Reply paths where
+  //    Meta permits attachments. Setting `subtitle` swaps the URL host
+  //    for a brand line so the card reads clean.
   if (ctaUrl && ctaLabel) {
     const element: Record<string, unknown> = {
       title: ctaLabel.slice(0, 80),
@@ -101,9 +122,8 @@ export async function sendDm(input: {
     }).catch(() => ({ ok: false, json: {} as { error?: { message?: string } }, status: 0 }));
 
     if (!cardRes.ok) {
-      // Private Reply / older IG Login can reject generic templates. Fall
-      // back to sending the URL as a second text message so the link
-      // actually reaches the recipient — the body bubble already landed.
+      // Card rejected — send URL as plain text so the link still reaches
+      // the recipient. Text message already landed above.
       await post({ text: ctaUrl.slice(0, 1000) }).catch(() => undefined);
     }
   }
