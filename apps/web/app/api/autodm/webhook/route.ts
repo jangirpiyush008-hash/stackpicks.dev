@@ -260,8 +260,32 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // Humanizing delay (2-5s — instant-feeling but bot-detector safe)
-      await new Promise((r) => setTimeout(r, 2000 + Math.floor(Math.random() * 3000)));
+      // Meta opt-out enforcement — required by the Messaging Platform Policy.
+      // If this recipient has previously sent us STOP/UNSUBSCRIBE/OPT OUT
+      // on this tenant, honor it forever. Silent skip — do not confirm the
+      // opt-out again (which would be another unsolicited message).
+      const { data: optOut } = await supa
+        .from('autodm_opt_outs')
+        .select('id')
+        .eq('tenant_id', tenant.id)
+        .eq('ig_user_id', fromIgsid)
+        .limit(1)
+        .maybeSingle();
+      if (optOut) {
+        await supa.from('autodm_dm_log').insert({
+          tenant_id: tenant.id, rule_id: rule.id, ig_user_id: fromIgsid, ig_username: fromUsername,
+          trigger_event: triggerEvent, trigger_post_id: postId,
+          trigger_text: commentText.slice(0, 80), trigger_comment_id: commentId,
+          status: 'skipped', error: 'user_opted_out',
+        });
+        processed.push(`skip:opted_out:${fromIgsid}`); continue;
+      }
+
+      // NOTE: previously we slept 2-5s here as a "humanizing" delay. Dropped
+      // for Meta compliance — the synchronous delay was pushing webhook
+      // response time past Meta's ~20s threshold on multi-comment bursts,
+      // triggering timeout + retry. Real anti-spam already comes from the
+      // hourly cap + per-recipient cap enforced above.
 
       // Follow check branches behavior
       const followerCheck = await checkIsFollower(fromIgsid, tenantToken);
@@ -423,6 +447,41 @@ export async function POST(req: NextRequest) {
     //   • we have an active conversation with this recipient
     //   • the message is NOT our own echo
     // ──────────────────────────────────────────────────────────────────
+    // Opt-out keyword detection runs for EVERY tenant regardless of tier —
+    // it's a Meta Messaging Platform Policy requirement, not a Pro feature.
+    // We scan inbound DMs for STOP / UNSUBSCRIBE / OPT OUT / STOP ALL /
+    // "please stop" and record the opt-out. Future comment→DM sends to this
+    // recipient are blocked at the send site (see opt-out check above).
+    const OPT_OUT_KEYWORDS = /^(stop|stop all|stopall|unsubscribe|opt[- ]?out|end|quit|cancel|no more|please stop|no thanks|leave me alone)\s*[.!]?$/i;
+
+    for (const msg of entry.messaging ?? []) {
+      const senderIgsid = msg.sender?.id;
+      const text = msg.message?.text?.trim();
+      const isEcho = msg.message?.is_echo === true;
+      if (!senderIgsid || !text || isEcho) continue;
+      // Ignore messages from ourselves (defensive — echoes should be filtered above)
+      if (senderIgsid === tenant.ig_business_id) continue;
+
+      // STOP / UNSUBSCRIBE handling — check first, before any AI processing.
+      // Adds a row to autodm_opt_outs; future sends check against this list.
+      // We do NOT send a confirmation reply (that would be another
+      // unsolicited message, which is what the recipient just asked to stop).
+      if (OPT_OUT_KEYWORDS.test(text)) {
+        await supa.from('autodm_opt_outs').upsert({
+          tenant_id: tenant.id,
+          ig_user_id: senderIgsid,
+          ig_username: msg.sender && (msg.sender as { username?: string }).username || null,
+          reason: 'user_stop_keyword',
+        }, { onConflict: 'tenant_id,ig_user_id' });
+        // Also close any active conversation so the AI agent stops replying
+        await supa.from('autodm_conversations').update({ status: 'closed' })
+          .eq('tenant_id', tenant.id).eq('recipient_igsid', senderIgsid)
+          .in('status', ['active', 'creator_escalated']);
+        processed.push(`opt_out:${senderIgsid}`);
+        continue;
+      }
+    }
+
     if (!tenant.ai_followup_agent) {
       // Skip silently for non-Pro tenants. Conversation row still exists
       // so we can show the inbound message in their dashboard inbox later.
@@ -436,6 +495,8 @@ export async function POST(req: NextRequest) {
       if (!senderIgsid || !text || isEcho) continue;
       // Ignore messages from ourselves (defensive — echoes should be filtered above)
       if (senderIgsid === tenant.ig_business_id) continue;
+      // If they opt-out'd in the first pass above, don't re-process here.
+      if (OPT_OUT_KEYWORDS.test(text)) continue;
 
       // Find the most recent active conversation with this recipient
       const { data: convRow } = await supa
